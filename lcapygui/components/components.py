@@ -92,7 +92,7 @@ class Components(list):
             if r == 1:
                 size = ''
             else:
-                size = '=' + str(r).rstrip('0').rstrip('.')
+                size = '=' + str(round(r, 2)).rstrip('0').rstrip('.')
 
             if y1 == y2:
                 if x1 > x2:
@@ -106,7 +106,7 @@ class Components(list):
                     attr = 'up' + size
             else:
                 angle = degrees(atan2(y2 - y1, x2 - x1))
-                attr = 'rotate=%s' % angle
+                attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
 
             # Add user defined attributes such as color=blue, thick, etc.
             if cpt.attrs != '':
