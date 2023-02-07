@@ -2,7 +2,8 @@
 Defines the components that lcapy-gui can simulate
 """
 
-import numpy as np
+from numpy import array, sin, cos, pi, dot
+from numpy.linalg import norm
 import ipycanvas as canvas
 
 from typing import Union
@@ -81,7 +82,10 @@ class Component(ABC):
     def __draw_on__(self, editor, layer: canvas.Canvas):
         """
         Handles drawing specific features of components.
-        Component end nodes are handled by the draw_on method, which calls this abstract method.
+
+        Component end nodes are handled by the draw_on method, which calls this
+        abstract method.
+
         """
         ...
 
@@ -89,36 +93,41 @@ class Component(ABC):
         """
         Computes the length of the component.
         """
-        return np.linalg.norm(np.abs(np.array(self.nodes[1].position) - np.array(self.nodes[0].position)))
+        return norm(abs(array(self.nodes[1].position)
+                        - array(self.nodes[0].position)))
 
     @property
-    def midpoint(self) -> np.array:
+    def midpoint(self) -> array:
         """
         Computes the midpoint of the component.
         """
 
-        return (np.array(self.nodes[0].position) + np.array(self.nodes[1].position)) / 2
+        return (array(self.nodes[0].position)
+                + array(self.nodes[1].position)) / 2
 
-    def along(self) -> np.array:
+    def along(self) -> array:
         """
         Computes a unit vector pointing along the line of the component.
-        If the length of the component is zero, this will return the zero vector.
+        If the length of the component is zero, this will return the
+        zero vector.
         """
         length = self.length()
         if length == 0:
-            return np.array((0, 0))
+            return array((0, 0))
         else:
-            return (np.array(self.nodes[1].position) - np.array(self.nodes[0].position))/length
+            return (array(self.nodes[1].position)
+                    - array(self.nodes[0].position))/length
 
-    def orthog(self) -> np.array:
+    def orthog(self) -> array:
         """
-        Computes a unit vector pointing anti-clockwise to the line of the component.
+        Computes a unit vector pointing anti-clockwise to the line
+        of the component.
         """
         delta = self.along()
-        theta = np.pi/2
-        rot = np.array([[np.cos(theta), -np.sin(theta)],
-                       [np.sin(theta), np.cos(theta)]])
-        return np.dot(rot, delta)
+        theta = pi/2
+        rot = array([[cos(theta), -sin(theta)],
+                     [sin(theta), cos(theta)]])
+        return dot(rot, delta)
 
     def draw_on(self, editor, layer: canvas.Canvas):
         """
@@ -139,8 +148,8 @@ class Component(ABC):
         # node dots
         start = self.nodes[0].position
         end = self.nodes[1].position
-        layer.fill_arc(start[0], start[1], editor.STEP // 5, 0, 2 * np.pi)
-        layer.fill_arc(end[0], end[1], editor.STEP // 5, 0, 2 * np.pi)
+        layer.fill_arc(start[0], start[1], editor.STEP // 5, 0, 2 * pi)
+        layer.fill_arc(end[0], end[1], editor.STEP // 5, 0, 2 * pi)
 
     @property
     def vertical(self) -> bool:
