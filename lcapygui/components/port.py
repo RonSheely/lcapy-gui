@@ -1,9 +1,20 @@
+from typing import Union
+
 from .component import Component
 
 
 class Port(Component):
     """
-        Placeholder port to fix import errors.
-        TOFIX
+    Port
     """
-    pass
+
+    TYPE = "P"
+    NAME = "Port"
+
+    def __init__(self):
+
+        super().__init__(None)
+
+    def __draw_on__(self, editor, layer):
+
+        pass
