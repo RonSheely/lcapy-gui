@@ -39,8 +39,6 @@ xxtal for a crystal, xcpe for a CPE, etc.
 
 17. Draw components in selected colours, etc.
 
-18. Draw port nodes
-
 19. Zoom/pan schematic
 
 20. Add node in middle of wire?   Need to delete wire or split into two.
@@ -48,3 +46,7 @@ xxtal for a crystal, xcpe for a CPE, etc.
 21. Draw nodes after drawing cpts (for port nodes)
 
 22. Close/quit
+
+23. Add labels, voltage labels, current labels to cpt attributes
+
+24. Add method for drawing plus and minus symbols and use for opamp

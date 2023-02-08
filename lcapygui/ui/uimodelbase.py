@@ -1,5 +1,5 @@
 from ..components import Capacitor, Component, CurrentSource, Inductor, \
-    Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS
+    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS
 from ..annotation import Annotation
 from ..annotations import Annotations
 from ..nodes import Nodes
@@ -12,6 +12,7 @@ from numpy import array
 class UIModelBase:
 
     STEP = 2
+    SNAP = 1
     SCALE = 0.25
 
     component_map = {
@@ -25,6 +26,8 @@ class UIModelBase:
         'F': ('CCCS', CCCS),
         'G': ('VCCS', VCCS),
         'H': ('CCVS', CCVS),
+        # TODO: temporary
+        'O': ('Opamp', Opamp),
         'P': ('Port', Port)
     }
 
@@ -447,9 +450,9 @@ class UIModelBase:
 
     def snap(self, x, y):
 
-        step = self.STEP
-        x = (x + 0.5 * step) // step * step
-        y = (y + 0.5 * step) // step * step
+        snap = self.SNAP
+        x = (x + 0.5 * snap) // snap * snap
+        y = (y + 0.5 * snap) // snap * snap
         return x, y
 
     def unselect(self):

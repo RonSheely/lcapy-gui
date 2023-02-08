@@ -14,8 +14,7 @@ from .capacitor import Capacitor
 from .voltage_source import VoltageSource
 from .current_source import CurrentSource
 
-from .ground import Ground
-
+from .opamp import Opamp
 from .port import Port
 from .wire import Wire
 

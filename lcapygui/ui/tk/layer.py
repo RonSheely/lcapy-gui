@@ -7,12 +7,11 @@ class Layer:
     def __init__(self, ax):
 
         self.ax = ax
-        self.color = 'black'
 
-    def stroke_line(self, xstart, ystart, xend, yend):
+    def stroke_line(self, xstart, ystart, xend, yend, color='black'):
 
         return self.ax.plot((xstart, xend), (ystart, yend), '-',
-                            color=self.color)
+                            color=color)
 
     def stroke_arc(self, x, y, r, theta1, theta2):
 
@@ -46,6 +45,12 @@ class Layer:
 
         patch = patches.Circle((x, y), radius, fc='white',
                                color=color, alpha=alpha)
+        self.ax.add_patch(patch)
+        return patch
+
+    def stroke_polygon(self, path, color='black', alpha=0.5, fill=False):
+
+        patch = patches.Polygon(path, fc=color, alpha=alpha, fill=fill)
         self.ax.add_patch(patch)
         return patch
 

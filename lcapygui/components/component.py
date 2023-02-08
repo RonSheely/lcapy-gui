@@ -51,6 +51,9 @@ class Component(ABC):
         self.attrs = ''
         self.opts = []
         self.annotations = []
+        self.label = ''
+        self.voltage_label = ''
+        self.current_label = ''
 
     @property
     @classmethod

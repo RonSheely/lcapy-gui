@@ -87,6 +87,7 @@ class UIModelMPH(UIModelBase):
             'h': self.on_add_cpt,
             'i': self.on_add_cpt,
             'l': self.on_add_cpt,
+            'o': self.on_add_cpt,
             'p': self.on_add_cpt,
             'r': self.on_add_cpt,
             'v': self.on_add_cpt,
