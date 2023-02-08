@@ -84,5 +84,5 @@ class Opamp(Component):
         layer.stroke_line(wire_out[0, 0], wire_out[0, 1],
                           wire_out[1, 0], wire_out[1, 1])
 
-        layer.text(plus[0], plus[1], '+', fontsize=20), ha = 'center')
-        layer.text(minus[0], minus[1], '-', fontsize = 20, ha = 'center')
+        layer.text(plus[0], plus[1], '+', fontsize=20, ha='center')
+        layer.text(minus[0], minus[1], '-', fontsize=20, ha='center')
