@@ -54,7 +54,7 @@ class Components(list):
         elts = []
         for cpt in self:
             parts = [cpt.name]
-            for node in cpt.nodes:
+            for node in cpt.nodes[0:2]:
                 parts.append(node.name)
 
             if cpt.TYPE in ('E', 'F', 'G', 'H') and cpt.control is None:
@@ -67,6 +67,10 @@ class Components(list):
                 parts.append(self[idx].nodes[1].name)
             elif cpt.TYPE in ('F', 'H'):
                 parts.append(cpt.control)
+            elif cpt.TYPE == 'Eopamp':
+                parts.append('opamp')
+                for node in cpt.nodes[2:4]:
+                    parts.append(node.name)
 
             # Later need to handle schematic kind attributes.
             if cpt.kind is not None and cpt.kinds[cpt.kind] != '':
