@@ -1,6 +1,7 @@
 from typing import Union
 from .component import Component
-from numpy import array
+from numpy import array, sqrt
+from numpy.linalg import norm
 
 
 class Opamp(Component):
@@ -86,3 +87,29 @@ class Opamp(Component):
 
         layer.text(plus[0], plus[1], '+', fontsize=20, ha='center')
         layer.text(minus[0], minus[1], '-', fontsize=20, ha='center')
+
+    def assign_positions(self, x1, y1, x2, y2) -> array:
+        """Assign node positions based on cursor positions."""
+
+        length = sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+        # TODO: handle rotation
+        positions = array(((x1, y2 + length / 5),
+                           (x1, y2 - length / 5),
+                           (x2, y2),
+                           (0, 0)))
+        return positions
+
+    @property
+    def midpoint(self) -> float:
+
+        pos = (self.nodes[2].position + self.nodes[3].position) / 2
+
+        return (self.nodes[0].position + pos) / 2
+
+    def length(self) -> float:
+
+        pos = (self.nodes[2].position + self.nodes[3].position) / 2
+
+        diff = (pos - self.nodes[0].position) / 2
+        return norm(diff)

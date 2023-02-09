@@ -10,21 +10,6 @@ from typing import Union
 from abc import ABC, abstractmethod
 
 
-class Node:
-
-    """
-    Describes the node that joins components.
-    """
-
-    def __init__(self):
-
-        self.position: tuple(int, int) = (0, 0)
-
-    def __eq__(self, other: 'Node') -> bool:
-
-        return self.position == other.position
-
-
 class Component(ABC):
 
     """
@@ -96,8 +81,8 @@ class Component(ABC):
         """
         Computes the length of the component.
         """
-        return norm(abs(array(self.nodes[1].position)
-                        - array(self.nodes[0].position)))
+        return norm(array(self.nodes[1].position)
+                    - array(self.nodes[0].position))
 
     @property
     def midpoint(self) -> array:
@@ -165,7 +150,7 @@ class Component(ABC):
         return abs(y2 - y1) > abs(x2 - x1)
 
     @property
-    def label_position(self) -> Node:
+    def label_position(self) -> array:
         """
         Returns position where to place label.   This should be
         customised for each component.
@@ -179,3 +164,8 @@ class Component(ABC):
             pos[1] += w
 
         return pos
+
+    def assign_positions(self, x1, y1, x2, y2) -> array:
+        """Assign node positions based on cursor positions."""
+
+        return array(((x1, y1), (x2, y2)))
