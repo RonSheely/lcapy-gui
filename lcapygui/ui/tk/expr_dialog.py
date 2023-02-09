@@ -58,6 +58,9 @@ class ExprDialog:
         button = Button(self.master, text="Plot", command=self.on_plot)
         button.grid(row=self.labelentries.row + 1, sticky='w')
 
+        button = Button(self.master, text="LaTeX", command=self.on_latex)
+        button.grid(row=self.labelentries.row + 1, column=1, sticky='w')
+
         self.update()
 
     def on_format(self, format):
@@ -144,3 +147,7 @@ class ExprDialog:
             return
 
         self.ui.show_plot_properties_dialog(self.expr_tweak)
+
+    def on_latex(self):
+
+        self.ui.show_info_dialog(self.expr_tweak.latex())
