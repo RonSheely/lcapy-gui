@@ -50,8 +50,7 @@ class Opamp(Component):
     def _tf(self, path, scale=1.0):
 
         # TODO, rotate
-
-        path = path * self.length() / scale
+        path = path * self.length() / scale * 2
         path = path + self.midpoint
         return path
 
@@ -94,10 +93,10 @@ class Opamp(Component):
         length = sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
         # TODO: handle rotation
-        positions = array(((x1, y2 + length / 5),
-                           (x1, y2 - length / 5),
-                           (x2, y2),
-                           (0, 0)))
+        positions = array(((x2, y2),
+                           (0, 0),
+                           (x1, y2 + length / 5),
+                           (x1, y2 - length / 5)))
         return positions
 
     @property
