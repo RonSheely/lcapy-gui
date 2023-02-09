@@ -56,11 +56,13 @@ class UIModelBase:
 
         if len(self.components) == 0:
             self.exception('No circuit defined')
+            return None
 
         try:
             sch = self.components.as_sch(self.STEP)
         except Exception as e:
             self.exception(e)
+            return None
 
         if self.ground_node is None:
             # Add dummy ground node
@@ -72,6 +74,7 @@ class UIModelBase:
             self._cct[0]
         except (AttributeError, ValueError, RuntimeError) as e:
             self.exception(e)
+            return None
 
         return self._cct
 
@@ -183,23 +186,6 @@ class UIModelBase:
         self.invalidate()
         return cpt
 
-    def cpt_create(self, cpt, x1, y1, x2, y2):
-
-        node1 = self.nodes.make(x1, y1, None, cpt)
-        self.nodes.add(node1)
-
-        node2 = self.nodes.make(x2, y2, None, cpt)
-        self.nodes.add(node2)
-
-        self.components.add_auto(cpt, node1, node2)
-
-        self.cpt_draw(cpt)
-
-        self.select(cpt)
-        self.dirty = True
-
-        self.history.append((cpt, 'A'))
-
     def cpt_find(self, n1, n2):
 
         cpt2 = None
@@ -212,12 +198,33 @@ class UIModelBase:
                 'Cannot find a component with nodes %s and %s' % (n1, n2))
         return cpt2
 
+    def cpt_place(self, cpt, x1, y1, x2, y2):
+        """Place a component at the specified pair of positions.
+
+        """
+
+        positions = cpt.assign_positions(x1, y1, x2, y2)
+        nodes = []
+        for position in positions:
+            node = self.nodes.make(*position, None, cpt)
+            self.nodes.add(node)
+            nodes.append(node)
+
+        self.components.add_auto(cpt, *nodes)
+        self.cpt_draw(cpt)
+
+        self.select(cpt)
+        self.dirty = True
+
+        self.history.append((cpt, 'A'))
+
     def create(self, cpt_type, x1, y1, x2, y2):
+        """Make and place a component."""
 
         cpt = self.cpt_make(cpt_type)
         if cpt is None:
             return
-        self.cpt_create(cpt, x1, y1, x2, y2)
+        self.cpt_place(cpt, x1, y1, x2, y2)
 
     def circuit(self):
 
@@ -270,6 +277,7 @@ class UIModelBase:
             calculated = sch._positions_calculate()
         except (AttributeError, ValueError, RuntimeError) as e:
             self.exception(e)
+            return
 
         width, height = sch.width * self.STEP,  sch.height * self.STEP
 
@@ -319,6 +327,7 @@ class UIModelBase:
                 pass
             else:
                 self.exception('Unhandled component ' + elt)
+                return
 
             attrs = []
             for opt, val in elt.opts.items():
@@ -349,7 +358,7 @@ class UIModelBase:
         if self.clipped is None:
             return
         cpt = copy(self.clipped)
-        self.cpt_create(cpt, x1, y1, x2, y2)
+        self.cpt_place(cpt, x1, y1, x2, y2)
 
     def rotate(self, angle):
         # TODO
@@ -375,6 +384,7 @@ class UIModelBase:
             s += self.components.as_sch(self.STEP)
         except Exception as e:
             self.exception(e)
+            return
 
         # Note, need a newline so string treated as a netlist string
         s += '; ' + self.preferences.schematic_preferences() + '\n'

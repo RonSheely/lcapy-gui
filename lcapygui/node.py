@@ -1,4 +1,5 @@
 from .components import Port
+from numpy import array
 
 
 class Node:
@@ -14,7 +15,7 @@ class Node:
     @property
     def position(self):
 
-        return self.x, self.y
+        return array((self.x, self.y))
 
     @position.setter
     def position(self, pos):
