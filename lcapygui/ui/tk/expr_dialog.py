@@ -151,4 +151,4 @@ class ExprDialog:
 
     def on_latex(self):
 
-        self.ui.show_info_dialog(self.expr_tweak.latex())
+        self.ui.show_message_dialog(self.expr_tweak.latex())
