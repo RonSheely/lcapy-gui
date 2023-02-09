@@ -96,6 +96,7 @@ class ExprDialog:
 
         if self.ui.debug:
             print('Expression command: ' + command)
+            print(self.expr)
 
         global_dict['result'] = self.expr
         try:
