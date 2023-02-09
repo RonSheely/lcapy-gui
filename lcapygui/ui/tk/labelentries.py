@@ -55,11 +55,17 @@ class LabelEntries(dict):
 
     def get_text(self, name):
 
-        return self.get_var(name).get()
+        val = self.get_var(name).get()
+        if val == 'None':
+            val = None
+        return val
 
     def get(self, name):
 
         val = self.get_text(name)
+        if val is None:
+            return val
+
         cls = self.get_cls(name)
         try:
             return cls(val)
