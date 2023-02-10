@@ -51,6 +51,8 @@ class Components(list):
 
     def as_sch(self, step):
 
+        # Perhaps have each cpt generate their own net?
+
         elts = []
         for cpt in self:
             parts = [cpt.name]
@@ -112,6 +114,10 @@ class Components(list):
                 angle = degrees(atan2(y2 - y1, x2 - x1))
                 attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
 
+            if cpt.TYPE == 'Eopamp':
+                # TODO: fix for other orientations
+                attr = 'right'
+
             # Add user defined attributes such as color=blue, thick, etc.
             if cpt.attrs != '':
                 attr += ', ' + cpt.attrs
@@ -122,13 +128,11 @@ class Components(list):
     def closest(self, x, y):
 
         for cpt in self:
-            x1, y1 = cpt.nodes[0].position
-            x2, y2 = cpt.nodes[1].position
-            xmid = (x1 + x2) / 2
-            ymid = (y1 + y2) / 2
-            rsq = (xmid - x)**2 + (ymid - y)**2
-            ssq = (x2 - x1)**2 + (y2 - y1)**2
-            if rsq < 0.1 * ssq:
+
+            lsq = cpt.length() ** 2
+            xm, ym = cpt.midpoint
+            rsq = (xm - x)**2 + (ym - y)**2
+            if rsq < 0.1 * lsq:
                 return cpt
         return None
 
