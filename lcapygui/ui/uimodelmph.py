@@ -152,9 +152,10 @@ class UIModelMPH(UIModelBase):
 
         self.add_cursor(x, y)
 
-    def on_add_cpt(self, cpt_type):
+    def on_add_cpt(self, cpt_key):
 
-        cpt_type = cpt_type.upper()
+        if self.ui.debug:
+            print(cpt_key)
 
         if len(self.cursors) == 0:
             self.ui.show_info_dialog(
@@ -170,20 +171,21 @@ class UIModelMPH(UIModelBase):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        self.cpt_create(cpt_type, x1, y1, x2, y2)
+        self.cpt_create(cpt_key, x1, y1, x2, y2)
         self.ui.refresh()
 
-    def on_add_con(self, conn):
+    def on_add_con(self, con_key):
+
+        if self.ui.debug:
+            print(con_key)
 
         if len(self.cursors) == 0:
             return
         cursor = self.cursors[0]
         x, y = cursor.position
         node = self.nodes.closest(x, y)
-        if node is None:
-            return
 
-        # TODO: annotate connection
+        self.ui.show_info_dialog('Connection %s not implemented' % con_key)
 
     def on_close(self):
 

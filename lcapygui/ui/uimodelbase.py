@@ -17,30 +17,30 @@ class UIModelBase:
     SCALE = 0.25
 
     component_map = {
-        'C': ('Capacitor', Capacitor),
-        'I': ('Current source', CurrentSource),
-        'L': ('Inductor', Inductor),
-        'R': ('Resistor', Resistor),
-        'V': ('Voltage source', VoltageSource),
-        'W': ('Wire', Wire),
-        'E': ('VCVS', VCVS),
-        'F': ('CCCS', CCCS),
-        'G': ('VCCS', VCCS),
-        'H': ('CCVS', CCVS),
-        'OPAMP': ('Opamp', Opamp),
-        'P': ('Port', Port)
+        'c': ('Capacitor', Capacitor),
+        'i': ('Current source', CurrentSource),
+        'l': ('Inductor', Inductor),
+        'r': ('Resistor', Resistor),
+        'v': ('Voltage source', VoltageSource),
+        'w': ('Wire', Wire),
+        'e': ('VCVS', VCVS),
+        'f': ('CCCS', CCCS),
+        'g': ('VCCS', VCCS),
+        'h': ('CCVS', CCVS),
+        'opamp': ('Opamp', Opamp),
+        'p': ('Port', Port)
     }
 
     connection_map = {
-        'GROUND': ('Ground', None),
-        'SGROUND': ('Signal ground', None),
-        'CGROUND': ('Chassis ground', None),
-        'VDD': ('VDD', None),
-        'VSS': ('VSS', None),
+        'ground': ('Ground', None),
+        'sground': ('Signal ground', None),
+        'cground': ('Chassis ground', None),
+        'vdd': ('VDD', None),
+        'vss': ('VSS', None),
         '0V': ('0V', None),
-        'INPUT': ('Input', None),
-        'OUTPUT': ('Output', None),
-        'BIDIR': ('Bidirectional', None)
+        'input': ('Input', None),
+        'output': ('Output', None),
+        'bidir': ('Bidirectional', None)
     }
 
     def __init__(self, ui):
@@ -95,10 +95,10 @@ class UIModelBase:
 
         return isinstance(self.selected, Component)
 
-    def cpt_create(self, cpt_type, x1, y1, x2, y2):
+    def cpt_create(self, cpt_key, x1, y1, x2, y2):
         """Make and place a component."""
 
-        cpt = self.cpt_make(cpt_type)
+        cpt = self.cpt_make(cpt_key)
         if cpt is None:
             return
         self.cpt_place(cpt, x1, y1, x2, y2)
@@ -184,20 +184,20 @@ class UIModelBase:
                 ann.draw(fontsize=18)
                 cpt.annotations.append(ann)
 
-    def cpt_make(self, cpt_type):
-
-        cpt_type = cpt_type.upper()
+    def cpt_make(self, cpt_key):
 
         try:
-            cpt_class = self.component_map[cpt_type][1]
+            cpt_class = self.component_map[cpt_key][1]
         except IndexError:
-            self.exception('Unhandled component ' + cpt_type)
+            self.exception('Unhandled component ' + cpt_key)
             return None
 
         if cpt_class is None:
             self.exception('Unimplemented component ' +
-                           self.component_map[cpt_type][0])
+                           self.component_map[cpt_key][0])
             return None
+
+        cpt_type = cpt_key.upper()
 
         if cpt_type in ('P', 'W'):
             cpt = cpt_class()
@@ -308,9 +308,9 @@ class UIModelBase:
                 continue
 
             if isinstance(elt, Eopamp):
-                cpt = self.cpt_make('OPAMP')
+                cpt = self.cpt_make('opamp')
             else:
-                cpt = self.cpt_make(elt.type)
+                cpt = self.cpt_make(elt.type.lower())
 
             nodes = []
             for m, node1 in enumerate(elt.nodes[0:2]):

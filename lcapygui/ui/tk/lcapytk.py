@@ -254,7 +254,7 @@ class LcapyTk(Tk):
         self.model = model
         return model
 
-    def on_add_connection(self, conname):
+    def on_add_con(self, conname):
 
         if self.debug:
             print('Adding connection ' + conname)
