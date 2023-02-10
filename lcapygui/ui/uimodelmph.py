@@ -76,8 +76,7 @@ class UIModelMPH(UIModelBase):
             'ctrl+9': self.on_pdb,
             'escape': self.on_unselect,
             'delete': self.on_delete,
-            'backspace': self.on_delete,
-            '0': self.on_add_ground}
+            'backspace': self.on_delete}
 
         self.key_bindings_with_key = {
             'c': self.on_add_cpt,
@@ -171,14 +170,10 @@ class UIModelMPH(UIModelBase):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        self.create(cpt_type, x1, y1, x2, y2)
+        self.cpt_create(cpt_type, x1, y1, x2, y2)
         self.ui.refresh()
 
-    def on_add_ground(self):
-
-        if self.ground_node is not None:
-            # Perhaps could rename old ground?
-            self.exception('Ground node already defined')
+    def on_add_con(self, conn):
 
         if len(self.cursors) == 0:
             return
@@ -187,9 +182,8 @@ class UIModelMPH(UIModelBase):
         node = self.nodes.closest(x, y)
         if node is None:
             return
-        node.name = '0'
 
-        # TODO: annotate ground
+        # TODO: annotate connection
 
     def on_close(self):
 
@@ -402,7 +396,7 @@ current through a component.
         node = self.nodes.closest(x, y)
 
         if cpt and node:
-            self.ui.show_error(
+            self.ui.show_error_dialog(
                 'Selected both node %s and cpt %s' % (node, cpt))
             return
 

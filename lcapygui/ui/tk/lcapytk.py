@@ -113,16 +113,31 @@ class LcapyTk(Tk):
         component_menu = self.component_menu
 
         for key, val in self.uimodel_class.component_map.items():
+            acc = key if len(key) == 1 else ''
             component_menu.add_command(label=val[0],
                                        command=lambda foo=key: self.on_add_cpt(
                                            foo),
-                                       accelerator=key)
+                                       accelerator=acc)
             # Callback called twice for some mysterious reason
             # self.component_menu.bind(key,
             #            lambda arg, foo=key: self.on_add_cpt(foo))
 
         self.menu.add_cascade(label='Component', underline=0,
                               menu=self.component_menu)
+
+        # Connection menu
+        self.connection_menu = Menu(self.menu, tearoff=0,
+                                    bg='lightgrey', fg='black')
+        connection_menu = self.connection_menu
+
+        for key, val in self.uimodel_class.connection_map.items():
+            acc = key if len(key) == 1 else ''
+            connection_menu.add_command(label=val[0], command=lambda
+                                        foo=key: self.on_add_con(foo),
+                                        accelerator=acc)
+
+        self.menu.add_cascade(label='Connection', underline=0,
+                              menu=self.connection_menu)
 
         # Help menu
         self.help_menu = Menu(self.menu, tearoff=0,
@@ -238,6 +253,13 @@ class LcapyTk(Tk):
         self.bind_canvas(canvas, model)
         self.model = model
         return model
+
+    def on_add_connection(self, conname):
+
+        if self.debug:
+            print('Adding connection ' + conname)
+
+        self.model.on_add_con(conname)
 
     def on_add_cpt(self, cptname):
 

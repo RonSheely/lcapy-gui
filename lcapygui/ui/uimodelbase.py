@@ -7,6 +7,7 @@ from ..components import Components
 from .preferences import Preferences
 from copy import copy
 from numpy import array
+from lcapy.mnacpts import Eopamp
 
 
 class UIModelBase:
@@ -26,9 +27,20 @@ class UIModelBase:
         'F': ('CCCS', CCCS),
         'G': ('VCCS', VCCS),
         'H': ('CCVS', CCVS),
-        # TODO: temporary
-        'O': ('Opamp', Opamp),
+        'OPAMP': ('Opamp', Opamp),
         'P': ('Port', Port)
+    }
+
+    connection_map = {
+        'GROUND': ('Ground', None),
+        'SGROUND': ('Signal ground', None),
+        'CGROUND': ('Chassis ground', None),
+        'VDD': ('VDD', None),
+        'VSS': ('VSS', None),
+        '0V': ('0V', None),
+        'INPUT': ('Input', None),
+        'OUTPUT': ('Output', None),
+        'BIDIR': ('Bidirectional', None)
     }
 
     def __init__(self, ui):
@@ -82,6 +94,14 @@ class UIModelBase:
     def cpt_selected(self):
 
         return isinstance(self.selected, Component)
+
+    def cpt_create(self, cpt_type, x1, y1, x2, y2):
+        """Make and place a component."""
+
+        cpt = self.cpt_make(cpt_type)
+        if cpt is None:
+            return
+        self.cpt_place(cpt, x1, y1, x2, y2)
 
     def cpt_delete(self, cpt):
 
@@ -218,14 +238,6 @@ class UIModelBase:
 
         self.history.append((cpt, 'A'))
 
-    def create(self, cpt_type, x1, y1, x2, y2):
-        """Make and place a component."""
-
-        cpt = self.cpt_make(cpt_type)
-        if cpt is None:
-            return
-        self.cpt_place(cpt, x1, y1, x2, y2)
-
     def circuit(self):
 
         from lcapy import Circuit
@@ -295,12 +307,21 @@ class UIModelBase:
                 # Ignore directives
                 continue
 
-            cpt = self.cpt_make(elt.type)
+            if isinstance(elt, Eopamp):
+                cpt = self.cpt_make('OPAMP')
+            else:
+                cpt = self.cpt_make(elt.type)
+
             nodes = []
             for m, node1 in enumerate(elt.nodes[0:2]):
 
-                x1 = sch.nodes[node1.name].pos.x + offsetx
-                y1 = sch.nodes[node1.name].pos.y + offsety
+                try:
+                    x1 = sch.nodes[node1.name].pos.x + offsetx
+                    y1 = sch.nodes[node1.name].pos.y + offsety
+                except KeyError:
+                    # Handle opamp ground node
+                    x1, y1 = 0, 0
+
                 node = self.nodes.make(x1, y1, node1.name, cpt)
                 self.nodes.add(node)
                 nodes.append(node)
@@ -316,9 +337,16 @@ class UIModelBase:
                         if val == elt.keyword[1]:
                             cpt.kind = key
             elif elt.type in ('E', 'G'):
-                # TODO, handle opamp keyword
                 cpt.value = elt.args[0]
                 vcs.append((cpt, elt.nodes[2].name, elt.nodes[3].name))
+                if isinstance(elt, Eopamp):
+                    for m, node1 in enumerate(elt.nodes[2:4]):
+                        x1 = sch.nodes[node1.name].pos.x + offsetx
+                        y1 = sch.nodes[node1.name].pos.y + offsety
+                        node = self.nodes.make(x1, y1, node1.name, cpt)
+                        self.nodes.add(node)
+                        nodes.append(node)
+
             elif elt.type in ('F', 'H'):
                 cpt.value = elt.args[0]
                 cpt.control = elt.args[1]
