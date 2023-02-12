@@ -79,6 +79,7 @@ class UIModelMPH(UIModelBase):
             'backspace': self.on_delete}
 
         self.key_bindings_with_key = {
+            '0': self.on_add_con,
             'c': self.on_add_cpt,
             'e': self.on_add_cpt,
             'f': self.on_add_cpt,
@@ -180,12 +181,23 @@ class UIModelMPH(UIModelBase):
             print(con_key)
 
         if len(self.cursors) == 0:
+            self.ui.show_info_dialog(
+                'To add component, first create nodes by clicking on grid')
             return
-        cursor = self.cursors[0]
-        x, y = cursor.position
-        node = self.nodes.closest(x, y)
+        elif len(self.cursors) == 1:
+            self.ui.show_info_dialog(
+                'To add component, add negative node by clicking on grid')
+            return
 
-        self.ui.show_info_dialog('Connection %s not implemented' % con_key)
+        # TODO: if have a single cursor choose down direction.
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+        self.con_create(con_key, x1, y1, x2, y2)
+        self.ui.refresh()
 
     def on_close(self):
 

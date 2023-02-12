@@ -1,6 +1,3 @@
-from math import sqrt, degrees, atan2
-
-
 class Components(list):
 
     def __init__(self):
@@ -51,79 +48,10 @@ class Components(list):
 
     def as_sch(self, step):
 
-        # Perhaps have each cpt generate their own net?
-
-        elts = []
+        nets = []
         for cpt in self:
-            parts = [cpt.name]
-            for node in cpt.nodes[0:2]:
-                parts.append(node.name)
-
-            if cpt.TYPE in ('E', 'F', 'G', 'H') and cpt.control is None:
-                raise ValueError(
-                    'Control component not defined for ' + cpt.name)
-
-            if cpt.TYPE in ('E', 'G'):
-                idx = self.find_index(cpt.control)
-                parts.append(self[idx].nodes[0].name)
-                parts.append(self[idx].nodes[1].name)
-            elif cpt.TYPE in ('F', 'H'):
-                parts.append(cpt.control)
-            elif cpt.TYPE == 'Eopamp':
-                parts.append('opamp')
-                for node in cpt.nodes[2:4]:
-                    parts.append(node.name)
-
-            # Later need to handle schematic kind attributes.
-            if cpt.kind is not None and cpt.kinds[cpt.kind] != '':
-                parts.append(cpt.kinds[cpt.kind])
-
-            if cpt.TYPE not in ('W', 'P', 'O') and cpt.value is not None:
-                if cpt.initial_value is None and cpt.name != cpt.value:
-                    if cpt.value.isalnum():
-                        parts.append(cpt.value)
-                    else:
-                        parts.append('{' + cpt.value + '}')
-
-            if cpt.initial_value is not None:
-                if cpt.initial_value.isalnum():
-                    parts.append(cpt.initial_value)
-                else:
-                    parts.append('{' + cpt.initial_value + '}')
-
-            x1, y1 = cpt.nodes[0].position
-            x2, y2 = cpt.nodes[1].position
-            r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
-
-            if r == 1:
-                size = ''
-            else:
-                size = '=' + str(round(r, 2)).rstrip('0').rstrip('.')
-
-            if y1 == y2:
-                if x1 > x2:
-                    attr = 'left' + size
-                else:
-                    attr = 'right' + size
-            elif x1 == x2:
-                if y1 > y2:
-                    attr = 'down' + size
-                else:
-                    attr = 'up' + size
-            else:
-                angle = degrees(atan2(y2 - y1, x2 - x1))
-                attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
-
-            if cpt.TYPE == 'Eopamp':
-                # TODO: fix for other orientations
-                attr = 'right'
-
-            # Add user defined attributes such as color=blue, thick, etc.
-            if cpt.attrs != '':
-                attr += ', ' + cpt.attrs
-
-            elts.append(' '.join(parts) + '; ' + attr)
-        return '\n'.join(elts) + '\n'
+            nets.append(cpt.net(self, step=step))
+        return '\n'.join(nets) + '\n'
 
     def closest(self, x, y):
 

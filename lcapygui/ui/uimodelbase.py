@@ -1,5 +1,5 @@
 from ..components import Capacitor, Component, CurrentSource, Inductor, \
-    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS
+    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS, Ground
 from ..annotation import Annotation
 from ..annotations import Annotations
 from ..nodes import Nodes
@@ -7,6 +7,7 @@ from ..components import Components
 from .preferences import Preferences
 from copy import copy
 from numpy import array
+from math import atan2, degrees
 from lcapy.mnacpts import Eopamp
 
 
@@ -32,7 +33,8 @@ class UIModelBase:
     }
 
     connection_map = {
-        'ground': ('Ground', None),
+        '0': ('Ground', Ground),
+        'ground': ('Ground', Ground),
         'sground': ('Signal ground', None),
         'cground': ('Chassis ground', None),
         'vdd': ('VDD', None),
@@ -58,7 +60,7 @@ class UIModelBase:
         self.history = []
         self.clipped = None
 
-    @ property
+    @property
     def cct(self):
 
         if self._cct is not None:
@@ -90,7 +92,32 @@ class UIModelBase:
 
         return self._cct
 
-    @ property
+    def con_create(self, con_key, x1, y1, x2, y2):
+        """Make and place a connection."""
+
+        cpt = self.con_make(con_key)
+        if cpt is None:
+            return
+        self.cpt_place(cpt, x1, y1, x2, y2)
+
+    def con_make(self, con_key):
+
+        try:
+            cpt_class = self.connection_map[con_key][1]
+        except IndexError:
+            self.exception('Unhandled connection ' + con_key)
+            return None
+
+        if cpt_class is None:
+            self.exception('Unimplemented connection ' +
+                           self.connection_map[con_key][0])
+            return None
+
+        cpt = cpt_class()
+        self.invalidate()
+        return cpt
+
+    @property
     def cpt_selected(self):
 
         return isinstance(self.selected, Component)
@@ -129,7 +156,7 @@ class UIModelBase:
 
         label_cpts = self.preferences.label_cpts
 
-        if cpt.TYPE in ('O', 'W'):
+        if cpt.TYPE in ('A', 'O', 'W'):
             label_cpts = 'none'
 
         name = cpt.name
@@ -224,6 +251,9 @@ class UIModelBase:
         """
 
         positions = cpt.assign_positions(x1, y1, x2, y2)
+        angle = degrees(atan2(y2 - y1, x2 - x1))
+        cpt.angle = angle
+
         nodes = []
         for position in positions:
             node = self.nodes.make(*position, None, cpt)

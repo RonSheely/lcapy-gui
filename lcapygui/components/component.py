@@ -8,6 +8,7 @@ import ipycanvas as canvas
 
 from typing import Union
 from abc import ABC, abstractmethod
+from math import sqrt, degrees, atan2
 
 
 class Component(ABC):
@@ -39,6 +40,7 @@ class Component(ABC):
         self.label = ''
         self.voltage_label = ''
         self.current_label = ''
+        self.angle = 0
 
     @property
     @classmethod
@@ -169,3 +171,75 @@ class Component(ABC):
         """Assign node positions based on cursor positions."""
 
         return array(((x1, y1), (x2, y2)))
+
+    def net(self, components, step=1):
+
+        parts = [self.name]
+        for node in self.nodes[0:2]:
+            parts.append(node.name)
+
+        if self.TYPE in ('E', 'F', 'G', 'H') and self.control is None:
+            raise ValueError(
+                'Control component not defined for ' + self.name)
+
+        if self.TYPE in ('E', 'G'):
+            # Lookup nodes for the control component.
+            idx = components.find_index(self.control)
+            parts.append(components[idx].nodes[0].name)
+            parts.append(components[idx].nodes[1].name)
+        elif self.TYPE in ('F', 'H'):
+            parts.append(self.control)
+        elif self.TYPE == 'Eopamp':
+            parts.append('opamp')
+            for node in self.nodes[2:4]:
+                parts.append(node.name)
+
+        # Later need to handle schematic kind attributes.
+        if self.kind is not None and self.kinds[self.kind] != '':
+            parts.append(self.kinds[self.kind])
+
+        if self.TYPE not in ('W', 'P', 'O') and self.value is not None:
+            if self.initial_value is None and self.name != self.value:
+                if self.value.isalnum():
+                    parts.append(self.value)
+                else:
+                    parts.append('{' + self.value + '}')
+
+        if self.initial_value is not None:
+            if self.initial_value.isalnum():
+                parts.append(self.initial_value)
+            else:
+                parts.append('{' + self.initial_value + '}')
+
+        x1, y1 = self.nodes[0].position
+        x2, y2 = self.nodes[1].position
+        r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
+
+        if r == 1:
+            size = ''
+        else:
+            size = '=' + str(round(r, 2)).rstrip('0').rstrip('.')
+
+        if y1 == y2:
+            if x1 > x2:
+                attr = 'left' + size
+            else:
+                attr = 'right' + size
+        elif x1 == x2:
+            if y1 > y2:
+                attr = 'down' + size
+            else:
+                attr = 'up' + size
+        else:
+            angle = degrees(atan2(y2 - y1, x2 - x1))
+            attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
+
+        if self.TYPE == 'Eopamp':
+            # TODO: fix for other orientations
+            attr = 'right'
+
+        # Add user defined attributes such as color=blue, thick, etc.
+        if self.attrs != '':
+            attr += ', ' + self.attrs
+
+        return ' '.join(parts) + '; ' + attr
