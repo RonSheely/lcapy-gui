@@ -1,5 +1,6 @@
 from ..components import Capacitor, Component, CurrentSource, Inductor, \
-    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS, Ground
+    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS
+from ..components import Ground, RGround, SGround
 from ..annotation import Annotation
 from ..annotations import Annotations
 from ..nodes import Nodes
@@ -33,9 +34,9 @@ class UIModelBase:
     }
 
     connection_map = {
-        '0': ('Ground', Ground),
-        'ground': ('Ground', Ground),
-        'sground': ('Signal ground', None),
+        '0': ('0V', Ground),
+        'sground': ('Signal ground', SGround),
+        'rground': ('Rail ground', RGround),
         'cground': ('Chassis ground', None),
         'vdd': ('VDD', None),
         'vss': ('VSS', None),

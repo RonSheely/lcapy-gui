@@ -6,6 +6,7 @@ Handles the component class and its various subclasses.
 
 # for typing purposes
 from .component import Component
+from .connection import Connection
 
 from .resistor import Resistor
 from .inductor import Inductor
@@ -24,5 +25,7 @@ from .ccvs import CCVS
 from .cccs import CCCS
 
 from .ground import Ground
+from .rground import RGround
+from .sground import SGround
 
 from .components import Components
