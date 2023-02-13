@@ -23,7 +23,7 @@ class Multiline(Thing):
         self.points = points
         self.kwargs = kwargs
 
-    def patch(self, offset=(0, 0), scale=1, angle=0):
+    def patch(self, offset=(0, 0), scale=1, angle=0, **kwargs):
 
         offset = array(offset)
 
@@ -39,7 +39,7 @@ class Multiline(Thing):
             codes.append(Path.LINETO)
         path = Path(verts, codes)
 
-        patch = patches.PathPatch(path, **self.kwargs)
+        patch = patches.PathPatch(path, **{**self.kwargs, **kwargs})
         return patch
 
 
@@ -51,12 +51,13 @@ class Circle(Thing):
         self.radius = radius
         self.kwargs = kwargs
 
-    def patch(self, offset=(0, 0), scale=1, angle=0):
+    def patch(self, offset=(0, 0), scale=1, angle=0, **kwargs):
 
         R = self.R(scale, angle)
         tstart = dot(R, self.centre) + offset
 
-        return patches.Circle(tstart, self.radius * scale, **self.kwargs)
+        return patches.Circle(tstart, self.radius * scale,
+                              **{**self.kwargs, **kwargs})
 
 
 class Arc(Thing):
@@ -69,16 +70,17 @@ class Arc(Thing):
         self.theta2 = theta2
         self.kwargs = kwargs
 
-    def patch(self, offset=(0, 0), scale=1, angle=0):
+    def patch(self, offset=(0, 0), scale=1, angle=0, **kwargs):
 
         R = self.R(scale, angle)
         tstart = dot(R, self.centre) + offset
         radius = self.radius * scale
 
         # Circular arc
-        return patches.Arc(tstart, radius, radius,
-                           angle=0, theta1=self.theta1 + angle,
-                           theta2=self.theta2 + angle, **self.kwargs)
+        return patches.Arc(tstart, radius, radius, angle=0,
+                           theta1=self.theta1 + angle,
+                           theta2=self.theta2 + angle,
+                           **{**self.kwargs, **kwargs})
 
 
 class Picture:
@@ -87,21 +89,21 @@ class Picture:
 
         self.things = things
 
-    def patches(self, offset, scale, angle):
+    def patches(self, offset, scale, angle, **kwargs):
 
         if hasattr(self, '_patches'):
             return self._patches
 
         patches = []
         for thing in self.things:
-            patches.append(thing.patch(offset, scale, angle))
+            patches.append(thing.patch(offset, scale, angle, **kwargs))
 
         self._patches = patches
         return patches
 
-    def draw(self, ax, offset=(0, 0), scale=1, angle=0):
+    def draw(self, ax, offset=(0, 0), scale=1, angle=0, **kwargs):
 
-        for patch in self.patches(offset, scale, angle):
+        for patch in self.patches(offset, scale, angle, **kwargs):
             ax.add_patch(patch)
 
     def remove(self):
@@ -115,13 +117,3 @@ pic = Picture(Multiline((0, 0), (0, 2), (1, 2), (0, 4),
                         lw=2),
               Circle((0, 4.5), 0.5),
               Arc((0, 0), 1, 0, 180, lw=2))
-
-
-fig, ax = plt.subplots()
-pic.draw(ax, offset=(1, 1), scale=1, angle=45)
-ax.axis('equal')
-ax.set_ylim(0, 6)
-
-# pic.remove()
-
-plt.show()
