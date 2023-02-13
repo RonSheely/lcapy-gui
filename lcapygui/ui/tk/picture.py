@@ -1,6 +1,5 @@
 from matplotlib.path import Path
 import matplotlib.patches as patches
-import matplotlib.pyplot as plt
 from numpy import array, dot, sin, cos, radians
 
 
@@ -110,10 +109,3 @@ class Picture:
 
         for patch in self.patches():
             patch.remove()
-
-
-pic = Picture(Multiline((0, 0), (0, 2), (1, 2), (0, 4),
-                        (-1, 2), (0, 2), facecolor='orange',
-                        lw=2),
-              Circle((0, 4.5), 0.5),
-              Arc((0, 0), 1, 0, 180, lw=2))
