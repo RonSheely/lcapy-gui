@@ -87,7 +87,7 @@ class PictureDrawer:
 
             ckwargs = {**thing.kwargs, **pic.kwargs, **kwargs}
 
-            patch = func(thing, offset, scale, angle, **ckwargs)
+            patch = func(thing, offset, scale * self.scale, angle, **ckwargs)
             self.ax.add_patch(patch)
             drawing.add(patch)
 

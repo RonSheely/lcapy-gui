@@ -82,8 +82,11 @@ class LcapyTk(Tk):
         self.view_menu = Menu(self.menu, tearoff=0,
                               bg='lightgrey', fg='black')
 
-        self.view_menu.add_command(label='Circuitikz', command=self.on_view,
+        self.view_menu.add_command(label='Circuitikz image',
+                                   command=self.on_view,
                                    accelerator='Ctrl+u')
+        self.view_menu.add_command(label='Circuitikz macros',
+                                   command=self.on_view_macros)
         self.view_menu.add_command(label='Netlist',
                                    command=self.on_netlist)
 
@@ -175,7 +178,7 @@ class LcapyTk(Tk):
         self.canvas = canvas
         self.model = canvas.model
         self.layer = canvas.layer
-        self.drawer = canvas.drawer
+        self.drawer = canvas.drawer,
 
         # TODO, resolve with JH
         self.cursor_layer = self.layer
@@ -409,6 +412,10 @@ class LcapyTk(Tk):
     def on_view(self, *args):
 
         self.model.on_view()
+
+    def on_view_macros(self, *args):
+
+        self.model.on_view_macros()
 
     def refresh(self):
 

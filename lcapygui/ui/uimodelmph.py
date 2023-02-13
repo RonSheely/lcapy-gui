@@ -481,3 +481,18 @@ current through a component.
     def on_view(self):
 
         self.view()
+
+    def on_view_macros(self):
+
+        from lcapy.system import tmpfilename
+        from os import remove
+
+        schtex_filename = tmpfilename('.schtex')
+        cct = self.circuit()
+        cct.draw(schtex_filename)
+
+        with open(schtex_filename) as f:
+            content = f.read()
+        remove(schtex_filename)
+
+        self.ui.show_message_dialog(content)
