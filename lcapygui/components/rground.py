@@ -1,5 +1,5 @@
 from .connection import Connection
-from numpy import array
+from .picture import Picture, Multiline
 
 
 class RGround(Connection):
@@ -10,19 +10,18 @@ class RGround(Connection):
     TYPE = "A"
     NAME = "RGround"
 
+    # Height of stem
+    h = 0.6
+    # Width of rail
+    w = 1
+
+    pic = Picture(Multiline((0, 0), (0, -h)),
+                  Multiline((-w / 2, -h), (w / 2, -h)))
+
     def __draw_on__(self, editor, layer):
 
-        # Height of stem
-        h = 0.3
-        # Width of rail
-        w = 0.5
-
-        paths = [array(((0, 0), (0, -h))),
-                 array(((-w / 2, -h), (w / 2, -h)))]
-
-        spaths = self._tf(paths, 2)
-        for path in spaths:
-            layer.stroke_path(path)
+        drawer = editor.ui.drawer
+        return drawer.draw(self.pic, offset=self.midpoint)
 
     def net(self, connections, step=1):
 

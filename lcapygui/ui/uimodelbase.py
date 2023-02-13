@@ -35,6 +35,7 @@ class UIModelBase:
 
     connection_map = {
         '0': ('0V', Ground),
+        'ground': ('Ground', Ground),
         'sground': ('Signal ground', SGround),
         'rground': ('Rail ground', RGround),
         'cground': ('Chassis ground', None),
