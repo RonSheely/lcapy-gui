@@ -178,7 +178,7 @@ class LcapyTk(Tk):
         self.canvas = canvas
         self.model = canvas.model
         self.layer = canvas.layer
-        self.drawer = canvas.drawer,
+        self.drawer = canvas.drawer
 
         # TODO, resolve with JH
         self.cursor_layer = self.layer
