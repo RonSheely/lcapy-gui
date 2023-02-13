@@ -6,6 +6,7 @@ from numpy import arange
 from os.path import basename
 from ..uimodelmph import UIModelMPH
 from .layer import Layer
+from .picturedrawer import PictureDrawer
 
 
 class LcapyTk(Tk):
@@ -174,6 +175,7 @@ class LcapyTk(Tk):
         self.canvas = canvas
         self.model = canvas.model
         self.layer = canvas.layer
+        self.drawer = canvas.drawer
 
         # TODO, resolve with JH
         self.cursor_layer = self.layer
@@ -222,6 +224,7 @@ class LcapyTk(Tk):
         canvas.drawing = drawing
         canvas.tab = tab
         canvas.layer = Layer(canvas.drawing.ax)
+        canvas.drawer = PictureDrawer(canvas.drawing.ax)
 
         tab.canvas = canvas
 

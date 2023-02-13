@@ -29,3 +29,4 @@ from .rground import RGround
 from .sground import SGround
 
 from .components import Components
+from .picture import Picture, Multiline, Arc, Circle
