@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""glcapy V0.0.1
+"""lcapy-tk V0.0.3
 Copyright (c) 2023 Michael P. Hayes, UC ECE, NZ
 
-Usage: glcapy [infile.sch]
+Usage: lcapy-tk [infile.sch]
 """
 
 from argparse import ArgumentParser
 import sys
-from lcapygui.ui.tk.lcapytkm import LcapyTkM
-from lcapygui.ui.tk.lcapytk import LcapyTk
+from lcapygui import LcapyTk
 
 
 def schtex_exception(type, value, tb):
@@ -43,19 +42,13 @@ def main(argv=None):
                         help="enable debugging")
     parser.add_argument('filename', type=str, nargs='?',
                         help='schematic filename', default=None)
-    parser.add_argument('--ui', type=str, default='tk',
-                        help="choose UI")
 
     args = parser.parse_args()
 
     if args.pdb:
         sys.excepthook = schtex_exception
 
-    if args.ui == 'tkm':
-        e = LcapyTkM(args.filename, debug=args.debug)
-    else:
-        e = LcapyTk(args.filename, debug=args.debug)
-
+    e = LcapyTk(args.filename, debug=args.debug)
     e.display()
 
     return 0

@@ -6,3 +6,5 @@ These can be imported directly from lcapy-gui.
 import pkg_resources
 
 __version__ = pkg_resources.require('lcapy')[0].version
+
+from .ui.tk import LcapyTk
