@@ -26,7 +26,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "lcapy",
+        "lcapy>=1.12",
         "numpy",
         "tk",
         "pillow",
