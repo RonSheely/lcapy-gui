@@ -197,8 +197,6 @@ class UIModelBase:
 
                 if draw_nodes == 'connections' and node.count < 3:
                     continue
-                if draw_nodes == 'alpha' and not node.name[0].isalpha():
-                    continue
                 if draw_nodes == 'primary' and not node.is_primary:
                     continue
                 self.node_draw(node)
@@ -206,6 +204,10 @@ class UIModelBase:
         label_nodes = self.preferences.label_nodes
         if label_nodes != 'none':
             for node in cpt.nodes:
+
+                if label_nodes == 'alpha' and not node.name[0].isalpha():
+                    continue
+
                 pos = array(node.position)
                 pos[0] += 0.3
                 pos[1] += 0.3
