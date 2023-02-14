@@ -69,7 +69,7 @@ class CptDialog:
             initial_value_entry.grid(row=row, column=1)
             row += 1
 
-        button = Button(self.master, text="OK", command=self.on_update)
+        button = Button(self.master, text="OK", command=self.on_ok)
         button.grid(row=row)
 
     def on_update(self, arg=None):
@@ -93,7 +93,11 @@ class CptDialog:
                 value = None
             self.cpt.initial_value = value
 
-        self.master.destroy()
-
         if self.update:
             self.update(self.cpt)
+
+    def on_ok(self):
+
+        self.on_update()
+
+        self.master.destroy()

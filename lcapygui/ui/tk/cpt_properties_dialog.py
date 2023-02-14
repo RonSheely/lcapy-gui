@@ -16,36 +16,44 @@ class CptPropertiesDialog:
         entries = []
         if cpt.kind is not None:
             entries.append(LabelEntry(
-                'kind', 'Kind', cpt.kind, list(cpt.kinds.keys())))
+                'kind', 'Kind', cpt.kind, list(cpt.kinds.keys()),
+                command=self.on_update))
 
-        entries.append(LabelEntry('name', 'Name', cpt.name))
-        entries.append(LabelEntry('value', 'Value', cpt.value))
+        entries.append(LabelEntry('name', 'Name', cpt.name,
+                                  command=self.on_update))
+        entries.append(LabelEntry('value', 'Value', cpt.value,
+                                  command=self.on_update))
 
         if isinstance(cpt, Capacitor):
             entries.append(LabelEntry(
-                'initial_value', 'v0', cpt.initial_value))
+                'initial_value', 'v0', cpt.initial_value,
+                command=self.on_update))
         elif isinstance(cpt, Inductor):
             entries.append(LabelEntry(
-                'initial_value', 'i0', cpt.initial_value))
+                'initial_value', 'i0', cpt.initial_value,
+                command=self.on_update))
         elif isinstance(cpt, (VCVS, VCCS, CCVS, CCCS)):
             names = [c.name for c in ui.model.components if c.name[0] != 'W']
             entries.append(LabelEntry('control', 'Control',
-                                      cpt.control, names))
+                                      cpt.control, names,
+                                      command=self.on_update))
 
-        entries.append(LabelEntry('attrs', 'Attributes', cpt.attrs))
+        entries.append(LabelEntry('attrs', 'Attributes', cpt.attrs,
+                                  command=self.on_update))
 
         self.labelentries = LabelEntries(self.master, ui, entries)
 
-        button = Button(self.master, text="OK", command=self.on_update)
+        button = Button(self.master, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
 
-    def on_update(self):
+    def on_update(self, arg=None):
 
         if self.cpt.kind is not None:
             self.cpt.kind = self.labelentries.get('kind')
 
         self.cpt.name = self.labelentries.get('name')
         self.cpt.value = self.labelentries.get('value')
+
         try:
             self.cpt.initial_value = self.labelentries.get('initial_value')
         except KeyError:
@@ -58,7 +66,11 @@ class CptPropertiesDialog:
 
         self.cpt.attrs = self.labelentries.get('attrs')
 
-        self.master.destroy()
-
         if self.update:
             self.update(self.cpt)
+
+    def on_ok(self):
+
+        self.on_update()
+
+        self.master.destroy()

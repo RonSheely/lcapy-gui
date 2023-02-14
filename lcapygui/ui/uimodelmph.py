@@ -210,6 +210,10 @@ class UIModelMPH(UIModelBase):
     def on_cpt_changed(self, cpt):
 
         self.invalidate()
+        # Component name may have changed
+        self.ui.clear()
+        self.redraw()
+        self.ui.refresh()
 
     def on_debug(self):
 
