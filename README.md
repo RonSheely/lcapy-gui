@@ -1,4 +1,5 @@
 # lcapy-gui
 
-This is an experimental GUI for Lcapy.  The goal is to have a
-Jupyter-based GUI and a standalone GUI, say based on Qt5.
+This is an experimental GUI for Lcapy, lcapy-tk.  Schematics can be
+created and saved in a number of formats and symbolic component
+voltages and currents can be inspected.
