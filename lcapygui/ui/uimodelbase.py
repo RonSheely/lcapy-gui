@@ -372,7 +372,6 @@ class UIModelBase:
                             cpt.kind = key
             elif elt.type in ('E', 'G'):
                 cpt.value = elt.args[0]
-                vcs.append((cpt, elt.nodes[2].name, elt.nodes[3].name))
                 if isinstance(elt, Eopamp):
                     for m, node1 in enumerate(elt.nodes[2:4]):
                         x1 = sch.nodes[node1.name].pos.x + offsetx
@@ -380,6 +379,8 @@ class UIModelBase:
                         node = self.nodes.make(x1, y1, node1.name, cpt)
                         self.nodes.add(node)
                         nodes.append(node)
+                else:
+                    vcs.append((cpt, elt.nodes[2].name, elt.nodes[3].name))
 
             elif elt.type in ('F', 'H'):
                 cpt.value = elt.args[0]
@@ -409,7 +410,9 @@ class UIModelBase:
             self.cpt_draw(cpt)
 
         for cpt, n1, n2 in vcs:
-            cpt.control = self.cpt_find(n1, n2).name
+            ccpt = self.cpt_find(n1, n2)
+            if ccpt is not None:
+                cpt.control = ccpt.name
 
     def move(self, xshift, yshift):
         # TODO
@@ -545,7 +548,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @ property
+    @property
     def ground_node(self):
 
         return self.node_find('0')

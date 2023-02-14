@@ -8,6 +8,11 @@ class Connection(Component):
 
         super().__init__(None)
 
+    def __str__(self) -> str:
+
+        return self.TYPE + ' ' + '(%s, %s)' % \
+            (self.nodes[0].position[0], self.nodes[0].position[1])
+
     @property
     def midpoint(self) -> array:
         """

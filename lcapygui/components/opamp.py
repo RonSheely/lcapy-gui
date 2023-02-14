@@ -47,7 +47,7 @@ class Opamp(Component):
 
         super().__init__(value)
 
-    def _tf(self, paths, scale=1.0):
+    def _tf(self, path, scale=1.0):
 
         # TODO, rotate
         path = path * self.length() / scale * 2

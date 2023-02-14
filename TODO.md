@@ -50,3 +50,9 @@ xxtal for a crystal, xcpe for a CPE, etc.
 23. Add labels, voltage labels, current labels to cpt attributes
 
 24. Add method for drawing plus and minus symbols and use for opamp
+
+25. Connect opamp negative output node to ground
+
+26. Name opamps E1, E2, etc
+
+27. Flip/mirror opamps
