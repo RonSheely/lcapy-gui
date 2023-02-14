@@ -1,4 +1,5 @@
 from tkinter import Tk, StringVar, Label, OptionMenu, Entry, Button
+from ..components import Capacitor, Inductor
 
 
 class CptDialog:
@@ -30,7 +31,8 @@ class CptDialog:
         self.name_var.set(cpt.name)
 
         name_label = Label(self.master, text='Name: ')
-        name_entry = Entry(self.master, textvariable=self.name_var)
+        name_entry = Entry(self.master, textvariable=self.name_var,
+                           command=self.on_update)
 
         name_label.grid(row=row)
         name_entry.grid(row=row, column=1)
@@ -43,7 +45,8 @@ class CptDialog:
         self.value_var.set(value)
 
         value_label = Label(self.master, text='Value: ')
-        value_entry = Entry(self.master, textvariable=self.value_var)
+        value_entry = Entry(self.master, textvariable=self.value_var,
+                            command=self.on_update)
 
         value_label.grid(row=row)
         value_entry.grid(row=row, column=1)
@@ -60,7 +63,8 @@ class CptDialog:
 
             initial_value_label = Label(self.master, text=ivlabel + ': ')
             initial_value_entry = Entry(
-                self.master, textvariable=self.initial_value_var)
+                self.master, textvariable=self.initial_value_var,
+                command=self.on_update)
             initial_value_label.grid(row=row)
             initial_value_entry.grid(row=row, column=1)
             row += 1
@@ -68,7 +72,7 @@ class CptDialog:
         button = Button(self.master, text="OK", command=self.on_update)
         button.grid(row=row)
 
-    def on_update(self):
+    def on_update(self, arg=None):
 
         if self.kind_var is not None:
             kind = self.kind_var.get()
