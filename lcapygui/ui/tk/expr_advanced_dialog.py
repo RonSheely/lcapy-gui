@@ -1,4 +1,5 @@
 from tkinter import Tk, Button, Label
+from PIL import Image, ImageTk
 from lcapy import Expr
 from .labelentries import LabelEntry, LabelEntries
 from .expr_image import ExprImage
@@ -113,7 +114,8 @@ class ExprAdvancedDialog:
 
     def show_img(self, e):
 
-        img = ExprImage(e).image()
+        png_filename = ExprImage(e).image()
+        img = ImageTk.PhotoImage(Image.open(png_filename), master=self.master)
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 
