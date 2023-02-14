@@ -1,6 +1,11 @@
 from numpy import array, dot, sin, cos, radians
 
 
+def offset(thing, offset):
+
+    return thing.offset(offset)
+
+
 def rotate(thing, angle):
 
     return thing.rotate(angle)
@@ -33,21 +38,28 @@ class Multiline(DrawingPrimitive):
 
         return 'Multiline' + str(self.points)
 
+    def offset(self, offset):
+
+        tpoints = []
+        for point in self.points:
+            tpoints.append(array(point) + offset)
+        return self.__class__(*tpoints, **self.kwargs)
+
     def scale(self, scale):
 
-        spoints = []
+        tpoints = []
         for point in self.points:
-            spoints.append(array(point) * scale)
-        return self.__class__(*spoints, **self.kwargs)
+            tpoints.append(array(point) * scale)
+        return self.__class__(*tpoints, **self.kwargs)
 
     def rotate(self, angle):
 
         R = self.R(angle)
 
-        spoints = []
+        tpoints = []
         for point in self.points:
-            spoints.append(dot(R, point))
-        return self.__class__(*spoints, **self.kwargs)
+            tpoints.append(dot(R, point))
+        return self.__class__(*tpoints, **self.kwargs)
 
 
 class Circle(DrawingPrimitive):
@@ -61,6 +73,11 @@ class Circle(DrawingPrimitive):
     def __repr__(self):
 
         return 'Circle(' + str(self.offset) + ', ' + str(self.radius) + ')'
+
+    def offset(self, offset):
+
+        return self.__class__(self.offset + offset, self.radius,
+                              **self.kwargs)
 
     def scale(self, scale):
 
@@ -88,6 +105,11 @@ class Arc(DrawingPrimitive):
         return 'Arc(' + str(self.offset) + ', ' + \
             ', '.join([str(x)
                       for x in [self.radius, self.theta1, self.theta2]]) + ')'
+
+    def offset(self, offset):
+
+        return self.__class__(self.offset + offset, self.radius,
+                              self.theta1, self.theta2, **self.kwargs)
 
     def scale(self, scale):
 
