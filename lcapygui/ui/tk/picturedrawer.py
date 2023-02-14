@@ -36,15 +36,17 @@ class PictureDrawer:
         offset = array(offset)
 
         R = self.R(scale, angle)
-        tstart = dot(R, thing.start) + offset
 
-        verts = [tstart]
-        codes = [Path.MOVETO]
+        verts = []
+        codes = []
 
         for point in thing.points:
             tpoint = dot(R, point) + offset
             verts.append(tpoint)
-            codes.append(Path.LINETO)
+            if codes == []:
+                codes.append(Path.MOVETO)
+            else:
+                codes.append(Path.LINETO)
         path = Path(verts, codes)
 
         patch = patches.PathPatch(path, **kwargs)
@@ -54,20 +56,20 @@ class PictureDrawer:
                      **kwargs):
 
         R = self.R(scale, angle)
-        tstart = dot(R, thing.centre) + offset
+        toffset = dot(R, thing.centre) + offset
 
-        return patches.Circle(tstart, thing.radius * scale,
+        return patches.Circle(toffset, thing.radius * scale,
                               **kwargs)
 
     def _draw_arc(self, thing, offset=(0, 0), scale=1, angle=0,
                   **kwargs):
 
         R = self.R(scale, angle)
-        tstart = dot(R, thing.centre) + offset
+        toffset = dot(R, thing.centre) + offset
         radius = thing.radius * scale
 
         # Circular arc
-        return patches.Arc(tstart, radius, radius, angle=0,
+        return patches.Arc(toffset, radius, radius, angle=0,
                            theta1=thing.theta1 + angle,
                            theta2=thing.theta2 + angle,
                            **kwargs)

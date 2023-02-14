@@ -56,3 +56,10 @@ xxtal for a crystal, xcpe for a CPE, etc.
 26. Name opamps E1, E2, etc
 
 27. Flip/mirror opamps
+
+28. Make Lcapy more robust to nodes being changed when node positions
+    are defined
+
+29. Improve opamp label placement
+
+30. Fix port enumeration if P1 deleted, etc.
