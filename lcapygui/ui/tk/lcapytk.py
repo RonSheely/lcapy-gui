@@ -440,6 +440,12 @@ class LcapyTk(Tk):
 
         self.expr_dialog = ExprDialog(expr, self, title)
 
+    def show_expr_advanced_dialog(self, expr, title=''):
+
+        from .expr_advanced_dialog import ExprAdvancedDialog
+
+        self.expr_advanced_dialog = ExprAdvancedDialog(expr, self, title)
+
     def show_inspect_dialog(self, cpt, title=''):
 
         from .inspect_dialog import InspectDialog

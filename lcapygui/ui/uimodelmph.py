@@ -269,11 +269,11 @@ class UIModelMPH(UIModelBase):
 Editing
 -------
 
-Click on the grid to place a red positive cursor then click elsewhere
-to place a blue negative cursor.  Then enter c for a capacitor, i for
+Click on the grid to place a red positive node then click elsewhere
+to place a blue negative node.  Then enter c for a capacitor, i for
 a current source, l for an inductor, r for a resistor, v for a voltage
 source, etc.  Alternatively, use the Components menu.  The escape key
-will remove the cursors.
+will remove both the positive and negative nodes.
 
 The attributes of a component (name, value, etc.) can be edited by
 right clicking on a component.  Note, voltage and current sources
@@ -283,12 +283,18 @@ the value as a time domain function.
 The attributes of a node can be edited by right clicking on a
 node.  This is useful for defining a ground node.
 
-
 Analysis
 --------
 
-Use Inspect (ctrl+i) to find the voltage across a component or the
-current through a component.
+Select a component and use Inspect (ctrl+i) to find the voltage across
+a component or the current through a component.  Note the polarity is
+defined by the red (plus) and blue (minus) highlighted nodes.
+
+Documentation
+-------------
+
+For further information about Lcapy, see https://lcapy.readthedocs.io
+
 
 
 """, 'Help')
