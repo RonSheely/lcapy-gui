@@ -1,6 +1,16 @@
 from numpy import array, dot, sin, cos, radians
 
 
+def rotate(thing, angle):
+
+    return thing.rotate(angle)
+
+
+def scale(thing, scale):
+
+    return thing.scale(scale)
+
+
 class DrawingPrimitive:
 
     def R(self, angle):
