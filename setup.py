@@ -34,8 +34,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'lcapy-gui=lcapygui.scripts.glcapy:main',
-            'lcapy-tk=lcapygui.scripts.glcapy:main',
+            'lcapy-tk=lcapygui.scripts.lcapytk:main',
         ],
     },
     python_requires=">=3.7"  # matched with lcapy
