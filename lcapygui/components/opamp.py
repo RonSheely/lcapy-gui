@@ -15,7 +15,7 @@ class Opamp(Component):
         The value of the opamp.
     """
 
-    TYPE = "Eopamp"
+    TYPE = "E"
     NAME = "Opamp"
 
     # The Nm node is not used (ground).

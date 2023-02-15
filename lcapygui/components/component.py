@@ -178,21 +178,24 @@ class Component(ABC):
         for node in self.nodes[0:2]:
             parts.append(node.name)
 
-        if self.TYPE in ('E', 'F', 'G', 'H') and self.control is None:
+        if self.TYPE in ('E', 'F', 'G', 'H') \
+           and self.control is None and self.NAME != 'Opamp':
             raise ValueError(
                 'Control component not defined for ' + self.name)
 
         if self.TYPE in ('E', 'G'):
-            # Lookup nodes for the control component.
-            idx = components.find_index(self.control)
-            parts.append(components[idx].nodes[0].name)
-            parts.append(components[idx].nodes[1].name)
+
+            if self.NAME == 'Opamp':
+                parts.append('opamp')
+                for node in self.nodes[2:4]:
+                    parts.append(node.name)
+            else:
+                # Lookup nodes for the control component.
+                idx = components.find_index(self.control)
+                parts.append(components[idx].nodes[0].name)
+                parts.append(components[idx].nodes[1].name)
         elif self.TYPE in ('F', 'H'):
             parts.append(self.control)
-        elif self.TYPE == 'Eopamp':
-            parts.append('opamp')
-            for node in self.nodes[2:4]:
-                parts.append(node.name)
 
         # Later need to handle schematic kind attributes.
         if self.kind is not None and self.kinds[self.kind] != '':
