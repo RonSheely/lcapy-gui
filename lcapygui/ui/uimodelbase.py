@@ -94,11 +94,21 @@ class UIModelBase:
 
         return self._cct
 
+    def annotation_make(self, elt):
+
+        opts = elt.opts
+
+        for k, v in self.connection_map.items():
+            if k in opts:
+                return self.con_make(k)
+        return None
+
     def con_create(self, con_key, x1, y1, x2, y2):
         """Make and place a connection."""
 
         cpt = self.con_make(con_key)
         if cpt is None:
+            self.exception('Unimplemented connection ' + con_key)
             return
         self.cpt_place(cpt, x1, y1, x2, y2)
 
@@ -106,20 +116,17 @@ class UIModelBase:
 
         try:
             cpt_class = self.connection_map[con_key][1]
-        except IndexError:
-            self.exception('Unhandled connection ' + con_key)
-            return None
+        except KeyError:
+            cpt_class = None
 
         if cpt_class is None:
-            self.exception('Unimplemented connection ' +
-                           self.connection_map[con_key][0])
             return None
 
         cpt = cpt_class()
         self.invalidate()
         return cpt
 
-    @property
+    @ property
     def cpt_selected(self):
 
         return isinstance(self.selected, Component)
@@ -129,6 +136,7 @@ class UIModelBase:
 
         cpt = self.cpt_make(cpt_key)
         if cpt is None:
+            self.exception('Unimplemented component ' + cpt_key)
             return
         self.cpt_place(cpt, x1, y1, x2, y2)
 
@@ -219,13 +227,10 @@ class UIModelBase:
 
         try:
             cpt_class = self.component_map[cpt_key][1]
-        except IndexError:
-            self.exception('Unhandled component ' + cpt_key)
-            return None
+        except KeyError:
+            cpt_class = None
 
         if cpt_class is None:
-            self.exception('Unimplemented component ' +
-                           self.component_map[cpt_key][0])
             return None
 
         cpt_type = cpt_key.upper()
@@ -340,11 +345,15 @@ class UIModelBase:
             if elt.type == 'XX':
                 # Ignore directives
                 continue
-
-            if isinstance(elt, Eopamp):
+            elif isinstance(elt, Eopamp):
                 cpt = self.cpt_make('opamp')
+            elif elt.type == 'A':
+                cpt = self.annotation_make(elt)
             else:
                 cpt = self.cpt_make(elt.type.lower())
+            if cpt is None:
+                self.exception('Unhandled component ' + str(elt.name))
+                return
 
             nodes = []
             for m, node1 in enumerate(elt.nodes[0:2]):
@@ -386,7 +395,7 @@ class UIModelBase:
                 cpt.value = elt.args[0]
                 cpt.control = elt.args[1]
 
-            elif elt.type in ('W', 'O', 'P'):
+            elif elt.type in ('A', 'W', 'O', 'P'):
                 pass
             else:
                 self.exception('Unhandled component ' + elt)
@@ -548,7 +557,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @property
+    @ property
     def ground_node(self):
 
         return self.node_find('0')
