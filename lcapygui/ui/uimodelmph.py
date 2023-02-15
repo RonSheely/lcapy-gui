@@ -142,7 +142,7 @@ class UIModelMPH(UIModelBase):
         self.ui.refresh()
 
     def exception(self, message):
-        self.ui.show_info_dialog(message)
+        self.ui.show_error_dialog(message)
 
     def unselect(self):
 
