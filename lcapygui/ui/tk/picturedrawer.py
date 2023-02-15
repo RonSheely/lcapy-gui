@@ -88,6 +88,8 @@ class PictureDrawer:
                 raise ValueError('Unhandled class ' + str(thing))
 
             ckwargs = {**thing.kwargs, **pic.kwargs, **kwargs}
+            if 'lw' not in ckwargs:
+                ckwargs['lw'] = 2
 
             patch = func(thing, offset, scale, angle, **ckwargs)
             self.ax.add_patch(patch)

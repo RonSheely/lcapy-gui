@@ -31,7 +31,7 @@ class Multiline(DrawingPrimitive):
 
     def __init__(self, *points, **kwargs):
 
-        self.points = points
+        self.points = array(points)
         self.kwargs = kwargs
 
     def __repr__(self):
@@ -42,14 +42,14 @@ class Multiline(DrawingPrimitive):
 
         tpoints = []
         for point in self.points:
-            tpoints.append(array(point) + offset)
+            tpoints.append(point + offset)
         return self.__class__(*tpoints, **self.kwargs)
 
     def scale(self, scale):
 
         tpoints = []
         for point in self.points:
-            tpoints.append(array(point) * scale)
+            tpoints.append(point * scale)
         return self.__class__(*tpoints, **self.kwargs)
 
     def rotate(self, angle):
@@ -66,7 +66,7 @@ class Circle(DrawingPrimitive):
 
     def __init__(self, centre, radius, **kwargs):
 
-        self.centre = centre
+        self.centre = array(centre)
         self.radius = radius
         self.kwargs = kwargs
 
@@ -132,3 +132,41 @@ class Picture:
 
         self.things = things
         self.kwargs = kwargs
+
+    def __repr__(self):
+
+        args = ', '.join([str(thing) for thing in self.things])
+        return self.__class__.__name__ + '(' + args + ')'
+
+    def offset(self, offset):
+
+        tthings = []
+        for thing in self.things:
+            tthings.append(thing.offset(offset))
+        return Picture(tthings)
+
+    def scale(self, scale):
+
+        tthings = []
+        for thing in self.things:
+            tthings.append(thing.scale(scale))
+        return Picture(tthings)
+
+    def rotate(self, angle):
+
+        tthings = []
+        for thing in self.things:
+            tthings.append(thing.rotate(angle))
+        return Picture(tthings)
+
+
+# class Foo(Things):
+#
+#     def __init__(self):
+#         super().__init__([Circle((2, 2), 3), Circle((3, 3), 2).rotate(45)])
+#
+#
+# class Bar(Things):
+#
+#     def __init__(self):
+#         super().__init__([Circle((2, 2), 1), Foo().offset((1, 1))])
