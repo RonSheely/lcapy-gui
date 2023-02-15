@@ -31,25 +31,25 @@ class Multiline(DrawingPrimitive):
 
     def __init__(self, *points, **kwargs):
 
-        self.points = array(points)
+        self.points = points
         self.kwargs = kwargs
 
     def __repr__(self):
 
-        return 'Multiline' + str(self.points)
+        return 'Multiline' + repr(self.points)
 
     def offset(self, offset):
 
         tpoints = []
         for point in self.points:
-            tpoints.append(point + offset)
+            tpoints.append(array(point) + offset)
         return self.__class__(*tpoints, **self.kwargs)
 
     def scale(self, scale):
 
         tpoints = []
         for point in self.points:
-            tpoints.append(point * scale)
+            tpoints.append(array(point) * scale)
         return self.__class__(*tpoints, **self.kwargs)
 
     def rotate(self, angle):
@@ -58,7 +58,7 @@ class Multiline(DrawingPrimitive):
 
         tpoints = []
         for point in self.points:
-            tpoints.append(dot(R, point))
+            tpoints.append(dot(R, array(point)))
         return self.__class__(*tpoints, **self.kwargs)
 
 
@@ -66,18 +66,20 @@ class Circle(DrawingPrimitive):
 
     def __init__(self, centre, radius, **kwargs):
 
-        self.centre = array(centre)
+        self.centre = centre
         self.radius = radius
         self.kwargs = kwargs
 
     def __repr__(self):
 
-        return 'Circle(' + str(self.centre) + ', ' + str(self.radius) + ')'
+        return 'Circle(' + repr(self.centre) + ', ' + repr(self.radius) + ')'
 
     def offset(self, offset):
 
-        return self.__class__(self.centre + offset, self.radius,
-                              **self.kwargs)
+        x = self.centre[0] + offset[0]
+        y = self.centre[1] + offset[1]
+
+        return self.__class__((x, y), self.radius, **self.kwargs)
 
     def scale(self, scale):
 
@@ -86,7 +88,7 @@ class Circle(DrawingPrimitive):
     def rotate(self, angle):
 
         R = self.R(angle)
-        offset = dot(R, self.centre)
+        offset = dot(R, array(self.centre))
 
         return self.__class__(offset, self.radius, **self.kwargs)
 
@@ -102,13 +104,16 @@ class Arc(DrawingPrimitive):
         self.kwargs = kwargs
 
     def __repr__(self):
-        return 'Arc(' + str(self.centre) + ', ' + \
-            ', '.join([str(x)
+        return 'Arc(' + repr(self.centre) + ', ' + \
+            ', '.join([repr(x)
                       for x in [self.radius, self.theta1, self.theta2]]) + ')'
 
     def offset(self, offset):
 
-        return self.__class__(self.centre + offset, self.radius,
+        x = self.centre[0] + offset[0]
+        y = self.centre[1] + offset[1]
+
+        return self.__class__((x, y), self.radius,
                               self.theta1, self.theta2, **self.kwargs)
 
     def scale(self, scale):
@@ -135,7 +140,7 @@ class Picture:
 
     def __repr__(self):
 
-        args = ', '.join([str(thing) for thing in self.things])
+        args = ', '.join([repr(thing) for thing in self.things])
         return self.__class__.__name__ + '(' + args + ')'
 
     def offset(self, offset):
