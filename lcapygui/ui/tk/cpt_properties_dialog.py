@@ -55,7 +55,7 @@ class CptPropertiesDialog:
         if name.startswith(self.cpt.name[0]):
             self.cpt.name = self.labelentries.get('name')
         else:
-            ui.show_info_dialog('Cannot change component type')
+            self.ui.show_info_dialog('Cannot change component type')
 
         self.cpt.value = self.labelentries.get('value')
 
