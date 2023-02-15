@@ -26,8 +26,8 @@ class Node:
     def __str__(self):
 
         # Note, need to have float type otherwise 0 becomes empty string.
-        x = str(self.x).rstrip('0').rstrip('.')
-        y = str(self.y).rstrip('0').rstrip('.')
+        x = str(round(self.x, 2)).rstrip('0').rstrip('.')
+        y = str(round(self.y, 2)).rstrip('0').rstrip('.')
 
         return '%s@(%s, %s)' % (self.name, x, y)
 
