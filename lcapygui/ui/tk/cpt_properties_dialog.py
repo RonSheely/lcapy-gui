@@ -9,6 +9,7 @@ class CptPropertiesDialog:
 
         self.cpt = cpt
         self.update = update
+        self.ui = ui
 
         self.master = Tk()
         self.master.title(title)
