@@ -3,13 +3,13 @@ class Components(list):
     def __init__(self):
 
         super(Components, self).__init__(self)
-        self.kinds = {}
+        self.types = {}
 
     def add(self, cpt, name, *nodes):
 
-        if cpt.TYPE not in self.kinds:
-            self.kinds[cpt.TYPE] = []
-        self.kinds[cpt.TYPE].append(name)
+        if cpt.TYPE not in self.types:
+            self.types[cpt.TYPE] = []
+        self.types[cpt.TYPE].append(name)
 
         cpt.name = name
         cpt.value = name
@@ -20,13 +20,13 @@ class Components(list):
     def add_auto(self, cpt, *nodes):
         """Enumerate component before adding."""
 
-        if cpt.TYPE not in self.kinds:
+        if cpt.TYPE not in self.types:
             name = cpt.TYPE + '1'
         else:
             num = 1
             while True:
                 name = cpt.TYPE + str(num)
-                if name not in self.kinds[cpt.TYPE]:
+                if name not in self.types[cpt.TYPE]:
                     break
                 num += 1
 
@@ -78,5 +78,7 @@ class Components(list):
             raise ValueError('Unknown component ' + cpt.name)
 
         cpt = self.pop(idx)
+
+        self.types[cpt.TYPE].remove(cpt.name)
 
         return cpt
