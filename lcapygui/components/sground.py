@@ -21,7 +21,7 @@ class SGround(Connection):
     def __draw_on__(self, editor, layer):
 
         drawer = editor.ui.drawer
-        return drawer.draw(self.pic, offset=self.midpoint)
+        return drawer.draw(self.pic, offset=self.nodes[0].position)
 
     def net(self, connections, step=1):
 

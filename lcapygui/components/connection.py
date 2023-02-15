@@ -19,7 +19,7 @@ class Connection(Component):
         Computes the midpoint of the component.
         """
 
-        return array(self.nodes[0].position) + array(0, -0.5)
+        return array(self.nodes[0].position) + array((0, -0.5))
 
     def length(self) -> float:
         """
