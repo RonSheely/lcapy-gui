@@ -64,62 +64,62 @@ class Multiline(DrawingPrimitive):
 
 class Circle(DrawingPrimitive):
 
-    def __init__(self, offset, radius, **kwargs):
+    def __init__(self, centre, radius, **kwargs):
 
-        self.offset = offset
+        self.centre = centre
         self.radius = radius
         self.kwargs = kwargs
 
     def __repr__(self):
 
-        return 'Circle(' + str(self.offset) + ', ' + str(self.radius) + ')'
+        return 'Circle(' + str(self.centre) + ', ' + str(self.radius) + ')'
 
     def offset(self, offset):
 
-        return self.__class__(self.offset + offset, self.radius,
+        return self.__class__(self.centre + offset, self.radius,
                               **self.kwargs)
 
     def scale(self, scale):
 
-        return self.__class__(self.offset, self.radius * scale, **self.kwargs)
+        return self.__class__(self.centre, self.radius * scale, **self.kwargs)
 
     def rotate(self, angle):
 
         R = self.R(angle)
-        offset = dot(R, self.offset)
+        offset = dot(R, self.centre)
 
         return self.__class__(offset, self.radius, **self.kwargs)
 
 
 class Arc(DrawingPrimitive):
 
-    def __init__(self, offset, radius, theta1, theta2, **kwargs):
+    def __init__(self, centre, radius, theta1, theta2, **kwargs):
 
-        self.offset = offset
+        self.centre = centre
         self.radius = radius
         self.theta1 = theta1
         self.theta2 = theta2
         self.kwargs = kwargs
 
     def __repr__(self):
-        return 'Arc(' + str(self.offset) + ', ' + \
+        return 'Arc(' + str(self.centre) + ', ' + \
             ', '.join([str(x)
                       for x in [self.radius, self.theta1, self.theta2]]) + ')'
 
     def offset(self, offset):
 
-        return self.__class__(self.offset + offset, self.radius,
+        return self.__class__(self.centre + offset, self.radius,
                               self.theta1, self.theta2, **self.kwargs)
 
     def scale(self, scale):
 
-        return self.__class__(self.offset, self.radius * scale,
+        return self.__class__(self.centre, self.radius * scale,
                               self.theta1, self.theta2, **self.kwargs)
 
     def rotate(self, angle):
 
         R = self.R(angle)
-        offset = dot(R, self.offset)
+        offset = dot(R, self.centre)
 
         return self.__class__(offset, self.radius,
                               self.theta1 + angle, self.theta2 + angle,
