@@ -6,8 +6,8 @@ class Node:
 
     def __init__(self, x, y, name):
 
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
         self.name = name
         self.count = 0
         self.cpts = []
@@ -25,6 +25,7 @@ class Node:
 
     def __str__(self):
 
+        # Note, need to have float type otherwise 0 becomes empty string.
         x = str(self.x).rstrip('0').rstrip('.')
         y = str(self.y).rstrip('0').rstrip('.')
 
