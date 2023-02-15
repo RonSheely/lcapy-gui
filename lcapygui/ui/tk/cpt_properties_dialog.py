@@ -51,7 +51,13 @@ class CptPropertiesDialog:
         if self.cpt.kind is not None:
             self.cpt.kind = self.labelentries.get('kind')
 
-        self.cpt.name = self.labelentries.get('name')
+        name = self.labelentries.get('name')
+        if name.startswith(self.cpt.name[0]):
+            self.cpt.name = self.labelentries.get('name')
+        else:
+            # Cannot change component type.
+            pass
+
         self.cpt.value = self.labelentries.get('value')
 
         try:
