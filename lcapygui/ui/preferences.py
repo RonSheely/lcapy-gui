@@ -8,6 +8,7 @@ class Preferences:
         self.style = 'american'
         self.node_size = 0.15
         self.node_color = 'black'
+        self.grid = 'on'
 
     def schematic_preferences(self):
 

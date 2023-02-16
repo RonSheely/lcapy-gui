@@ -164,10 +164,10 @@ class LcapyTk(Tk):
 
         self.load(filename)
 
-    def clear(self):
+    def clear(self, grid='on'):
 
         self.component_layer.clear()
-        self.canvas.drawing.draw_grid()
+        self.canvas.drawing.draw_grid(grid)
 
     def display(self):
 
@@ -550,9 +550,9 @@ class Drawing():
         self.fig = fig
         self.ax = self.fig.add_subplot(111)
 
-        self.draw_grid()
+        self.draw_grid('on')
 
-    def draw_grid(self):
+    def draw_grid(self, grid):
 
         xticks = arange(self.ui.XSIZE)
         yticks = arange(self.ui.YSIZE)
@@ -564,7 +564,8 @@ class Drawing():
         self.ax.set_yticks(yticks)
         self.ax.set_xticklabels([])
         self.ax.set_yticklabels([])
-        self.ax.grid(color='lightblue')
+        if grid == 'on':
+            self.ax.grid(color='lightblue')
 
         self.ax.tick_params(which='both', left=False, bottom=False,
                             top=False, labelbottom=False)

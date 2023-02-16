@@ -129,6 +129,10 @@ class UIModelMPH(UIModelBase):
 
         self.ui.refresh()
 
+    def clear(self):
+
+        self.ui.clear(self.preferences.grid)
+
     def draw_node_select(self, x, y):
 
         x, y = self.snap(x, y)
@@ -211,7 +215,7 @@ class UIModelMPH(UIModelBase):
 
         self.invalidate()
         # Component name may have changed
-        self.ui.clear()
+        self.clear()
         self.redraw()
         self.ui.refresh()
 
@@ -460,7 +464,7 @@ For further information about Lcapy, see https://lcapy.readthedocs.io
 
     def on_redraw(self):
 
-        self.ui.clear()
+        self.clear()
         self.redraw()
         self.ui.refresh()
 

@@ -27,7 +27,13 @@ class PreferencesDialog:
                    LabelEntry('style', 'Style',
                               self.model.preferences.style,
                               ('american', 'british', 'european'),
-                              command=self.on_update)]
+                              command=self.on_update),
+                   LabelEntry('grid', 'Grid',
+                              self.model.preferences.grid,
+                              ('on', 'off'),
+                              command=self.on_update),
+
+                   ]
 
         self.labelentries = LabelEntries(self.master, ui, entries)
 
@@ -41,6 +47,7 @@ class PreferencesDialog:
         self.model.preferences.draw_nodes = self.labelentries.get('draw_nodes')
         self.model.preferences.label_cpts = self.labelentries.get('label_cpts')
         self.model.preferences.style = self.labelentries.get('style')
+        self.model.preferences.grid = self.labelentries.get('grid')
 
         if self.update:
             # Could check for changes
