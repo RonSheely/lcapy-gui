@@ -36,6 +36,12 @@ Select a component and use Inspect (ctrl+i) to find the voltage across
 a component or the current through a component.  Note the polarity is
 defined by the red (plus) and blue (minus) highlighted nodes.
 
+Note, voltage and current sources default to DC.  This can be changed
+by right clicking on the source and selecting `DC`, `AC`, `step`, or
+`arbitrary`.  With `arbitrary`, the value can be an arbitrary
+time-domain expression, for example, `4 * H(t) + 2`, where `H(t)` is
+the Heaviside step.
+
 
 Additional documentation
 ========================
