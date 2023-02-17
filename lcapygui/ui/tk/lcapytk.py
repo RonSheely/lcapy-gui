@@ -466,7 +466,7 @@ class LcapyTk(Tk):
         self.node_properties_dialog = NodePropertiesDialog(node,
                                                            on_changed, title)
 
-    def show_plot_properties_dialog(self, ex5pr):
+    def show_plot_properties_dialog(self, expr):
 
         from .plot_properties_dialog import PlotPropertiesDialog
 
