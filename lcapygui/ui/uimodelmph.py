@@ -5,7 +5,7 @@ class Cursor:
 
     def __init__(self, ui, x, y):
 
-        self.layer = ui.cursor_layer
+        self.layer = ui.layer
         self.patch = None
         self.x = x
         self.y = y

@@ -166,7 +166,7 @@ class LcapyTk(Tk):
 
     def clear(self, grid='on'):
 
-        self.component_layer.clear()
+        self.layer.clear()
         self.canvas.drawing.draw_grid(grid)
 
     def display(self):
@@ -179,12 +179,6 @@ class LcapyTk(Tk):
         self.model = canvas.model
         self.layer = canvas.layer
         self.drawer = canvas.drawer
-
-        # TODO, resolve with JH
-        self.cursor_layer = self.layer
-        self.active_layer = self.layer
-        self.component_layer = self.layer
-        self.grid_layer = self.layer
 
         if self.debug:
             print(self.notebook.tab(self.notebook.select(), "text"))

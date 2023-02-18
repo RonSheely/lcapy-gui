@@ -133,7 +133,7 @@ class CptMaker:
 
         sketch = cls(cpt_type, paths, transforms)
         self.sketches[cpt_type] = sketch
-        return sketch
+        return sketchc
 
 
 cpt_maker = CptMaker()

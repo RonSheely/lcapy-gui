@@ -162,7 +162,7 @@ class UIModelBase:
 
     def cpt_draw(self, cpt):
 
-        cpt.__draw_on__(self, self.ui.component_layer)
+        cpt.__draw_on__(self, self.ui.layer)
 
         label_cpts = self.preferences.label_cpts
 
@@ -565,11 +565,11 @@ class UIModelBase:
     def node_draw(self, node):
 
         if node.port:
-            self.ui.component_layer.stroke_circle(
+            self.ui.layer.stroke_circle(
                 *node.position, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
         else:
-            self.ui.component_layer.stroke_filled_circle(
+            self.ui.layer.stroke_filled_circle(
                 *node.position, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
 
