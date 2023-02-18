@@ -31,21 +31,62 @@ class CptSketch:
         return patches
 
 
+class Bipole(CptSketch):
+
+    can_stretch = True
+
+
+class Capacitor(Bipole):
+    pass
+
+
+class CurrentSource(Bipole):
+    pass
+
+
+class Diode(Bipole):
+    pass
+
+
+class Inductor(Bipole):
+    pass
+
+
+class Opamp(CptSketch):
+    pass
+
+
+class Resistor(Bipole):
+    pass
+
+
+class VCVS(Bipole):
+    pass
+
+
+class VoltageSource(Bipole):
+    pass
+
+
 class CptMaker:
 
-    nets = {
-        'R': ('R 1 2'),
-        'C': ('C 1 2'),
-        'L': ('L 1 2'),
-        'V': ('V 1 2'),
-        'Vac': ('V 1 2 ac'),
-        'Vdc': ('V 1 2 dc'),
-        'I': ('I 1 2'),
-        'Iac': ('I 1 2 ac'),
-        'Idc': ('I 1 2 dc'),
-        'D': ('D 1 2'),
-        'Dled': ('D 1 2; kind=led'),
-        'Dzener': ('D 1 2; kind=zener'),
+    # TODO, move cpts into classes
+
+    cpts = {
+        'C': ('C 1 2', Capacitor),
+        'D': ('D 1 2', Diode),
+        'Dled': ('D 1 2; kind=led', Diode),
+        'Dzener': ('D 1 2; kind=zener', Diode),
+        'E': ('E 1 2 3 4', VCVS),
+        'Eopamp': ('E 1 2 opamp 3 4', Opamp),
+        'I': ('I 1 2', CurrentSource),
+        'Iac': ('I 1 2 ac', CurrentSource),
+        'Idc': ('I 1 2 dc', CurrentSource),
+        'L': ('L 1 2', Inductor),
+        'R': ('R 1 2', Resistor),
+        'V': ('V 1 2', VoltageSource),
+        'Vac': ('V 1 2 ac', VoltageSource),
+        'Vdc': ('V 1 2 dc', VoltageSource),
     }
 
     def __init__(self):
@@ -54,12 +95,14 @@ class CptMaker:
 
     def __call__(self, cpt_type):
 
+        cls = self.cpts[cpt_type][1]
+
         try:
-            return CptSketch(cpt_type, self.sketches[cpt_type])
+            return self.sketches[cpt_type]
         except KeyError:
             pass
 
-        net = self.nets[cpt_type]
+        net = self.cpts[cpt_type][0]
 
         dirname = join(expanduser('~'), '.lcapygui')
         if not exists(dirname):
@@ -75,7 +118,7 @@ class CptMaker:
 
             a = Circuit()
 
-            net = self.nets[cpt_type]
+            net = self.cpts[cpt_type][0]
             if ';' not in net:
                 net += '; right'
 
@@ -88,7 +131,7 @@ class CptMaker:
         paths = svg.paths
         transforms = svg.transforms
 
-        sketch = CptSketch(cpt_type, paths, transforms)
+        sketch = cls(cpt_type, paths, transforms)
         self.sketches[cpt_type] = sketch
         return sketch
 
