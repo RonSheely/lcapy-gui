@@ -8,13 +8,14 @@ from .svgparse import SVGParse
 
 class CptSketch:
 
-    SCALE = 2 / 50
+    SCALE = 2.54 / 72
 
-    def __init__(self, cpt_type, paths, transforms):
+    def __init__(self, cpt_type, paths, transforms, height):
 
         self.cpt_type = cpt_type
         self.paths = paths
         self.transforms = transforms
+        self.height = height
 
     def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
 
@@ -25,6 +26,7 @@ class CptSketch:
         for path, transform in zip(self.paths, self.transforms):
 
             path = path.transformed(Affine2D(transform))
+            path = path.transformed(Affine2D().translate(0, -self.height / 2))
             path = path.transformed(gtransform)
 
             patch = PathPatch(path, fc='white', **kwargs)
@@ -34,8 +36,7 @@ class CptSketch:
 
 
 class Bipole(CptSketch):
-
-    can_stretch = True
+    pass
 
 
 class Capacitor(Bipole):
@@ -70,6 +71,10 @@ class VoltageSource(Bipole):
     pass
 
 
+class Wire(Bipole):
+    pass
+
+
 class CptMaker:
 
     # TODO, move cpts into classes
@@ -89,6 +94,7 @@ class CptMaker:
         'V': ('V 1 2', VoltageSource),
         'Vac': ('V 1 2 ac', VoltageSource),
         'Vdc': ('V 1 2 dc', VoltageSource),
+        'W': ('W 1 2', Wire),
     }
 
     def __init__(self):
@@ -130,10 +136,8 @@ class CptMaker:
                    label_nodes=False, draw_nodes=False)
 
         svg = SVGParse(svg_filename)
-        paths = svg.paths
-        transforms = svg.transforms
 
-        sketch = cls(cpt_type, paths, transforms)
+        sketch = cls(cpt_type, svg.paths, svg.transforms, svg.height)
         self.sketches[cpt_type] = sketch
         return sketch
 

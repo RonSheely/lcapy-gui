@@ -13,8 +13,18 @@ class SVGParse:
 
         svg_paths = doc.getElementsByTagName('path')
         svg_defs = doc.getElementsByTagName('defs')
-        svg_gs = doc.getElementsByTagName('g')
         svg_uses = doc.getElementsByTagName('use')
+
+        svg = doc.getElementsByTagName('svg')[0]
+        width_str = svg.getAttribute('width')
+        height_str = svg.getAttribute('height')
+        if not width_str.endswith('pt'):
+            raise ValueError('Need to to handle other units.')
+        if not height_str.endswith('pt'):
+            raise ValueError('Need to to handle other units.')
+
+        self.width = float(width_str[:-2])
+        self.height = float(height_str[:-2])
 
         # Ignore paths for symbol defs and clip paths
         svg_paths = [path for path in svg_paths

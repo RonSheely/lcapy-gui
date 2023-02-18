@@ -4,11 +4,12 @@ Defines the components that lcapy-gui can simulate
 
 from numpy import array, dot
 from numpy.linalg import norm
-import ipycanvas as canvas
 
 from typing import Union
 from abc import ABC, abstractmethod
-from math import sqrt, degrees, atan2, pi
+from math import sqrt, degrees, atan2
+
+from .cpt_maker import cpt_make
 
 
 class Component(ABC):
@@ -25,6 +26,7 @@ class Component(ABC):
     """
 
     kinds = {}
+    can_stretch = False
 
     def __init__(self, value: Union[str, int, float]):
 
@@ -41,6 +43,8 @@ class Component(ABC):
         self.voltage_label = ''
         self.current_label = ''
         self.angle = 0
+
+        self.sketch = cpt_make(self.TYPE)
 
     @property
     @classmethod
@@ -68,16 +72,34 @@ class Component(ABC):
             (self.nodes[0].position[0], self.nodes[0].position[1],
              self.nodes[1].position[0], self.nodes[1].position[1])
 
-    @abstractmethod
-    def draw(self, editor, layer: canvas.Canvas):
+    def draw(self, editor, layer, **kwargs):
         """
         Handles drawing specific features of components.
-
-        Component end nodes are handled by the draw method, which calls this
-        abstract method.
-
         """
-        ...
+
+        x1, y1 = self.nodes[0].position
+        x2, y2 = self.nodes[1].position
+
+        dx = x2 - x1
+        dy = y2 - y1
+        r = sqrt(dx**2 + dy**2)
+
+        # R = array(((dx, -dy), (dy, dx))) / r
+        angle = degrees(atan2(dy, dx))
+
+        s = 2
+        p1 = array((x1, y1))
+        dp = array((dx, dy)) / r * (r - s) / 2
+        p1p = p1 + dp
+
+        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=1.5, **kwargs)
+
+        if self.can_stretch:
+            p2 = array((x2, y2))
+            p2p = p2 - dp
+
+            layer.stroke_line(*p1, *p1p, **kwargs)
+            layer.stroke_line(*p2p, *p2, **kwargs)
 
     def length(self) -> float:
         """

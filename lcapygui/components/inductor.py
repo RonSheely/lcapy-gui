@@ -16,6 +16,7 @@ class Inductor(Component):
 
     TYPE = "L"
     NAME = "Inductor"
+    can_stretch = True
 
     def __init__(self, value: Union[str, int, float]):
 
