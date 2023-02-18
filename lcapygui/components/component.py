@@ -2,13 +2,13 @@
 Defines the components that lcapy-gui can simulate
 """
 
-from numpy import array, sin, cos, pi, dot
+from numpy import array, dot
 from numpy.linalg import norm
 import ipycanvas as canvas
 
 from typing import Union
 from abc import ABC, abstractmethod
-from math import sqrt, degrees, atan2
+from math import sqrt, degrees, atan2, pi
 
 
 class Component(ABC):
@@ -73,7 +73,7 @@ class Component(ABC):
         """
         Handles drawing specific features of components.
 
-        Component end nodes are handled by the draw_on method, which calls this
+        Component end nodes are handled by the draw method, which calls this
         abstract method.
 
         """
@@ -114,32 +114,10 @@ class Component(ABC):
         of the component.
         """
         delta = self.along()
-        theta = pi/2
-        rot = array([[cos(theta), -sin(theta)],
-                     [sin(theta), cos(theta)]])
+
+        rot = array([[0, -1],
+                     [1, 0]])
         return dot(rot, delta)
-
-    def draw_on(self, editor, layer: canvas.Canvas):
-        """
-        Draws a single component on a canvas.
-
-        Parameters
-        ----------
-
-        editor: Editor
-            The editor object to draw on
-        layer: Canvas = None
-            Layer to draw component on
-        """
-
-        # abstract method for drawing components
-        self.draw(editor, layer)
-
-        # node dots
-        start = self.nodes[0].position
-        end = self.nodes[1].position
-        layer.fill_arc(start[0], start[1], editor.STEP // 5, 0, 2 * pi)
-        layer.fill_arc(end[0], end[1], editor.STEP // 5, 0, 2 * pi)
 
     @property
     def vertical(self) -> bool:
