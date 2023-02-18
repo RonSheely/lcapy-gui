@@ -162,7 +162,7 @@ class UIModelBase:
 
     def cpt_draw(self, cpt):
 
-        cpt.__draw_on__(self, self.ui.layer)
+        cpt.draw(self, self.ui.layer)
 
         label_cpts = self.preferences.label_cpts
 

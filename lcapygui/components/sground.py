@@ -18,7 +18,7 @@ class SGround(Connection):
     pic = Picture(Multiline((0, 0), (0, -h), (w / 2, -h),
                             (0, -2 * h), (-w / 2, -h), (0, -h)))
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         drawer = editor.ui.drawer
         return drawer.draw(self.pic, offset=self.nodes[0].position)

@@ -54,7 +54,7 @@ class Opamp(Component):
         path = path + self.midpoint
         return path
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         path = array(((-0.85, -1), (-0.85, 1), (.85, 0),
                      (-0.85, -1)), dtype=float)

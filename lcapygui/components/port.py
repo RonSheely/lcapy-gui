@@ -15,6 +15,6 @@ class Port(Component):
 
         super().__init__(None)
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         pass

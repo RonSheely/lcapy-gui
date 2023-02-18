@@ -69,7 +69,7 @@ class Component(ABC):
              self.nodes[1].position[0], self.nodes[1].position[1])
 
     @abstractmethod
-    def __draw_on__(self, editor, layer: canvas.Canvas):
+    def draw(self, editor, layer: canvas.Canvas):
         """
         Handles drawing specific features of components.
 
@@ -133,7 +133,7 @@ class Component(ABC):
         """
 
         # abstract method for drawing components
-        self.__draw_on__(editor, layer)
+        self.draw(editor, layer)
 
         # node dots
         start = self.nodes[0].position

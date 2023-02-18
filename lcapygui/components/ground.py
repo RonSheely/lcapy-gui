@@ -22,7 +22,7 @@ class Ground(Connection):
                   Multiline((-w / 4, -h - s), (w / 4, -h - s)),
                   Multiline((-w / 8, -h - 2 * s), (w / 8, -h - 2 * s)))
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         drawer = editor.ui.drawer
         return drawer.draw(self.pic, offset=self.nodes[0].position)

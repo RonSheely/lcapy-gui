@@ -20,7 +20,7 @@ class Resistor(Component):
 
         super().__init__(value)
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         length = self.length()
 

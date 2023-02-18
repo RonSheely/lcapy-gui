@@ -13,7 +13,7 @@ class Wire(Component):
 
         super().__init__(None)
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         start_x, start_y = self.nodes[0].position
         end_x, end_y = self.nodes[1].position

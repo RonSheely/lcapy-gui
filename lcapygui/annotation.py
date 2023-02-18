@@ -2,7 +2,7 @@ class Annotation:
 
     def __init__(self, ui, x, y, text):
 
-        self.layer = ui.cursor_layer
+        self.layer = ui.layer
         self.x = x
         self.y = y
         self.text = text
