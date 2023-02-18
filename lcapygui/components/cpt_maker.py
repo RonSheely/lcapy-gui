@@ -8,6 +8,8 @@ from .svgparse import SVGParse
 
 class CptSketch:
 
+    SCALE = 2 / 50
+
     def __init__(self, cpt_type, paths, transforms):
 
         self.cpt_type = cpt_type
@@ -16,7 +18,7 @@ class CptSketch:
 
     def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
 
-        gtransform = Affine2D().rotate_deg(angle).scale(scale)
+        gtransform = Affine2D().rotate_deg(angle).scale(scale * self.SCALE)
         gtransform = gtransform.translate(*offset)
 
         patches = []
@@ -133,7 +135,7 @@ class CptMaker:
 
         sketch = cls(cpt_type, paths, transforms)
         self.sketches[cpt_type] = sketch
-        return sketchc
+        return sketch
 
 
 cpt_maker = CptMaker()
