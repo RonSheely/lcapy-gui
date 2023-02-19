@@ -113,8 +113,6 @@ class UIModelBase:
 
     def con_make(self, con_key):
 
-        import pdb
-        pdb.set_trace()
         try:
             cpt_class_name = self.connection_map[con_key][1]
             cpt_kind = self.connection_map[con_key][2]
