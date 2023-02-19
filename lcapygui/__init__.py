@@ -3,8 +3,15 @@ Root-level lcapy-gui objects.
 These can be imported directly from lcapy-gui.
 """
 
+import sys
 import pkg_resources
 
-__version__ = pkg_resources.require('lcapy')[0].version
+if sys.version_info < (3, 9):
+    import importlib_resources
+else:
+    import importlib.resources as importlib_resources
 
-from .ui.tk import LcapyTk
+__version__ = pkg_resources.require('lcapy-gui')[0].version
+
+pkg = importlib_resources.files('lcapy-gui')
+__datadir__ = pkg / 'data'
