@@ -1,14 +1,13 @@
-from .component import Component
+from .component import BipoleComponent
 
 
-class Diode(Component):
+class Diode(BipoleComponent):
     """
     Diode
     """
 
     TYPE = "R"
     NAME = "Diode"
-    can_stretch = True
 
     def __init__(self):
 

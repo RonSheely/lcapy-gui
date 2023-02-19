@@ -24,10 +24,10 @@ class UIModelBase:
         'r': ('Resistor', 'R', ''),
         'v': ('Voltage source', 'V', ''),
         'w': ('Wire', 'W', ''),
-        'e': ('VCVS', 'VCVS', ''),
-        'f': ('CCCS', 'CCCS', ''),
-        'g': ('VCCS', 'VCCS', ''),
-        'h': ('CCVS', 'CCVS', ''),
+        'e': ('VCVS', 'E', ''),
+        'f': ('CCCS', 'F', ''),
+        'g': ('VCCS', 'G', ''),
+        'h': ('CCVS', 'H', ''),
         'opamp': ('Opamp', 'Eopamp', ''),
         'p': ('Port', 'P', '')
     }

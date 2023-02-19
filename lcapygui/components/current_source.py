@@ -1,8 +1,8 @@
 from typing import Union
-from .component import Component
+from .component import BipoleComponent
 
 
-class CurrentSource(Component):
+class CurrentSource(BipoleComponent):
     """
     CurrentSource
 

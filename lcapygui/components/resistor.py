@@ -1,8 +1,8 @@
 from typing import Union
-from .component import Component
+from .component import BipoleComponent
 
 
-class Resistor(Component):
+class Resistor(BipoleComponent):
     """
     Resistor
 
@@ -15,7 +15,6 @@ class Resistor(Component):
 
     TYPE = "R"
     NAME = "Resistor"
-    can_stretch = True
 
     def __init__(self, value: Union[str, int, float]):
 

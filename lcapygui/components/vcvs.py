@@ -3,10 +3,10 @@ import numpy as np
 
 from typing import Union
 
-from .component import Component
+from .component import BipoleComponent
 
 
-class VCVS(Component):
+class VCVS(BipoleComponent):
     """
     VCVS
 

@@ -1,8 +1,8 @@
 from typing import Union
-from .component import Component
+from .component import BipoleComponent
 
 
-class Capacitor(Component):
+class Capacitor(BipoleComponent):
     """
     Capacitor
 
@@ -15,7 +15,6 @@ class Capacitor(Component):
 
     TYPE = "C"
     NAME = "Capacitor"
-    can_stretch = True
 
     def __init__(self, value: Union[str, int, float]):
 

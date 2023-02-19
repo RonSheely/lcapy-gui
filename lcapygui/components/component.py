@@ -242,3 +242,8 @@ class Component(ABC):
             attr += ', ' + self.attrs
 
         return ' '.join(parts) + '; ' + attr
+
+
+class BipoleComponent(Component):
+
+    can_stretch = True

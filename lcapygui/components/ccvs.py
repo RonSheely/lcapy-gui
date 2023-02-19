@@ -1,12 +1,8 @@
-
-import numpy as np
-
 from typing import Union
+from .component import BipoleComponent
 
-from .component import Component
 
-
-class CCVS(Component):
+class CCVS(BipoleComponent):
     """
     CCVS
 

@@ -1,9 +1,9 @@
 import numpy as np
 from typing import Union
-from .component import Component
+from .component import BipoleComponent
 
 
-class Inductor(Component):
+class Inductor(BipoleComponent):
     """
     Inductor
 
@@ -16,7 +16,6 @@ class Inductor(Component):
 
     TYPE = "L"
     NAME = "Inductor"
-    can_stretch = True
 
     def __init__(self, value: Union[str, int, float]):
 

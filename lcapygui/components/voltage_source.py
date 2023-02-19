@@ -1,8 +1,8 @@
 from typing import Union
-from .component import Component
+from .component import BipoleComponent
 
 
-class VoltageSource(Component):
+class VoltageSource(BipoleComponent):
     """
     VoltageSource
 
@@ -16,7 +16,6 @@ class VoltageSource(Component):
     TYPE = "V"
     NAME = "Voltage Source"
     kinds = {'DC': 'dc', 'AC': 'ac', 'Step': 'step', 'Arbitrary': ''}
-    can_stretch = True
 
     def __init__(self, value: Union[str, int, float]):
 
