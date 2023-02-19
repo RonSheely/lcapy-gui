@@ -1,3 +1,4 @@
+from .annotation import Annotation
 from .capacitor import Capacitor
 from .current_source import CurrentSource
 from .diode import Diode
@@ -29,36 +30,29 @@ class CptMaker:
     # TODO, move cpts into classes
 
     cpts = {
-        'C': ('C 1 2', Capacitor),
-        'D': ('D 1 2', Diode),
-        'Dled': ('D 1 2; kind=led', Diode),
-        'Dzener': ('D 1 2; kind=zener', Diode),
-        'E': ('E 1 2 3 4', VCVS),
-        'Eopamp': ('E 1 2 opamp 3 4', Opamp),
-        'F': ('F 1 2 3 4', CCCS),
-        'G': ('G 1 2 3 4', VCCS),
-        'H': ('H 1 2 3 4', CCVS),
-        'I': ('I 1 2', CurrentSource),
-        'Iac': ('I 1 2 ac', CurrentSource),
-        'Idc': ('I 1 2 dc', CurrentSource),
-        'L': ('L 1 2', Inductor),
-        'P': ('P 1 2', Port),
-        'R': ('R 1 2', Resistor),
-        'V': ('V 1 2', VoltageSource),
-        'Vac': ('V 1 2 ac', VoltageSource),
-        'Vdc': ('V 1 2 dc', VoltageSource),
-        'W': ('W 1 2', Wire),
+        'A': Annotation,
+        'C': Capacitor,
+        'D': Diode,
+        'E': VCVS,
+        'Opamp': Opamp,
+        'F': CCCS,
+        'G': VCCS,
+        'H': CCVS,
+        'I': CurrentSource,
+        'L': Inductor,
+        'P': Port,
+        'R': Resistor,
+        'V': VoltageSource,
+        'W': Wire
     }
 
     def __init__(self):
 
         self.sketches = {}
 
-    def _make_sketch(self, cpt_type):
+    def _make_sketch(self, cpt):
 
-        net = self.cpts[cpt_type][0]
-
-        dirname = join(expanduser('~'), '.lcapygui')
+        dirname = join(expanduser('~'), '.lcapy')
         if not exists(dirname):
             mkdir(dirname)
 
@@ -66,13 +60,13 @@ class CptMaker:
         if not exists(dirname):
             mkdir(dirname)
 
-        svg_filename = join(dirname, cpt_type + '.svg')
+        svg_filename = join(dirname, cpt.sketch_key + '.svg')
 
         if not exists(svg_filename):
 
             a = Circuit()
 
-            net = self.cpts[cpt_type][0]
+            net = cpt.sketch_net
             if ';' not in net:
                 net += '; right'
 
@@ -83,25 +77,27 @@ class CptMaker:
 
         svg = SVGParse(svg_filename)
 
-        sketch = CptSketch(cpt_type, svg.paths, svg.transforms, svg.height)
+        sketch = CptSketch(cpt.sketch_key, svg.paths,
+                           svg.transforms, svg.height)
         return sketch
 
-    def __call__(self, cpt_type):
+    def __call__(self, cpt_type, kind=''):
+
+        cls = self.cpts[cpt_type]
 
         try:
-            sketch = self.sketches[cpt_type]
-        except KeyError:
-            sketch = self._make_sketch(cpt_type)
-
-        self.sketches[cpt_type] = sketch
-
-        cls = self.cpts[cpt_type][1]
-
-        # TODO: tidy
-        try:
-            cpt = cls()
+            cpt = cls(kind=kind)
         except TypeError:
-            cpt = cls(None)
+            cpt = cls(None, kind=kind)
+
+        sketch_key = cpt.sketch_key
+
+        try:
+            sketch = self.sketches[sketch_key]
+        except KeyError:
+            sketch = self._make_sketch(cpt)
+
+        self.sketches[sketch_key] = sketch
 
         # TODO: remove duck type
         cpt.sketch = sketch
@@ -116,4 +112,4 @@ def cpt_make(cpt_type, kind=''):
     """Factory to create the path required to draw a component
     of `cpt_type`."""
 
-    return cpt_maker(cpt_type)
+    return cpt_maker(cpt_type, kind)

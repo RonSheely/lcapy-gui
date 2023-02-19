@@ -1,4 +1,3 @@
-from typing import Union
 from .component import BipoleComponent
 
 
@@ -13,9 +12,5 @@ class Capacitor(BipoleComponent):
         The value of the capacitor.
     """
 
-    TYPE = "C"
-    NAME = "Capacitor"
-
-    def __init__(self, value: Union[str, int, float]):
-
-        super().__init__(value)
+    TYPE = 'C'
+    NAME = 'Capacitor'

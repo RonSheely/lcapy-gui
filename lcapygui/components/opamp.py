@@ -43,10 +43,6 @@ class Opamp(Component):
              'r-': ('l', -0.85, 0.25),
              'r+': ('l', -0.85, -0.25)}
 
-    def __init__(self, value: Union[str, int, float]):
-
-        super().__init__(value)
-
     def _tf(self, path, scale=1.0):
 
         # TODO, rotate

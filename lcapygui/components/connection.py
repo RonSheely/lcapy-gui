@@ -31,3 +31,9 @@ class Connection(Component):
         """Assign node positions based on cursor positions."""
 
         return array(((x1, y1), ))
+
+    def draw(self, editor, layer, **kwargs):
+
+        x1, y1 = self.nodes[0].position
+
+        self.sketch.draw(layer.ax, offset=(x1, y1), angle=0, lw=2, **kwargs)

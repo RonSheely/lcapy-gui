@@ -28,22 +28,22 @@ class UIModelBase:
         'f': ('CCCS', 'F', ''),
         'g': ('VCCS', 'G', ''),
         'h': ('CCVS', 'H', ''),
-        'opamp': ('Opamp', 'Eopamp', ''),
+        'opamp': ('Opamp', 'Opamp', ''),
         'p': ('Port', 'P', '')
     }
 
     connection_map = {
-        '0': ('0V', 'Ground', ''),
-        'ground': ('Ground', 'Ground', ''),
-        'sground': ('Signal ground', 'Ground', 'sground'),
-        'rground': ('Rail ground', 'Ground', 'rground'),
-        'cground': ('Chassis ground', '', ''),
-        'vdd': ('VDD', '', ''),
-        'vss': ('VSS', '', ''),
-        '0V': ('0V', '', ''),
-        'input': ('Input', '', ''),
-        'output': ('Output', '', ''),
-        'bidir': ('Bidirectional', '', '')
+        '0': ('0V', 'A', ''),
+        'ground': ('Ground', 'A', ''),
+        'sground': ('Signal ground', 'A', 'Sground'),
+        'rground': ('Rail ground', 'A', 'Rground'),
+        'cground': ('Chassis ground', 'A', 'Cground'),
+        'vdd': ('VDD', 'A', 'vdd'),
+        'vss': ('VSS', 'A', 'vss'),
+        '0V': ('0V', 'A', '0V'),
+        'input': ('Input', 'A', 'input'),
+        'output': ('Output', 'A', 'output'),
+        'bidir': ('Bidirectional', 'A', 'bidir')
     }
 
     def __init__(self, ui):
@@ -113,9 +113,11 @@ class UIModelBase:
 
     def con_make(self, con_key):
 
+        import pdb
+        pdb.set_trace()
         try:
-            cpt_class_name = self.connections_map[con_key][1]
-            cpt_kind = self.connections_map[con_key][2]
+            cpt_class_name = self.connection_map[con_key][1]
+            cpt_kind = self.connection_map[con_key][2]
         except KeyError:
             return None
 

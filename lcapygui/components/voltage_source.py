@@ -1,4 +1,3 @@
-from typing import Union
 from .component import BipoleComponent
 
 
@@ -13,11 +12,13 @@ class VoltageSource(BipoleComponent):
         The value of the voltage source.
     """
 
-    TYPE = "V"
-    NAME = "Voltage Source"
+    TYPE = 'V'
+    NAME = 'Voltage Source'
     kinds = {'DC': 'dc', 'AC': 'ac', 'Step': 'step', 'Arbitrary': ''}
+    default_kind = 'DC'
 
-    def __init__(self, value: Union[str, int, float]):
+    @property
+    def sketch_net(self):
 
-        super().__init__(value)
-        self.kind = 'DC'
+        # TODO handle arbitrary
+        return self.TYPE + ' 1 2 ' + self.kinds[self.kind] + ' ' + '; right'

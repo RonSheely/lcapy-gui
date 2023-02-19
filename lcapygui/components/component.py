@@ -25,12 +25,12 @@ class Component(ABC):
 
     kinds = {}
     can_stretch = False
+    default_kind = ''
 
-    def __init__(self, value: Union[str, int, float]):
+    def __init__(self, value: Union[str, int, float], kind=''):
 
         self.name = None
         self.value: str = value
-        self.kind = None
         self.nodes = []
         self.initial_value = None
         self.control = None
@@ -41,6 +41,11 @@ class Component(ABC):
         self.voltage_label = ''
         self.current_label = ''
         self.angle = 0
+
+        if kind == '':
+            kind = self.default_kind
+
+        self.kind = kind
 
     @property
     @classmethod
@@ -67,6 +72,14 @@ class Component(ABC):
         return self.TYPE + ' ' + '(%s, %s) (%s, %s)' % \
             (self.nodes[0].position[0], self.nodes[0].position[1],
              self.nodes[1].position[0], self.nodes[1].position[1])
+
+    @property
+    def sketch_key(self):
+
+        if self.kind != '':
+            return self.TYPE + self.kinds[self.kind]
+        else:
+            return self.TYPE
 
     def draw(self, editor, layer, **kwargs):
         """
@@ -247,3 +260,8 @@ class Component(ABC):
 class BipoleComponent(Component):
 
     can_stretch = True
+
+    @property
+    def sketch_net(self):
+
+        return self.TYPE + ' 1 2'
