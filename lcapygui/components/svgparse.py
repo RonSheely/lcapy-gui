@@ -45,21 +45,22 @@ class SVGParse:
             transforms.append(transform)
         svg_transforms = transforms
 
-        svg_symbols = svg_defs[0].getElementsByTagName('symbol')
-        symbols = {}
-        for symbol in svg_symbols:
-            symbol_id = symbol.getAttribute('id')
-            path = symbol.getElementsByTagName('path')[0]
-            d = path.getAttribute('d')
-            symbols[symbol_id] = d
+        if svg_defs != []:
+            svg_symbols = svg_defs[0].getElementsByTagName('symbol')
+            symbols = {}
+            for symbol in svg_symbols:
+                symbol_id = symbol.getAttribute('id')
+                path = symbol.getElementsByTagName('path')[0]
+                d = path.getAttribute('d')
+                symbols[symbol_id] = d
 
-        for use in svg_uses:
-            symbol_id = use.getAttribute('xlink:href')[1:]
-            x = use.getAttribute('x')
-            y = use.getAttribute('y')
-            transform = 'matrix(1,0,0,1,%s,%s)' % (x, y)
-            svg_transforms.append(transform)
-            svg_ds.append(symbols[symbol_id])
+            for use in svg_uses:
+                symbol_id = use.getAttribute('xlink:href')[1:]
+                x = use.getAttribute('x')
+                y = use.getAttribute('y')
+                transform = 'matrix(1,0,0,1,%s,%s)' % (x, y)
+                svg_transforms.append(transform)
+                svg_ds.append(symbols[symbol_id])
 
         self.transforms = []
         for transform in svg_transforms:
