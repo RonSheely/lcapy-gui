@@ -77,7 +77,7 @@ class Component(ABC):
     def sketch_key(self):
 
         if self.kind != '':
-            return self.TYPE + self.kinds[self.kind]
+            return self.TYPE + '-' + self.kinds[self.kind]
         else:
             return self.TYPE
 

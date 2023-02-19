@@ -1,22 +1,17 @@
-from .annotation import Annotation
 from .capacitor import Capacitor
 from .current_source import CurrentSource
 from .diode import Diode
+from .ground import Ground
 from .inductor import Inductor
 from .opamp import Opamp
 from .port import Port
 from .resistor import Resistor
 from .voltage_source import VoltageSource
 from .wire import Wire
-
 from .vcvs import VCVS
 from .vccs import VCCS
 from .ccvs import CCVS
 from .cccs import CCCS
-
-# from .ground import Ground
-# from .rground import RGround
-# from .sground import SGround
 
 from lcapy import Circuit
 from os.path import exists, expanduser, join
@@ -27,10 +22,8 @@ from .cpt_sketch import CptSketch
 
 class CptMaker:
 
-    # TODO, move cpts into classes
-
     cpts = {
-        'A': Annotation,
+        'Ground': Ground,
         'C': Capacitor,
         'D': Diode,
         'E': VCVS,

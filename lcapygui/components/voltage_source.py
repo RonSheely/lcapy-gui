@@ -20,5 +20,4 @@ class VoltageSource(BipoleComponent):
     @property
     def sketch_net(self):
 
-        # TODO handle arbitrary
         return self.TYPE + ' 1 2 ' + self.kinds[self.kind] + ' ' + '; right'

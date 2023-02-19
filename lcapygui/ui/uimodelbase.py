@@ -33,14 +33,14 @@ class UIModelBase:
     }
 
     connection_map = {
-        '0': ('0V', 'A', ''),
-        'ground': ('Ground', 'A', ''),
-        'sground': ('Signal ground', 'A', 'Sground'),
-        'rground': ('Rail ground', 'A', 'Rground'),
-        'cground': ('Chassis ground', 'A', 'Cground'),
+        '0': ('0V', 'Ground', ''),
+        '0V': ('0V', 'Ground', '0V'),
+        'ground': ('Ground', 'Ground', ''),
+        'sground': ('Signal ground', 'Ground', 'Sground'),
+        'rground': ('Rail ground', 'Ground', 'Rground'),
+        'cground': ('Chassis ground', 'Ground', 'Cground'),
         'vdd': ('VDD', 'A', 'vdd'),
         'vss': ('VSS', 'A', 'vss'),
-        '0V': ('0V', 'A', '0V'),
         'input': ('Input', 'A', 'input'),
         'output': ('Output', 'A', 'output'),
         'bidir': ('Bidirectional', 'A', 'bidir')

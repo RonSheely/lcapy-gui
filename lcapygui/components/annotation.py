@@ -6,15 +6,12 @@ class Annotation(Connection):
     Ground connection
     """
 
-    TYPE = "A"
-    NAME = "Ground"
+    TYPE = 'A'
+    NAME = 'Ground'
+    default_kind = 'Ground'
 
-    kinds = {'Ground': 'ground', 'Sground': 'sground', 'Rground': 'rground'}
-
-    def __init__(self, kind='Ground'):
-
-        super().__init__()
-        self.kind = kind
+    kinds = {'': '', 'Ground': 'ground', 'Sground': 'sground',
+             'Rground': 'rground'}
 
     @property
     def sketch_net(self):

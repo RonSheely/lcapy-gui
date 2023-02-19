@@ -8,7 +8,17 @@ class Ground(Connection):
 
     TYPE = "A"
     NAME = "Ground"
+    default_kind = 'Ground'
+
+    kinds = {'': '', 'Ground': 'ground', 'Sground': 'sground',
+             'Rground': 'rground'}
+
+    @property
+    def sketch_net(self):
+
+        return self.TYPE + ' 1' '; down, ' + self.kinds[self.kind]
 
     def net(self, connections, step=1):
 
-        return self.name + ' ' + self.nodes[0].name + '; down, ground'
+        return self.name + ' ' + self.nodes[0].name + '; down, ' \
+            + self.kinds[self.kind]
