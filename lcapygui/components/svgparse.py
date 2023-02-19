@@ -69,6 +69,3 @@ class SVGParse:
         self.paths = []
         for d in svg_ds:
             self.paths.append(parse_path(d))
-
-
-s = SVGParse('foo.svg')
