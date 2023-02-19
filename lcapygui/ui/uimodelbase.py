@@ -1,11 +1,10 @@
-from ..components import Capacitor, Component, CurrentSource, Inductor, \
-    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS
-from ..components import Ground, RGround, SGround
+from ..components.component import Component
 from ..annotation import Annotation
 from ..annotations import Annotations
 from ..nodes import Nodes
 from ..components import Components
 from .preferences import Preferences
+from ..components.cpt_maker import cpt_make
 from copy import copy
 from numpy import array
 from math import atan2, degrees
@@ -19,32 +18,32 @@ class UIModelBase:
     SCALE = 0.25
 
     component_map = {
-        'c': ('Capacitor', Capacitor),
-        'i': ('Current source', CurrentSource),
-        'l': ('Inductor', Inductor),
-        'r': ('Resistor', Resistor),
-        'v': ('Voltage source', VoltageSource),
-        'w': ('Wire', Wire),
-        'e': ('VCVS', VCVS),
-        'f': ('CCCS', CCCS),
-        'g': ('VCCS', VCCS),
-        'h': ('CCVS', CCVS),
-        'opamp': ('Opamp', Opamp),
-        'p': ('Port', Port)
+        'c': ('Capacitor', 'C', ''),
+        'i': ('Current source', 'I', ''),
+        'l': ('Inductor', 'L', ''),
+        'r': ('Resistor', 'R', ''),
+        'v': ('Voltage source', 'V', ''),
+        'w': ('Wire', 'W', ''),
+        'e': ('VCVS', 'VCVS', ''),
+        'f': ('CCCS', 'CCCS', ''),
+        'g': ('VCCS', 'VCCS', ''),
+        'h': ('CCVS', 'CCVS', ''),
+        'opamp': ('Opamp', 'Eopamp', ''),
+        'p': ('Port', 'P', '')
     }
 
     connection_map = {
-        '0': ('0V', Ground),
-        'ground': ('Ground', Ground),
-        'sground': ('Signal ground', SGround),
-        'rground': ('Rail ground', RGround),
-        'cground': ('Chassis ground', None),
-        'vdd': ('VDD', None),
-        'vss': ('VSS', None),
-        '0V': ('0V', None),
-        'input': ('Input', None),
-        'output': ('Output', None),
-        'bidir': ('Bidirectional', None)
+        '0': ('0V', 'Ground', ''),
+        'ground': ('Ground', 'Ground', ''),
+        'sground': ('Signal ground', 'Ground', 'sground'),
+        'rground': ('Rail ground', 'Ground', 'rground'),
+        'cground': ('Chassis ground', '', ''),
+        'vdd': ('VDD', '', ''),
+        'vss': ('VSS', '', ''),
+        '0V': ('0V', '', ''),
+        'input': ('Input', '', ''),
+        'output': ('Output', '', ''),
+        'bidir': ('Bidirectional', '', '')
     }
 
     def __init__(self, ui):
@@ -115,14 +114,15 @@ class UIModelBase:
     def con_make(self, con_key):
 
         try:
-            cpt_class = self.connection_map[con_key][1]
+            cpt_class_name = self.connections_map[con_key][1]
+            cpt_kind = self.connections_map[con_key][2]
         except KeyError:
-            cpt_class = None
-
-        if cpt_class is None:
             return None
 
-        cpt = cpt_class()
+        if cpt_class_name == '':
+            return None
+
+        cpt = cpt_make(cpt_class_name, cpt_kind)
         self.invalidate()
         return cpt
 
@@ -226,19 +226,15 @@ class UIModelBase:
     def cpt_make(self, cpt_key):
 
         try:
-            cpt_class = self.component_map[cpt_key][1]
+            cpt_class_name = self.component_map[cpt_key][1]
+            cpt_kind = self.component_map[cpt_key][2]
         except KeyError:
-            cpt_class = None
-
-        if cpt_class is None:
             return None
 
-        cpt_type = cpt_key.upper()
+        if cpt_class_name == '':
+            return None
 
-        if cpt_type in ('P', 'W'):
-            cpt = cpt_class()
-        else:
-            cpt = cpt_class(None)
+        cpt = cpt_make(cpt_class_name, cpt_kind)
         self.invalidate()
         return cpt
 

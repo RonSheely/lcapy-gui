@@ -1,4 +1,9 @@
-from ...components import Capacitor, Inductor, VCVS, CCVS, VCCS, CCCS
+from ...components.capacitor import Capacitor
+from ...components.inductor import Inductor
+from ...components.vcvs import VCVS
+from ...components.vccs import VCCS
+from ...components.ccvs import CCVS
+from ...components.cccs import CCCS
 from tkinter import Tk, Button
 from .labelentries import LabelEntry, LabelEntries
 

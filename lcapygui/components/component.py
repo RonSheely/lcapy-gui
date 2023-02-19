@@ -9,8 +9,6 @@ from typing import Union
 from abc import ABC, abstractmethod
 from math import sqrt, degrees, atan2
 
-from .cpt_maker import cpt_make
-
 
 class Component(ABC):
 
@@ -43,8 +41,6 @@ class Component(ABC):
         self.voltage_label = ''
         self.current_label = ''
         self.angle = 0
-
-        self.sketch = cpt_make(self.TYPE)
 
     @property
     @classmethod

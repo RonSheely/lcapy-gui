@@ -2,6 +2,10 @@ from xml.dom import minidom
 from svgpathtools.parser import parse_transform
 from svgpath2mpl import parse_path
 
+# TODO: look for style attribute, split by semicolon.  One of the most
+# useful is fill, for example, 'fill:rgb(0%,0%,0%)' or 'fill:none'.
+# The paths and use nodes have a style attribute.
+
 
 class SVGParse:
 

@@ -1,78 +1,27 @@
+from .capacitor import Capacitor
+from .current_source import CurrentSource
+from .diode import Diode
+from .inductor import Inductor
+from .opamp import Opamp
+from .port import Port
+from .resistor import Resistor
+from .voltage_source import VoltageSource
+from .wire import Wire
+
+from .vcvs import VCVS
+from .vccs import VCCS
+from .ccvs import CCVS
+from .cccs import CCCS
+
+# from .ground import Ground
+# from .rground import RGround
+# from .sground import SGround
+
 from lcapy import Circuit
-from matplotlib.patches import PathPatch
-from matplotlib.transforms import Affine2D
 from os.path import exists, expanduser, join
 from os import mkdir
 from .svgparse import SVGParse
-
-
-class CptSketch:
-
-    SCALE = 2.54 / 72
-
-    def __init__(self, cpt_type, paths, transforms, height):
-
-        self.cpt_type = cpt_type
-        self.paths = paths
-        self.transforms = transforms
-        self.height = height
-
-    def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
-
-        gtransform = Affine2D().rotate_deg(angle).scale(scale * self.SCALE)
-        gtransform = gtransform.translate(*offset)
-
-        patches = []
-        for path, transform in zip(self.paths, self.transforms):
-
-            path = path.transformed(Affine2D(transform))
-            path = path.transformed(Affine2D().translate(0, -self.height / 2))
-            path = path.transformed(gtransform)
-
-            patch = PathPatch(path, fc='white', **kwargs)
-            patches.append(patch)
-            axes.add_patch(patch)
-        return patches
-
-
-class Bipole(CptSketch):
-    pass
-
-
-class Capacitor(Bipole):
-    pass
-
-
-class CurrentSource(Bipole):
-    pass
-
-
-class Diode(Bipole):
-    pass
-
-
-class Inductor(Bipole):
-    pass
-
-
-class Opamp(CptSketch):
-    pass
-
-
-class Resistor(Bipole):
-    pass
-
-
-class VCVS(Bipole):
-    pass
-
-
-class VoltageSource(Bipole):
-    pass
-
-
-class Wire(Bipole):
-    pass
+from .cpt_sketch import CptSketch
 
 
 class CptMaker:
@@ -86,10 +35,14 @@ class CptMaker:
         'Dzener': ('D 1 2; kind=zener', Diode),
         'E': ('E 1 2 3 4', VCVS),
         'Eopamp': ('E 1 2 opamp 3 4', Opamp),
+        'F': ('E 1 2 3 4', CCCS),
+        'G': ('E 1 2 3 4', VCCS),
+        'H': ('E 1 2 3 4', CCVS),
         'I': ('I 1 2', CurrentSource),
         'Iac': ('I 1 2 ac', CurrentSource),
         'Idc': ('I 1 2 dc', CurrentSource),
         'L': ('L 1 2', Inductor),
+        'P': ('P 1 2', Port),
         'R': ('R 1 2', Resistor),
         'V': ('V 1 2', VoltageSource),
         'Vac': ('V 1 2 ac', VoltageSource),
@@ -101,14 +54,7 @@ class CptMaker:
 
         self.sketches = {}
 
-    def __call__(self, cpt_type):
-
-        cls = self.cpts[cpt_type][1]
-
-        try:
-            return self.sketches[cpt_type]
-        except KeyError:
-            pass
+    def _make_sketch(self, cpt_type):
 
         net = self.cpts[cpt_type][0]
 
@@ -137,16 +83,37 @@ class CptMaker:
 
         svg = SVGParse(svg_filename)
 
-        sketch = cls(cpt_type, svg.paths, svg.transforms, svg.height)
-        self.sketches[cpt_type] = sketch
+        sketch = CptSketch(cpt_type, svg.paths, svg.transforms, svg.height)
         return sketch
+
+    def __call__(self, cpt_type):
+
+        try:
+            sketch = self.sketches[cpt_type]
+        except KeyError:
+            sketch = self._make_sketch(cpt_type)
+
+        self.sketches[cpt_type] = sketch
+
+        cls = self.cpts[cpt_type][1]
+
+        # TODO: tidy
+        try:
+            cpt = cls()
+        except TypeError:
+            cpt = cls(None)
+
+        # TODO: remove duck type
+        cpt.sketch = sketch
+
+        return cpt
 
 
 cpt_maker = CptMaker()
 
 
-def cpt_make(cpt_type):
+def cpt_make(cpt_type, kind=''):
     """Factory to create the path required to draw a component
-    of `cpt_typ`."""
+    of `cpt_type`."""
 
     return cpt_maker(cpt_type)
