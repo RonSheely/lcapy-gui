@@ -1,7 +1,8 @@
-from tkinter import Canvas, Tk, Menu, Frame, TOP, BOTH
+from tkinter import Canvas, Tk, Menu, Frame, TOP, BOTH, BOTTOM, X
 from tkinter.ttk import Notebook
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from numpy import arange
 from os.path import basename
 from ..uimodelmph import UIModelMPH
@@ -12,11 +13,12 @@ from .picturedrawer import PictureDrawer
 class LcapyTk(Tk):
 
     XSIZE = 36
-    YSIZE = 23
+    YSIZE = 22
     SCALE = 0.01
 
     GEOMETRY = '1200x800'
-    FIGSIZE = (12, 8)
+    # Note, need to reduce height from 8 to 7.2 to fit toolbar.
+    FIGSIZE = (12, 7.2)
 
     NAME = 'lcapy-tk'
     VERSION = '1.0'
@@ -214,8 +216,12 @@ class LcapyTk(Tk):
                             top=1, wspace=0, hspace=0)
 
         graph = FigureCanvasTkAgg(fig, canvas)
-        graph.get_tk_widget().pack(side='top', fill='both',
-                                   expand=True)
+        graph.draw()
+        graph.get_tk_widget().pack(fill='both', expand=True)
+
+        toolbar = NavigationToolbar2Tk(graph, canvas, pack_toolbar=False)
+        toolbar.update()
+        toolbar.pack(side=BOTTOM, fill=X)
 
         drawing = Drawing(self, fig)
         canvas.drawing = drawing

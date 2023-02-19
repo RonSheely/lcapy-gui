@@ -92,14 +92,14 @@ class Component(ABC):
         dp = array((dx, dy)) / r * (r - s) / 2
         p1p = p1 + dp
 
-        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=1.5, **kwargs)
+        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=2, **kwargs)
 
         if self.can_stretch:
             p2 = array((x2, y2))
             p2p = p2 - dp
 
-            layer.stroke_line(*p1, *p1p, **kwargs)
-            layer.stroke_line(*p2p, *p2, **kwargs)
+            layer.stroke_line(*p1, *p1p, lw=2, **kwargs)
+            layer.stroke_line(*p2p, *p2, lw=2, **kwargs)
 
     def length(self) -> float:
         """
