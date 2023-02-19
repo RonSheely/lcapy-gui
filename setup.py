@@ -37,5 +37,7 @@ setup(
             'lcapy-tk=lcapygui.scripts.lcapytk:main',
         ],
     },
+    include_package_data=True,
+    package_data={'': ['data/*.svg']},
     python_requires=">=3.7"  # matched with lcapy
 )
