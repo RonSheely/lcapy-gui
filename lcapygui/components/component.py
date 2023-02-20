@@ -26,6 +26,8 @@ class Component(ABC):
     kinds = {}
     can_stretch = False
     default_kind = ''
+    xoffset = 0
+    yoffset = 0
 
     def __init__(self, value: Union[str, int, float], kind=''):
 
@@ -207,7 +209,7 @@ class Component(ABC):
             parts.append(self.control)
 
         # Later need to handle schematic kind attributes.
-        if self.kind is not None and self.kinds[self.kind] != '':
+        if self.kind not in (None, '') and self.kinds[self.kind] != '':
             parts.append(self.kinds[self.kind])
 
         if self.TYPE not in ('W', 'P', 'O') and self.value is not None:
