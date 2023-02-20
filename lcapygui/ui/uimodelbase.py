@@ -126,7 +126,7 @@ class UIModelBase:
         self.invalidate()
         return cpt
 
-    @ property
+    @property
     def cpt_selected(self):
 
         return isinstance(self.selected, Component)
@@ -553,7 +553,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @ property
+    @property
     def ground_node(self):
 
         return self.node_find('0')
