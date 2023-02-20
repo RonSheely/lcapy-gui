@@ -55,6 +55,8 @@ class CptMaker:
             a = Circuit()
 
             net = cpt.sketch_net
+            if net is None:
+                return None
             if ';' not in net:
                 net += '; right'
 

@@ -20,16 +20,21 @@ class CptSketch:
         gtransform = Affine2D().rotate_deg(angle).scale(scale * self.SCALE)
         gtransform = gtransform.translate(*offset)
 
+        xoffset = self.xoffset
+        yoffset = self.yoffset - self.height / 2
+
         patches = []
         for path, transform in zip(self.paths, self.transforms):
 
             path = path.transformed(Affine2D(transform))
-            path = path.transformed(Affine2D().translate(0, -self.height / 2))
-            path = path.transformed(Affine2D().translate(self.xoffset,
-                                                         self.yoffset))
+            path = path.transformed(Affine2D().translate(xoffset, yoffset))
             path = path.transformed(gtransform)
+
+            if False and patches == []:
+                print(path.vertices)
 
             patch = PathPatch(path, fill=False, color='black', **kwargs)
             patches.append(patch)
             axes.add_patch(patch)
+
         return patches

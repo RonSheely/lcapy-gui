@@ -88,6 +88,10 @@ class Component(ABC):
         Handles drawing specific features of components.
         """
 
+        # Handle ports where nothing is drawn.
+        if self.sketch is None:
+            return
+
         x1, y1 = self.nodes[0].position
         x2, y2 = self.nodes[1].position
 

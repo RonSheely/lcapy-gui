@@ -8,3 +8,5 @@ class Port(Component):
 
     TYPE = "P"
     NAME = "Port"
+
+    sketch_net = None
