@@ -44,18 +44,13 @@ class CptMaker:
         self.sketches = {}
 
     def _make_sketch(self, cpt):
+        from lcapygui import __datadir__
 
-        dirname = join(expanduser('~'), '.lcapy')
-        if not exists(dirname):
-            mkdir(dirname)
+        dirname = __datadir__ / 'svg'
 
-        dirname = join(dirname, 'svg')
-        if not exists(dirname):
-            mkdir(dirname)
+        svg_filename = dirname / (cpt.sketch_key + '.svg')
 
-        svg_filename = join(dirname, cpt.sketch_key + '.svg')
-
-        if not exists(svg_filename):
+        if not svg_filename.exists():
 
             a = Circuit()
 
@@ -65,13 +60,12 @@ class CptMaker:
 
             a.add(net)
 
-            a.draw(svg_filename, label_values=False, label_ids=False,
+            a.draw(str(svg_filename), label_values=False, label_ids=False,
                    label_nodes=False, draw_nodes=False)
 
-        svg = SVGParse(svg_filename)
+        svg = SVGParse(str(svg_filename))
 
-        sketch = CptSketch(cpt.sketch_key, svg.paths,
-                           svg.transforms, svg.height)
+        sketch = CptSketch(cpt, svg.paths, svg.transforms, svg.height)
         return sketch
 
     def __call__(self, cpt_type, kind=''):

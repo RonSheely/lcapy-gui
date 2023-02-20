@@ -7,9 +7,10 @@ class CptSketch:
     # Convert points to cm.
     SCALE = 2.54 / 72
 
-    def __init__(self, cpt_type, paths, transforms, height):
+    def __init__(self, cpt, paths, transforms, height):
 
-        self.cpt_type = cpt_type
+        self.xoffset = cpt.xoffset
+        self.yoffset = cpt.yoffset
         self.paths = paths
         self.transforms = transforms
         self.height = height
@@ -24,6 +25,8 @@ class CptSketch:
 
             path = path.transformed(Affine2D(transform))
             path = path.transformed(Affine2D().translate(0, -self.height / 2))
+            path = path.transformed(Affine2D().translate(self.xoffset,
+                                                         self.yoffset))
             path = path.transformed(gtransform)
 
             patch = PathPatch(path, fill=False, color='black', **kwargs)
