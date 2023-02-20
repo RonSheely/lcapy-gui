@@ -102,12 +102,15 @@ class Component(ABC):
         # R = array(((dx, -dy), (dy, dx))) / r
         angle = degrees(atan2(dy, dx))
 
-        s = 2
+        # Width in cm
+        s = self.sketch.width / 72 * 2.54
+
         p1 = array((x1, y1))
         dp = array((dx, dy)) / r * (r - s) / 2
         p1p = p1 + dp
 
-        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=2, **kwargs)
+        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=2,
+                         snap=True, **kwargs)
 
         if self.can_stretch:
             p2 = array((x2, y2))

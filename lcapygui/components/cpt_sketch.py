@@ -7,12 +7,13 @@ class CptSketch:
     # Convert points to cm.
     SCALE = 2.54 / 72
 
-    def __init__(self, cpt, paths, transforms, height):
+    def __init__(self, cpt, paths, transforms, width, height):
 
         self.xoffset = cpt.xoffset
         self.yoffset = cpt.yoffset
         self.paths = paths
         self.transforms = transforms
+        self.width = width
         self.height = height
 
     def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
