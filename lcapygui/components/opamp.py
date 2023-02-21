@@ -18,6 +18,9 @@ class Opamp(Component):
     TYPE = "E"
     NAME = "Opamp"
 
+    sketch_net = 'E 1 2 opamp 3 4'
+    sketch_key = 'opamp'
+
     # The Nm node is not used (ground).
     node_pinnames = ('out', '', 'in+', 'in-')
 
