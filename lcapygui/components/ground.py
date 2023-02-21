@@ -10,8 +10,8 @@ class Ground(Connection):
     NAME = "Ground"
     default_kind = 'Ground'
 
-    kinds = {'': '', 'ground': 'Ground', 'sground': 'Sground',
-                  'rground': 'Rground'}
+    kinds = {'': '', 'ground': 'Ground', 'sground': 'Signal ground',
+             'rground': 'Rail ground', 'cground': 'Chassis ground'}
 
     @property
     def sketch_net(self):

@@ -41,7 +41,11 @@ class CptMaker:
 
     def _make_sketch(self, cpt):
 
-        return CptSketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
+        sketch = CptSketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
+        # TODO, raise exception if not pre-made.
+        if sketch is None:
+            sketch = CptSketch.create(cpt.sketch_key, cpt.sketch_net)
+        return sketch
 
     def _make_cpt(self, cpt_type, kind=''):
 

@@ -9,13 +9,14 @@ class CptSketch:
     # Convert points to cm.
     SCALE = 2.54 / 72
 
-    def __init__(self, paths, width, height, xoffset=0, yoffset=0):
+    def __init__(self, paths, width, height, xoffset=0, yoffset=0, **kwargs):
 
         self.paths = paths
         self.width = width
         self.height = height
         self.xoffset = xoffset
         self.yoffset = yoffset
+        self.kwargs = kwargs
 
     def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
 
@@ -53,8 +54,7 @@ class CptSketch:
         svg_filename = dirname / (sketch_key + '.svg')
 
         if not svg_filename.exists():
-            raise FileNotFoundError(
-                'Cannot find sketch file with key ' + sketch_key)
+            return None
 
         svg = SVGParse(str(svg_filename))
 
@@ -63,16 +63,16 @@ class CptSketch:
         return sketch
 
     @classmethod
-    def create(cls, cpt):
+    def create(cls, sketch_key, sketch_net):
 
         from lcapygui import __datadir__
 
         dirname = __datadir__ / 'svg'
-        svg_filename = dirname / (cpt.sketch_key + '.svg')
+        svg_filename = dirname / (sketch_key + '.svg')
 
         a = Circuit()
 
-        net = cpt.sketch_net
+        net = sketch_net
         if net is None:
             return None
         if ';' not in net:
