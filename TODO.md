@@ -62,6 +62,6 @@ xxtal for a crystal, xcpe for a CPE, etc.
 
 29. Improve opamp label placement
 
-30. Fix schematic kinds (for diodes, etc.)
+30. Tweak component positions
 
-31. Tweak component positions
+31. Fix asymmetrical components (LED)

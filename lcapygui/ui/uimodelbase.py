@@ -37,9 +37,9 @@ class UIModelBase:
         '0': ('0V', 'Ground', ''),
         '0V': ('0V', 'Ground', '0V'),
         'ground': ('Ground', 'Ground', ''),
-        'sground': ('Signal ground', 'Ground', 'Sground'),
-        'rground': ('Rail ground', 'Ground', 'Rground'),
-        'cground': ('Chassis ground', 'Ground', 'Cground'),
+        'sground': ('Signal ground', 'Ground', 'sground'),
+        'rground': ('Rail ground', 'Ground', 'rground'),
+        'cground': ('Chassis ground', 'Ground', 'cground'),
         'vdd': ('VDD', 'A', 'vdd'),
         'vss': ('VSS', 'A', 'vss'),
         'input': ('Input', 'A', 'input'),
@@ -94,13 +94,13 @@ class UIModelBase:
 
         return self._cct
 
-    def annotation_make(self, elt):
+    def annotation_make(self, elt, kind=''):
 
         opts = elt.opts
 
         for k, v in self.connection_map.items():
             if k in opts:
-                return self.con_make(k)
+                return self.con_make(k, kind)
         return None
 
     def con_create(self, con_key, x1, y1, x2, y2):
@@ -112,18 +112,19 @@ class UIModelBase:
             return
         self.cpt_place(cpt, x1, y1, x2, y2)
 
-    def con_make(self, con_key):
+    def con_make(self, con_key, kind=''):
 
         try:
             cpt_class_name = self.connection_map[con_key][1]
-            cpt_kind = self.connection_map[con_key][2]
+            if kind == '':
+                kind = self.connection_map[con_key][2]
         except KeyError:
             return None
 
         if cpt_class_name == '':
             return None
 
-        cpt = cpt_make(cpt_class_name, cpt_kind)
+        cpt = cpt_make(cpt_class_name, kind)
         self.invalidate()
         return cpt
 
@@ -224,11 +225,10 @@ class UIModelBase:
                 ann.draw(fontsize=18)
                 cpt.annotations.append(ann)
 
-    def cpt_make(self, cpt_key):
+    def cpt_make(self, cpt_key, cpt_kind=''):
 
         try:
             cpt_class_name = self.component_map[cpt_key][1]
-            cpt_kind = self.component_map[cpt_key][2]
         except KeyError:
             return None
 
@@ -339,15 +339,21 @@ class UIModelBase:
         vcs = []
         elements = cct.elements
         for elt in elements.values():
+
+            if 'kind' in elt.opts:
+                kind = elt.opts['kind']
+            else:
+                kind = ''
+
             if elt.type == 'XX':
                 # Ignore directives
                 continue
             elif isinstance(elt, Eopamp):
                 cpt = self.cpt_make('opamp')
             elif elt.type == 'A':
-                cpt = self.annotation_make(elt)
+                cpt = self.annotation_make(elt, kind)
             else:
-                cpt = self.cpt_make(elt.type.lower())
+                cpt = self.cpt_make(elt.type.lower(), kind)
             if cpt is None:
                 self.exception('Unhandled component ' + str(elt.name))
                 return
@@ -392,11 +398,7 @@ class UIModelBase:
                 cpt.value = elt.args[0]
                 cpt.control = elt.args[1]
 
-            elif elt.type in ('D', ):
-                if 'kind' in elt.opts:
-                    cpt.kind = elt.opts['kind']
-
-            elif elt.type in ('A', 'W', 'O', 'P'):
+            elif elt.type in ('A', 'W', 'O', 'P', 'D'):
                 pass
             else:
                 self.exception('Unhandled component ' + elt)
