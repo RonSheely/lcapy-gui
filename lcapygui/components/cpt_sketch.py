@@ -1,5 +1,7 @@
 from matplotlib.patches import PathPatch
 from matplotlib.transforms import Affine2D
+from lcapy import Circuit
+from .svgparse import SVGParse
 
 
 class CptSketch:
@@ -7,13 +9,13 @@ class CptSketch:
     # Convert points to cm.
     SCALE = 2.54 / 72
 
-    def __init__(self, cpt, paths, width, height):
+    def __init__(self, paths, width, height, xoffset=0, yoffset=0):
 
-        self.xoffset = cpt.xoffset
-        self.yoffset = cpt.yoffset
         self.paths = paths
         self.width = width
         self.height = height
+        self.xoffset = xoffset
+        self.yoffset = yoffset
 
     def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
 
@@ -41,3 +43,42 @@ class CptSketch:
             axes.add_patch(patch)
 
         return patches
+
+    @classmethod
+    def load(cls, sketch_key, xoffset=0, yoffset=0):
+
+        from lcapygui import __datadir__
+
+        dirname = __datadir__ / 'svg'
+        svg_filename = dirname / (sketch_key + '.svg')
+
+        if not svg_filename.exists():
+            raise FileNotFoundError(
+                'Cannot find sketch file with key ' + sketch_key)
+
+        svg = SVGParse(str(svg_filename))
+
+        sketch = cls(svg.paths, svg.width, svg.height,
+                     xoffset, yoffset)
+        return sketch
+
+    @classmethod
+    def create(cls, cpt):
+
+        from lcapygui import __datadir__
+
+        dirname = __datadir__ / 'svg'
+        svg_filename = dirname / (cpt.sketch_key + '.svg')
+
+        a = Circuit()
+
+        net = cpt.sketch_net
+        if net is None:
+            return None
+        if ';' not in net:
+            net += '; right'
+
+        a.add(net)
+
+        a.draw(str(svg_filename), label_values=False, label_ids=False,
+               label_nodes=False, draw_nodes=False)

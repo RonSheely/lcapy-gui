@@ -13,8 +13,6 @@ from .vccs import VCCS
 from .ccvs import CCVS
 from .cccs import CCCS
 
-from lcapy import Circuit
-from .svgparse import SVGParse
 from .cpt_sketch import CptSketch
 
 
@@ -42,31 +40,8 @@ class CptMaker:
         self.sketches = {}
 
     def _make_sketch(self, cpt):
-        from lcapygui import __datadir__
 
-        dirname = __datadir__ / 'svg'
-
-        svg_filename = dirname / (cpt.sketch_key + '.svg')
-
-        if not svg_filename.exists():
-
-            a = Circuit()
-
-            net = cpt.sketch_net
-            if net is None:
-                return None
-            if ';' not in net:
-                net += '; right'
-
-            a.add(net)
-
-            a.draw(str(svg_filename), label_values=False, label_ids=False,
-                   label_nodes=False, draw_nodes=False)
-
-        svg = SVGParse(str(svg_filename))
-
-        sketch = CptSketch(cpt, svg.paths, svg.width, svg.height)
-        return sketch
+        return CptSketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
 
     def _make_cpt(self, cpt_type, kind=''):
 
