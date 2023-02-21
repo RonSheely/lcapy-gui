@@ -13,7 +13,7 @@ from .vccs import VCCS
 from .ccvs import CCVS
 from .cccs import CCCS
 
-from .cpt_sketch import CptSketch
+from .sketch import Sketch
 
 
 class CptMaker:
@@ -41,10 +41,10 @@ class CptMaker:
 
     def _make_sketch(self, cpt):
 
-        sketch = CptSketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
+        sketch = Sketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
         # TODO, raise exception if not pre-made.
         if sketch is None:
-            sketch = CptSketch.create(cpt.sketch_key, cpt.sketch_net)
+            sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
         return sketch
 
     def _make_cpt(self, cpt_type, kind=''):

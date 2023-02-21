@@ -4,7 +4,7 @@ from lcapy import Circuit
 from .svgparse import SVGParse
 
 
-class CptSketch:
+class Sketch:
 
     # Convert points to cm.
     SCALE = 2.54 / 72
