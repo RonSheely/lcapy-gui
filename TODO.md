@@ -65,3 +65,5 @@ xxtal for a crystal, xcpe for a CPE, etc.
 30. Tweak component positions
 
 31. Fix asymmetrical components (LED)
+
+32. Add frequency and phase to AC sources

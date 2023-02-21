@@ -340,10 +340,15 @@ class UIModelBase:
         elements = cct.elements
         for elt in elements.values():
 
+            # Handle schematic kind
             if 'kind' in elt.opts:
                 kind = elt.opts['kind']
             else:
                 kind = ''
+
+            # Handle electrical kind
+            if elt.keyword[0] is not None:
+                kind = elt.keyword[1]
 
             if elt.type == 'XX':
                 # Ignore directives
@@ -378,10 +383,6 @@ class UIModelBase:
                 cpt.initial_value = elt.args[1]
             elif elt.type in ('V', 'I'):
                 cpt.value = elt.args[0]
-                if elt.keyword[0] is not None:
-                    for key, val in cpt.kinds.items():
-                        if val == elt.keyword[1]:
-                            cpt.kind = key
             elif elt.type in ('E', 'G'):
                 cpt.value = elt.args[0]
                 if isinstance(elt, Eopamp):
