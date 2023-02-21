@@ -30,7 +30,9 @@ setup(
         "numpy",
         "tk",
         "pillow",
-        "matplotlib"
+        "matplotlib",
+        "svgpathtools",
+        "svgpath2mpl"
     ],
     entry_points={
         'console_scripts': [

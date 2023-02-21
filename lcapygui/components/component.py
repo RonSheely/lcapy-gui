@@ -28,6 +28,7 @@ class Component(ABC):
     default_kind = ''
     xoffset = 0
     yoffset = 0
+    schematic_kind = False
 
     def __init__(self, value: Union[str, int, float], kind=''):
 
@@ -48,6 +49,7 @@ class Component(ABC):
             kind = self.default_kind
 
         self.kind = kind
+        self.inv_kinds = {v: k for k, v in self.kinds.items()}
 
     @property
     @classmethod
@@ -79,7 +81,7 @@ class Component(ABC):
     def sketch_key(self):
 
         if self.kind != '':
-            return self.TYPE + '-' + self.kinds[self.kind]
+            return self.TYPE + '-' + self.kind
         else:
             return self.TYPE
 
@@ -216,8 +218,8 @@ class Component(ABC):
             parts.append(self.control)
 
         # Later need to handle schematic kind attributes.
-        if self.kind not in (None, '') and self.kinds[self.kind] != '':
-            parts.append(self.kinds[self.kind])
+        if not self.schematic_kind and self.kind not in (None, ''):
+            parts.append(self.kind)
 
         if self.TYPE not in ('W', 'P', 'O') and self.value is not None:
             if self.initial_value is None and self.name != self.value:
@@ -262,6 +264,9 @@ class Component(ABC):
         # Add user defined attributes such as color=blue, thick, etc.
         if self.attrs != '':
             attr += ', ' + self.attrs
+
+        if self.schematic_kind and self.kind not in (None, ''):
+            attr += ', kind=' + self.kind
 
         return ' '.join(parts) + '; ' + attr
 

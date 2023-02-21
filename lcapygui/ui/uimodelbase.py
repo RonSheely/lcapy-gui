@@ -392,6 +392,10 @@ class UIModelBase:
                 cpt.value = elt.args[0]
                 cpt.control = elt.args[1]
 
+            elif elt.type in ('D', ):
+                if 'kind' in elt.opts:
+                    cpt.kind = elt.opts['kind']
+
             elif elt.type in ('A', 'W', 'O', 'P'):
                 pass
             else:
@@ -400,7 +404,7 @@ class UIModelBase:
 
             attrs = []
             for opt, val in elt.opts.items():
-                if opt in ('left', 'right', 'up', 'down', 'rotate'):
+                if opt in ('left', 'right', 'up', 'down', 'rotate', 'kind'):
                     continue
 
                 def fmt(key, val):
