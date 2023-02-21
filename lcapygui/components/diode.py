@@ -6,7 +6,7 @@ class Diode(BipoleComponent):
     Diode
     """
 
-    TYPE = 'R'
+    TYPE = 'D'
     NAME = 'Diode'
     kinds = {'': '', 'LED': 'led', 'Zener': 'zener'}
     default_kind = ''
@@ -14,4 +14,8 @@ class Diode(BipoleComponent):
     @property
     def sketch_net(self):
 
-        return self.TYPE + ' 1 2; down, kind=' + self.kinds[self.kind]
+        kind = self.kinds[self.kind]
+        s = self.TYPE + ' 1 2; down'
+        if kind != '':
+            s += ', kind=' + kind
+        return s

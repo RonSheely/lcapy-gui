@@ -81,6 +81,7 @@ class UIModelMPH(UIModelBase):
         self.key_bindings_with_key = {
             '0': self.on_add_con,
             'c': self.on_add_cpt,
+            'd': self.on_add_cpt,
             'e': self.on_add_cpt,
             'f': self.on_add_cpt,
             'g': self.on_add_cpt,

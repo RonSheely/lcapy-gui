@@ -19,6 +19,7 @@ class UIModelBase:
 
     component_map = {
         'c': ('Capacitor', 'C', ''),
+        'd': ('Diode', 'D', ''),
         'i': ('Current source', 'I', ''),
         'l': ('Inductor', 'L', ''),
         'r': ('Resistor', 'R', ''),
@@ -61,7 +62,7 @@ class UIModelBase:
         self.history = []
         self.clipped = None
 
-    @property
+    @ property
     def cct(self):
 
         if self._cct is not None:
@@ -126,7 +127,7 @@ class UIModelBase:
         self.invalidate()
         return cpt
 
-    @property
+    @ property
     def cpt_selected(self):
 
         return isinstance(self.selected, Component)

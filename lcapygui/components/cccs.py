@@ -1,7 +1,7 @@
-from .component import BipoleComponent
+from .component import ControlledComponent
 
 
-class CCCS(BipoleComponent):
+class CCCS(ControlledComponent):
     """
     CCCS
 

@@ -71,7 +71,7 @@ class CptMaker:
                            svg.height)
         return sketch
 
-    def __call__(self, cpt_type, kind=''):
+    def _make_cpt(self, cpt_type, kind=''):
 
         cls = self.cpts[cpt_type]
 
@@ -79,6 +79,12 @@ class CptMaker:
             cpt = cls(kind=kind)
         except TypeError:
             cpt = cls(None, kind=kind)
+
+        return cpt
+
+    def __call__(self, cpt_type, kind=''):
+
+        cpt = self._make_cpt(cpt_type, kind)
 
         sketch_key = cpt.sketch_key
 

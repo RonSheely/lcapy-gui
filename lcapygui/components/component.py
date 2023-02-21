@@ -274,3 +274,13 @@ class BipoleComponent(Component):
     def sketch_net(self):
 
         return self.TYPE + ' 1 2'
+
+
+class ControlledComponent(Component):
+
+    can_stretch = True
+
+    @property
+    def sketch_net(self):
+
+        return self.TYPE + ' 1 2 3 4'
