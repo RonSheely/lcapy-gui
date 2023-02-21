@@ -566,3 +566,5 @@ class Drawing():
 
         self.ax.tick_params(which='both', left=False, bottom=False,
                             top=False, labelbottom=False)
+
+        self.ax.set_axisbelow(True)
