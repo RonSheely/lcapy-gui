@@ -4,6 +4,9 @@ from numpy import array
 
 class Connection(Component):
 
+    xoffset = -6.8
+    yoffset = 10
+
     def __str__(self) -> str:
 
         return self.TYPE + ' ' + '(%s, %s)' % \
@@ -31,4 +34,4 @@ class Connection(Component):
     def draw(self, editor, layer, **kwargs):
 
         x1, y1 = self.nodes[0].position
-        self.sketch.draw(layer.ax, offset=(x1, y1), angle=0, lw=2, **kwargs)
+        self.sketch.draw(layer.ax, offset=(x1, y1), angle=180, lw=2, **kwargs)
