@@ -80,9 +80,7 @@ class CptMaker:
 
         return cpt
 
-    def __call__(self, cpt_type, kind=''):
-
-        cpt = self._make_cpt(cpt_type, kind)
+    def _add_sketch(self, cpt):
 
         sketch_key = cpt.sketch_key
 
@@ -96,6 +94,12 @@ class CptMaker:
         # TODO: remove duck type
         cpt.sketch = sketch
 
+    def __call__(self, cpt_type, kind=''):
+
+        cpt = self._make_cpt(cpt_type, kind)
+
+        self._add_sketch(cpt)
+
         return cpt
 
 
@@ -107,3 +111,8 @@ def cpt_make(cpt_type, kind=''):
     of `cpt_type`."""
 
     return cpt_maker(cpt_type, kind)
+
+
+def cpt_remake(cpt):
+
+    return cpt_maker._add_sketch(cpt)

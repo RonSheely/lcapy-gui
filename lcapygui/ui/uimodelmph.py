@@ -1,4 +1,5 @@
 from .uimodelbase import UIModelBase
+from ..components.cpt_maker import cpt_remake
 
 
 class Cursor:
@@ -217,6 +218,8 @@ class UIModelMPH(UIModelBase):
         self.invalidate()
         # Component name may have changed
         self.clear()
+        # If kind has changed need to remake the sketch
+        cpt_remake(cpt)
         self.redraw()
         self.ui.refresh()
 
