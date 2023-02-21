@@ -65,8 +65,7 @@ class CptMaker:
 
         svg = SVGParse(str(svg_filename))
 
-        sketch = CptSketch(cpt, svg.paths, svg.transforms, svg.width,
-                           svg.height)
+        sketch = CptSketch(cpt, svg.paths, svg.width, svg.height)
         return sketch
 
     def _make_cpt(self, cpt_type, kind=''):

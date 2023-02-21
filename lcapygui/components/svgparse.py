@@ -6,6 +6,25 @@ from svgpath2mpl import parse_path
 # useful is fill, for example, 'fill:rgb(0%,0%,0%)' or 'fill:none'.
 # The paths and use nodes have a style attribute.
 
+# The SVG file has:
+# 1. Symbol definitions
+# 2. Clip paths
+# 3. Drawing paths
+# 4. Symbol uses
+#
+# It uses the <g> element to group other elements
+
+
+class SVGPath:
+
+    def __init__(self, path, transform, fill):
+
+        # TODO, add style
+
+        self.path = path
+        self.transform = transform
+        self.fill = fill
+
 
 class SVGParse:
 
@@ -35,8 +54,7 @@ class SVGParse:
                      if path.parentNode.tagName not in ('symbol', 'clipPath')]
 
         svg_ds = [path.getAttribute('d') for path in svg_paths]
-        svg_transforms = [path.getAttribute(
-            'transform') for path in svg_paths]
+        svg_transforms = [path.getAttribute('transform') for path in svg_paths]
 
         transforms = []
         for transform in svg_transforms:
@@ -44,6 +62,12 @@ class SVGParse:
                 transform = 'matrix(1,0,0,1,0,0)'
             transforms.append(transform)
         svg_transforms = transforms
+
+        self.paths = []
+        for d, transform in zip(svg_ds, svg_transforms):
+            path = parse_path(d)
+            transform = parse_transform(transform)
+            self.paths.append(SVGPath(path, transform, False))
 
         if svg_defs != []:
             svg_symbols = svg_defs[0].getElementsByTagName('symbol')
@@ -59,13 +83,6 @@ class SVGParse:
                 x = use.getAttribute('x')
                 y = use.getAttribute('y')
                 transform = 'matrix(1,0,0,1,%s,%s)' % (x, y)
-                svg_transforms.append(transform)
-                svg_ds.append(symbols[symbol_id])
-
-        self.transforms = []
-        for transform in svg_transforms:
-            self.transforms.append(parse_transform(transform))
-
-        self.paths = []
-        for d in svg_ds:
-            self.paths.append(parse_path(d))
+                path = parse_path(symbols[symbol_id])
+                transform = parse_transform(transform)
+                self.paths.append(SVGPath(path, transform, True))
