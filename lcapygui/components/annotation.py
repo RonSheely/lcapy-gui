@@ -10,8 +10,8 @@ class Annotation(Connection):
     NAME = 'Ground'
     default_kind = 'Ground'
 
-    kinds = {'': '', 'Ground': 'ground', 'Sground': 'sground',
-             'Rground': 'rground'}
+    kind_names = {'': '', 'ground': 'Ground', 'sground': 'Sground',
+                  'rground': 'Rground'}
 
     @property
     def sketch_net(self):

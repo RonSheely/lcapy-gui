@@ -14,8 +14,6 @@ from .ccvs import CCVS
 from .cccs import CCCS
 
 from lcapy import Circuit
-from os.path import exists, expanduser, join
-from os import mkdir
 from .svgparse import SVGParse
 from .cpt_sketch import CptSketch
 

@@ -373,7 +373,7 @@ class UIModelBase:
             elif elt.type in ('V', 'I'):
                 cpt.value = elt.args[0]
                 if elt.keyword[0] is not None:
-                    for key, val in cpt.kinds.items():
+                    for key, val in cpt.kind_names.items():
                         if val == elt.keyword[1]:
                             cpt.kind = key
             elif elt.type in ('E', 'G'):

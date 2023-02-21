@@ -14,7 +14,7 @@ class CurrentSource(BipoleComponent):
 
     TYPE = 'I'
     NAME = 'Current Source'
-    kinds = {'DC': 'dc', 'AC': 'ac', 'Step': 'step', 'Arbitrary': ''}
+    kind_names = {'dc': 'DC', 'ac': 'AC', 'step': 'Step', '': 'Arbitrary'}
     default_kind = 'DC'
 
     @property
