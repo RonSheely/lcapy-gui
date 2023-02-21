@@ -23,7 +23,7 @@ class Component(ABC):
         The value of the component.
     """
 
-    kind_names = {}
+    kinds = {}
     can_stretch = False
     default_kind = ''
     xoffset = 0
@@ -49,7 +49,7 @@ class Component(ABC):
             kind = self.default_kind
 
         self.kind = kind
-        self.inv_kind_names = {v: k for k, v in self.kind_names.items()}
+        self.inv_kinds = {v: k for k, v in self.kinds.items()}
 
     @property
     @classmethod

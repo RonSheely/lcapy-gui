@@ -8,7 +8,7 @@ for k, v in UIModelBase.component_map.items():
     print(cpt_type)
 
     kinds = cpt.kinds
-    for k, v in kinds.items():
-        print(cpt_type, k, v)
-        if k != '':
-            cpt = cpt_make(cpt_type, kind=k)
+    for kind in kinds:
+        if kind != '':
+            cpt = cpt_make(cpt_type, kind=kind)
+            print(cpt_type, kind)

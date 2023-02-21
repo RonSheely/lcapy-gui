@@ -10,7 +10,7 @@ class Ground(Connection):
     NAME = "Ground"
     default_kind = 'Ground'
 
-    kind_names = {'': '', 'ground': 'Ground', 'sground': 'Sground',
+    kinds = {'': '', 'ground': 'Ground', 'sground': 'Sground',
                   'rground': 'Rground'}
 
     @property

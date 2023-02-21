@@ -8,7 +8,7 @@ class Diode(BipoleComponent):
 
     TYPE = 'D'
     NAME = 'Diode'
-    kind_names = {'': '', 'led': 'LED', 'zener': 'Zener'}
+    kinds = {'': '', 'led': 'LED', 'zener': 'Zener'}
     default_kind = ''
     schematic_kind = True
 

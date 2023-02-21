@@ -85,6 +85,8 @@ class CptMaker:
         cpt = self._make_cpt(cpt_type, kind)
 
         sketch_key = cpt.sketch_key
+        import pdb
+        pdb.set_trace()
 
         try:
             sketch = self.sketches[sketch_key]

@@ -21,9 +21,9 @@ class CptPropertiesDialog:
 
         entries = []
         if cpt.kind is not None:
-            kind_name = cpt.kind_names[cpt.kind]
+            kind_name = cpt.kinds[cpt.kind]
             entries.append(LabelEntry(
-                'kind', 'Kind', kind_name, list(cpt.kind_names.values()),
+                'kind', 'Kind', kind_name, list(cpt.kinds.values()),
                 command=self.on_update))
 
         entries.append(LabelEntry('name', 'Name', cpt.name,
@@ -56,7 +56,7 @@ class CptPropertiesDialog:
     def on_update(self, arg=None):
 
         if self.cpt.kind is not None:
-            self.cpt.kind = self.cpt.inv_kind_names[self.labelentries.get(
+            self.cpt.kind = self.cpt.inv_kinds[self.labelentries.get(
                 'kind')]
 
         name = self.labelentries.get('name')
