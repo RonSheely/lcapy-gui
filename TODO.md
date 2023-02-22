@@ -67,3 +67,5 @@ xxtal for a crystal, xcpe for a CPE, etc.
 31. Fix asymmetrical components (LED)
 
 32. Add frequency and phase to AC sources
+
+33. Fill open nodes so not transparent to wire underneath

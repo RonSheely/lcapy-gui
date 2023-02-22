@@ -507,6 +507,8 @@ For further information about Lcapy, see https://lcapy.readthedocs.io
 
     def on_quit(self):
 
+        self.preferences.save()
+
         if self.dirty:
             self.ui.show_info_dialog('Schematic not saved')
         else:

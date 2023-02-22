@@ -1,3 +1,7 @@
+from pathlib import Path
+import json
+
+
 class Preferences:
 
     def __init__(self):
@@ -9,6 +13,27 @@ class Preferences:
         self.node_size = 0.15
         self.node_color = 'black'
         self.grid = 'on'
+        self.lw = 1.2
+
+    def _dirname(self):
+
+        return Path('~/.lcapy/').expanduser()
+
+    def load(self):
+
+        dirname = self._dirname()
+        if not dirname.exists():
+            self.save()
+
+    def save(self):
+
+        dirname = self._dirname()
+        if not dirname.exists():
+            dirname.make()
+        s = json.dumps(self, default=lambda o: o.__dict__,
+                       sort_keys=True, indent=4)
+        filename = dirname / 'preferences.json'
+        filename.write_text(s)
 
     def schematic_preferences(self):
 

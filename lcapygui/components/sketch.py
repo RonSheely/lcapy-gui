@@ -19,7 +19,15 @@ class Sketch:
         self.yoffset = yoffset
         self.kwargs = kwargs
 
+    @property
+    def color(self):
+
+        return self.kwargs.get('color', 'black')
+
+    # This should be in a UI class.
     def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
+
+        kwargs = {**self.kwargs, **kwargs}
 
         gtransform = Affine2D().rotate_deg(angle).scale(scale * self.SCALE)
         gtransform = gtransform.translate(*offset)
@@ -40,7 +48,7 @@ class Sketch:
             if False and patches == []:
                 print(path.vertices)
 
-            patch = PathPatch(path, fill=fill, color='black', **kwargs)
+            patch = PathPatch(path, fill=fill, color=self.color, **kwargs)
             patches.append(patch)
             axes.add_patch(patch)
 

@@ -32,7 +32,9 @@ class PreferencesDialog:
                               self.model.preferences.grid,
                               ('on', 'off'),
                               command=self.on_update),
-
+                   LabelEntry('lw', 'Line width',
+                              self.model.preferences.lw,
+                              command=self.on_update)
                    ]
 
         self.labelentries = LabelEntries(self.master, ui, entries)
@@ -48,6 +50,7 @@ class PreferencesDialog:
         self.model.preferences.label_cpts = self.labelentries.get('label_cpts')
         self.model.preferences.style = self.labelentries.get('style')
         self.model.preferences.grid = self.labelentries.get('grid')
+        self.model.preferences.lw = self.labelentries.get('lw')
 
         if self.update:
             # Could check for changes
