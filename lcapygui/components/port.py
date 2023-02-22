@@ -8,5 +8,4 @@ class Port(Component):
 
     TYPE = "P"
     NAME = "Port"
-
-    sketch_net = None
+    sketch_net = 'P 1 2'

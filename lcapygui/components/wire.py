@@ -8,11 +8,7 @@ class Wire(Component):
 
     TYPE = 'W'
     NAME = 'Wire'
-
-    @property
-    def sketch_net(self):
-
-        return self.TYPE + ' 1 2'
+    sketch_net = 'W 1 2'
 
     def draw(self, editor, layer):
 
