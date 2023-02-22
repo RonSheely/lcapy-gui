@@ -1,5 +1,6 @@
 from .uimodelbase import UIModelBase
 from ..components.cpt_maker import cpt_remake
+from ..components.component import Component
 
 
 class Cursor:
@@ -218,8 +219,9 @@ class UIModelMPH(UIModelBase):
         self.invalidate()
         # Component name may have changed
         self.clear()
-        # If kind has changed need to remake the sketch
-        cpt_remake(cpt)
+        if isinstance(cpt, Component):
+            # If kind has changed need to remake the sketch
+            cpt_remake(cpt)
         self.redraw()
         self.ui.refresh()
 
@@ -389,6 +391,9 @@ For further information about Lcapy, see https://lcapy.readthedocs.io
 
     def on_mesh_equations(self):
 
+        if self.ground_node is None:
+            self.ui.show_info_dialog('Suggest adding a ground node.')
+
         try:
             la = self.circuit().loop_analysis()
         except Exception as e:
@@ -412,6 +417,9 @@ For further information about Lcapy, see https://lcapy.readthedocs.io
         self.ui.show_message_dialog(s, 'Netlist')
 
     def on_nodal_equations(self):
+
+        if self.ground_node is None:
+            self.ui.show_info_dialog('Suggest adding a ground node.')
 
         try:
             na = self.circuit().nodal_analysis()
