@@ -7,6 +7,7 @@ class Preferences:
 
     def __init__(self):
 
+        self.version = 1
         self.label_nodes = 'none'
         self.draw_nodes = 'connections'
         self.label_cpts = 'name'
