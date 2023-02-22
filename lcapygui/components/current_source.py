@@ -15,7 +15,7 @@ class CurrentSource(BipoleComponent):
     TYPE = 'I'
     NAME = 'Current Source'
     kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step', '': 'Arbitrary'}
-    default_kind = 'dc'
+    default_kind = ''
 
     @property
     def sketch_net(self):

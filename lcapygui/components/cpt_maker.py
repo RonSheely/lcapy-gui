@@ -39,12 +39,15 @@ class CptMaker:
 
         self.sketches = {}
 
-    def _make_sketch(self, cpt):
+    def _make_sketch(self, cpt, create=False):
 
         sketch = Sketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
-        # TODO, raise exception if not pre-made.
         if sketch is None:
-            sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
+            if create:
+                sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
+            else:
+                raise FileNotFoundError(
+                    'Could not find data file for ' + cpt.sketch_key)
         return sketch
 
     def _make_cpt(self, cpt_type, kind=''):
@@ -58,25 +61,25 @@ class CptMaker:
 
         return cpt
 
-    def _add_sketch(self, cpt):
+    def _add_sketch(self, cpt, create=False):
 
         sketch_key = cpt.sketch_key
 
         try:
             sketch = self.sketches[sketch_key]
         except KeyError:
-            sketch = self._make_sketch(cpt)
+            sketch = self._make_sketch(cpt, create)
 
         self.sketches[sketch_key] = sketch
 
         # TODO: remove duck type
         cpt.sketch = sketch
 
-    def __call__(self, cpt_type, kind=''):
+    def __call__(self, cpt_type, kind='', create=False):
 
         cpt = self._make_cpt(cpt_type, kind)
 
-        self._add_sketch(cpt)
+        self._add_sketch(cpt, create)
 
         return cpt
 
@@ -84,11 +87,11 @@ class CptMaker:
 cpt_maker = CptMaker()
 
 
-def cpt_make(cpt_type, kind=''):
+def cpt_make(cpt_type, kind='', create=False):
     """Factory to create the path required to draw a component
     of `cpt_type`."""
 
-    return cpt_maker(cpt_type, kind)
+    return cpt_maker(cpt_type, kind, create)
 
 
 def cpt_remake(cpt):

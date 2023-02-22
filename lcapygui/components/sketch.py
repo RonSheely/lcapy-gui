@@ -2,6 +2,7 @@ from matplotlib.patches import PathPatch
 from matplotlib.transforms import Affine2D
 from lcapy import Circuit
 from .svgparse import SVGParse
+from os.path import join
 
 
 class Sketch:
@@ -65,10 +66,8 @@ class Sketch:
     @classmethod
     def create(cls, sketch_key, sketch_net):
 
-        from lcapygui import __datadir__
-
-        dirname = __datadir__ / 'svg'
-        svg_filename = dirname / (sketch_key + '.svg')
+        dirname = join('lcapygui', 'data', 'svg')
+        svg_filename = join(dirname, sketch_key + '.svg')
 
         a = Circuit()
 
