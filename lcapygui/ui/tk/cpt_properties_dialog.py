@@ -20,7 +20,7 @@ class CptPropertiesDialog:
         self.master.title(title)
 
         entries = []
-        if cpt.kind not in (None, ''):
+        if cpt.kinds != {}:
             kind_name = cpt.kinds[cpt.kind]
             entries.append(LabelEntry(
                 'kind', 'Kind', kind_name, list(cpt.kinds.values()),
@@ -55,7 +55,7 @@ class CptPropertiesDialog:
 
     def on_update(self, arg=None):
 
-        if self.cpt.kind not in (None, ''):
+        if self.cpt.kinds != {}:
             self.cpt.kind = self.cpt.inv_kinds[self.labelentries.get('kind')]
 
         name = self.labelentries.get('name')

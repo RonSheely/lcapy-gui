@@ -347,7 +347,7 @@ class UIModelBase:
                 kind = ''
 
             # Handle electrical kind
-            if elt.keyword[0] is not None:
+            if elt.keyword and elt.keyword[0] is not None:
                 kind = elt.keyword[1]
 
             if elt.type == 'XX':
