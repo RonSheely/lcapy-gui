@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name='lcapy-gui',
+    name='lcapygui',
     packages=find_packages(include=[
         "lcapygui",
         "lcapygui.*"
@@ -40,6 +40,6 @@ setup(
         ],
     },
     include_package_data=True,
-    package_data={'': ['data/*.svg']},
+    package_data={'': ['data/svg/*.svg']},
     python_requires=">=3.7"  # matched with lcapy
 )
