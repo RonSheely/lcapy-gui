@@ -29,10 +29,11 @@ setup(
         "lcapy>=1.12",
         "numpy",
         "tk",
-        "pillow",
+        "pillow>=9.4.0",
         "matplotlib",
         "svgpathtools",
-        "svgpath2mpl"
+        "svgpath2mpl",
+        "tkhtmlview"
     ],
     entry_points={
         'console_scripts': [
