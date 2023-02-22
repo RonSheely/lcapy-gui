@@ -15,7 +15,7 @@ class VoltageSource(BipoleComponent):
     TYPE = 'V'
     NAME = 'Voltage Source'
     kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step', '': 'Arbitrary'}
-    default_kind = 'DC'
+    default_kind = 'dc'
 
     @property
     def sketch_net(self):
