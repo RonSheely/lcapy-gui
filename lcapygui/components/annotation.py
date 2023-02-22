@@ -1,17 +1,17 @@
 from .connection import Connection
 
 
-class Ground(Connection):
+class Annotation(Connection):
     """
     Ground connection
     """
 
-    TYPE = "A"
-    NAME = "Ground"
+    TYPE = 'A'
+    NAME = 'Ground'
     default_kind = 'Ground'
 
-    kinds = {'': '', 'ground': 'Ground', 'sground': 'Signal ground',
-             'rground': 'Rail ground', 'cground': 'Chassis ground'}
+    kinds = {'': '', 'ground': 'Ground', 'sground': 'Sground',
+                  'rground': 'Rground'}
 
     @property
     def sketch_net(self):
@@ -20,5 +20,6 @@ class Ground(Connection):
 
     def net(self, connections, step=1):
 
+        # TODO: make vdd go up
         return self.name + ' ' + self.nodes[0].name + '; down, ' \
             + self.kind

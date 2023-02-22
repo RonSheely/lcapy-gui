@@ -1,4 +1,4 @@
-from .components import Port
+from .components.port import Port
 from numpy import array
 
 

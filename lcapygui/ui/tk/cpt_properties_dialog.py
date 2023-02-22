@@ -1,4 +1,9 @@
-from ...components import Capacitor, Inductor, VCVS, CCVS, VCCS, CCCS
+from ...components.capacitor import Capacitor
+from ...components.inductor import Inductor
+from ...components.vcvs import VCVS
+from ...components.vccs import VCCS
+from ...components.ccvs import CCVS
+from ...components.cccs import CCCS
 from tkinter import Tk, Button
 from .labelentries import LabelEntry, LabelEntries
 
@@ -15,9 +20,10 @@ class CptPropertiesDialog:
         self.master.title(title)
 
         entries = []
-        if cpt.kind is not None:
+        if cpt.kind not in (None, ''):
+            kind_name = cpt.kinds[cpt.kind]
             entries.append(LabelEntry(
-                'kind', 'Kind', cpt.kind, list(cpt.kinds.keys()),
+                'kind', 'Kind', kind_name, list(cpt.kinds.values()),
                 command=self.on_update))
 
         entries.append(LabelEntry('name', 'Name', cpt.name,
@@ -49,8 +55,8 @@ class CptPropertiesDialog:
 
     def on_update(self, arg=None):
 
-        if self.cpt.kind is not None:
-            self.cpt.kind = self.labelentries.get('kind')
+        if self.cpt.kind not in (None, ''):
+            self.cpt.kind = self.cpt.inv_kinds[self.labelentries.get('kind')]
 
         name = self.labelentries.get('name')
         if name.startswith(self.cpt.name[0]):

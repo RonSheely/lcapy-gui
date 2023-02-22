@@ -62,4 +62,8 @@ xxtal for a crystal, xcpe for a CPE, etc.
 
 29. Improve opamp label placement
 
-30. Fix port enumeration if P1 deleted, etc.
+30. Tweak component positions
+
+31. Fix asymmetrical components (LED)
+
+32. Add frequency and phase to AC sources

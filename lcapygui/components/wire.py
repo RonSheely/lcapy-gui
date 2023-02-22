@@ -6,14 +6,15 @@ class Wire(Component):
     Wire
     """
 
-    TYPE = "W"
-    NAME = "Wire"
+    TYPE = 'W'
+    NAME = 'Wire'
 
-    def __init__(self):
+    @property
+    def sketch_net(self):
 
-        super().__init__(None)
+        return self.TYPE + ' 1 2'
 
-    def __draw_on__(self, editor, layer):
+    def draw(self, editor, layer):
 
         start_x, start_y = self.nodes[0].position
         end_x, end_y = self.nodes[1].position

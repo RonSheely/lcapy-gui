@@ -30,12 +30,16 @@ setup(
         "numpy",
         "tk",
         "pillow",
-        "matplotlib"
+        "matplotlib",
+        "svgpathtools",
+        "svgpath2mpl"
     ],
     entry_points={
         'console_scripts': [
             'lcapy-tk=lcapygui.scripts.lcapytk:main',
         ],
     },
+    include_package_data=True,
+    package_data={'': ['data/*.svg']},
     python_requires=">=3.7"  # matched with lcapy
 )

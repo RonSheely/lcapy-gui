@@ -2,9 +2,8 @@
 Defines the components that lcapy-gui can simulate
 """
 
-from numpy import array, sin, cos, pi, dot
+from numpy import array, dot
 from numpy.linalg import norm
-import ipycanvas as canvas
 
 from typing import Union
 from abc import ABC, abstractmethod
@@ -25,12 +24,16 @@ class Component(ABC):
     """
 
     kinds = {}
+    can_stretch = False
+    default_kind = ''
+    xoffset = 0
+    yoffset = 0
+    schematic_kind = False
 
-    def __init__(self, value: Union[str, int, float]):
+    def __init__(self, value: Union[str, int, float], kind=''):
 
         self.name = None
         self.value: str = value
-        self.kind = None
         self.nodes = []
         self.initial_value = None
         self.control = None
@@ -41,6 +44,12 @@ class Component(ABC):
         self.voltage_label = ''
         self.current_label = ''
         self.angle = 0
+
+        if kind == '':
+            kind = self.default_kind
+
+        self.kind = kind
+        self.inv_kinds = {v: k for k, v in self.kinds.items()}
 
     @property
     @classmethod
@@ -68,16 +77,49 @@ class Component(ABC):
             (self.nodes[0].position[0], self.nodes[0].position[1],
              self.nodes[1].position[0], self.nodes[1].position[1])
 
-    @abstractmethod
-    def __draw_on__(self, editor, layer: canvas.Canvas):
+    @property
+    def sketch_key(self):
+
+        if self.kind != '':
+            return self.TYPE + '-' + self.kind
+        else:
+            return self.TYPE
+
+    def draw(self, editor, layer, **kwargs):
         """
         Handles drawing specific features of components.
-
-        Component end nodes are handled by the draw_on method, which calls this
-        abstract method.
-
         """
-        ...
+
+        # Handle ports where nothing is drawn.
+        if self.sketch is None:
+            return
+
+        x1, y1 = self.nodes[0].position
+        x2, y2 = self.nodes[1].position
+
+        dx = x2 - x1
+        dy = y2 - y1
+        r = sqrt(dx**2 + dy**2)
+
+        # R = array(((dx, -dy), (dy, dx))) / r
+        angle = degrees(atan2(dy, dx))
+
+        # Width in cm
+        s = self.sketch.width / 72 * 2.54
+
+        p1 = array((x1, y1))
+        dp = array((dx, dy)) / r * (r - s) / 2
+        p1p = p1 + dp
+
+        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=2,
+                         snap=True, **kwargs)
+
+        if self.can_stretch:
+            p2 = array((x2, y2))
+            p2p = p2 - dp
+
+            layer.stroke_line(*p1, *p1p, lw=2, **kwargs)
+            layer.stroke_line(*p2p, *p2, lw=2, **kwargs)
 
     def length(self) -> float:
         """
@@ -114,32 +156,10 @@ class Component(ABC):
         of the component.
         """
         delta = self.along()
-        theta = pi/2
-        rot = array([[cos(theta), -sin(theta)],
-                     [sin(theta), cos(theta)]])
+
+        rot = array([[0, -1],
+                     [1, 0]])
         return dot(rot, delta)
-
-    def draw_on(self, editor, layer: canvas.Canvas):
-        """
-        Draws a single component on a canvas.
-
-        Parameters
-        ----------
-
-        editor: Editor
-            The editor object to draw on
-        layer: Canvas = None
-            Layer to draw component on
-        """
-
-        # abstract method for drawing components
-        self.__draw_on__(editor, layer)
-
-        # node dots
-        start = self.nodes[0].position
-        end = self.nodes[1].position
-        layer.fill_arc(start[0], start[1], editor.STEP // 5, 0, 2 * pi)
-        layer.fill_arc(end[0], end[1], editor.STEP // 5, 0, 2 * pi)
 
     @property
     def vertical(self) -> bool:
@@ -198,8 +218,8 @@ class Component(ABC):
             parts.append(self.control)
 
         # Later need to handle schematic kind attributes.
-        if self.kind is not None and self.kinds[self.kind] != '':
-            parts.append(self.kinds[self.kind])
+        if not self.schematic_kind and self.kind not in (None, ''):
+            parts.append(self.kind)
 
         if self.TYPE not in ('W', 'P', 'O') and self.value is not None:
             if self.initial_value is None and self.name != self.value:
@@ -245,4 +265,27 @@ class Component(ABC):
         if self.attrs != '':
             attr += ', ' + self.attrs
 
+        if self.schematic_kind and self.kind not in (None, ''):
+            attr += ', kind=' + self.kind
+
         return ' '.join(parts) + '; ' + attr
+
+
+class BipoleComponent(Component):
+
+    can_stretch = True
+
+    @property
+    def sketch_net(self):
+
+        return self.TYPE + ' 1 2'
+
+
+class ControlledComponent(Component):
+
+    can_stretch = True
+
+    @property
+    def sketch_net(self):
+
+        return self.TYPE + ' 1 2 3 4'

@@ -1,11 +1,10 @@
-from ..components import Capacitor, Component, CurrentSource, Inductor, \
-    Opamp, Port, Resistor, VoltageSource, Wire, VCVS, CCVS, VCCS, CCCS
-from ..components import Ground, RGround, SGround
+from ..components.component import Component
 from ..annotation import Annotation
 from ..annotations import Annotations
 from ..nodes import Nodes
 from ..components import Components
 from .preferences import Preferences
+from ..components.cpt_maker import cpt_make
 from copy import copy
 from numpy import array
 from math import atan2, degrees
@@ -19,32 +18,33 @@ class UIModelBase:
     SCALE = 0.25
 
     component_map = {
-        'c': ('Capacitor', Capacitor),
-        'i': ('Current source', CurrentSource),
-        'l': ('Inductor', Inductor),
-        'r': ('Resistor', Resistor),
-        'v': ('Voltage source', VoltageSource),
-        'w': ('Wire', Wire),
-        'e': ('VCVS', VCVS),
-        'f': ('CCCS', CCCS),
-        'g': ('VCCS', VCCS),
-        'h': ('CCVS', CCVS),
-        'opamp': ('Opamp', Opamp),
-        'p': ('Port', Port)
+        'c': ('Capacitor', 'C', ''),
+        'd': ('Diode', 'D', ''),
+        'i': ('Current source', 'I', ''),
+        'l': ('Inductor', 'L', ''),
+        'r': ('Resistor', 'R', ''),
+        'v': ('Voltage source', 'V', ''),
+        'w': ('Wire', 'W', ''),
+        'e': ('VCVS', 'E', ''),
+        'f': ('CCCS', 'F', ''),
+        'g': ('VCCS', 'G', ''),
+        'h': ('CCVS', 'H', ''),
+        'opamp': ('Opamp', 'Opamp', ''),
+        'p': ('Port', 'P', '')
     }
 
     connection_map = {
-        '0': ('0V', Ground),
-        'ground': ('Ground', Ground),
-        'sground': ('Signal ground', SGround),
-        'rground': ('Rail ground', RGround),
-        'cground': ('Chassis ground', None),
-        'vdd': ('VDD', None),
-        'vss': ('VSS', None),
-        '0V': ('0V', None),
-        'input': ('Input', None),
-        'output': ('Output', None),
-        'bidir': ('Bidirectional', None)
+        '0': ('0V', 'Ground', ''),
+        '0V': ('0V', 'Ground', '0V'),
+        'ground': ('Ground', 'Ground', ''),
+        'sground': ('Signal ground', 'Ground', 'sground'),
+        'rground': ('Rail ground', 'Ground', 'rground'),
+        'cground': ('Chassis ground', 'Ground', 'cground'),
+        # 'vdd': ('VDD', 'A', 'vdd'),
+        # 'vss': ('VSS', 'A', 'vss'),
+        # 'input': ('Input', 'A', 'input'),
+        # 'output': ('Output', 'A', 'output'),
+        # 'bidir': ('Bidirectional', 'A', 'bidir')
     }
 
     def __init__(self, ui):
@@ -62,7 +62,7 @@ class UIModelBase:
         self.history = []
         self.clipped = None
 
-    @property
+    @ property
     def cct(self):
 
         if self._cct is not None:
@@ -94,13 +94,13 @@ class UIModelBase:
 
         return self._cct
 
-    def annotation_make(self, elt):
+    def annotation_make(self, elt, kind=''):
 
         opts = elt.opts
 
         for k, v in self.connection_map.items():
             if k in opts:
-                return self.con_make(k)
+                return self.con_make(k, kind)
         return None
 
     def con_create(self, con_key, x1, y1, x2, y2):
@@ -112,17 +112,19 @@ class UIModelBase:
             return
         self.cpt_place(cpt, x1, y1, x2, y2)
 
-    def con_make(self, con_key):
+    def con_make(self, con_key, kind=''):
 
         try:
-            cpt_class = self.connection_map[con_key][1]
+            cpt_class_name = self.connection_map[con_key][1]
+            if kind == '':
+                kind = self.connection_map[con_key][2]
         except KeyError:
-            cpt_class = None
-
-        if cpt_class is None:
             return None
 
-        cpt = cpt_class()
+        if cpt_class_name == '':
+            return None
+
+        cpt = cpt_make(cpt_class_name, kind)
         self.invalidate()
         return cpt
 
@@ -162,7 +164,7 @@ class UIModelBase:
 
     def cpt_draw(self, cpt):
 
-        cpt.__draw_on__(self, self.ui.component_layer)
+        cpt.draw(self, self.ui.layer)
 
         label_cpts = self.preferences.label_cpts
 
@@ -223,22 +225,17 @@ class UIModelBase:
                 ann.draw(fontsize=18)
                 cpt.annotations.append(ann)
 
-    def cpt_make(self, cpt_key):
+    def cpt_make(self, cpt_key, cpt_kind=''):
 
         try:
-            cpt_class = self.component_map[cpt_key][1]
+            cpt_class_name = self.component_map[cpt_key][1]
         except KeyError:
-            cpt_class = None
-
-        if cpt_class is None:
             return None
 
-        cpt_type = cpt_key.upper()
+        if cpt_class_name == '':
+            return None
 
-        if cpt_type in ('P', 'W'):
-            cpt = cpt_class()
-        else:
-            cpt = cpt_class(None)
+        cpt = cpt_make(cpt_class_name, cpt_kind)
         self.invalidate()
         return cpt
 
@@ -342,15 +339,26 @@ class UIModelBase:
         vcs = []
         elements = cct.elements
         for elt in elements.values():
+
+            # Handle schematic kind
+            if 'kind' in elt.opts:
+                kind = elt.opts['kind']
+            else:
+                kind = ''
+
+            # Handle electrical kind
+            if elt.keyword[0] is not None:
+                kind = elt.keyword[1]
+
             if elt.type == 'XX':
                 # Ignore directives
                 continue
             elif isinstance(elt, Eopamp):
                 cpt = self.cpt_make('opamp')
             elif elt.type == 'A':
-                cpt = self.annotation_make(elt)
+                cpt = self.annotation_make(elt, kind)
             else:
-                cpt = self.cpt_make(elt.type.lower())
+                cpt = self.cpt_make(elt.type.lower(), kind)
             if cpt is None:
                 self.exception('Unhandled component ' + str(elt.name))
                 return
@@ -375,10 +383,6 @@ class UIModelBase:
                 cpt.initial_value = elt.args[1]
             elif elt.type in ('V', 'I'):
                 cpt.value = elt.args[0]
-                if elt.keyword[0] is not None:
-                    for key, val in cpt.kinds.items():
-                        if val == elt.keyword[1]:
-                            cpt.kind = key
             elif elt.type in ('E', 'G'):
                 cpt.value = elt.args[0]
                 if isinstance(elt, Eopamp):
@@ -395,7 +399,7 @@ class UIModelBase:
                 cpt.value = elt.args[0]
                 cpt.control = elt.args[1]
 
-            elif elt.type in ('A', 'W', 'O', 'P'):
+            elif elt.type in ('A', 'W', 'O', 'P', 'D'):
                 pass
             else:
                 self.exception('Unhandled component ' + elt)
@@ -403,7 +407,7 @@ class UIModelBase:
 
             attrs = []
             for opt, val in elt.opts.items():
-                if opt in ('left', 'right', 'up', 'down', 'rotate'):
+                if opt in ('left', 'right', 'up', 'down', 'rotate', 'kind'):
                     continue
 
                 def fmt(key, val):
@@ -557,7 +561,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @ property
+    @property
     def ground_node(self):
 
         return self.node_find('0')
@@ -565,11 +569,11 @@ class UIModelBase:
     def node_draw(self, node):
 
         if node.port:
-            self.ui.component_layer.stroke_circle(
+            self.ui.layer.stroke_circle(
                 *node.position, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
         else:
-            self.ui.component_layer.stroke_filled_circle(
+            self.ui.layer.stroke_filled_circle(
                 *node.position, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
 

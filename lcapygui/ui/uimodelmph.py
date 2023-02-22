@@ -1,11 +1,12 @@
 from .uimodelbase import UIModelBase
+from ..components.cpt_maker import cpt_remake
 
 
 class Cursor:
 
     def __init__(self, ui, x, y):
 
-        self.layer = ui.cursor_layer
+        self.layer = ui.layer
         self.patch = None
         self.x = x
         self.y = y
@@ -81,6 +82,7 @@ class UIModelMPH(UIModelBase):
         self.key_bindings_with_key = {
             '0': self.on_add_con,
             'c': self.on_add_cpt,
+            'd': self.on_add_cpt,
             'e': self.on_add_cpt,
             'f': self.on_add_cpt,
             'g': self.on_add_cpt,
@@ -216,6 +218,8 @@ class UIModelMPH(UIModelBase):
         self.invalidate()
         # Component name may have changed
         self.clear()
+        # If kind has changed need to remake the sketch
+        cpt_remake(cpt)
         self.redraw()
         self.ui.refresh()
 
