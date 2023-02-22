@@ -1,12 +1,12 @@
-from tkinter import Tk,  Label
+from tkinter import Tk
+from tkinter.ttk import Label
 from PIL import Image, ImageTk
 
 from .expr_image import ExprImage
 
 
-global_dict = {}
-exec('from lcapy import *', global_dict)
-
+# See https://stackoverflow.com/questions/56043767/
+# show-large-image-using-scrollbar-in-python
 
 class EquationsDialog:
 
@@ -21,7 +21,7 @@ class EquationsDialog:
         self.master.title(title)
 
         self.expr_label = Label(self.master, text='')
-        self.expr_label.grid(row=0, columnspan=4)
+        self.expr_label.grid(row=0)
 
         self.update()
 
