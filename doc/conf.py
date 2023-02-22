@@ -233,7 +233,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'Lcapy-gui', u'Lcapy-gui Documentation',
-     u'Michael Hayes', 'Lcapy-gui', 'Linear circuit analysis in Python.',
+     u'Michael Hayes', 'Lcapy-gui', 'GUI for linear circuit analysis in Python.',
      'Miscellaneous'),
 ]
 

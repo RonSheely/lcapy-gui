@@ -43,6 +43,12 @@ time-domain expression, for example, `4 * H(t) + 2`, where `H(t)` is
 the Heaviside step.
 
 
+Preferences
+===========
+
+The preferences dialog controls the drawing style.
+
+
 Additional documentation
 ========================
 
