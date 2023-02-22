@@ -387,6 +387,16 @@ For further information about Lcapy, see https://lcapy.readthedocs.io
         self.ui.set_filename(filename)
         self.ui.refresh()
 
+    def on_mesh_equations(self):
+
+        try:
+            la = self.circuit().loop_analysis()
+        except Exception as e:
+            self.exception(e)
+
+        eqns = la.mesh_equations()
+        self.ui.show_equations_dialog(eqns, 'Mesh equations')
+
     def on_move(self, xshift, yshift):
 
         self.move(xshift, yshift)
@@ -400,6 +410,15 @@ For further information about Lcapy, see https://lcapy.readthedocs.io
             netlist.append(parts[0].strip())
         s = '\n'.join(netlist)
         self.ui.show_message_dialog(s, 'Netlist')
+
+    def on_nodal_equations(self):
+
+        try:
+            na = self.circuit().nodal_analysis()
+        except Exception as e:
+            self.exception(e)
+        eqns = na.nodal_equations()
+        self.ui.show_equations_dialog(eqns, 'Nodal equations')
 
     def on_new(self):
 

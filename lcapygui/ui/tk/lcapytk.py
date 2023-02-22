@@ -90,6 +90,10 @@ class LcapyTk(Tk):
                                    command=self.on_view_macros)
         self.view_menu.add_command(label='Netlist',
                                    command=self.on_netlist)
+        self.view_menu.add_command(label='Nodal equations',
+                                   command=self.on_nodal_equations)
+        self.view_menu.add_command(label='Mesh equations',
+                                   command=self.on_mesh_equations)
 
         self.menu.add_cascade(label='View', underline=0, menu=self.view_menu)
 
@@ -364,9 +368,17 @@ class LcapyTk(Tk):
 
         self.model.on_load()
 
+    def on_mesh_equations(self, *args):
+
+        self.model.on_mesh_equations()
+
     def on_netlist(self, *args):
 
         self.model.on_netlist()
+
+    def on_nodal_equations(self, *args):
+
+        self.model.on_nodal_equations()
 
     def on_new(self, *args):
 
@@ -430,6 +442,12 @@ class LcapyTk(Tk):
     def set_canvas_title(self, name):
 
         self.notebook.tab('current', text=name)
+
+    def show_equations_dialog(self, expr, title=''):
+
+        from .equations_dialog import EquationsDialog
+
+        self.equations_dialog = EquationsDialog(expr, self, title)
 
     def show_expr_dialog(self, expr, title=''):
 
