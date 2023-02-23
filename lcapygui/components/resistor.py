@@ -1,4 +1,3 @@
-from typing import Union
 from .component import BipoleComponent
 
 

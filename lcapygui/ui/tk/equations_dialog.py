@@ -12,8 +12,6 @@ class EquationsDialog:
 
     def __init__(self, expr, ui, title=''):
 
-        if isinstance(expr, dict):
-
         self.expr = expr
         self.ui = ui
         self.labelentries = None

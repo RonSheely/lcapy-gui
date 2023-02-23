@@ -36,8 +36,8 @@ the Heaviside step.
 
 <h1>Documentation</h1>
 
-For further information about Lcapy, see <a href="https://lcapy.readthedocs.io">
- https://lcapy.readthedocs.io </a>
+For further information about Lcapy, see
+ <a href="https://lcapy.readthedocs.io"> https://lcapy.readthedocs.io </a>
 """
 
     def __init__(self):

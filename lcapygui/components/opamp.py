@@ -1,4 +1,3 @@
-from typing import Union
 from .component import Component
 from numpy import array, sqrt
 from numpy.linalg import norm

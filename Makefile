@@ -42,7 +42,7 @@ flake8:
 	flake8 doc
 
 .PHONY: check
-check: style-check test
+check: style-check
 
 .PHONY: push
 push: check

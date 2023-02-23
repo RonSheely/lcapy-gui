@@ -2,7 +2,7 @@ from ..components.component import Component
 from ..annotation import Annotation
 from ..annotations import Annotations
 from ..nodes import Nodes
-from ..components import Components
+from ..components.components import Components
 from .preferences import Preferences
 from ..components.cpt_maker import cpt_make
 from copy import copy

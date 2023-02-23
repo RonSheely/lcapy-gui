@@ -3,7 +3,7 @@ Root-level lcapy-gui objects.
 These can be imported directly from lcapy-gui.
 """
 
-from .ui.tk import LcapyTk
+from .ui.tk.lcapytk import LcapyTk
 import sys
 
 from importlib.metadata import version
