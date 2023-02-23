@@ -34,6 +34,9 @@ class PreferencesDialog:
                               command=self.on_update),
                    LabelEntry('lw', 'Line width',
                               self.model.preferences.lw,
+                              command=self.on_update),
+                   LabelEntry('node_size', 'Node size',
+                              self.model.preferences.node_size,
                               command=self.on_update)
                    ]
 
@@ -51,6 +54,7 @@ class PreferencesDialog:
         self.model.preferences.style = self.labelentries.get('style')
         self.model.preferences.grid = self.labelentries.get('grid')
         self.model.preferences.lw = self.labelentries.get('lw')
+        self.model.preferences.node_size = self.labelentries.get('node_size')
 
         if self.update:
             # Could check for changes
