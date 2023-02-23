@@ -6,8 +6,12 @@ These can be imported directly from lcapy-gui.
 from .ui.tk.lcapytk import LcapyTk
 import sys
 
-from importlib.metadata import version
-__version__ = version('lcapygui')
+if sys.version_info < (3, 9):
+    import pkg_resources
+    __version__ = pkg_resources.require('lcapygui')[0].version
+else:
+    from importlib.metadata import version
+    __version__ = version('lcapygui')
 
 
 if sys.version_info < (3, 9):
