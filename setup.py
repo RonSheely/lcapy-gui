@@ -10,7 +10,7 @@ setup(
         "lcapygui",
         "lcapygui.*"
     ]),
-    version="0.3.7",
+    version="0.3.8",
     description="A GUI for lcapy",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -27,9 +27,9 @@ setup(
     ],
     install_requires=[
         "setuptools",
-        "lcapy>=1.12",
         "importlib",
-        "importlib-metada",
+        "importlib-metadata",
+        "lcapy>=1.12",
         "numpy",
         "tk",
         "pillow>=9.4.0",
