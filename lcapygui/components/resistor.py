@@ -14,3 +14,4 @@ class Resistor(BipoleComponent):
 
     TYPE = 'R'
     NAME = 'Resistor'
+    label_offset = 0.4

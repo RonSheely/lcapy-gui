@@ -29,6 +29,7 @@ class Component(ABC):
     xoffset = 0
     yoffset = 0
     schematic_kind = False
+    label_offset = 0.6
 
     def __init__(self, value: Union[str, int, float], kind=''):
 
@@ -176,12 +177,11 @@ class Component(ABC):
     @property
     def label_position(self) -> array:
         """
-        Returns position where to place label.   This should be
-        customised for each component.
+        Returns position where to place label.
         """
 
         pos = self.midpoint
-        w = 0.75
+        w = self.label_offset
         if self.vertical:
             pos[0] += w
         else:
