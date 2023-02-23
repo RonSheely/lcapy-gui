@@ -10,7 +10,7 @@ setup(
         "lcapygui",
         "lcapygui.*"
     ]),
-    version="0.3.6",
+    version="0.3.7",
     description="A GUI for lcapy",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -26,6 +26,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
+        "setuptools",
         "lcapy>=1.12",
         "importlib",
         "importlib-metada",
@@ -35,8 +36,7 @@ setup(
         "matplotlib",
         "svgpathtools",
         "svgpath2mpl",
-        "tkhtmlview",
-        "setuptools"
+        "tkhtmlview"
     ],
     entry_points={
         'console_scripts': [
