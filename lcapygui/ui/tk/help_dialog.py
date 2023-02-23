@@ -42,7 +42,8 @@ For further information about Lcapy, see
 
     def __init__(self):
 
-        root = Tk(title='Help')
-        html_label = HTMLLabel(root, html=self.message)
+        master = Tk()
+        master.title('Help!')
+        html_label = HTMLLabel(master, html=self.message)
         html_label.pack(fill="both", expand=True)
         html_label.fit_height()
