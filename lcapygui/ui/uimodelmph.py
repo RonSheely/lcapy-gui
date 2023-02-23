@@ -69,6 +69,7 @@ class UIModelMPH(UIModelBase):
             'ctrl+n': self.on_new,
             'ctrl+o': self.on_load,
             'ctrl+s': self.on_save,
+            'alt+s': self.on_save_as,
             'ctrl+u': self.on_view,
             'ctrl+v': self.on_paste,
             'ctrl+w': self.on_quit,
@@ -348,7 +349,7 @@ class UIModelMPH(UIModelBase):
     def on_load(self):
 
         filename = self.ui.open_file_dialog()
-        if filename == '':
+        if filename == '' or filename == ():
             return
 
         model = self.ui.new()
@@ -469,8 +470,16 @@ class UIModelMPH(UIModelBase):
 
     def on_save(self):
 
-        filename = self.ui.save_file_dialog(self.filename)
+        filename = self.filename
         if filename == '':
+            return
+        self.save(filename)
+        self.ui.save(filename)
+
+    def on_save_as(self):
+
+        filename = self.ui.save_file_dialog(self.filename)
+        if filename == '' or filename == ():
             return
         self.save(filename)
         self.ui.save(filename)
@@ -479,7 +488,7 @@ class UIModelMPH(UIModelBase):
 
         filename = self.ui.export_file_dialog(self.filename,
                                               default_ext='.png')
-        if filename == '':
+        if filename == '' or filename == ():
             return
         self.ui.screenshot(filename)
 

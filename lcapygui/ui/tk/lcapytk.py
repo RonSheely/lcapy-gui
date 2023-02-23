@@ -52,6 +52,8 @@ class LcapyTk(Tk):
                                    underline=0, accelerator='Ctrl+o')
         self.file_menu.add_command(label='Save', command=self.on_save,
                                    underline=0, accelerator='Ctrl+s')
+        self.file_menu.add_command(label='Save as', command=self.on_save_as,
+                                   underline=1, accelerator='Alt+s')
         self.file_menu.add_command(label='Export', command=self.on_export,
                                    underline=0, accelerator='Ctrl+e')
         self.file_menu.add_command(label='Screenshot', command=self.on_screenshot,
@@ -419,15 +421,15 @@ class LcapyTk(Tk):
 
     def on_quit(self, *args):
 
-        if self.debug:
-            print('Quit')
         self.model.on_quit()
 
     def on_save(self, *args):
 
-        if self.debug:
-            print('Save')
         self.model.on_save()
+
+    def on_save_as(self, *args):
+
+        self.model.on_save_as()
 
     def on_screenshot(self, *args):
 
