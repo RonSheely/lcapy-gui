@@ -69,3 +69,5 @@ xxtal for a crystal, xcpe for a CPE, etc.
 32. Add frequency and phase to AC sources
 
 33. Fill open nodes so not transparent to wire underneath
+
+34. Fix Lcapy to simplify condition expression for t >= 0
