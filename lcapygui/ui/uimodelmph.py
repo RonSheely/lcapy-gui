@@ -362,7 +362,7 @@ class UIModelMPH(UIModelBase):
             self.ui.show_info_dialog('Suggest adding a ground node.')
 
         try:
-            la = self.circuit().loop_analysis()
+            la = self.cct.loop_analysis()
         except Exception as e:
             self.exception(e)
 
@@ -376,7 +376,7 @@ class UIModelMPH(UIModelBase):
     def on_netlist(self):
 
         netlist = []
-        lines = self.circuit().netlist().split('\n')
+        lines = self.cct.netlist().split('\n')
         for line in lines:
             parts = line.split(';')
             netlist.append(parts[0].strip())
@@ -389,7 +389,7 @@ class UIModelMPH(UIModelBase):
             self.ui.show_info_dialog('Suggest adding a ground node.')
 
         try:
-            na = self.circuit().nodal_analysis()
+            na = self.cct.nodal_analysis()
         except Exception as e:
             self.exception(e)
         eqns = na.nodal_equations()
@@ -516,7 +516,7 @@ class UIModelMPH(UIModelBase):
         from os import remove
 
         schtex_filename = tmpfilename('.schtex')
-        cct = self.circuit()
+        cct = self.cct
         cct.draw(schtex_filename)
 
         with open(schtex_filename) as f:

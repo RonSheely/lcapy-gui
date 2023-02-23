@@ -277,15 +277,6 @@ class UIModelBase:
 
         self.history.append((cpt, 'A'))
 
-    def circuit(self):
-
-        from lcapy import Circuit
-
-        s = self.schematic()
-
-        cct = Circuit(s)
-        return cct
-
     def cut(self, cpt):
 
         self.delete(cpt)
@@ -304,7 +295,7 @@ class UIModelBase:
 
     def export(self, filename):
 
-        cct = self.circuit()
+        cct = self._cct
         cct.draw(filename)
 
     def invalidate(self):
@@ -556,7 +547,7 @@ class UIModelBase:
 
     def view(self):
 
-        cct = self.circuit()
+        cct = self._cct
         cct.draw()
 
     def voltage_annotate(self, cpt):
