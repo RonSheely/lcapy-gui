@@ -1,8 +1,9 @@
-from tkinter import Tk, Button, Label
+from tkinter import Tk
+from tkinter.ttk import Button, Label
 from PIL import Image, ImageTk
 from lcapy import Expr
 from .labelentries import LabelEntry, LabelEntries
-from .expr_image import ExprImage
+from .exprimage import ExprImage
 
 
 global_dict = {}

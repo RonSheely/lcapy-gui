@@ -2,7 +2,7 @@ from tkinter import Tk, Button, Label
 from PIL import Image, ImageTk
 
 from lcapy import Expr
-from .expr_image import ExprImage
+from .exprimage import ExprImage
 
 
 global_dict = {}

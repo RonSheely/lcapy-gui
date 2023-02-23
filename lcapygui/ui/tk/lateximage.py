@@ -1,11 +1,11 @@
 from lcapy.system import tmpfilename, LatexRunner, PDFConverter
 
 
-class ExprImage:
+class LatexImage:
 
-    def __init__(self, expr):
+    def __init__(self, s):
 
-        self.expr = expr
+        self.s = s
 
     def image(self):
 
@@ -16,7 +16,7 @@ class ExprImage:
                     '\\usepackage{amsmath}\n'
                     '\\begin{document}\n$%s$\n'
                     '\\end{document}\n')
-        content = template % self.expr.latex()
+        content = template % self.s
 
         open(tex_filename, 'w').write(content)
         pdf_filename = tex_filename.replace('.tex', '.pdf')
