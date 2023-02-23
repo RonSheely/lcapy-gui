@@ -54,6 +54,8 @@ class LcapyTk(Tk):
                                    underline=0, accelerator='Ctrl+s')
         self.file_menu.add_command(label='Export', command=self.on_export,
                                    underline=0, accelerator='Ctrl+e')
+        self.file_menu.add_command(label='Screenshot', command=self.on_screenshot,
+                                   underline=1)
         self.file_menu.add_command(label='Quit', command=self.on_quit,
                                    underline=0, accelerator='Ctrl+q')
 
@@ -427,6 +429,10 @@ class LcapyTk(Tk):
             print('Save')
         self.model.on_save()
 
+    def on_screenshot(self, *args):
+
+        self.model.on_screenshot()
+
     def on_tab_selected(self, event):
 
         notebook = event.widget
@@ -461,6 +467,10 @@ class LcapyTk(Tk):
 
         name = basename(filename)
         self.set_canvas_title(name)
+
+    def screenshot(self, filename):
+
+        self.canvas.drawing.fig.savefig(filename,  bbox_inches='tight')
 
     def set_canvas_title(self, name):
 
@@ -564,13 +574,16 @@ class LcapyTk(Tk):
 
         return asksaveasfilename(**options)
 
-    def export_file_dialog(self, filename):
+    def export_file_dialog(self, filename, default_ext=None):
 
         from tkinter.filedialog import asksaveasfilename
         from os.path import dirname, splitext, basename
 
         dirname = dirname(filename)
         basename, ext = splitext(basename(filename))
+
+        if default_ext is not None:
+            ext = default_ext
 
         options = {}
         options['defaultextension'] = ext
