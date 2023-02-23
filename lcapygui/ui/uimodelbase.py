@@ -568,6 +568,11 @@ class UIModelBase:
     def view(self):
 
         cct = self._cct
+        if cct is None:
+            if self.ui.debug:
+                import pdb
+                pdb.set_trace()
+            return
         cct.draw()
 
     def voltage_annotate(self, cpt):
