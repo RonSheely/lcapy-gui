@@ -627,6 +627,7 @@ class Drawing():
         self.ax = self.fig.add_subplot(111)
 
         self.draw_grid('on')
+        self.set_default_view()
 
     def draw_grid(self, grid):
 
@@ -642,9 +643,6 @@ class Drawing():
         self.ax.set_yticklabels([])
         if grid == 'on':
             self.ax.grid(color='lightblue')
-
-        self.ax.set_xlim(0, self.ui.XSIZE)
-        self.ax.set_ylim(0, self.ui.YSIZE)
 
         self.ax.tick_params(which='both', left=False, bottom=False,
                             top=False, labelbottom=False)
