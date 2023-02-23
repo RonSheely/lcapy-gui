@@ -231,6 +231,7 @@ class Component(ABC):
                     parts.append('{' + self.value + '}')
 
         if self.initial_value is not None:
+            parts.append(self.value)
             if self.initial_value.isalnum():
                 parts.append(self.initial_value)
             else:

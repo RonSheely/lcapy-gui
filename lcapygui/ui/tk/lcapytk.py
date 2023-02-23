@@ -27,6 +27,7 @@ class LcapyTk(Tk):
 
         super().__init__()
         self.debug = debug
+        self.version = __version__
         self.model = None
         self.canvas = None
 
@@ -148,6 +149,19 @@ class LcapyTk(Tk):
 
         self.menu.add_cascade(label='Connection', underline=0,
                               menu=self.connection_menu)
+
+        # Model menu
+        self.model_menu = Menu(self.menu, tearoff=0,
+                               bg='lightgrey', fg='black')
+
+        self.model_menu.add_command(label='Laplace',
+                                    command=self.on_laplace_model)
+
+        self.model_menu.add_command(label='Noise',
+                                    command=self.on_noise_model)
+
+        self.menu.add_cascade(label='Model', underline=0,
+                              menu=self.model_menu)
 
         # Help menu
         self.help_menu = Menu(self.menu, tearoff=0,
@@ -365,6 +379,10 @@ class LcapyTk(Tk):
 
         self.model.on_inspect_voltage()
 
+    def on_laplace_model(self, *args):
+
+        self.model.on_laplace_model()
+
     def on_load(self, *args):
 
         self.model.on_load()
@@ -380,6 +398,10 @@ class LcapyTk(Tk):
     def on_nodal_equations(self, *args):
 
         self.model.on_nodal_equations()
+
+    def on_noise_model(self, *args):
+
+        self.model.on_noise_model()
 
     def on_new(self, *args):
 

@@ -14,7 +14,8 @@ class VoltageSource(BipoleComponent):
 
     TYPE = 'V'
     NAME = 'Voltage Source'
-    kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step', '': 'Arbitrary'}
+    kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step',
+             '': 'Arbitrary', 'noise': 'Noise'}
     default_kind = ''
 
     @property

@@ -1,7 +1,9 @@
+from .admittance import Admittance
 from .capacitor import Capacitor
 from .current_source import CurrentSource
 from .diode import Diode
 from .ground import Ground
+from .impedance import Impedance
 from .inductor import Inductor
 from .opamp import Opamp
 from .port import Port
@@ -31,8 +33,11 @@ class CptMaker:
         'L': Inductor,
         'P': Port,
         'R': Resistor,
+        'NR': Resistor,         # Noise free resistor
         'V': VoltageSource,
-        'W': Wire
+        'W': Wire,
+        'Y': Admittance,
+        'Z': Impedance
     }
 
     def __init__(self):

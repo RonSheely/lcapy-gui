@@ -23,6 +23,7 @@ class UIModelBase:
         'i': ('Current source', 'I', ''),
         'l': ('Inductor', 'L', ''),
         'r': ('Resistor', 'R', ''),
+        'nr': ('Resistor', 'R', ''),
         'v': ('Voltage source', 'V', ''),
         'w': ('Wire', 'W', ''),
         'e': ('VCVS', 'E', ''),
@@ -30,7 +31,9 @@ class UIModelBase:
         'g': ('VCCS', 'G', ''),
         'h': ('CCVS', 'H', ''),
         'opamp': ('Opamp', 'Opamp', ''),
-        'p': ('Port', 'P', '')
+        'p': ('Port', 'P', ''),
+        'y': ('Admittance', 'Y', ''),
+        'z': ('Impedance', 'Z', ''),
     }
 
     connection_map = {
@@ -62,7 +65,7 @@ class UIModelBase:
         self.history = []
         self.clipped = None
 
-    @ property
+    @property
     def cct(self):
 
         if self._cct is not None:
@@ -128,7 +131,7 @@ class UIModelBase:
         self.invalidate()
         return cpt
 
-    @ property
+    @property
     def cpt_selected(self):
 
         return isinstance(self.selected, Component)
@@ -317,6 +320,11 @@ class UIModelBase:
         self.components.clear()
 
         cct = Circuit(filename)
+
+        self.load_from_circuit(cct)
+
+    def load_from_circuit(self, cct):
+
         sch = cct.sch
 
         try:
@@ -376,12 +384,12 @@ class UIModelBase:
                 node = self.nodes.make(x1, y1, node1.name, cpt)
                 self.nodes.add(node)
                 nodes.append(node)
-            if elt.type == 'R':
+            if elt.type in ('R', 'NR'):
                 cpt.value = elt.args[0]
             elif elt.type in ('C', 'L'):
                 cpt.value = elt.args[0]
                 cpt.initial_value = elt.args[1]
-            elif elt.type in ('V', 'I'):
+            elif elt.type in ('V', 'I', 'Z', 'Y'):
                 cpt.value = elt.args[0]
             elif elt.type in ('E', 'G'):
                 cpt.value = elt.args[0]
@@ -452,7 +460,7 @@ class UIModelBase:
 
     def schematic(self):
 
-        s = '# Created by ' + self.ui.NAME + ' V' + self.ui.VERSION + '\n'
+        s = '# Created by ' + self.ui.NAME + ' V' + self.ui.version + '\n'
 
         # Define node positions
         foo = [str(node) for node in self.nodes]

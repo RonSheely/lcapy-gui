@@ -320,6 +320,11 @@ class UIModelMPH(UIModelBase):
 
         self.inspect_voltage(self.selected)
 
+    def on_laplace_model(self):
+
+        cct = self.cct.s_model()
+        self.on_show_new_circuit(cct)
+
     def on_left_click(self, x, y):
 
         self.on_select(x, y)
@@ -394,45 +399,10 @@ class UIModelMPH(UIModelBase):
 
         self.ui.new()
 
-    def on_right_click(self, x, y):
+    def on_noise_model(self):
 
-        self.on_select(x, y)
-        if not self.selected:
-            return
-
-        if self.cpt_selected:
-            self.ui.inspect_properties_dialog(self.selected,
-                                              self.on_cpt_changed,
-                                              title=self.selected.name)
-        else:
-            self.ui.show_node_properties_dialog(self.selected,
-                                                self.on_cpt_changed,
-                                                title='Node ' +
-                                                self.selected.name)
-
-    def on_right_double_click(self, x, y):
-        pass
-
-    def on_rotate(self, angle):
-
-        self.rotate(angle)
-
-    def on_select(self, x, y):
-
-        cpt = self.components.closest(x, y)
-        node = self.nodes.closest(x, y)
-
-        if cpt and node:
-            self.ui.show_error_dialog(
-                'Selected both node %s and cpt %s' % (node, cpt))
-            return
-
-        if cpt:
-            self.select(cpt)
-        elif node:
-            self.select(node)
-        else:
-            self.select(None)
+        cct = self.cct.noise_model()
+        self.on_show_new_circuit(cct)
 
     def on_paste(self):
 
@@ -456,6 +426,13 @@ class UIModelMPH(UIModelBase):
 
         self.ui.show_preferences_dialog(self.on_redraw)
 
+    def on_quit(self):
+
+        if self.dirty:
+            self.ui.show_info_dialog('Schematic not saved')
+        else:
+            self.ui.quit()
+
     def on_redo(self):
 
         self.redo()
@@ -467,14 +444,28 @@ class UIModelMPH(UIModelBase):
         self.redraw()
         self.ui.refresh()
 
-    def on_quit(self):
+    def on_right_click(self, x, y):
 
-        self.preferences.save()
+        self.on_select(x, y)
+        if not self.selected:
+            return
 
-        if self.dirty:
-            self.ui.show_info_dialog('Schematic not saved')
+        if self.cpt_selected:
+            self.ui.inspect_properties_dialog(self.selected,
+                                              self.on_cpt_changed,
+                                              title=self.selected.name)
         else:
-            self.ui.quit()
+            self.ui.show_node_properties_dialog(self.selected,
+                                                self.on_cpt_changed,
+                                                title='Node ' +
+                                                self.selected.name)
+
+    def on_right_double_click(self, x, y):
+        pass
+
+    def on_rotate(self, angle):
+
+        self.rotate(angle)
 
     def on_save(self):
 
@@ -483,6 +474,28 @@ class UIModelMPH(UIModelBase):
             return
         self.save(filename)
         self.ui.save(filename)
+
+    def on_select(self, x, y):
+
+        cpt = self.components.closest(x, y)
+        node = self.nodes.closest(x, y)
+
+        if cpt and node:
+            self.ui.show_error_dialog(
+                'Selected both node %s and cpt %s' % (node, cpt))
+            return
+
+        if cpt:
+            self.select(cpt)
+        elif node:
+            self.select(node)
+        else:
+            self.select(None)
+
+    def on_show_new_circuit(self, cct):
+
+        model = self.ui.new()
+        model.load_from_circuit(cct)
 
     def on_undo(self):
 

@@ -61,3 +61,5 @@ class PreferencesDialog:
         self.on_update()
 
         self.master.destroy()
+
+        self.model.preferences.save()
