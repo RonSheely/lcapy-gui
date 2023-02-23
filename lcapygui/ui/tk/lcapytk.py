@@ -20,9 +20,10 @@ class LcapyTk(Tk):
     FIGSIZE = (12, 7.2)
 
     NAME = 'lcapy-tk'
-    VERSION = '1.0'
 
     def __init__(self, filename=None, uimodel_class=None, debug=0):
+
+        from ... import __version__
 
         super().__init__()
         self.debug = debug
@@ -34,7 +35,7 @@ class LcapyTk(Tk):
         self.uimodel_class = uimodel_class
 
         # Title and size of the window
-        self.title('Lcapy-tk')
+        self.title('Lcapy-tk ' + __version__)
         self.geometry(self.GEOMETRY)
 
         # Create the drop down menus
