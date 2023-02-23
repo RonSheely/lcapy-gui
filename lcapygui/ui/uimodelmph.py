@@ -475,6 +475,14 @@ class UIModelMPH(UIModelBase):
         self.save(filename)
         self.ui.save(filename)
 
+    def on_screenshot(self):
+
+        filename = self.ui.export_file_dialog(self.filename,
+                                              default_ext='.png')
+        if filename == '':
+            return
+        self.ui.screenshot(filename)
+
     def on_select(self, x, y):
 
         cpt = self.components.closest(x, y)
