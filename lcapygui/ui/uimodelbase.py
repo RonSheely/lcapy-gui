@@ -106,6 +106,26 @@ class UIModelBase:
                 return self.con_make(k, kind)
         return None
 
+    def bounding_box(self):
+
+        if len(self.nodes) == 0:
+            return None
+
+        xmin = 1000
+        xmax = 0
+        ymin = 1000
+        ymax = 0
+        for node in self.nodes:
+            if node.x < xmin:
+                xmin = node.x
+            if node.x > xmax:
+                xmax = node.x
+            if node.y < ymin:
+                ymin = node.y
+            if node.y > ymax:
+                ymax = node.y
+        return xmin, ymin, xmax, ymax
+
     def con_create(self, con_key, x1, y1, x2, y2):
         """Make and place a connection."""
 

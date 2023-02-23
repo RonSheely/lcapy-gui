@@ -100,6 +100,10 @@ class LcapyTk(Tk):
                                    command=self.on_nodal_equations)
         self.view_menu.add_command(label='Mesh equations',
                                    command=self.on_mesh_equations)
+        self.view_menu.add_command(label='Best fit',
+                                   command=self.on_best_fit)
+        self.view_menu.add_command(label='Default fit',
+                                   command=self.on_default_fit)
 
         self.menu.add_cascade(label='View', underline=0, menu=self.view_menu)
 
@@ -294,6 +298,10 @@ class LcapyTk(Tk):
 
         self.model.on_add_cpt(cptname)
 
+    def on_best_fit(self, *args):
+
+        self.model.on_best_fit()
+
     def on_click_event(self, event):
 
         if self.debug:
@@ -322,6 +330,11 @@ class LcapyTk(Tk):
     def on_cut(self, *args):
 
         self.model.on_cut()
+
+    def on_default_fit(self, *args):
+
+        self.canvas.drawing.set_default_view()
+        self.refresh()
 
     def on_enter(self, event):
 
@@ -472,11 +485,15 @@ class LcapyTk(Tk):
 
     def screenshot(self, filename):
 
-        self.canvas.drawing.fig.savefig(filename,  bbox_inches='tight')
+        self.canvas.drawing.savefig(filename)
 
     def set_canvas_title(self, name):
 
         self.notebook.tab('current', text=name)
+
+    def set_view(self, xmin, ymin, xmax, ymax):
+
+        self.canvas.drawing.set_view(xmin, ymin, xmax, ymax)
 
     def show_equations_dialog(self, expr, title=''):
 
@@ -613,12 +630,12 @@ class Drawing():
 
     def draw_grid(self, grid):
 
-        xticks = arange(self.ui.XSIZE)
-        yticks = arange(self.ui.YSIZE)
+        # Enlarge grid by factor of 2 in each direction.
+        # Only XSIZE by YSIZE is visible.
+        xticks = arange(self.ui.XSIZE * 2)
+        yticks = arange(self.ui.YSIZE * 2)
 
         self.ax.axis('equal')
-        self.ax.set_xlim(0, self.ui.XSIZE)
-        self.ax.set_ylim(0, self.ui.YSIZE)
         self.ax.set_xticks(xticks)
         self.ax.set_yticks(yticks)
         self.ax.set_xticklabels([])
@@ -626,7 +643,24 @@ class Drawing():
         if grid == 'on':
             self.ax.grid(color='lightblue')
 
+        self.ax.set_xlim(0, self.ui.XSIZE)
+        self.ax.set_ylim(0, self.ui.YSIZE)
+
         self.ax.tick_params(which='both', left=False, bottom=False,
                             top=False, labelbottom=False)
 
         self.ax.set_axisbelow(True)
+
+    def savefig(self, filename):
+
+        self.fig.savefig(filename, bbox_inches='tight')
+
+    def set_view(self, xmin, ymin, xmax, ymax):
+
+        self.ax.set_xlim(xmin, xmax)
+        self.ax.set_ylim(ymin, ymax)
+
+    def set_default_view(self):
+
+        self.ax.set_xlim(0, self.ui.XSIZE)
+        self.ax.set_ylim(0, self.ui.YSIZE)

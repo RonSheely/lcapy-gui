@@ -207,6 +207,16 @@ class UIModelMPH(UIModelBase):
         self.con_create(con_key, x1, y1, x2, y2)
         self.ui.refresh()
 
+    def on_best_fit(self):
+
+        bbox = self.bounding_box()
+        if bbox is None:
+            return
+        xmin, ymin, xmax, ymax = bbox
+
+        self.ui.set_view(xmin - 1, ymin - 1, xmax + 1, ymax + 1)
+        self.ui.refresh()
+
     def on_close(self):
 
         self.ui.quit()
