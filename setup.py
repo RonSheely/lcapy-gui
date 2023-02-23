@@ -10,7 +10,7 @@ setup(
         "lcapygui",
         "lcapygui.*"
     ]),
-    version="0.3.5",
+    version="0.3.6",
     description="A GUI for lcapy",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -35,7 +35,8 @@ setup(
         "matplotlib",
         "svgpathtools",
         "svgpath2mpl",
-        "tkhtmlview"
+        "tkhtmlview",
+        "setuptools"
     ],
     entry_points={
         'console_scripts': [
