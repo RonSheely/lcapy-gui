@@ -12,7 +12,6 @@ class Components(list):
         self.types[cpt.TYPE].append(name)
 
         cpt.name = name
-        cpt.value = name
         cpt.nodes = nodes
 
         self.append(cpt)

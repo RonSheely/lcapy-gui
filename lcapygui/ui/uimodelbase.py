@@ -336,6 +336,8 @@ class UIModelBase:
 
     def load_from_circuit(self, cct):
 
+        # TODO: use Lcapy parser
+
         sch = cct.sch
 
         try:
