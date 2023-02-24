@@ -44,7 +44,7 @@ class Preferences:
 
         dirname = self._dirname
         if not dirname.exists():
-            dirname.make()
+            dirname.mkdir()
         s = json.dumps(self, default=lambda o: o.__dict__,
                        sort_keys=True, indent=4)
 
