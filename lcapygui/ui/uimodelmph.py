@@ -376,6 +376,7 @@ class UIModelMPH(UIModelBase):
             la = self.cct.loop_analysis()
         except Exception as e:
             self.exception(e)
+            return
 
         eqns = la.mesh_equations()
         self.ui.show_equations_dialog(eqns, 'Mesh equations')
@@ -403,6 +404,8 @@ class UIModelMPH(UIModelBase):
             na = self.cct.nodal_analysis()
         except Exception as e:
             self.exception(e)
+            return
+
         eqns = na.nodal_equations()
         self.ui.show_equations_dialog(eqns, 'Nodal equations')
 
