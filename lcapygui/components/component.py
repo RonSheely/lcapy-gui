@@ -24,14 +24,16 @@ class Component(ABC):
     """
 
     kinds = {}
+    styles = {}
     can_stretch = False
     default_kind = ''
+    default_style = ''
     xoffset = 0
     yoffset = 0
     schematic_kind = False
     label_offset = 0.6
 
-    def __init__(self, value: Union[str, int, float], kind=''):
+    def __init__(self, value: Union[str, int, float], kind='', style=''):
 
         self.name = None
         self.value: str = value
@@ -48,9 +50,13 @@ class Component(ABC):
 
         if kind == '':
             kind = self.default_kind
-
         self.kind = kind
         self.inv_kinds = {v: k for k, v in self.kinds.items()}
+
+        if style == '':
+            style = self.default_style
+        self.style = style
+        self.inv_styles = {v: k for k, v in self.styles.items()}
 
     @property
     @classmethod
@@ -81,10 +87,12 @@ class Component(ABC):
     @property
     def sketch_key(self):
 
+        s = self.TYPE
         if self.kind != '':
-            return self.TYPE + '-' + self.kind
-        else:
-            return self.TYPE
+            s += '-' + self.kind
+        if self.style != '':
+            s += '-' + self.style
+        return s
 
     def draw(self, editor, layer, **kwargs):
         """
@@ -270,6 +278,9 @@ class Component(ABC):
 
         if self.schematic_kind and self.kind not in (None, ''):
             attr += ', kind=' + self.kind
+
+        if self.style not in (None, ''):
+            attr += ', style=' + self.style
 
         return ' '.join(parts) + '; ' + attr
 

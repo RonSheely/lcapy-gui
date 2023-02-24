@@ -26,6 +26,12 @@ class CptPropertiesDialog:
                 'kind', 'Kind', kind_name, list(cpt.kinds.values()),
                 command=self.on_update))
 
+        if cpt.styles != {}:
+            style_name = cpt.styles[cpt.style]
+            entries.append(LabelEntry(
+                'style', 'Style', style_name, list(cpt.styles.values()),
+                command=self.on_update))
+
         entries.append(LabelEntry('name', 'Name', cpt.name,
                                   command=self.on_update))
         entries.append(LabelEntry('value', 'Value', cpt.value,
@@ -57,6 +63,10 @@ class CptPropertiesDialog:
 
         if self.cpt.kinds != {}:
             self.cpt.kind = self.cpt.inv_kinds[self.labelentries.get('kind')]
+
+        if self.cpt.styles != {}:
+            self.cpt.style = self.cpt.inv_styles[self.labelentries.get(
+                'style')]
 
         name = self.labelentries.get('name')
         if name.startswith(self.cpt.name[0]):
