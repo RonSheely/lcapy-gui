@@ -194,8 +194,7 @@ class LcapyTk(Tk):
 
     def clear(self, grid='on'):
 
-        self.layer.clear()
-        self.canvas.drawing.draw_grid(grid)
+        self.canvas.drawing.clear(grid)
 
     def display(self):
 
@@ -248,7 +247,7 @@ class LcapyTk(Tk):
         toolbar.update()
         toolbar.pack(side=BOTTOM, fill=X)
 
-        drawing = Drawing(self, fig)
+        drawing = Drawing(self, fig, self.debug)
         canvas.drawing = drawing
         canvas.tab = tab
         canvas.layer = Layer(canvas.drawing.ax)
@@ -472,7 +471,7 @@ class LcapyTk(Tk):
 
     def refresh(self):
 
-        self.canvas.drawing.fig.canvas.draw()
+        self.canvas.drawing.refresh()
 
     def quit(self):
 
@@ -620,16 +619,21 @@ class LcapyTk(Tk):
 
 class Drawing():
 
-    def __init__(self, ui, fig):
+    def __init__(self, ui, fig, debug=0):
 
         self.ui = ui
         self.fig = fig
+        self.debug = debug
+
         self.ax = self.fig.add_subplot(111)
 
         self.draw_grid('on')
         self.set_default_view()
 
     def draw_grid(self, grid):
+
+        if self.debug:
+            print('draw grid')
 
         # Enlarge grid by factor of 2 in each direction.
         # Only XSIZE by YSIZE is visible.
@@ -655,10 +659,32 @@ class Drawing():
 
     def set_view(self, xmin, ymin, xmax, ymax):
 
+        if self.debug:
+            print('view', xmin, ymin, xmax, ymax)
+
         self.ax.set_xlim(xmin, xmax)
         self.ax.set_ylim(ymin, ymax)
 
     def set_default_view(self):
 
-        self.ax.set_xlim(0, self.ui.XSIZE)
-        self.ax.set_ylim(0, self.ui.YSIZE)
+        self.set_view(0, 0, self.ui.XSIZE, self.ui.YSIZE)
+
+    def clear(self, grid='on'):
+
+        if self.debug:
+            print('clear')
+
+        xmin, xmax = self.ax.get_xlim()
+        ymin, ymax = self.ax.get_ylim()
+
+        self.ax.clear()
+
+        self.draw_grid(grid)
+
+        self.set_view(xmin, ymin, xmax, ymax)
+
+    def refresh(self):
+
+        if self.debug:
+            print('refresh')
+        self.fig.canvas.draw()
