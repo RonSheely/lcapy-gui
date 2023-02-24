@@ -248,7 +248,7 @@ class UIModelBase:
                 ann.draw(fontsize=18)
                 cpt.annotations.append(ann)
 
-    def cpt_make(self, cpt_key, cpt_kind=''):
+    def cpt_make(self, cpt_key, kind='', style=''):
 
         try:
             cpt_class_name = self.component_map[cpt_key][1]
@@ -258,7 +258,7 @@ class UIModelBase:
         if cpt_class_name == '':
             return None
 
-        cpt = cpt_make(cpt_class_name, cpt_kind)
+        cpt = cpt_make(cpt_class_name, kind, style)
         self.invalidate()
         return cpt
 
@@ -367,6 +367,11 @@ class UIModelBase:
             else:
                 kind = ''
 
+            if 'style' in elt.opts:
+                style = elt.opts['style']
+            else:
+                style = ''
+
             # Handle electrical kind
             if elt.keyword and elt.keyword[0] is not None:
                 kind = elt.keyword[1]
@@ -377,9 +382,9 @@ class UIModelBase:
             elif isinstance(elt, Eopamp):
                 cpt = self.cpt_make('opamp')
             elif elt.type == 'A':
-                cpt = self.annotation_make(elt, kind)
+                cpt = self.annotation_make(elt, kind, style)
             else:
-                cpt = self.cpt_make(elt.type.lower(), kind)
+                cpt = self.cpt_make(elt.type.lower(), kind, style)
             if cpt is None:
                 self.exception('Unhandled component ' + str(elt.name))
                 return
@@ -428,7 +433,7 @@ class UIModelBase:
 
             attrs = []
             for opt, val in elt.opts.items():
-                if opt in ('left', 'right', 'up', 'down', 'rotate', 'kind'):
+                if opt in ('left', 'right', 'up', 'down', 'rotate', 'kind', 'style'):
                     continue
 
                 def fmt(key, val):

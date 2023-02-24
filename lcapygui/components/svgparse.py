@@ -17,13 +17,27 @@ from svgpath2mpl import parse_path
 
 class SVGPath:
 
-    def __init__(self, path, transform, fill):
-
-        # TODO, add style
+    def __init__(self, path, transform, style, symbol):
 
         self.path = path
         self.transform = transform
-        self.fill = fill
+        self.symbol = symbol
+
+        self.style = {}
+        parts = style.strip().split(';')
+        for part in parts:
+            print(part)
+            bits = part.split(':')
+            if len(bits) == 2:
+                k, v = bits
+                self.style[k] = v
+
+    # Perhaps handle stroke-width
+
+    @property
+    def fill(self):
+
+        return self.symbol or ('fill' in self.style and self.style['fill'] != 'none')
 
 
 class SVGParse:
@@ -54,6 +68,7 @@ class SVGParse:
                      if path.parentNode.tagName not in ('symbol', 'clipPath')]
 
         svg_ds = [path.getAttribute('d') for path in svg_paths]
+        svg_styles = [path.getAttribute('style') for path in svg_paths]
         svg_transforms = [path.getAttribute('transform') for path in svg_paths]
 
         transforms = []
@@ -64,10 +79,10 @@ class SVGParse:
         svg_transforms = transforms
 
         self.paths = []
-        for d, transform in zip(svg_ds, svg_transforms):
+        for d, transform, style in zip(svg_ds, svg_transforms, svg_styles):
             path = parse_path(d)
             transform = parse_transform(transform)
-            self.paths.append(SVGPath(path, transform, False))
+            self.paths.append(SVGPath(path, transform, style, False))
 
         if svg_defs != []:
             svg_symbols = svg_defs[0].getElementsByTagName('symbol')
@@ -85,4 +100,4 @@ class SVGParse:
                 transform = 'matrix(1,0,0,1,%s,%s)' % (x, y)
                 path = parse_path(symbols[symbol_id])
                 transform = parse_transform(transform)
-                self.paths.append(SVGPath(path, transform, True))
+                self.paths.append(SVGPath(path, transform, style, True))
