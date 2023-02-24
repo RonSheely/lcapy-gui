@@ -234,6 +234,7 @@ class UIModelMPH(UIModelBase):
             # If kind has changed need to remake the sketch
             cpt_remake(cpt)
         self.redraw()
+        self.cursors.draw()
         self.ui.refresh()
 
     def on_debug(self):

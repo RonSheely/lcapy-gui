@@ -26,7 +26,6 @@ class SVGPath:
         self.style = {}
         parts = style.strip().split(';')
         for part in parts:
-            print(part)
             bits = part.split(':')
             if len(bits) == 2:
                 k, v = bits
