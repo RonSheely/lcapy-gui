@@ -103,4 +103,4 @@ class Opamp(Component):
         xc = (x1 + x2) / 2
         yc = (y1 + y2) / 2
 
-        self.sketch.draw(layer.ax, offset=(xc, yc), angle=0, lw=2, **kwargs)
+        layer.sketch(self.sketch, offset=(xc, yc), angle=0, lw=2, **kwargs)

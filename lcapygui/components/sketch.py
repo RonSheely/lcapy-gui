@@ -1,5 +1,3 @@
-from matplotlib.patches import PathPatch
-from matplotlib.transforms import Affine2D
 from lcapy import Circuit
 from .svgparse import SVGParse
 from os.path import join
@@ -23,36 +21,6 @@ class Sketch:
     def color(self):
 
         return self.kwargs.get('color', 'black')
-
-    # This should be in a UI class.
-    def draw(self, axes, offset=(0, 0), scale=1, angle=0, **kwargs):
-
-        kwargs = {**self.kwargs, **kwargs}
-
-        gtransform = Affine2D().rotate_deg(angle).scale(scale * self.SCALE)
-        gtransform = gtransform.translate(*offset)
-
-        xoffset = self.xoffset
-        yoffset = self.yoffset - self.height / 2
-
-        patches = []
-        for spath in self.paths:
-            path = spath.path
-            transform = spath.transform
-            fill = spath.fill
-
-            path = path.transformed(Affine2D(transform))
-            path = path.transformed(Affine2D().translate(xoffset, yoffset))
-            path = path.transformed(gtransform)
-
-            if False and patches == []:
-                print(path.vertices)
-
-            patch = PathPatch(path, fill=fill, color=self.color, **kwargs)
-            patches.append(patch)
-            axes.add_patch(patch)
-
-        return patches
 
     @classmethod
     def load(cls, sketch_key, xoffset=0, yoffset=0):

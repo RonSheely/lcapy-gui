@@ -34,4 +34,5 @@ class Connection(Component):
     def draw(self, editor, layer, **kwargs):
 
         x1, y1 = self.nodes[0].position
-        self.sketch.draw(layer.ax, offset=(x1, y1), angle=180, lw=2, **kwargs)
+        self.layer.sketch(self.sketch, offset=(x1, y1),
+                          angle=180, lw=2, **kwargs)

@@ -122,8 +122,8 @@ class Component(ABC):
 
         lw = kwargs.pop('lw', editor.preferences.lw)
 
-        self.sketch.draw(layer.ax, offset=p1p, angle=angle, lw=lw,
-                         snap=True, **kwargs)
+        layer.sketch(self.sketch, offset=p1p, angle=angle, lw=lw,
+                     snap=True, **kwargs)
 
         if self.can_stretch:
             p2 = array((x2, y2))
