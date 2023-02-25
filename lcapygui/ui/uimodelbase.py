@@ -328,9 +328,19 @@ class UIModelBase:
 
         self.filename = filename
 
+        with open(filename) as f:
+            line = f.readline()
+            if line.startswith(r'\begin{tikz'):
+                self.ui.show_error_dialog('Cannot load Circuitikz macro file')
+                return
+
         self.components.clear()
 
-        cct = Circuit(filename)
+        try:
+            cct = Circuit(filename)
+        except Exception as e:
+            self.exception(e)
+            return
 
         self.load_from_circuit(cct)
 
