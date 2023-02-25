@@ -86,6 +86,8 @@ class Layer:
         xoffset = sketch.xoffset
         yoffset = sketch.yoffset - sketch.height / 2
 
+        color = kwargs.pop('color', sketch.color)
+
         patches = []
         for spath in sketch.paths:
             path = spath.path
@@ -99,7 +101,7 @@ class Layer:
             if False and patches == []:
                 print(path.vertices)
 
-            patch = PathPatch(path, fill=fill, color=sketch.color, **kwargs)
+            patch = PathPatch(path, fill=fill, color=color, **kwargs)
             patches.append(patch)
             self.ax.add_patch(patch)
 

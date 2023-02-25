@@ -46,6 +46,8 @@ class Component(ABC):
         self.label = ''
         self.voltage_label = ''
         self.current_label = ''
+        self.flow_label = ''
+        self.color = ''
         self.angle = 0
 
         if kind == '':
@@ -57,6 +59,13 @@ class Component(ABC):
             style = self.default_style
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
+
+        self.fields = {'label': 'Label',
+                       'voltage_label': 'Voltage label',
+                       'current_label': 'Current label',
+                       'flow_label': 'Flow label',
+                       'color': 'Color',
+                       'attrs': 'Attributes'}
 
     @property
     @classmethod
@@ -121,6 +130,8 @@ class Component(ABC):
         p1p = p1 + dp
 
         lw = kwargs.pop('lw', editor.preferences.lw)
+        if self.color != '':
+            kwargs['color'] = self.color
 
         layer.sketch(self.sketch, offset=p1p, angle=angle, lw=lw,
                      snap=True, **kwargs)
@@ -131,6 +142,8 @@ class Component(ABC):
 
             layer.stroke_line(*p1, *p1p, lw=lw, **kwargs)
             layer.stroke_line(*p2p, *p2, lw=lw, **kwargs)
+
+        # TODO, add label, voltage_label, current_label, flow_label
 
     def length(self) -> float:
         """
@@ -271,6 +284,16 @@ class Component(ABC):
         if self.TYPE == 'Eopamp':
             # TODO: fix for other orientations
             attr = 'right'
+
+        if self.color != '':
+            attr += ', color=' + self.color
+        # TODO, add cunning way of specifing modifiers, e.g., v^, i<
+        if self.voltage_label != '':
+            attr += ', v=' + self.voltage_label
+        if self.current_label != '':
+            attr += ', i=' + self.current_label
+        if self.flow_label != '':
+            attr += ', f=' + self.flow_label
 
         # Add user defined attributes such as color=blue, thick, etc.
         if self.attrs != '':

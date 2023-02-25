@@ -51,8 +51,9 @@ class CptPropertiesDialog:
                                       cpt.control, names,
                                       command=self.on_update))
 
-        entries.append(LabelEntry('attrs', 'Attributes', cpt.attrs,
-                                  command=self.on_update))
+        for k, v in cpt.fields.items():
+            entries.append(LabelEntry(k, v, getattr(cpt, k),
+                                      command=self.on_update))
 
         self.labelentries = LabelEntries(self.master, ui, entries)
 
@@ -86,7 +87,8 @@ class CptPropertiesDialog:
         except KeyError:
             pass
 
-        self.cpt.attrs = self.labelentries.get('attrs')
+        for k, v in self.cpt.fields.items():
+            setattr(self.cpt, k, self.labelentries.get(k))
 
         if self.update:
             self.update(self.cpt)
