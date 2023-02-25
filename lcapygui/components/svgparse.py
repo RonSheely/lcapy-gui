@@ -1,6 +1,7 @@
 from xml.dom import minidom
 from svgpathtools.parser import parse_transform
 from svgpath2mpl import parse_path
+from numpy import all
 
 # TODO: look for style attribute, split by semicolon.  One of the most
 # useful is fill, for example, 'fill:rgb(0%,0%,0%)' or 'fill:none'.
@@ -81,6 +82,7 @@ class SVGParse:
         for d, transform, style in zip(svg_ds, svg_transforms, svg_styles):
             path = parse_path(d)
             transform = parse_transform(transform)
+
             self.paths.append(SVGPath(path, transform, style, False))
 
         if svg_defs != []:
@@ -100,3 +102,16 @@ class SVGParse:
                 path = parse_path(symbols[symbol_id])
                 transform = parse_transform(transform)
                 self.paths.append(SVGPath(path, transform, style, True))
+
+            self.find_wire()
+
+    def find_wire(self):
+
+        yoffset = None
+        for path in self.paths:
+            if len(path.path) == 4 and all(path.path.codes == (1, 2, 1, 2)):
+                vertices = path.path.vertices
+                if vertices[0][1] == vertices[1][1]:
+                    yoffset = vertices[0][1]
+                    break
+        print(yoffset)
