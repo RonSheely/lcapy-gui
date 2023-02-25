@@ -214,7 +214,7 @@ class UIModelMPH(UIModelBase):
             return
         xmin, ymin, xmax, ymax = bbox
 
-        self.ui.set_view(xmin - 1, ymin - 1, xmax + 1, ymax + 1)
+        self.ui.set_view(xmin - 2, ymin - 2, xmax + 2, ymax + 2)
         self.ui.refresh()
 
     def on_close(self):
