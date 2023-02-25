@@ -16,6 +16,18 @@ from numpy import all
 # It uses the <g> element to group other elements
 
 
+def parse_style(string):
+
+    style = {}
+    parts = string.strip().split(';')
+    for part in parts:
+        bits = part.split(':')
+        if len(bits) == 2:
+            k, v = bits
+            style[k] = v
+    return style
+
+
 class SVGPath:
 
     def __init__(self, path, transform, style, symbol):
@@ -23,21 +35,7 @@ class SVGPath:
         self.path = path
         self.transform = transform
         self.symbol = symbol
-
-        self.style = {}
-        parts = style.strip().split(';')
-        for part in parts:
-            bits = part.split(':')
-            if len(bits) == 2:
-                k, v = bits
-                self.style[k] = v
-
-    # Perhaps handle stroke-width
-
-    @property
-    def fill(self):
-
-        return self.symbol or ('fill' in self.style and self.style['fill'] != 'none')
+        self.style = style
 
 
 class SVGParse:
@@ -82,8 +80,8 @@ class SVGParse:
         for d, transform, style in zip(svg_ds, svg_transforms, svg_styles):
             path = parse_path(d)
             transform = parse_transform(transform)
-
-            self.paths.append(SVGPath(path, transform, style, False))
+            self.paths.append(
+                SVGPath(path, transform, parse_style(style), False))
 
         if svg_defs != []:
             svg_symbols = svg_defs[0].getElementsByTagName('symbol')
@@ -101,17 +99,5 @@ class SVGParse:
                 transform = 'matrix(1,0,0,1,%s,%s)' % (x, y)
                 path = parse_path(symbols[symbol_id])
                 transform = parse_transform(transform)
-                self.paths.append(SVGPath(path, transform, style, True))
-
-            self.find_wire()
-
-    def find_wire(self):
-
-        yoffset = None
-        for path in self.paths:
-            if len(path.path) == 4 and all(path.path.codes == (1, 2, 1, 2)):
-                vertices = path.path.vertices
-                if vertices[0][1] == vertices[1][1]:
-                    yoffset = vertices[0][1]
-                    break
-        print(yoffset)
+                self.paths.append(
+                    SVGPath(path, transform, parse_style(style), True))

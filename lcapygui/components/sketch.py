@@ -1,6 +1,27 @@
 from lcapy import Circuit
+from matplotlib.transforms import Affine2D
 from .svgparse import SVGParse
 from os.path import join
+
+
+class SketchPath:
+
+    def __init__(self, path, style, symbol):
+
+        self.path = path
+        self.style = style
+        self.symbol = symbol
+
+    @property
+    def fill(self):
+
+        return self.symbol or ('fill' in self.style and self.style['fill'] != 'none')
+
+    def transform(self, transform):
+
+        path = self.path.transformed(transform)
+
+        return self.__class__(path, self.style, self.symbol)
 
 
 class Sketch:
@@ -8,13 +29,11 @@ class Sketch:
     # Convert points to cm.
     SCALE = 2.54 / 72
 
-    def __init__(self, paths, width, height, xoffset=0, yoffset=0, **kwargs):
+    def __init__(self, paths, width, height, **kwargs):
 
         self.paths = paths
         self.width = width
         self.height = height
-        self.xoffset = xoffset
-        self.yoffset = yoffset
         self.kwargs = kwargs
 
     @property
@@ -35,8 +54,14 @@ class Sketch:
 
         svg = SVGParse(str(svg_filename))
 
-        sketch = cls(svg.paths, svg.width, svg.height,
-                     xoffset, yoffset)
+        sketch_paths = []
+        for svga_path in svg.paths:
+            sketch_path = SketchPath(
+                svga_path.path, svga_path.style, svga_path.symbol)
+            sketch_path = sketch_path.transform(Affine2D(svga_path.transform))
+            sketch_paths.append(sketch_path)
+
+        sketch = cls(sketch_paths, svg.width, svg.height).align()
         return sketch
 
     @classmethod
@@ -57,3 +82,42 @@ class Sketch:
 
         a.draw(str(svg_filename), label_values=False, label_ids=False,
                label_nodes=False, draw_nodes=False)
+
+    def offsets(self):
+
+        xoffset = None
+        yoffset = None
+
+        # Look for pair of wires
+        for path in self.paths:
+            if len(path.path) == 4 and all(path.path.codes == (1, 2, 1, 2)):
+                vertices = path.path.vertices
+                if vertices[0][1] == vertices[1][1]:
+                    xoffset = vertices[0][0]
+                    yoffset = vertices[0][1]
+                    return xoffset, yoffset
+
+        # Look for single wire
+        for path in self.paths:
+            if len(path.path) == 2 and all(path.path.codes == (1, 2)):
+                vertices = path.path.vertices
+                if vertices[0][1] == vertices[1][1]:
+                    xoffset = vertices[0][0]
+                    yoffset = vertices[0][1]
+                    return xoffset, yoffset
+
+        return None, None
+
+    def align(self):
+        """Remove yoffset from component."""
+
+        xoffset, yoffset = self.offsets()
+
+        if xoffset is None:
+            return self
+
+        paths = []
+        for path in self.paths:
+            paths.append(path.transform(Affine2D().translate(0, -yoffset)))
+
+        return self.__class__(paths, self.width, self.height, **self.kwargs)

@@ -83,19 +83,13 @@ class Layer:
         gtransform = Affine2D().rotate_deg(angle).scale(scale * sketch.SCALE)
         gtransform = gtransform.translate(*offset)
 
-        xoffset = sketch.xoffset
-        yoffset = sketch.yoffset - sketch.height / 2
-
         color = kwargs.pop('color', sketch.color)
 
         patches = []
         for spath in sketch.paths:
             path = spath.path
-            transform = spath.transform
             fill = spath.fill
 
-            path = path.transformed(Affine2D(transform))
-            path = path.transformed(Affine2D().translate(xoffset, yoffset))
             path = path.transformed(gtransform)
 
             if False and patches == []:
