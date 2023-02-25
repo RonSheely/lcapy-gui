@@ -235,7 +235,7 @@ class LcapyTk(Tk):
         self.notebook.pack(fill=BOTH, expand=1)
 
         # Add the figure to the graph tab
-        fig = Figure(figsize=self.FIGSIZE)
+        fig = Figure(figsize=self.FIGSIZE, frameon=False)
         fig.subplots_adjust(left=0, bottom=0, right=1,
                             top=1, wspace=0, hspace=0)
 

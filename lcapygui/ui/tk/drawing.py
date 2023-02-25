@@ -39,7 +39,7 @@ class Drawing():
 
     def savefig(self, filename):
 
-        self.fig.savefig(filename, bbox_inches='tight')
+        self.fig.savefig(filename, bbox_inches='tight', pad_inches=0)
 
     def set_view(self, xmin, ymin, xmax, ymax):
 
