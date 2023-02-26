@@ -19,6 +19,7 @@ class Opamp(Component):
 
     sketch_net = 'E 1 2 opamp 3 4'
     sketch_key = 'opamp'
+    label_offset = 0
 
     # The Nm node is not used (ground).
     node_pinnames = ('out', '', 'in+', 'in-')
@@ -103,4 +104,13 @@ class Opamp(Component):
         xc = (x1 + x2) / 2
         yc = (y1 + y2) / 2
 
-        layer.sketch(self.sketch, offset=(xc, yc), angle=0, lw=2, **kwargs)
+        dy = abs(self.nodes[3].y - self.nodes[2].y)
+        size = dy * 5 / 4
+
+        lw = kwargs.pop('lw', editor.preferences.lw)
+        if self.color != '':
+            kwargs['color'] = self.color
+
+        print(size)
+        layer.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
+                     lw=lw, **kwargs)
