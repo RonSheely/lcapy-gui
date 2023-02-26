@@ -88,23 +88,33 @@ class Sketch:
         xoffset = None
         yoffset = None
 
-        # Look for pair of wires
+        # Look for pair of horizontal wires
         for path in self.paths:
             if len(path.path) == 4 and all(path.path.codes == (1, 2, 1, 2)):
                 vertices = path.path.vertices
                 if vertices[0][1] == vertices[1][1]:
                     xoffset = vertices[0][0]
                     yoffset = vertices[0][1]
+                    return 0, yoffset
+
+        # Look for vertical wire (for ground, sground, cground, rground)
+        # Note, if look for horizontal wire first, get incorrect offset for rground
+        for path in self.paths:
+            if len(path.path) == 2 and all(path.path.codes == (1, 2)):
+                vertices = path.path.vertices
+                if vertices[0][0] == vertices[1][0]:
+                    xoffset = vertices[0][0]
+                    yoffset = vertices[0][1]
                     return xoffset, yoffset
 
-        # Look for single wire
+        # Look for single horizontal wire (this is triggered by W components)
         for path in self.paths:
             if len(path.path) == 2 and all(path.path.codes == (1, 2)):
                 vertices = path.path.vertices
                 if vertices[0][1] == vertices[1][1]:
                     xoffset = vertices[0][0]
                     yoffset = vertices[0][1]
-                    return xoffset, yoffset
+                    return 0, yoffset
 
         return self.width / 2, self.height / 2
 
@@ -118,6 +128,7 @@ class Sketch:
 
         paths = []
         for path in self.paths:
-            paths.append(path.transform(Affine2D().translate(0, -yoffset)))
+            paths.append(path.transform(
+                Affine2D().translate(-xoffset, -yoffset)))
 
         return self.__class__(paths, self.width, self.height, **self.kwargs)
