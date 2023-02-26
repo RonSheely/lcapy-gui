@@ -44,6 +44,10 @@ class ExprDialog:
 
     def show_img(self, e):
 
+        # TODO, fixme
+        # if self.ui.model.preferences.show_units == 'true':
+        #    e = e * e.units
+
         png_filename = ExprImage(e).image()
         img = ImageTk.PhotoImage(Image.open(png_filename), master=self.master)
         self.expr_label.config(image=img)

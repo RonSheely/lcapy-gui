@@ -1,6 +1,5 @@
 from tkinter import Tk, Button
 from .labelentries import LabelEntry, LabelEntries
-from lcapy.state import state
 
 
 class PreferencesDialog:
@@ -62,7 +61,8 @@ class PreferencesDialog:
         self.model.preferences.node_size = self.labelentries.get('node_size')
         self.model.preferences.show_units = self.labelentries.get('show_units')
 
-        state.show_units = self.model.preferences.show_units == 'true'
+        # Do not set show_units; this needs fixing in Lcapy since
+        # str(expr) includes the units and this causes problems...
 
         if self.update:
             # Could check for changes
