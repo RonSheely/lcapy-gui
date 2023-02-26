@@ -1,5 +1,6 @@
 from tkinter import Tk, Button
 from .labelentries import LabelEntry, LabelEntries
+from lcapy.state import state
 
 
 class PreferencesDialog:
@@ -37,6 +38,10 @@ class PreferencesDialog:
                               command=self.on_update),
                    LabelEntry('node_size', 'Node size',
                               self.model.preferences.node_size,
+                              command=self.on_update),
+                   LabelEntry('show_units', 'Show units',
+                              self.model.preferences.show_units,
+                              ('true', 'false'),
                               command=self.on_update)
                    ]
 
@@ -55,6 +60,9 @@ class PreferencesDialog:
         self.model.preferences.grid = self.labelentries.get('grid')
         self.model.preferences.lw = self.labelentries.get('lw')
         self.model.preferences.node_size = self.labelentries.get('node_size')
+        self.model.preferences.show_units = self.labelentries.get('show_units')
+
+        state.show_units = self.model.preferences.show_units == 'true'
 
         if self.update:
             # Could check for changes

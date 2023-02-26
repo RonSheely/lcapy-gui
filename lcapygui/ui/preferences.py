@@ -16,6 +16,7 @@ class Preferences:
         self.node_color = 'black'
         self.grid = 'on'
         self.lw = 1.2
+        self.show_units = 'false'
 
         self.load()
 
