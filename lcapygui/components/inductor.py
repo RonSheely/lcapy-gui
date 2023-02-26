@@ -14,4 +14,3 @@ class Inductor(BipoleComponent):
 
     TYPE = 'L'
     NAME = 'Inductor'
-    yoffset = -1.4

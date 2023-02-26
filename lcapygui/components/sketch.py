@@ -42,7 +42,7 @@ class Sketch:
         return self.kwargs.get('color', 'black')
 
     @classmethod
-    def load(cls, sketch_key, xoffset=0, yoffset=0):
+    def load(cls, sketch_key):
 
         from lcapygui import __datadir__
 
@@ -106,7 +106,7 @@ class Sketch:
                     yoffset = vertices[0][1]
                     return xoffset, yoffset
 
-        return None, None
+        return self.width / 2, self.height / 2
 
     def align(self):
         """Remove yoffset from component."""

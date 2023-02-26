@@ -28,8 +28,6 @@ class Component(ABC):
     can_stretch = False
     default_kind = ''
     default_style = ''
-    xoffset = 0
-    yoffset = 0
     schematic_kind = False
     label_offset = 0.6
 

@@ -4,9 +4,6 @@ from numpy import array
 
 class Connection(Component):
 
-    xoffset = -6.8
-    yoffset = 10
-
     def __str__(self) -> str:
 
         return self.TYPE + ' ' + '(%s, %s)' % \

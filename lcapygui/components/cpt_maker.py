@@ -49,7 +49,7 @@ class CptMaker:
         if create:
             sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
 
-        sketch = Sketch.load(cpt.sketch_key, cpt.xoffset, cpt.yoffset)
+        sketch = Sketch.load(cpt.sketch_key)
         if sketch is None:
             raise FileNotFoundError(
                 'Could not find data file for ' + cpt.sketch_key)
