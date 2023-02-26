@@ -97,13 +97,13 @@ class UIModelBase:
 
         return self._cct
 
-    def annotation_make(self, elt, kind=''):
+    def annotation_make(self, elt, kind='', style=''):
 
         opts = elt.opts
 
         for k, v in self.connection_map.items():
             if k in opts:
-                return self.con_make(k, kind)
+                return self.con_make(k, kind, style)
         return None
 
     def bounding_box(self):
@@ -135,7 +135,7 @@ class UIModelBase:
             return
         self.cpt_place(cpt, x1, y1, x2, y2)
 
-    def con_make(self, con_key, kind=''):
+    def con_make(self, con_key, kind='', style=''):
 
         try:
             cpt_class_name = self.connection_map[con_key][1]
@@ -147,7 +147,7 @@ class UIModelBase:
         if cpt_class_name == '':
             return None
 
-        cpt = cpt_make(cpt_class_name, kind)
+        cpt = cpt_make(cpt_class_name, kind, style)
         self.invalidate()
         return cpt
 
