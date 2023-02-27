@@ -244,7 +244,12 @@ class UIModelMPH(UIModelBase):
 
     def on_copy(self):
 
-        pass
+        if self.selected is None:
+            return
+        if not self.cpt_selected:
+            return
+
+        self.copy(self.selected)
 
     def on_cpt_changed(self, cpt):
 

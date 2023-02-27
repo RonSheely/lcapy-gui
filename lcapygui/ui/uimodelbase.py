@@ -4,7 +4,7 @@ from .preferences import Preferences
 from ..components.cpt_maker import cpt_make
 from copy import copy
 from numpy import array
-from math import atan2, degrees
+from math import atan2, degrees, sqrt
 from lcapy import Circuit
 from lcapy.mnacpts import Cpt, Eopamp
 
@@ -60,7 +60,7 @@ class UIModelBase:
         self.preferences = Preferences()
         self.dirty = False
         self.history = []
-        self.clipped = None
+        self.clipboard = None
 
     @property
     def analysis_circuit(self):
@@ -112,17 +112,17 @@ class UIModelBase:
         return xmin, ymin, xmax, ymax
 
     def con_create(self, con_key, x1, y1, x2, y2):
-        """Create and place a new connection."""
+        """Create a new connection."""
 
         try:
-            cpt_class_name = self.connection_map[con_key][1]
+            cpt_type = self.connection_map[con_key][1]
         except KeyError:
             return None
 
-        if cpt_class_name == '':
+        if cpt_type == '':
             return None
 
-        return self.thing_create(cpt_class_name, x1, y1, x2, y2)
+        return self.thing_create(cpt_type, x1, y1, x2, y2)
 
     def choose_cpt_name(self, cpt_type):
 
@@ -142,62 +142,25 @@ class UIModelBase:
                 return name
             num += 1
 
-    def thing_create(self, cpt_class_name, x1, y1, x2, y2):
-
-        gcpt = cpt_make(cpt_class_name)
-
-        positions = gcpt.assign_positions(x1, y1, x2, y2)
-
-        cpt_name = self.choose_cpt_name(gcpt.type)
-        net_parts = [cpt_name]
-
-        nodes = list(self.circuit.nodes)
-
-        for m, position in enumerate(positions):
-            node = self.circuit.nodes.by_position(position)
-            if node is None:
-                node_name = self.choose_node_name(nodes)
-                nodes.append(node_name)
-            else:
-                node_name = node.name
-            net_parts.append(node_name)
-
-        net = ' '.join(net_parts)
-
-        if self.ui.debug:
-            print('Adding ' + net)
-
-        cct = self.circuit.add(net)
-        cpt = cct[cpt_name]
-
-        for m, position in enumerate(positions):
-            cpt.nodes[m].pos = position
-
-        # Duck type
-        cpt.gcpt = gcpt
-        gcpt.nodes = cpt.nodes
-
-        self.cpt_draw(cpt)
-
-        self.history.append((cpt, 'A'))
-
-        return cpt
-
     def con_make(self, con_key, kind='', style=''):
 
         try:
-            cpt_class_name = self.connection_map[con_key][1]
+            cpt_type = self.connection_map[con_key][1]
             if kind == '':
                 kind = self.connection_map[con_key][2]
         except KeyError:
             return None
 
-        if cpt_class_name == '':
+        if cpt_type == '':
             return None
 
-        gcpt = cpt_make(cpt_class_name, kind, style)
+        gcpt = cpt_make(cpt_type, kind, style)
         self.invalidate()
         return gcpt
+
+    def copy(self, cpt):
+
+        self.clipboard = cpt
 
     @property
     def cpt_selected(self):
@@ -205,17 +168,22 @@ class UIModelBase:
         return isinstance(self.selected, Cpt)
 
     def cpt_create(self, cpt_key, x1, y1, x2, y2):
-        """Create and place a new component."""
+        """Create a new component."""
+
+        s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        if s < 0.2:
+            self.exception('Nodes too close to create component')
+            return
 
         try:
-            cpt_class_name = self.component_map[cpt_key][1]
+            cpt_type = self.component_map[cpt_key][1]
         except KeyError:
             return None
 
-        if cpt_class_name == '':
+        if cpt_type == '':
             return None
 
-        return self.thing_create(cpt_class_name, x1, y1, x2, y2)
+        return self.thing_create(cpt_type, x1, y1, x2, y2)
 
     def cpt_delete(self, cpt):
 
@@ -229,7 +197,7 @@ class UIModelBase:
         except AttributeError:
             pass
 
-        self.circuit.remove(cpt)
+        self.circuit.remove(cpt.name)
 
         if redraw:
             self.ui.clear()
@@ -314,28 +282,10 @@ class UIModelBase:
                 'Cannot find a component with nodes %s and %s' % (n1, n2))
         return cpt2
 
-    def cpt_place(self, cpt, x1, y1, x2, y2):
-        """Place a component at the specified pair of positions.
-
-        """
-
-        positions = cpt.assign_positions(x1, y1, x2, y2)
-
-        # TODO, fixme if placed on top of exisiting node
-        for m, position in enumerate(positions):
-            cpt.nodes[m].pos = position
-
-        self.cpt_draw(cpt)
-
-        self.select(cpt)
-        self.dirty = True
-
-        self.history.append((cpt, 'A'))
-
     def cut(self, cpt):
 
         self.delete(cpt)
-        self.clipped = cpt
+        self.clipboard = cpt
 
     def delete(self, cpt):
 
@@ -381,10 +331,10 @@ class UIModelBase:
 
     def paste(self, x1, y1, x2, y2):
 
-        if self.clipped is None:
+        if self.clipboard is None:
             return
-        cpt = copy(self.clipped)
-        self.cpt_place(cpt, x1, y1, x2, y2)
+
+        return self.thing_create(self.clipboard.type, x1, y1, x2, y2)
 
     def rotate(self, angle):
         # TODO
@@ -411,6 +361,47 @@ class UIModelBase:
         # Note, need a newline so string treated as a netlist string
         s += '; ' + self.preferences.schematic_preferences() + '\n'
         return s
+
+    def thing_create(self, cpt_type, x1, y1, x2, y2):
+
+        gcpt = cpt_make(cpt_type)
+
+        positions = gcpt.assign_positions(x1, y1, x2, y2)
+
+        cpt_name = self.choose_cpt_name(gcpt.type)
+        net_parts = [cpt_name]
+
+        nodes = list(self.circuit.nodes)
+
+        for m, position in enumerate(positions):
+            node = self.circuit.nodes.by_position(position)
+            if node is None:
+                node_name = self.choose_node_name(nodes)
+                nodes.append(node_name)
+            else:
+                node_name = node.name
+            net_parts.append(node_name)
+
+        net = ' '.join(net_parts)
+
+        if self.ui.debug:
+            print('Adding ' + net)
+
+        cct = self.circuit.add(net)
+        cpt = cct[cpt_name]
+
+        for m, position in enumerate(positions):
+            cpt.nodes[m].pos = position
+
+        # Duck type
+        cpt.gcpt = gcpt
+        gcpt.nodes = cpt.nodes
+
+        self.cpt_draw(cpt)
+
+        self.history.append((cpt, 'A'))
+
+        return cpt
 
     def inspect_admittance(self, cpt):
 
@@ -544,7 +535,14 @@ class UIModelBase:
             return
         cpt, op = self.history.pop()
         if op == 'D':
-            self.circuit.add(cpt)
+            self.circuit.add(str(cpt))
+
+            # Copy node positions
+            new_cpt = self.circuit.elements[cpt.name]
+            for m, node in enumerate(cpt.nodes):
+                new_cpt.nodes[m].pos = node.pos
+            new_cpt.gcpt = cpt.gcpt
+
             self.cpt_draw(cpt)
             self.select(cpt)
         else:
