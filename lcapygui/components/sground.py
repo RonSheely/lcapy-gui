@@ -6,7 +6,7 @@ class SGround(Connection):
     Signal ground connection
     """
 
-    TYPE = "A"
+    type = "A"
     NAME = "Ground"
 
     def net(self, connections, step=1):

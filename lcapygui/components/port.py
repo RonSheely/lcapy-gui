@@ -2,10 +2,6 @@ from .component import Component
 
 
 class Port(Component):
-    """
-    Port
-    """
 
-    TYPE = "P"
-    NAME = "Port"
+    type = "P"
     sketch_net = 'P 1 2'

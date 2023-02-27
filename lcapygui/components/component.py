@@ -68,33 +68,23 @@ class Component(ABC):
     @property
     @classmethod
     @abstractmethod
-    def TYPE(cls) -> str:
+    def type(cls) -> str:
         """
         Component type identifer used by lcapy.
         E.g. Resistors have the identifier R.
         """
         ...
 
-    @property
-    @classmethod
-    @abstractmethod
-    def NAME(cls) -> str:
-        """
-        The full name of the component.
-        E.g. Resistor
-        """
-        ...
-
     def __str__(self) -> str:
 
-        return self.TYPE + ' ' + '(%s, %s) (%s, %s)' % \
-            (self.nodes[0].position[0], self.nodes[0].position[1],
-             self.nodes[1].position[0], self.nodes[1].position[1])
+        return self.type + ' ' + '(%s, %s) (%s, %s)' % \
+            (self.nodes[0].pos[0], self.nodes[0].pos[1],
+             self.nodes[1].pos[0], self.nodes[1].pos[1])
 
     @property
     def sketch_key(self):
 
-        s = self.TYPE
+        s = self.type
         if self.kind != '':
             s += '-' + self.kind
         if self.style != '':
@@ -110,8 +100,8 @@ class Component(ABC):
         if self.sketch is None:
             return
 
-        x1, y1 = self.nodes[0].position
-        x2, y2 = self.nodes[1].position
+        x1, y1 = self.nodes[0].pos
+        x2, y2 = self.nodes[1].pos
 
         dx = x2 - x1
         dy = y2 - y1
@@ -147,8 +137,8 @@ class Component(ABC):
         """
         Computes the length of the component.
         """
-        return norm(array(self.nodes[1].position)
-                    - array(self.nodes[0].position))
+        return norm(array(self.nodes[1].pos)
+                    - array(self.nodes[0].pos))
 
     @property
     def midpoint(self) -> array:
@@ -156,32 +146,8 @@ class Component(ABC):
         Computes the midpoint of the component.
         """
 
-        return (array(self.nodes[0].position)
-                + array(self.nodes[1].position)) / 2
-
-    def along(self) -> array:
-        """
-        Computes a unit vector pointing along the line of the component.
-        If the length of the component is zero, this will return the
-        zero vector.
-        """
-        length = self.length()
-        if length == 0:
-            return array((0, 0))
-        else:
-            return (array(self.nodes[1].position)
-                    - array(self.nodes[0].position))/length
-
-    def orthog(self) -> array:
-        """
-        Computes a unit vector pointing anti-clockwise to the line
-        of the component.
-        """
-        delta = self.along()
-
-        rot = array([[0, -1],
-                     [1, 0]])
-        return dot(rot, delta)
+        return (array(self.nodes[0].pos)
+                + array(self.nodes[1].pos)) / 2
 
     @property
     def vertical(self) -> bool:
@@ -189,8 +155,8 @@ class Component(ABC):
         Returns true if component essentially vertical.
         """
 
-        x1, y1 = self.nodes[0].position
-        x2, y2 = self.nodes[1].position
+        x1, y1 = self.nodes[0].pos
+        x2, y2 = self.nodes[1].pos
         return abs(y2 - y1) > abs(x2 - x1)
 
     @property
@@ -219,14 +185,14 @@ class Component(ABC):
         for node in self.nodes[0:2]:
             parts.append(node.name)
 
-        if self.TYPE in ('E', 'F', 'G', 'H') \
-           and self.control is None and self.NAME != 'Opamp':
+        if self.type in ('E', 'F', 'G', 'H') \
+           and self.control is None and self.__class__.__name__ != 'Opamp':
             raise ValueError(
                 'Control component not defined for ' + self.name)
 
-        if self.TYPE in ('E', 'G'):
+        if self.type in ('E', 'G'):
 
-            if self.NAME == 'Opamp':
+            if self.__class__.__name__ == 'Opamp':
                 parts.append('opamp')
                 for node in self.nodes[2:4]:
                     parts.append(node.name)
@@ -235,14 +201,14 @@ class Component(ABC):
                 idx = components.find_index(self.control)
                 parts.append(components[idx].nodes[0].name)
                 parts.append(components[idx].nodes[1].name)
-        elif self.TYPE in ('F', 'H'):
+        elif self.type in ('F', 'H'):
             parts.append(self.control)
 
         # Later need to handle schematic kind attributes.
         if not self.schematic_kind and self.kind not in (None, ''):
             parts.append(self.kind)
 
-        if self.TYPE not in ('W', 'P', 'O') and self.value is not None:
+        if self.type not in ('W', 'P', 'O') and self.value is not None:
             if self.initial_value is None and self.name != self.value:
                 if self.value.isalnum():
                     parts.append(self.value)
@@ -256,8 +222,8 @@ class Component(ABC):
             else:
                 parts.append('{' + self.initial_value + '}')
 
-        x1, y1 = self.nodes[0].position
-        x2, y2 = self.nodes[1].position
+        x1, y1 = self.nodes[0].pos
+        x2, y2 = self.nodes[1].pos
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
         if r == 1:
@@ -279,7 +245,7 @@ class Component(ABC):
             angle = degrees(atan2(y2 - y1, x2 - x1))
             attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
 
-        if self.TYPE == 'Eopamp':
+        if self.type == 'Eopamp':
             # TODO: fix for other orientations
             attr = 'right'
 
@@ -313,7 +279,7 @@ class BipoleComponent(Component):
     @property
     def sketch_net(self):
 
-        return self.TYPE + ' 1 2'
+        return self.type + ' 1 2'
 
 
 class ControlledComponent(Component):
@@ -323,4 +289,4 @@ class ControlledComponent(Component):
     @property
     def sketch_net(self):
 
-        return self.TYPE + ' 1 2 3 4'
+        return self.type + ' 1 2 3 4'

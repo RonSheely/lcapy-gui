@@ -2,12 +2,8 @@ from .connection import Connection
 
 
 class Annotation(Connection):
-    """
-    Ground connection
-    """
 
-    TYPE = 'A'
-    NAME = 'Ground'
+    type = 'A'
     default_kind = 'ground'
 
     kinds = {'': '', 'ground': 'Ground', 'sground': 'Signal ground',
@@ -16,7 +12,7 @@ class Annotation(Connection):
     @property
     def sketch_net(self):
 
-        return self.TYPE + ' 1' '; down, ' + self.kind
+        return self.type + ' 1' '; down, ' + self.kind
 
     def net(self, connections, step=1):
 

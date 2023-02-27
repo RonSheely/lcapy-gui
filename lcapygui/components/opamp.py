@@ -4,19 +4,8 @@ from numpy.linalg import norm
 
 
 class Opamp(Component):
-    """
-    Opamp
 
-    Parameters
-    ----------
-
-    value: Union[str, int, float]
-        The value of the opamp.
-    """
-
-    TYPE = "E"
-    NAME = "Opamp"
-
+    type = "E"
     sketch_net = 'E 1 2 opamp 3 4'
     sketch_key = 'opamp'
     label_offset = 0
@@ -75,15 +64,15 @@ class Opamp(Component):
     @property
     def midpoint(self) -> float:
 
-        pos = (self.nodes[2].position + self.nodes[3].position) / 2
+        pos = (self.nodes[2].pos + self.nodes[3].pos) / 2
 
-        return (self.nodes[0].position + pos) / 2
+        return (self.nodes[0].pos + pos) / 2
 
     def length(self) -> float:
 
-        pos = (self.nodes[2].position + self.nodes[3].position) / 2
+        pos = (self.nodes[2].pos + self.nodes[3].pos) / 2
 
-        diff = (pos - self.nodes[0].position) / 2
+        diff = (pos - self.nodes[0].pos) / 2
         return norm(diff)
 
     def net(self, connections, step=1):
@@ -98,8 +87,8 @@ class Opamp(Component):
 
     def draw(self, editor, layer, **kwargs):
 
-        x1, y1 = self.nodes[2].position
-        x2, y2 = self.nodes[3].position
+        x1, y1 = self.nodes[2].pos
+        x2, y2 = self.nodes[3].pos
 
         xc = (x1 + x2) / 2
         yc = (y1 + y2) / 2

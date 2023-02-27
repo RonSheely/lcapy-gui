@@ -1,6 +1,6 @@
 from .uimodelbase import UIModelBase
 from ..components.cpt_maker import cpt_remake
-from ..components.component import Component
+from lcapy.mnacpts import Cpt
 
 
 class Cursor:
@@ -137,6 +137,27 @@ class UIModelMPH(UIModelBase):
 
         self.ui.clear(self.preferences.grid)
 
+    def closest_cpt(self, x, y):
+
+        for cpt in self.circuit.elements.values():
+
+            gcpt = cpt.gcpt
+            lsq = gcpt.length() ** 2
+            xm, ym = gcpt.midpoint
+            rsq = (xm - x)**2 + (ym - y)**2
+            if rsq < 0.1 * lsq:
+                return cpt
+        return None
+
+    def closest_node(self, x, y):
+
+        for node in self.circuit.nodes.values():
+            x1, y1 = node.pos
+            rsq = (x1 - x)**2 + (y1 - y)**2
+            if rsq < 0.1:
+                return node
+        return None
+
     def draw_node_select(self, x, y):
 
         x, y = self.snap(x, y)
@@ -230,7 +251,7 @@ class UIModelMPH(UIModelBase):
         self.invalidate()
         # Component name may have changed
         self.clear()
-        if isinstance(cpt, Component):
+        if isinstance(cpt, Cpt):
             # If kind has changed need to remake the sketch
             cpt_remake(cpt)
         self.redraw()
@@ -243,7 +264,7 @@ class UIModelMPH(UIModelBase):
         s += 'Netlist.........\n'
         s += self.schematic() + '\n'
         s += 'Nodes...........\n'
-        s += self.nodes.debug() + '\n'
+        s += self.circuit.nodes.debug() + '\n'
         s += 'Cursors.........\n'
         s += self.cursors.debug() + '\n'
         s += 'Selected.........\n'
@@ -279,7 +300,7 @@ class UIModelMPH(UIModelBase):
 
     def on_describe(self):
 
-        self.ui.show_message_dialog(self.cct.description(),
+        self.ui.show_message_dialog(self.circuit.description(),
                                     title='Description')
 
     def on_export(self):
@@ -334,7 +355,7 @@ class UIModelMPH(UIModelBase):
 
     def on_laplace_model(self):
 
-        cct = self.cct.s_model()
+        cct = self.circuit.s_model()
         self.on_show_new_circuit(cct)
 
     def on_left_click(self, x, y):
@@ -346,8 +367,8 @@ class UIModelMPH(UIModelBase):
             if self.ui.debug:
                 print('Selected ' + cpt.name)
             self.cursors.remove()
-            self.add_cursor(*cpt.nodes[0].position)
-            self.add_cursor(*cpt.nodes[-1].position)
+            self.add_cursor(*cpt.nodes[0].pos)
+            self.add_cursor(*cpt.nodes[1].pos)
         else:
             if self.ui.debug:
                 print('Add node at (%s, %s)' % (x, y))
@@ -374,7 +395,7 @@ class UIModelMPH(UIModelBase):
             self.ui.show_info_dialog('Suggest adding a ground node.')
 
         try:
-            la = self.cct.loop_analysis()
+            la = self.analysis_circuit.loop_analysis()
         except Exception as e:
             self.exception(e)
             return
@@ -389,7 +410,7 @@ class UIModelMPH(UIModelBase):
     def on_netlist(self):
 
         netlist = []
-        lines = self.cct.netlist().split('\n')
+        lines = self.circuit.netlist().split('\n')
         for line in lines:
             parts = line.split(';')
             netlist.append(parts[0].strip())
@@ -402,7 +423,7 @@ class UIModelMPH(UIModelBase):
             self.ui.show_info_dialog('Suggest adding a ground node.')
 
         try:
-            na = self.cct.nodal_analysis()
+            na = self.analysis_circuit.nodal_analysis()
         except Exception as e:
             self.exception(e)
             return
@@ -416,7 +437,7 @@ class UIModelMPH(UIModelBase):
 
     def on_noise_model(self):
 
-        cct = self.cct.noise_model()
+        cct = self.analysis_circuit.noise_model()
         self.on_show_new_circuit(cct)
 
     def on_paste(self):
@@ -508,8 +529,8 @@ class UIModelMPH(UIModelBase):
 
     def on_select(self, x, y):
 
-        cpt = self.components.closest(x, y)
-        node = self.nodes.closest(x, y)
+        cpt = self.closest_cpt(x, y)
+        node = self.closest_node(x, y)
 
         if cpt and node:
             self.ui.show_error_dialog(
@@ -547,7 +568,7 @@ class UIModelMPH(UIModelBase):
         from os import remove
 
         schtex_filename = tmpfilename('.schtex')
-        cct = self.cct
+        cct = self.circuit
         cct.draw(schtex_filename)
 
         with open(schtex_filename) as f:

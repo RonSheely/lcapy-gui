@@ -6,7 +6,7 @@ class RGround(Connection):
     Rail ground connection
     """
 
-    TYPE = "A"
+    type = "A"
     NAME = "RGround"
 
     def net(self, connections, step=1):

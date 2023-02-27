@@ -6,7 +6,7 @@ class Connection(Component):
 
     def __str__(self) -> str:
 
-        return self.TYPE + ' ' + '(%s, %s)' % \
+        return self.type + ' ' + '(%s, %s)' % \
             (self.nodes[0].position[0], self.nodes[0].position[1])
 
     @property

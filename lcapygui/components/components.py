@@ -7,9 +7,9 @@ class Components(list):
 
     def add(self, cpt, name, *nodes):
 
-        if cpt.TYPE not in self.types:
-            self.types[cpt.TYPE] = []
-        self.types[cpt.TYPE].append(name)
+        if cpt.type not in self.types:
+            self.types[cpt.type] = []
+        self.types[cpt.type].append(name)
 
         cpt.name = name
         cpt.nodes = nodes
@@ -19,13 +19,13 @@ class Components(list):
     def add_auto(self, cpt, *nodes):
         """Enumerate component before adding."""
 
-        if cpt.TYPE not in self.types:
-            name = cpt.TYPE + '1'
+        if cpt.type not in self.types:
+            name = cpt.type + '1'
         else:
             num = 1
             while True:
-                name = cpt.TYPE + str(num)
-                if name not in self.types[cpt.TYPE]:
+                name = cpt.type + str(num)
+                if name not in self.types[cpt.type]:
                     break
                 num += 1
 
@@ -78,6 +78,6 @@ class Components(list):
 
         cpt = self.pop(idx)
 
-        self.types[cpt.TYPE].remove(cpt.name)
+        self.types[cpt.type].remove(cpt.name)
 
         return cpt

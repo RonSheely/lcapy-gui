@@ -1,14 +1,12 @@
-from ..components.component import Component
 from ..annotation import Annotation
 from ..annotations import Annotations
-from ..nodes import Nodes
-from ..components.components import Components
 from .preferences import Preferences
 from ..components.cpt_maker import cpt_make
 from copy import copy
 from numpy import array
 from math import atan2, degrees
-from lcapy.mnacpts import Eopamp
+from lcapy import Circuit
+from lcapy.mnacpts import Cpt, Eopamp
 
 
 class UIModelBase:
@@ -52,10 +50,9 @@ class UIModelBase:
 
     def __init__(self, ui):
 
-        self.components = Components()
-        self.nodes = Nodes()
+        self.circuit = Circuit()
         self.ui = ui
-        self._cct = None
+        self._analysis_circuit = None
         self.filename = ''
         self.voltage_annotations = Annotations()
         self.selected = None
@@ -66,56 +63,44 @@ class UIModelBase:
         self.clipped = None
 
     @property
-    def cct(self):
+    def analysis_circuit(self):
+        """This like circuit but it has an added ground node if one does
+        not exist.
 
-        if self._cct is not None:
-            return self._cct
+        """
 
-        from lcapy import Circuit
+        if self._analysis_circuit is not None:
+            return self._analysis_circuit
 
-        if len(self.components) == 0:
+        if self.circuit.elements == {}:
             self.exception('No circuit defined')
             return None
 
-        try:
-            sch = self.components.as_sch(self.STEP)
-        except Exception as e:
-            self.exception(e)
-            return None
+        self._analysis_circuit = self.circuit.copy()
 
         if self.ground_node is None:
-            # Add dummy ground node
-            sch += 'W %s 0\n' % self.nodes[0].name
-
-        self._cct = Circuit(sch)
+            # Add dummy ground node to first node
+            net = 'W %s 0\n' % list(self.circuit.nodes)[0]
+            self.analysis_circuit.add(net)
 
         try:
-            self._cct[0]
+            self._analysis_circuit[0]
         except (AttributeError, ValueError, RuntimeError) as e:
             self.exception(e)
             return None
 
-        return self._cct
-
-    def annotation_make(self, elt, kind='', style=''):
-
-        opts = elt.opts
-
-        for k, v in self.connection_map.items():
-            if k in opts:
-                return self.con_make(k, kind, style)
-        return None
+        return self._analysis_circuit
 
     def bounding_box(self):
 
-        if len(self.nodes) == 0:
+        if len(self.circuit.nodes) == 0:
             return None
 
         xmin = 1000
         xmax = 0
         ymin = 1000
         ymax = 0
-        for node in self.nodes:
+        for node in self.circuit.nodes:
             if node.x < xmin:
                 xmin = node.x
             if node.x > xmax:
@@ -127,13 +112,76 @@ class UIModelBase:
         return xmin, ymin, xmax, ymax
 
     def con_create(self, con_key, x1, y1, x2, y2):
-        """Make and place a connection."""
+        """Create and place a new connection."""
 
-        cpt = self.con_make(con_key)
-        if cpt is None:
-            self.exception('Unimplemented connection ' + con_key)
-            return
-        self.cpt_place(cpt, x1, y1, x2, y2)
+        try:
+            cpt_class_name = self.connection_map[con_key][1]
+        except KeyError:
+            return None
+
+        if cpt_class_name == '':
+            return None
+
+        return self.thing_create(cpt_class_name, x1, y1, x2, y2)
+
+    def choose_cpt_name(self, cpt_type):
+
+        num = 1
+        while True:
+            name = cpt_type + str(num)
+            if name not in self.circuit.elements:
+                return name
+            num += 1
+
+    def choose_node_name(self, nodes):
+
+        num = 1
+        while True:
+            name = str(num)
+            if name not in nodes:
+                return name
+            num += 1
+
+    def thing_create(self, cpt_class_name, x1, y1, x2, y2):
+
+        gcpt = cpt_make(cpt_class_name)
+
+        positions = gcpt.assign_positions(x1, y1, x2, y2)
+
+        cpt_name = self.choose_cpt_name(gcpt.type)
+        net_parts = [cpt_name]
+
+        nodes = list(self.circuit.nodes)
+
+        for m, position in enumerate(positions):
+            node = self.circuit.nodes.by_position(position)
+            if node is None:
+                node_name = self.choose_node_name(nodes)
+                nodes.append(node_name)
+            else:
+                node_name = node.name
+            net_parts.append(node_name)
+
+        net = ' '.join(net_parts)
+
+        if self.ui.debug:
+            print('Adding ' + net)
+
+        cct = self.circuit.add(net)
+        cpt = cct[cpt_name]
+
+        for m, position in enumerate(positions):
+            cpt.nodes[m].pos = position
+
+        # Duck type
+        cpt.gcpt = gcpt
+        gcpt.nodes = cpt.nodes
+
+        self.cpt_draw(cpt)
+
+        self.history.append((cpt, 'A'))
+
+        return cpt
 
     def con_make(self, con_key, kind='', style=''):
 
@@ -147,23 +195,27 @@ class UIModelBase:
         if cpt_class_name == '':
             return None
 
-        cpt = cpt_make(cpt_class_name, kind, style)
+        gcpt = cpt_make(cpt_class_name, kind, style)
         self.invalidate()
-        return cpt
+        return gcpt
 
     @property
     def cpt_selected(self):
 
-        return isinstance(self.selected, Component)
+        return isinstance(self.selected, Cpt)
 
     def cpt_create(self, cpt_key, x1, y1, x2, y2):
-        """Make and place a component."""
+        """Create and place a new component."""
 
-        cpt = self.cpt_make(cpt_key)
-        if cpt is None:
-            self.exception('Unimplemented component ' + cpt_key)
-            return
-        self.cpt_place(cpt, x1, y1, x2, y2)
+        try:
+            cpt_class_name = self.component_map[cpt_key][1]
+        except KeyError:
+            return None
+
+        if cpt_class_name == '':
+            return None
+
+        return self.thing_create(cpt_class_name, x1, y1, x2, y2)
 
     def cpt_delete(self, cpt):
 
@@ -177,9 +229,7 @@ class UIModelBase:
         except AttributeError:
             pass
 
-        self.components.remove(cpt)
-        for node in cpt.nodes:
-            self.nodes.remove(node, cpt)
+        self.circuit.remove(cpt)
 
         if redraw:
             self.ui.clear()
@@ -187,15 +237,19 @@ class UIModelBase:
 
     def cpt_draw(self, cpt):
 
-        cpt.draw(self, self.ui.layer)
+        gcpt = cpt.gcpt
+        gcpt.draw(self, self.ui.layer)
 
         label_cpts = self.preferences.label_cpts
 
-        if cpt.TYPE in ('A', 'O', 'W'):
+        if gcpt.type in ('A', 'O', 'W'):
             label_cpts = 'none'
 
         name = cpt.name
-        value = cpt.value
+
+        # FIXME
+        value = gcpt.value
+
         if value is None:
             value = ''
 
@@ -217,9 +271,9 @@ class UIModelBase:
             raise RuntimeError('Unhandled label_cpts=' + label_cpts)
 
         if label != '':
-            ann = Annotation(self.ui, *cpt.label_position, label)
+            ann = Annotation(self.ui, *gcpt.label_position, label)
             ann.draw(fontsize=18)
-            cpt.annotations.append(ann)
+            gcpt.annotations.append(ann)
 
         draw_nodes = self.preferences.draw_nodes
         if draw_nodes != 'none':
@@ -241,31 +295,17 @@ class UIModelBase:
                 if label_nodes == 'alpha' and not node.name[0].isalpha():
                     continue
 
-                pos = array(node.position)
+                pos = array(node.pos)
                 pos[0] += 0.3
                 pos[1] += 0.3
                 ann = Annotation(self.ui, *pos, node.name)
                 ann.draw(fontsize=18)
-                cpt.annotations.append(ann)
-
-    def cpt_make(self, cpt_key, kind='', style=''):
-
-        try:
-            cpt_class_name = self.component_map[cpt_key][1]
-        except KeyError:
-            return None
-
-        if cpt_class_name == '':
-            return None
-
-        cpt = cpt_make(cpt_class_name, kind, style)
-        self.invalidate()
-        return cpt
+                gcpt.annotations.append(ann)
 
     def cpt_find(self, n1, n2):
 
         cpt2 = None
-        for cpt in self.components:
+        for cpt in self.circuit:
             if (cpt.nodes[0].name == n1 and cpt.nodes[1].name == n2):
                 cpt2 = cpt
                 break
@@ -280,16 +320,11 @@ class UIModelBase:
         """
 
         positions = cpt.assign_positions(x1, y1, x2, y2)
-        angle = degrees(atan2(y2 - y1, x2 - x1))
-        cpt.angle = angle
 
-        nodes = []
-        for position in positions:
-            node = self.nodes.make(*position, None, cpt)
-            self.nodes.add(node)
-            nodes.append(node)
+        # TODO, fixme if placed on top of exisiting node
+        for m, position in enumerate(positions):
+            cpt.nodes[m].pos = position
 
-        self.components.add_auto(cpt, *nodes)
         self.cpt_draw(cpt)
 
         self.select(cpt)
@@ -315,12 +350,12 @@ class UIModelBase:
 
     def export(self, filename):
 
-        cct = self.cct
+        cct = self.circuit
         cct.draw(filename)
 
     def invalidate(self):
 
-        self._cct = None
+        self._analysis_circuit = None
 
     def load(self, filename):
 
@@ -334,134 +369,11 @@ class UIModelBase:
                 self.ui.show_error_dialog('Cannot load Circuitikz macro file')
                 return
 
-        self.components.clear()
-
         try:
-            cct = Circuit(filename)
+            self.circuit = Circuit(filename)
         except Exception as e:
             self.exception(e)
             return
-
-        self.load_from_circuit(cct)
-
-    def load_from_circuit(self, cct):
-
-        # TODO: use Lcapy parser
-
-        sch = cct.sch
-
-        try:
-            # This will fail if have detached circuits unless nodes
-            # are defined in the file.
-            calculated = sch._positions_calculate()
-        except (AttributeError, ValueError, RuntimeError) as e:
-            self.exception(e)
-            return
-
-        width, height = sch.width * self.STEP,  sch.height * self.STEP
-
-        if calculated:
-            # Centre the schematic.
-            offsetx, offsety = self.snap((self.ui.XSIZE - width) / 2,
-                                         (self.ui.YSIZE - height) / 2)
-        else:
-            offsetx, offsety = 0, 0
-
-        vcs = []
-        elements = cct.elements
-        for elt in elements.values():
-
-            # Handle schematic kind
-            if 'kind' in elt.opts:
-                kind = elt.opts['kind']
-            else:
-                kind = ''
-
-            if 'style' in elt.opts:
-                style = elt.opts['style']
-            else:
-                style = ''
-
-            # Handle electrical kind
-            if elt.keyword and elt.keyword[0] is not None:
-                kind = elt.keyword[1]
-
-            if elt.type == 'XX':
-                # Ignore directives
-                continue
-            elif isinstance(elt, Eopamp):
-                cpt = self.cpt_make('opamp')
-            elif elt.type == 'A':
-                cpt = self.annotation_make(elt, kind, style)
-            else:
-                cpt = self.cpt_make(elt.type.lower(), kind, style)
-            if cpt is None:
-                self.exception('Unhandled component ' + str(elt.name))
-                return
-
-            nodes = []
-            for m, node1 in enumerate(elt.nodes[0:2]):
-
-                try:
-                    x1 = sch.nodes[node1.name].pos.x + offsetx
-                    y1 = sch.nodes[node1.name].pos.y + offsety
-                except KeyError:
-                    # Handle opamp ground node
-                    x1, y1 = 0, 0
-
-                node = self.nodes.make(x1, y1, node1.name, cpt)
-                self.nodes.add(node)
-                nodes.append(node)
-            if elt.type in ('R', 'NR'):
-                cpt.value = elt.args[0]
-            elif elt.type in ('C', 'L'):
-                cpt.value = elt.args[0]
-                cpt.initial_value = elt.args[1]
-            elif elt.type in ('V', 'I', 'Z', 'Y'):
-                cpt.value = elt.args[0]
-            elif elt.type in ('E', 'G'):
-                cpt.value = elt.args[0]
-                if isinstance(elt, Eopamp):
-                    for m, node1 in enumerate(elt.nodes[2:4]):
-                        x1 = sch.nodes[node1.name].pos.x + offsetx
-                        y1 = sch.nodes[node1.name].pos.y + offsety
-                        node = self.nodes.make(x1, y1, node1.name, cpt)
-                        self.nodes.add(node)
-                        nodes.append(node)
-                else:
-                    vcs.append((cpt, elt.nodes[2].name, elt.nodes[3].name))
-
-            elif elt.type in ('F', 'H'):
-                cpt.value = elt.args[0]
-                cpt.control = elt.args[1]
-
-            elif elt.type in ('A', 'W', 'O', 'P', 'D'):
-                pass
-            else:
-                self.exception('Unhandled component ' + elt)
-                return
-
-            attrs = []
-            for opt, val in elt.opts.items():
-                if opt in ('left', 'right', 'up', 'down', 'rotate', 'kind', 'style'):
-                    continue
-
-                def fmt(key, val):
-                    if val == '':
-                        return key
-                    return '%s=%s' % (key, val)
-
-                attrs.append(fmt(opt, val))
-            cpt.attrs = ', '.join(attrs)
-            cpt.opts = elt.opts
-
-            self.components.add(cpt, elt.name, *nodes)
-            self.cpt_draw(cpt)
-
-        for cpt, n1, n2 in vcs:
-            ccpt = self.cpt_find(n1, n2)
-            if ccpt is not None:
-                cpt.control = ccpt.name
 
     def move(self, xshift, yshift):
         # TODO
@@ -491,14 +403,10 @@ class UIModelBase:
         s = '# Created by ' + self.ui.NAME + ' V' + self.ui.version + '\n'
 
         # Define node positions
-        foo = [str(node) for node in self.nodes]
+        foo = [str(node) for node in self.circuit.nodes.values()]
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
-        try:
-            s += self.components.as_sch(self.STEP)
-        except Exception as e:
-            self.exception(e)
-            return
+        s += str(self.circuit) + '\n'
 
         # Note, need a newline so string treated as a netlist string
         s += '; ' + self.preferences.schematic_preferences() + '\n'
@@ -507,7 +415,7 @@ class UIModelBase:
     def inspect_admittance(self, cpt):
 
         try:
-            self.last_expr = self.cct[cpt.name].Y
+            self.last_expr = self.analysis_circuit[cpt.name].Y
             self.ui.show_expr_dialog(self.last_expr,
                                      '%s admittance' % cpt.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -517,7 +425,7 @@ class UIModelBase:
 
         # TODO: FIXME for wire current
         try:
-            self.last_expr = self.cct[cpt.name].i
+            self.last_expr = self.analysis_circuit[cpt.name].i
             self.ui.show_expr_dialog(self.last_expr,
                                      '%s current' % cpt.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -526,7 +434,7 @@ class UIModelBase:
     def inspect_impedance(self, cpt):
 
         try:
-            self.last_expr = self.cct[cpt.name].Z
+            self.last_expr = self.analysis_circuit[cpt.name].Z
             self.ui.show_expr_dialog(self.last_expr,
                                      '%s impe' % cpt.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -535,7 +443,7 @@ class UIModelBase:
     def inspect_norton_admittance(self, cpt):
 
         try:
-            self.last_expr = self.cct[cpt.name].dpY
+            self.last_expr = self.analysis_circuit[cpt.name].dpY
             self.ui.show_expr_dialog(self.last_expr,
                                      '%s Norton admittance' % cpt.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -544,7 +452,7 @@ class UIModelBase:
     def inspect_thevenin_impedance(self, cpt):
 
         try:
-            self.last_expr = self.cct[cpt.name].dpZ
+            self.last_expr = self.analysis_circuit[cpt.name].dpZ
             self.ui.show_expr_dialog(self.last_expr,
                                      '%s Thevenin impedance' % cpt.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -553,7 +461,7 @@ class UIModelBase:
     def inspect_voltage(self, cpt):
 
         try:
-            self.last_expr = self.cct[cpt.name].v
+            self.last_expr = self.analysis_circuit[cpt.name].v
             self.ui.show_expr_dialog(self.last_expr,
                                      '%s potential difference' % cpt.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -562,7 +470,7 @@ class UIModelBase:
     def show_node_voltage(self, node):
 
         try:
-            self.last_expr = self.cct[node.name].v
+            self.last_expr = self.analysis_circuit[node.name].v
             self.ui.show_expr_dialog(self.last_expr,
                                      'Node %s potential' % node.name)
         except (AttributeError, ValueError, RuntimeError) as e:
@@ -584,13 +492,13 @@ class UIModelBase:
 
     def view(self):
 
-        cct = self.cct
+        cct = self.circuit
         cct.draw()
 
     def voltage_annotate(self, cpt):
 
-        ann1 = Annotation(self.ui, *cpt.nodes[0].position, '+')
-        ann2 = Annotation(self.ui, *cpt.nodes[1].position, '-')
+        ann1 = Annotation(self.ui, *cpt.nodes[0].pos, '+')
+        ann2 = Annotation(self.ui, *cpt.nodes[1].pos, '-')
 
         self.voltage_annotations.add(ann1)
         self.voltage_annotations.add(ann2)
@@ -606,16 +514,16 @@ class UIModelBase:
 
         if node.port:
             self.ui.layer.stroke_circle(
-                *node.position, self.preferences.node_size,
+                *node.pos, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
         else:
             self.ui.layer.stroke_filled_circle(
-                *node.position, self.preferences.node_size,
+                *node.pos, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
 
     def node_find(self, nodename):
 
-        for node in self.nodes:
+        for node in self.circuit.nodes.values():
             if node.name == nodename:
                 return node
         return None
@@ -627,7 +535,7 @@ class UIModelBase:
 
     def redraw(self):
 
-        for cpt in self.components:
+        for cpt in self.circuit.elements.values():
             self.cpt_draw(cpt)
 
     def undo(self):
@@ -636,7 +544,7 @@ class UIModelBase:
             return
         cpt, op = self.history.pop()
         if op == 'D':
-            self.components.add(cpt, cpt.name, *cpt.nodes)
+            self.circuit.add(cpt)
             self.cpt_draw(cpt)
             self.select(cpt)
         else:
