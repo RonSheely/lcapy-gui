@@ -78,8 +78,8 @@ class Component(ABC):
     def __str__(self) -> str:
 
         return self.type + ' ' + '(%s, %s) (%s, %s)' % \
-            (self.nodes[0].pos[0], self.nodes[0].pos[1],
-             self.nodes[1].pos[0], self.nodes[1].pos[1])
+            (self.nodes[0].pos.x, self.nodes[0].pos.y,
+             self.nodes[1].pos.x, self.nodes[1].pos.y)
 
     @property
     def sketch_key(self):
@@ -100,8 +100,8 @@ class Component(ABC):
         if self.sketch is None:
             return
 
-        x1, y1 = self.nodes[0].pos
-        x2, y2 = self.nodes[1].pos
+        x1, y1 = self.nodes[0].x, self.nodes[0].y
+        x2, y2 = self.nodes[1].x, self.nodes[1].y
 
         dx = x2 - x1
         dy = y2 - y1
@@ -137,8 +137,7 @@ class Component(ABC):
         """
         Computes the length of the component.
         """
-        return norm(array(self.nodes[1].pos)
-                    - array(self.nodes[0].pos))
+        return (self.nodes[1].pos - self.nodes[0].pos).norm()
 
     @property
     def midpoint(self) -> array:
@@ -146,8 +145,7 @@ class Component(ABC):
         Computes the midpoint of the component.
         """
 
-        return (array(self.nodes[0].pos)
-                + array(self.nodes[1].pos)) / 2
+        return (self.nodes[0].pos + self.nodes[1].pos) * 0.5
 
     @property
     def vertical(self) -> bool:
@@ -155,8 +153,8 @@ class Component(ABC):
         Returns true if component essentially vertical.
         """
 
-        x1, y1 = self.nodes[0].pos
-        x2, y2 = self.nodes[1].pos
+        x1, y1 = self.nodes[0].x, self.nodes[0].y
+        x2, y2 = self.nodes[1].x, self.nodes[1].y
         return abs(y2 - y1) > abs(x2 - x1)
 
     @property
@@ -168,9 +166,9 @@ class Component(ABC):
         pos = self.midpoint
         w = self.label_offset
         if self.vertical:
-            pos[0] += w
+            pos.x += w
         else:
-            pos[1] += w
+            pos.y += w
 
         return pos
 

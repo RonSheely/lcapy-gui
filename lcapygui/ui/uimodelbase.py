@@ -7,6 +7,7 @@ from numpy import array
 from math import atan2, degrees, sqrt
 from lcapy import Circuit
 from lcapy.mnacpts import Cpt, Eopamp
+from lcapy.nodes import parse_nodes
 
 
 class UIModelBase:
@@ -206,6 +207,9 @@ class UIModelBase:
     def cpt_draw(self, cpt):
 
         gcpt = cpt.gcpt
+        if gcpt is None:
+            return
+
         gcpt.draw(self, self.ui.layer)
 
         label_cpts = self.preferences.label_cpts
@@ -239,7 +243,8 @@ class UIModelBase:
             raise RuntimeError('Unhandled label_cpts=' + label_cpts)
 
         if label != '':
-            ann = Annotation(self.ui, *gcpt.label_position, label)
+            ann = Annotation(self.ui, gcpt.label_position.x,
+                             gcpt.label_position.y, label)
             ann.draw(fontsize=18)
             gcpt.annotations.append(ann)
 
@@ -324,6 +329,33 @@ class UIModelBase:
         except Exception as e:
             self.exception(e)
             return
+
+        positions = None
+        for cpt in self.circuit.elements.values():
+            if cpt.type == 'XX' and 'nodes' in cpt.opts:
+                positions = parse_nodes(cpt.opts['nodes'])
+
+        if positions is None:
+            self.exception('Node positions not defined')
+            return
+
+        for k, v in self.circuit.nodes.items():
+            v.pos = positions[k]
+
+        for cpt in self.circuit.elements.values():
+            if cpt.type == 'XX':
+                cpt.gcpt = None
+                continue
+            try:
+                gcpt = cpt_make(cpt.type)
+                gcpt.nodes = cpt.nodes
+            except Exception as e:
+                cgpt = None
+                self.exception(e)
+
+            cpt.gcpt = gcpt
+
+        self.redraw()
 
     def move(self, xshift, yshift):
         # TODO
@@ -505,11 +537,11 @@ class UIModelBase:
 
         if node.port:
             self.ui.layer.stroke_circle(
-                *node.pos, self.preferences.node_size,
+                node.x, node.y, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
         else:
             self.ui.layer.stroke_filled_circle(
-                *node.pos, self.preferences.node_size,
+                node.x, node.y, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
 
     def node_find(self, nodename):
