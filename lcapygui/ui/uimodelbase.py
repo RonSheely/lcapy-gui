@@ -112,19 +112,6 @@ class UIModelBase:
                 ymax = node.y
         return xmin, ymin, xmax, ymax
 
-    def con_create(self, con_key, x1, y1, x2, y2):
-        """Create a new connection."""
-
-        try:
-            cpt_type = self.connection_map[con_key][1]
-        except KeyError:
-            return None
-
-        if cpt_type == '':
-            return None
-
-        return self.thing_create(cpt_type, x1, y1, x2, y2)
-
     def choose_cpt_name(self, cpt_type):
 
         num = 1
@@ -143,21 +130,18 @@ class UIModelBase:
                 return name
             num += 1
 
-    def con_make(self, con_key, kind='', style=''):
+    def con_create(self, con_key, x1, y1, x2, y2):
+        """Create a new connection."""
 
         try:
             cpt_type = self.connection_map[con_key][1]
-            if kind == '':
-                kind = self.connection_map[con_key][2]
         except KeyError:
             return None
 
         if cpt_type == '':
             return None
 
-        gcpt = cpt_make(cpt_type, kind, style)
-        self.invalidate()
-        return gcpt
+        return self.thing_create(cpt_type, x1, y1, x2, y2)
 
     def copy(self, cpt):
 
@@ -344,6 +328,8 @@ class UIModelBase:
         for k, v in self.circuit.nodes.items():
             v.pos = positions[k]
 
+        self.remove_directives()
+
         for cpt in self.circuit.elements.values():
             if cpt.type == 'XX':
                 cpt.gcpt = None
@@ -362,6 +348,7 @@ class UIModelBase:
 
             cpt.gcpt = gcpt
 
+        self.invalidate()
         self.redraw()
 
     def move(self, xshift, yshift):
@@ -374,6 +361,29 @@ class UIModelBase:
             return
 
         return self.thing_create(self.clipboard.type, x1, y1, x2, y2)
+
+    def remove_directives(self):
+
+        elt_list = list(self.circuit.elements.values())
+        if elt_list == []:
+            return
+
+        cpt = elt_list[-1]
+        if cpt.type == 'XX':
+            # TODO: make more robust
+            # This tries to remove the schematic attributes.
+            # Perhaps parse this and set preferences but this
+            # might be confusing.
+            self.circuit.remove(cpt.name)
+            cpt = elt_list[0]
+
+        if cpt.type == 'XX' and cpt._string.startswith('# Created by lcapy'):
+            self.circuit.remove(cpt.name)
+
+        if len(elt_list) > 1:
+            cpt = elt_list[1]
+            if cpt.type == 'XX' and cpt._string.startswith('; nodes='):
+                self.circuit.remove(cpt.name)
 
     def rotate(self, angle):
         # TODO
