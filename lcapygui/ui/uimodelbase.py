@@ -219,8 +219,10 @@ class UIModelBase:
 
         name = cpt.name
 
-        # FIXME
-        value = gcpt.value
+        try:
+            value = cpt.args[0]
+        except IndexError:
+            value = None
 
         if value is None:
             value = ''

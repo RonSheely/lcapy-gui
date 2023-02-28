@@ -33,17 +33,17 @@ class CptPropertiesDialog:
 
         entries.append(LabelEntry('name', 'Name', self.cpt.name,
                                   command=self.on_update))
-        entries.append(LabelEntry('value', 'Value', self.gcpt.value,
-                                  command=self.on_update))
+
+        for m, arg in enumerate(self.gcpt.args):
+            entries.append(LabelEntry(arg, arg, self.cpt.args[m],
+                                      command=self.on_update))
 
         if cpt.is_capacitor:
-            entries.append(LabelEntry(
-                'initial_value', 'v0', self.gcpt.initial_value,
-                command=self.on_update))
+            entries.append(LabelEntry('v0', 'v0', self.cpt.v0,
+                                      command=self.on_update))
         elif cpt.is_inductor:
-            entries.append(LabelEntry(
-                'initial_value', 'i0', self.gcpt.initial_value,
-                command=self.on_update))
+            entries.append(LabelEntry('i0', 'i0', self.cpt.i0,
+                                      command=self.on_update))
         elif isinstance(cpt, (VCVS, VCCS, CCVS, CCCS)):
             names = [c.name for c in ui.model.components if c.name[0] != 'W']
             entries.append(LabelEntry('control', 'Control',
@@ -75,11 +75,15 @@ class CptPropertiesDialog:
         else:
             self.ui.show_error_dialog('Cannot change component type')
 
-        self.gcpt.value = self.labelentries.get('value')
+        for m, arg in enumerate(self.gcpt.args):
+            value = self.labelentries.get(arg)
+            self.cpt.args[m] = value
 
         try:
-            self.gcpt.initial_value = self.labelentries.get(
-                'initial_value')
+            if self.cpt.is_capacitor:
+                self.cpt.v0 = self.labelentries.get('v0')
+            elif self.cpt.is_inductor:
+                self.cpt.i0 = self.labelentries.get('i0')
         except KeyError:
             pass
 

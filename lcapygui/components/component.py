@@ -15,12 +15,6 @@ class Component(ABC):
     """
     Describes an lcapy-gui component.
     This is an abstract class, specific components are derived from here.
-
-    Parameters
-    ----------
-
-    value: Union[str, int, float]
-        The value of the component.
     """
 
     args = ('Value', )
@@ -32,12 +26,10 @@ class Component(ABC):
     schematic_kind = False
     label_offset = 0.6
 
-    def __init__(self, value: Union[str, int, float], kind='', style=''):
+    def __init__(self, kind='', style=''):
 
         self.name = None
-        self.value: str = value
         self.nodes = []
-        self.initial_value = None
         self.control = None
         self.attrs = ''
         self.opts = []
