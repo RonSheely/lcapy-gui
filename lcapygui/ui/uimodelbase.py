@@ -347,7 +347,10 @@ class UIModelBase:
                 cpt.gcpt = None
                 continue
             try:
-                gcpt = cpt_make(cpt.type)
+                cpt_type = cpt.type
+                if isinstance(cpt, Eopamp):
+                    cpt_type = 'Opamp'
+                gcpt = cpt_make(cpt_type)
                 gcpt.nodes = cpt.nodes
             except Exception as e:
                 cgpt = None

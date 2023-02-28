@@ -35,13 +35,6 @@ class Opamp(Component):
              'r-': ('l', -0.85, 0.25),
              'r+': ('l', -0.85, -0.25)}
 
-    def _tf(self, path, scale=1.0):
-
-        # TODO, rotate
-        path = path * self.length() / scale * 2
-        path = path + self.midpoint
-        return path
-
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
 
@@ -62,18 +55,18 @@ class Opamp(Component):
         return positions
 
     @property
-    def midpoint(self) -> float:
+    def midpoint(self):
 
-        pos = (self.nodes[2].pos + self.nodes[3].pos) / 2
+        pos = (self.nodes[2].pos + self.nodes[3].pos) * 0.5
 
-        return (self.nodes[0].pos + pos) / 2
+        return (self.nodes[0].pos + pos) * 0.5
 
     def length(self) -> float:
 
-        pos = (self.nodes[2].pos + self.nodes[3].pos) / 2
+        pos = (self.nodes[2].pos + self.nodes[3].pos) * 0.5
 
-        diff = (pos - self.nodes[0].pos) / 2
-        return norm(diff)
+        diff = (pos - self.nodes[0].pos) * 0.5
+        return diff.norm()
 
     def net(self, connections, step=1):
 
@@ -87,8 +80,8 @@ class Opamp(Component):
 
     def draw(self, editor, layer, **kwargs):
 
-        x1, y1 = self.nodes[2].pos
-        x2, y2 = self.nodes[3].pos
+        x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
+        x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
 
         xc = (x1 + x2) / 2
         yc = (y1 + y2) / 2
