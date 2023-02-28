@@ -39,10 +39,10 @@ class CptPropertiesDialog:
                                       command=self.on_update))
 
         if cpt.is_capacitor:
-            entries.append(LabelEntry('v0', 'v0', self.cpt.v0,
+            entries.append(LabelEntry('v0', 'v0', self.cpt.cpt.v0,
                                       command=self.on_update))
         elif cpt.is_inductor:
-            entries.append(LabelEntry('i0', 'i0', self.cpt.i0,
+            entries.append(LabelEntry('i0', 'i0', self.cpt.cpt.i0,
                                       command=self.on_update))
         elif isinstance(cpt, (VCVS, VCCS, CCVS, CCCS)):
             names = [c.name for c in ui.model.components if c.name[0] != 'W']
@@ -81,9 +81,9 @@ class CptPropertiesDialog:
 
         try:
             if self.cpt.is_capacitor:
-                self.cpt.v0 = self.labelentries.get('v0')
+                self.cpt.cpt.v0 = self.labelentries.get('v0')
             elif self.cpt.is_inductor:
-                self.cpt.i0 = self.labelentries.get('i0')
+                self.cpt.cpt.i0 = self.labelentries.get('i0')
         except KeyError:
             pass
 
