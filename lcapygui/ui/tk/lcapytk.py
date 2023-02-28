@@ -553,11 +553,13 @@ class LcapyTk(Tk):
     def show_info_dialog(self, message):
 
         from tkinter.messagebox import showinfo
+
         showinfo('', message)
 
     def show_error_dialog(self, message):
 
         from tkinter.messagebox import showerror
+
         showerror('', message)
 
     def show_message_dialog(self, message, title=''):
@@ -565,6 +567,12 @@ class LcapyTk(Tk):
         from .message_dialog import MessageDialog
 
         self.message_dialog = MessageDialog(message, title)
+
+    def show_warning_dialog(self, message):
+
+        from tkinter.messagebox import showwarning
+
+        showwarning('', message)
 
     def open_file_dialog(self, initialdir='.'):
 

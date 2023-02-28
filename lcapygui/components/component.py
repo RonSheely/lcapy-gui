@@ -99,6 +99,10 @@ class Component(ABC):
         dx = x2 - x1
         dy = y2 - y1
         r = sqrt(dx**2 + dy**2)
+        if r == 0:
+            editor.ui.show_warning_dialog(
+                'Ignoring zero size component ' + self.name)
+            return
 
         angle = degrees(atan2(dy, dx))
 
