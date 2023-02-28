@@ -353,6 +353,7 @@ class UIModelBase:
                 if isinstance(cpt, Eopamp):
                     cpt_type = 'Opamp'
                 gcpt = cpt_make(cpt_type)
+                # FIXME.
                 gcpt.name = cpt.name
                 gcpt.nodes = cpt.nodes
             except Exception as e:
@@ -399,6 +400,7 @@ class UIModelBase:
             if cpt.gcpt is not None:
                 s += '; ' + cpt.gcpt.attr_string(self.STEP) + '\n'
 
+        # FIXME, remove other preference string
         # Note, need a newline so string treated as a netlist string
         s += '; ' + self.preferences.schematic_preferences() + '\n'
         return s
@@ -414,7 +416,6 @@ class UIModelBase:
         nodes = list(self.circuit.nodes)
         positions = gcpt.assign_positions(x1, y1, x2, y2)
 
-        gcpt = cpt_make(cpt_type)
         for m, position in enumerate(positions):
             node = self.circuit.nodes.by_position(position)
             if node is None:
