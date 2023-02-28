@@ -1,5 +1,5 @@
 """
-Defines the components that lcapy-gui can simulate
+Defines the components that lcapy-gui can draw
 """
 
 from numpy import array, dot
@@ -23,6 +23,7 @@ class Component(ABC):
         The value of the component.
     """
 
+    args = ('Value', )
     kinds = {}
     styles = {}
     can_stretch = False
@@ -176,51 +177,10 @@ class Component(ABC):
 
         return array(((x1, y1), (x2, y2)))
 
-    def net(self, components, step=1):
+    def attr_string(self, step=1):
 
-        parts = [self.name]
-        for node in self.nodes[0:2]:
-            parts.append(node.name)
-
-        if self.type in ('E', 'F', 'G', 'H') \
-           and self.control is None and self.__class__.__name__ != 'Opamp':
-            raise ValueError(
-                'Control component not defined for ' + self.name)
-
-        if self.type in ('E', 'G'):
-
-            if self.__class__.__name__ == 'Opamp':
-                parts.append('opamp')
-                for node in self.nodes[2:4]:
-                    parts.append(node.name)
-            else:
-                # Lookup nodes for the control component.
-                idx = components.find_index(self.control)
-                parts.append(components[idx].nodes[0].name)
-                parts.append(components[idx].nodes[1].name)
-        elif self.type in ('F', 'H'):
-            parts.append(self.control)
-
-        # Later need to handle schematic kind attributes.
-        if not self.schematic_kind and self.kind not in (None, ''):
-            parts.append(self.kind)
-
-        if self.type not in ('W', 'P', 'O') and self.value is not None:
-            if self.initial_value is None and self.name != self.value:
-                if self.value.isalnum():
-                    parts.append(self.value)
-                else:
-                    parts.append('{' + self.value + '}')
-
-        if self.initial_value is not None:
-            parts.append(self.value)
-            if self.initial_value.isalnum():
-                parts.append(self.initial_value)
-            else:
-                parts.append('{' + self.initial_value + '}')
-
-        x1, y1 = self.nodes[0].pos
-        x2, y2 = self.nodes[1].pos
+        x1, y1 = self.nodes[0].x, self.nodes[0].y
+        x2, y2 = self.nodes[1].x, self.nodes[1].y
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
         if r == 1:
@@ -266,7 +226,7 @@ class Component(ABC):
         if self.style not in (None, ''):
             attr += ', style=' + self.style
 
-        return ' '.join(parts) + '; ' + attr
+        return attr
 
 
 class BipoleComponent(Component):

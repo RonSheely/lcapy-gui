@@ -1,5 +1,3 @@
-from ...components.capacitor import Capacitor
-from ...components.inductor import Inductor
 from ...components.vcvs import VCVS
 from ...components.vccs import VCCS
 from ...components.ccvs import CCVS
@@ -33,16 +31,16 @@ class CptPropertiesDialog:
                 'style', 'Style', style_name, list(self.gcpt.styles.values()),
                 command=self.on_update))
 
-        entries.append(LabelEntry('name', 'Name', self.gcpt.name,
+        entries.append(LabelEntry('name', 'Name', self.cpt.name,
                                   command=self.on_update))
         entries.append(LabelEntry('value', 'Value', self.gcpt.value,
                                   command=self.on_update))
 
-        if isinstance(cpt, Capacitor):
+        if cpt.is_capacitor:
             entries.append(LabelEntry(
                 'initial_value', 'v0', self.gcpt.initial_value,
                 command=self.on_update))
-        elif isinstance(cpt, Inductor):
+        elif cpt.is_inductor:
             entries.append(LabelEntry(
                 'initial_value', 'i0', self.gcpt.initial_value,
                 command=self.on_update))

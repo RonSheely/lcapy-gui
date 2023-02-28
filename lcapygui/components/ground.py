@@ -14,7 +14,6 @@ class Ground(Connection):
 
         return self.type + ' 1' '; down, ' + self.kind
 
-    def net(self, connections, step=1):
+    def attr_string(self, step=1):
 
-        return self.name + ' ' + self.nodes[0].name + '; down, ' \
-            + self.kind
+        return 'down, ' + self.kind

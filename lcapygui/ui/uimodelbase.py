@@ -351,6 +351,7 @@ class UIModelBase:
                 if isinstance(cpt, Eopamp):
                     cpt_type = 'Opamp'
                 gcpt = cpt_make(cpt_type)
+                gcpt.name = cpt.name
                 gcpt.nodes = cpt.nodes
             except Exception as e:
                 cgpt = None
@@ -391,7 +392,10 @@ class UIModelBase:
         foo = [str(node) for node in self.circuit.nodes.values()]
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
-        s += str(self.circuit) + '\n'
+        for cpt in self.circuit.elements.values():
+            s += str(cpt)
+            if cpt.gcpt is not None:
+                s += '; ' + cpt.gcpt.attr_string(self.STEP) + '\n'
 
         # Note, need a newline so string treated as a netlist string
         s += '; ' + self.preferences.schematic_preferences() + '\n'
@@ -401,13 +405,14 @@ class UIModelBase:
 
         gcpt = cpt_make(cpt_type)
 
-        positions = gcpt.assign_positions(x1, y1, x2, y2)
-
         cpt_name = self.choose_cpt_name(gcpt.type)
+        gcpt.name = cpt_name
         net_parts = [cpt_name]
 
         nodes = list(self.circuit.nodes)
+        positions = gcpt.assign_positions(x1, y1, x2, y2)
 
+        gcpt = cpt_make(cpt_type)
         for m, position in enumerate(positions):
             node = self.circuit.nodes.by_position(position)
             if node is None:

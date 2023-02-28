@@ -9,6 +9,7 @@ class Opamp(Component):
     sketch_net = 'E 1 2 opamp 3 4'
     sketch_key = 'opamp'
     label_offset = 0
+    args = ('Ad', 'Ac', 'Ro')
 
     # The Nm node is not used (ground).
     node_pinnames = ('out', '', 'in+', 'in-')
@@ -68,15 +69,13 @@ class Opamp(Component):
         diff = (pos - self.nodes[0].pos) * 0.5
         return diff.norm()
 
-    def net(self, connections, step=1):
-
-        nodenames = [node.name for node in self.nodes]
+    def attr_string(self, step=1):
 
         # TODO: Handle rotation
         dy = abs(self.nodes[3].y - self.nodes[2].y)
         size = dy * 5 / 4
 
-        return '%s %s %s opamp %s %s; right=%s' % (self.name, *nodenames, size)
+        return 'right=%s' % size
 
     def draw(self, editor, layer, **kwargs):
 

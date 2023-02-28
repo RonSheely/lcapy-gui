@@ -262,7 +262,7 @@ class UIModelMPH(UIModelBase):
         self.clear()
         if isinstance(cpt, Cpt):
             # If kind has changed need to remake the sketch
-            cpt_remake(cpt)
+            cpt_remake(cpt.gcpt)
         self.redraw()
         self.cursors.draw()
         self.ui.refresh()
