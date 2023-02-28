@@ -376,8 +376,8 @@ class UIModelMPH(UIModelBase):
             if self.ui.debug:
                 print('Selected ' + cpt.name)
             self.cursors.remove()
-            self.add_cursor(*cpt.nodes[0].pos)
-            self.add_cursor(*cpt.nodes[1].pos)
+            self.add_cursor(cpt.nodes[0].pos.x, cpt.nodes[0].pos.y)
+            self.add_cursor(cpt.nodes[1].pos.x, cpt.nodes[1].pos.y)
         else:
             if self.ui.debug:
                 print('Add node at (%s, %s)' % (x, y))
