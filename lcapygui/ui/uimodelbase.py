@@ -3,11 +3,11 @@ from ..annotations import Annotations
 from .preferences import Preferences
 from ..components.cpt_maker import cpt_make
 from copy import copy
-from numpy import array
 from math import atan2, degrees, sqrt
 from lcapy import Circuit
 from lcapy.mnacpts import Cpt, Eopamp
 from lcapy.nodes import parse_nodes
+from lcapy.schemmisc import Pos
 
 
 class UIModelBase:
@@ -101,7 +101,7 @@ class UIModelBase:
         xmax = 0
         ymin = 1000
         ymax = 0
-        for node in self.circuit.nodes:
+        for node in self.circuit.nodes.values():
             if node.x < xmin:
                 xmin = node.x
             if node.x > xmax:
@@ -268,10 +268,10 @@ class UIModelBase:
                 if label_nodes == 'alpha' and not node.name[0].isalpha():
                     continue
 
-                pos = array(node.pos)
-                pos[0] += 0.3
-                pos[1] += 0.3
-                ann = Annotation(self.ui, *pos, node.name)
+                x, y = node.pos.x, node.pos.y
+                x += 0.3
+                y += 0.3
+                ann = Annotation(self.ui, x, y, node.name)
                 ann.draw(fontsize=18)
                 gcpt.annotations.append(ann)
 
@@ -423,7 +423,7 @@ class UIModelBase:
         cpt = cct[cpt_name]
 
         for m, position in enumerate(positions):
-            cpt.nodes[m].pos = position
+            cpt.nodes[m].pos = Pos(position)
 
         # Duck type
         cpt.gcpt = gcpt

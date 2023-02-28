@@ -142,8 +142,12 @@ class UIModelMPH(UIModelBase):
         for cpt in self.circuit.elements.values():
 
             gcpt = cpt.gcpt
+            if gcpt is None:
+                continue
+
             lsq = gcpt.length() ** 2
-            xm, ym = gcpt.midpoint
+            mid = gcpt.midpoint
+            xm, ym = mid.x, mid.y
             rsq = (xm - x)**2 + (ym - y)**2
             if rsq < 0.1 * lsq:
                 return cpt
@@ -152,7 +156,7 @@ class UIModelMPH(UIModelBase):
     def closest_node(self, x, y):
 
         for node in self.circuit.nodes.values():
-            x1, y1 = node.pos
+            x1, y1 = node.pos.x, node.pos.y
             rsq = (x1 - x)**2 + (y1 - y)**2
             if rsq < 0.1:
                 return node

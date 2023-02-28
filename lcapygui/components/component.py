@@ -107,7 +107,6 @@ class Component(ABC):
         dy = y2 - y1
         r = sqrt(dx**2 + dy**2)
 
-        # R = array(((dx, -dy), (dy, dx))) / r
         angle = degrees(atan2(dy, dx))
 
         # Width in cm
@@ -140,7 +139,7 @@ class Component(ABC):
         return (self.nodes[1].pos - self.nodes[0].pos).norm()
 
     @property
-    def midpoint(self) -> array:
+    def midpoint(self):
         """
         Computes the midpoint of the component.
         """
@@ -158,7 +157,7 @@ class Component(ABC):
         return abs(y2 - y1) > abs(x2 - x1)
 
     @property
-    def label_position(self) -> array:
+    def label_position(self):
         """
         Returns position where to place label.
         """
