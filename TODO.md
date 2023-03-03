@@ -1,73 +1,50 @@
 1. Highlight selected component ?
 
-2. Add stretchy wires to components rather than resizing
+2. Add misc operations: poles, zeros, etc.
 
-3. Add coloured components
-
-4. Click on component to edit attributes: name, kind, value.  For
-example, DC, AC, transient kinds of source.
-
-5. Add ports, open circuits (how to show?)
-
-6. Add misc operations: poles, zeros, etc.
-
-7. Show current through component.  For wires this is tricky and will
+3. Show current through component.  For wires this is tricky and will
 require some Lcapy magic.  Need to sum all the currents coming into
 the branch node.  This requires recursion if connected to other wires.
 Stop if reach one of the branch nodes
 
-8. Redo...
+4. Redo...
 
-9. Move components
+5. Move components
 
-10. Rotate components?  Perhaps just delete and re-enter but lose
+6. Rotate components?  Perhaps just delete and re-enter but lose
 attributes unless clever
 
-11. Lots more components to add.  Perhaps automagically go through
-    lcapy.schemcpts to add them.
+7. Configuration file
 
-12. Entry of exotic components, say xtal.  Need a special prefix, say x.
-xxtal for a crystal, xcpe for a CPE, etc.
+8. User levels to hide many options
 
-13. Configuration file
+9. Add numerical analysis
 
-14. User levels to hide many options
+10. Add node in middle of wire?   Need to delete wire or split into two.
 
-15. Make resistors a little shorter
+11. Draw nodes after drawing cpts (for port nodes)
 
-16. Add numerical analysis
+12. Close/quit
 
-17. Draw components in selected colours, etc.
+13. Add labels, voltage labels, current labels to cpt attributes
 
-19. Zoom/pan schematic
+14. Connect opamp negative output node to ground
 
-20. Add node in middle of wire?   Need to delete wire or split into two.
+15. Name opamps E1, E2, etc
 
-21. Draw nodes after drawing cpts (for port nodes)
+16. Flip/mirror opamps
 
-22. Close/quit
-
-23. Add labels, voltage labels, current labels to cpt attributes
-
-24. Add method for drawing plus and minus symbols and use for opamp
-
-25. Connect opamp negative output node to ground
-
-26. Name opamps E1, E2, etc
-
-27. Flip/mirror opamps
-
-28. Make Lcapy more robust to nodes being changed when node positions
+17. Make Lcapy more robust to nodes being changed when node positions
     are defined
 
-29. Improve opamp label placement
+18. Improve opamp label placement
 
-30. Tweak component positions
+19. Add frequency and phase to AC sources
 
-31. Fix asymmetrical components (LED)
+20. Fill open nodes so not transparent to wire underneath
 
-32. Add frequency and phase to AC sources
+21. Fix Lcapy to simplify condition expression for t >= 0
 
-33. Fill open nodes so not transparent to wire underneath
+22. Reposition component labels to match circuitikz
 
-34. Fix Lcapy to simplify condition expression for t >= 0
+23. Fix fullscreen

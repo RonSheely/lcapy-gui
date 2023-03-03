@@ -1,5 +1,4 @@
 from .uimodelbase import UIModelBase
-from ..components.cpt_maker import cpt_remake
 from lcapy.mnacpts import Cpt
 
 
@@ -262,7 +261,12 @@ class UIModelMPH(UIModelBase):
         self.clear()
         if isinstance(cpt, Cpt):
             # If kind has changed need to remake the sketch
-            cpt_remake(cpt.gcpt)
+            # and remake the cpt.
+            self.cpt_remake(cpt)
+        else:
+            # Node name may have changed...
+            pass
+
         self.redraw()
         self.cursors.draw()
         self.ui.refresh()

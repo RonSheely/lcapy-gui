@@ -28,9 +28,10 @@ class NodePropertiesDialog:
 
     def on_update(self):
 
-        self.node.name = self.name_var.get()
+        node_name = self.name_var.get()
 
         self.master.destroy()
 
-        if self.update:
+        if self.node.name != node_name and self.update:
+            self.node_name = node_name
             self.update(self.node)

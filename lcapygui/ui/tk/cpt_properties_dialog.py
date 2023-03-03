@@ -62,8 +62,10 @@ class CptPropertiesDialog:
     def on_update(self, arg=None):
 
         if self.gcpt.kinds != {}:
-            self.gcpt.kind = self.gcpt.inv_kinds[self.labelentries.get(
-                'kind')]
+            kind = self.gcpt.inv_kinds[self.labelentries.get('kind')]
+            if self.gcpt.kind != kind:
+                self.gcpt.kind = kind
+                # Need a new cpt
 
         if self.gcpt.styles != {}:
             self.gcpt.style = self.gcpt.inv_styles[self.labelentries.get(

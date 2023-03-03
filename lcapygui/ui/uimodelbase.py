@@ -1,7 +1,8 @@
 from ..annotation import Annotation
 from ..annotations import Annotations
 from .preferences import Preferences
-from ..components.cpt_maker import cpt_make
+from ..components.cpt_maker import cpt_make, cpt_remake
+
 from copy import copy
 from math import atan2, degrees, sqrt
 from lcapy import Circuit
@@ -22,7 +23,7 @@ class UIModelBase:
         'i': ('Current source', 'I', ''),
         'l': ('Inductor', 'L', ''),
         'r': ('Resistor', 'R', ''),
-        'nr': ('Resistor', 'R', ''),
+        'nr': ('Noiseless resistor', 'R', ''),
         'v': ('Voltage source', 'V', ''),
         'w': ('Wire', 'W', ''),
         'e': ('VCVS', 'E', ''),
@@ -273,6 +274,12 @@ class UIModelBase:
                 'Cannot find a component with nodes %s and %s' % (n1, n2))
         return cpt2
 
+    def cpt_remake(self, cpt):
+
+        newcpt = cpt._change_kind(cpt.gcpt.kind)
+        newcpt.gcpt = cpt.gcpt
+        cpt_remake(newcpt.gcpt)
+
     def cut(self, cpt):
 
         self.delete(cpt)
@@ -338,7 +345,7 @@ class UIModelBase:
                 cpt_type = cpt.type
                 if isinstance(cpt, Eopamp):
                     cpt_type = 'Opamp'
-                gcpt = cpt_make(cpt_type)
+                gcpt = cpt_make(cpt_type, kind=cpt._kind)
                 # FIXME.
                 gcpt.name = cpt.name
                 gcpt.nodes = cpt.nodes
