@@ -11,8 +11,6 @@ from .drawing import Drawing
 
 class LcapyTk(Tk):
 
-    XSIZE = 36
-    YSIZE = 22
     SCALE = 0.01
 
     GEOMETRY = '1200x800'
@@ -226,7 +224,7 @@ class LcapyTk(Tk):
         name = basename(filename)
         self.set_canvas_title(name)
 
-    def create_canvas(self, name):
+    def create_canvas(self, name, model):
 
         tab = Frame(self.notebook)
 
@@ -249,7 +247,7 @@ class LcapyTk(Tk):
         toolbar.update()
         toolbar.pack(side=BOTTOM, fill=X)
 
-        drawing = Drawing(self, fig, self.debug)
+        drawing = Drawing(self, fig, model, self.debug)
         canvas.drawing = drawing
         canvas.tab = tab
         canvas.layer = Layer(canvas.drawing.ax)
@@ -262,10 +260,6 @@ class LcapyTk(Tk):
 
         self.notebook.bind('<<NotebookTabChanged>>', self.on_tab_selected)
 
-        return canvas
-
-    def bind_canvas(self, canvas, model):
-
         canvas.model = model
 
         figure = canvas.drawing.fig
@@ -277,11 +271,12 @@ class LcapyTk(Tk):
 
         self.enter(canvas)
 
+        return canvas
+
     def new(self):
 
         model = self.uimodel_class(self)
-        canvas = self.create_canvas('Untitled')
-        self.bind_canvas(canvas, model)
+        canvas = self.create_canvas('Untitled', model)
         self.model = model
         return model
 

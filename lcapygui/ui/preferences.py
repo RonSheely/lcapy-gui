@@ -17,6 +17,8 @@ class Preferences:
         self.grid = 'on'
         self.lw = 1.2
         self.show_units = 'false'
+        self.xsize = 36
+        self.ysize = 22
 
         self.load()
 

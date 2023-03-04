@@ -41,6 +41,12 @@ class PreferencesDialog:
                    LabelEntry('show_units', 'Show units',
                               self.model.preferences.show_units,
                               ('true', 'false'),
+                              command=self.on_update),
+                   LabelEntry('xsize', 'Width',
+                              self.model.preferences.xsize,
+                              command=self.on_update),
+                   LabelEntry('ysize', 'Height',
+                              self.model.preferences.ysize,
                               command=self.on_update)
                    ]
 
@@ -60,6 +66,8 @@ class PreferencesDialog:
         self.model.preferences.lw = self.labelentries.get('lw')
         self.model.preferences.node_size = self.labelentries.get('node_size')
         self.model.preferences.show_units = self.labelentries.get('show_units')
+        self.model.preferences.xsize = self.labelentries.get('xsize')
+        self.model.preferences.ysize = self.labelentries.get('ysize')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...
