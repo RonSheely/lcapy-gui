@@ -33,5 +33,5 @@ class NodePropertiesDialog:
         self.master.destroy()
 
         if self.node.name != node_name and self.update:
-            self.node_name = node_name
+            self.node.name = node_name
             self.update(self.node)
