@@ -50,6 +50,8 @@ class LcapyTk(Tk):
                                    underline=0, accelerator='Ctrl+n')
         self.file_menu.add_command(label='Open', command=self.on_load,
                                    underline=0, accelerator='Ctrl+o')
+        self.file_menu.add_command(label='Open library', command=self.on_library,
+                                   underline=6, accelerator='Ctrl+l')
         self.file_menu.add_command(label='Save', command=self.on_save,
                                    underline=0, accelerator='Ctrl+s')
         self.file_menu.add_command(label='Save as', command=self.on_save_as,
@@ -398,6 +400,11 @@ class LcapyTk(Tk):
     def on_laplace_model(self, *args):
 
         self.model.on_laplace_model()
+
+    def on_library(self, *args):
+        from lcapygui import __libdir__
+
+        self.model.on_load(str(__libdir__))
 
     def on_load(self, *args):
 

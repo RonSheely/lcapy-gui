@@ -21,3 +21,5 @@ else:
 
 pkg = importlib_resources.files('lcapygui')
 __datadir__ = pkg / 'data'
+
+__libdir__ = __datadir__ / 'lib'

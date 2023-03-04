@@ -391,9 +391,9 @@ class UIModelMPH(UIModelBase):
 
         self.on_right_click(x, y)
 
-    def on_load(self):
+    def on_load(self, initial_dir='.'):
 
-        filename = self.ui.open_file_dialog()
+        filename = self.ui.open_file_dialog(initial_dir)
         if filename == '' or filename == ():
             return
 

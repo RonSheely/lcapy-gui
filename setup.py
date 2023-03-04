@@ -46,6 +46,6 @@ setup(
         ],
     },
     include_package_data=True,
-    package_data={'': ['data/svg/*.svg']},
+    package_data={'': ['data/svg/*.svg', 'data/lib/*.sch']},
     python_requires=">=3.7"  # matched with lcapy
 )
