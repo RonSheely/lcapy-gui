@@ -10,7 +10,7 @@ setup(
         "lcapygui",
         "lcapygui.*"
     ]),
-    version="0.4.3",
+    version="0.5",
     description="A GUI for lcapy",
     long_description=long_description,
     long_description_content_type="text/markdown",
