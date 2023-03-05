@@ -1,4 +1,5 @@
 from tkinter import StringVar, Label, Entry, OptionMenu
+from tkinter.ttk import Checkbutton
 
 
 class LabelEntry:
@@ -34,11 +35,15 @@ class LabelEntries(dict):
                     master, var, *labelentry.options,
                     command=labelentry.command)
             else:
-                entry = Entry(master, textvariable=var)
-                # if labelentry.command:
-                #    var.trace_add('write', labelentry.command)
-                if labelentry.command:
-                    entry.bind('<Return>', labelentry.command)
+                if isinstance(labelentry.default, bool):
+                    entry = Checkbutton(
+                        master, variable=var, command=labelentry.command)
+                else:
+                    entry = Entry(master, textvariable=var)
+                    # if labelentry.command:
+                    #    var.trace_add('write', labelentry.command)
+                    if labelentry.command:
+                        entry.bind('<Return>', labelentry.command)
 
             label.grid(row=self.row, sticky='w')
             entry.grid(row=self.row, column=1, sticky='w')
@@ -67,6 +72,10 @@ class LabelEntries(dict):
             return val
 
         cls = self.get_cls(name)
+
+        if cls is bool:
+            val = {'1': True, '0': False}[val]
+
         try:
             return cls(val)
         except Exception:

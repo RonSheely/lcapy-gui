@@ -26,6 +26,13 @@ class Component(ABC):
     default_style = ''
     schematic_kind = False
     label_offset = 0.6
+    fields = {'label': 'Label',
+              'voltage_label': 'Voltage label',
+              'current_label': 'Current label',
+              'flow_label': 'Flow label',
+              'color': 'Color',
+              'attrs': 'Attributes'}
+    extra_fields = {}
 
     def __init__(self, kind='', style=''):
 
@@ -41,6 +48,9 @@ class Component(ABC):
         self.color = ''
         self.angle = 0
 
+        self.mirror = False
+        self.invert = False
+
         if kind == '':
             kind = self.default_kind
         self.kind = kind
@@ -50,13 +60,6 @@ class Component(ABC):
             style = self.default_style
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
-
-        self.fields = {'label': 'Label',
-                       'voltage_label': 'Voltage label',
-                       'current_label': 'Current label',
-                       'flow_label': 'Flow label',
-                       'color': 'Color',
-                       'attrs': 'Attributes'}
 
     @property
     @classmethod
@@ -140,6 +143,12 @@ class Component(ABC):
 
         if self.color != '':
             kwargs['color'] = self.color
+
+        if self.mirror:
+            kwargs['mirror'] = True
+
+        if self.invert:
+            kwargs['invert'] = True
 
         return kwargs
 

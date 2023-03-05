@@ -36,6 +36,8 @@ class Opamp(Component):
              'r-': ('l', -0.85, 0.25),
              'r+': ('l', -0.85, -0.25)}
 
+    extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
+
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
 

@@ -54,6 +54,10 @@ class CptPropertiesDialog:
             entries.append(LabelEntry(k, v, getattr(self.gcpt, k),
                                       command=self.on_update))
 
+        for k, v in self.gcpt.extra_fields.items():
+            entries.append(LabelEntry(k, v, getattr(self.gcpt, k),
+                                      command=self.on_update))
+
         self.labelentries = LabelEntries(self.master, ui, entries)
 
         button = Button(self.master, text="OK", command=self.on_ok)
@@ -95,6 +99,9 @@ class CptPropertiesDialog:
             pass
 
         for k, v in self.gcpt.fields.items():
+            setattr(self.gcpt, k, self.labelentries.get(k))
+
+        for k, v in self.gcpt.extra_fields.items():
             setattr(self.gcpt, k, self.labelentries.get(k))
 
         if self.update:
