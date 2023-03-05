@@ -85,6 +85,14 @@ class Layer:
 
         color = kwargs.pop('color', sketch.color)
 
+        if 'mirror' in kwargs:
+            kwargs.pop('mirror')
+            print('TODO: add mirror')
+
+        if 'invert' in kwargs:
+            kwargs.pop('invert')
+            print('TODO: add invert')
+
         patches = []
         for spath in sketch.paths:
             path = spath.path
