@@ -64,6 +64,12 @@ class Layer:
 
     def text(self, x, y, text, **kwargs):
 
+        from lcapy.latex import latex_format_label
+
+        # The matplotlib mathtext parser does not like
+        # dollar signs inside mathrm, e.g., \mathrm{$A_2$}
+        # text = r'$\mathrm{' + latex_format_label(text) + '}$'
+
         return self.ax.annotate(text, (x, y), **kwargs)
 
     def stroke_path(self, path, color='black', **kwargs):
