@@ -31,7 +31,7 @@ setup(
         "importlib-metadata",
         "importlib-resources",
         "pathlib",
-        "lcapy>=1.13.1",
+        "lcapy>=1.13.2",
         "numpy",
         "tk",
         "pillow>=9.4.0",
