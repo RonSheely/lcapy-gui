@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from os.path import basename
 from ..uimodelmph import UIModelMPH
-from .layer import Layer
+from .sketcher import Layer
 from .drawing import Drawing
 
 
@@ -204,7 +204,7 @@ class LcapyTk(Tk):
 
         self.canvas = canvas
         self.model = canvas.model
-        self.layer = canvas.layer
+        self.sketcher = canvas.sketcher
 
         if self.debug:
             print(self.notebook.tab(self.notebook.select(), "text"))
@@ -250,7 +250,7 @@ class LcapyTk(Tk):
         drawing = Drawing(self, fig, model, self.debug)
         canvas.drawing = drawing
         canvas.tab = tab
-        canvas.layer = Layer(canvas.drawing.ax)
+        canvas.sketcher = Layer(canvas.drawing.ax)
 
         tab.canvas = canvas
 

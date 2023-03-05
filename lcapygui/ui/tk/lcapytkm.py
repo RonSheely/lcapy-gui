@@ -2,7 +2,7 @@ from matplotlib.pyplot import subplots, rcParams, show
 from matplotlib.backend_tools import ToolBase
 from numpy import arange
 from sys import exit
-from .layer import Layer
+from .sketcher import Layer
 
 
 class Tool(ToolBase):
@@ -125,12 +125,12 @@ class LcapyTkM:
 
         self.draw_grid()
 
-        layer = Layer(self.ax)
+        sketcher = Layer(self.ax)
 
-        self.cursor_layer = layer
-        self.active_layer = layer
-        self.component_layer = layer
-        self.grid_layer = layer
+        self.cursor_sketcher = sketcher
+        self.active_sketcher = sketcher
+        self.component_sketcher = sketcher
+        self.grid_sketcher = sketcher
 
         self.cid = self.fig.canvas.mpl_connect('button_press_event',
                                                self.on_click_event)
@@ -169,7 +169,7 @@ class LcapyTkM:
 
     def clear(self):
 
-        self.component_layer.clear()
+        self.component_sketcher.clear()
         self.draw_grid()
 
     def refresh(self):

@@ -83,7 +83,7 @@ class Opamp(Component):
 
         return attr
 
-    def draw(self, editor, layer, **kwargs):
+    def draw(self, editor, sketcher, **kwargs):
 
         x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
         x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
@@ -104,5 +104,5 @@ class Opamp(Component):
             kwargs.pop('invert')
             print('TODO: add invert')
 
-        layer.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
+        sketcher.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
                      **kwargs)

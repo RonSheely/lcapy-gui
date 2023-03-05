@@ -2,7 +2,7 @@ class Annotation:
 
     def __init__(self, ui, x, y, text):
 
-        self.layer = ui.layer
+        self.sketcher = ui.sketcher
         self.x = x
         self.y = y
         self.text = text
@@ -15,7 +15,7 @@ class Annotation:
 
     def draw(self, **kwargs):
 
-        self.patch = self.layer.text(self.x, self.y, self.text, **kwargs)
+        self.patch = self.sketcher.text(self.x, self.y, self.text, **kwargs)
 
     def remove(self):
 

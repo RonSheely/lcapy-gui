@@ -28,8 +28,8 @@ class Connection(Component):
 
         return array(((x1, y1), ))
 
-    def draw(self, editor, layer, **kwargs):
+    def draw(self, editor, sketcher, **kwargs):
 
         x1, y1 = self.nodes[0].position
-        layer.sketch(self.sketch, offset=(x1, y1),
+        sketcher.sketch(self.sketch, offset=(x1, y1),
                      angle=180, lw=2, **kwargs)

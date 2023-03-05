@@ -195,7 +195,7 @@ class UIModelBase:
         if gcpt is None:
             return
 
-        gcpt.draw(self, self.ui.layer)
+        gcpt.draw(self, self.ui.sketcher)
 
         label_cpts = self.preferences.label_cpts
 
@@ -568,11 +568,11 @@ class UIModelBase:
     def node_draw(self, node):
 
         if node.port:
-            self.ui.layer.stroke_circle(
+            self.ui.sketcher.stroke_circle(
                 node.x, node.y, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
         else:
-            self.ui.layer.stroke_filled_circle(
+            self.ui.sketcher.stroke_filled_circle(
                 node.x, node.y, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
 

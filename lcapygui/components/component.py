@@ -84,7 +84,7 @@ class Component(ABC):
             s += '-' + self.style
         return s
 
-    def draw(self, editor, layer, **kwargs):
+    def draw(self, editor, sketcher, **kwargs):
         """
         Handles drawing specific features of components.
         """
@@ -115,15 +115,15 @@ class Component(ABC):
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
-        layer.sketch(self.sketch, offset=p1p, angle=angle,
+        sketcher.sketch(self.sketch, offset=p1p, angle=angle,
                      snap=True, **kwargs)
 
         if self.can_stretch:
             p2 = array((x2, y2))
             p2p = p2 - dp
 
-            layer.stroke_line(*p1, *p1p, **kwargs)
-            layer.stroke_line(*p2p, *p2, **kwargs)
+            sketcher.stroke_line(*p1, *p1p, **kwargs)
+            sketcher.stroke_line(*p2p, *p2, **kwargs)
 
         # TODO, add label, voltage_label, current_label, flow_label
 
