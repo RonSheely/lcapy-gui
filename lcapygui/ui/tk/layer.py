@@ -95,6 +95,8 @@ class Layer:
             if False and patches == []:
                 print(path.vertices)
 
+            fill = kwargs.pop('fill', fill)
+
             patch = PathPatch(path, fill=fill, color=color, **kwargs)
             patches.append(patch)
             self.ax.add_patch(patch)

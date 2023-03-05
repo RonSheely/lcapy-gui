@@ -4,6 +4,7 @@ Defines the components that lcapy-gui can draw
 
 from numpy import array, dot
 from numpy.linalg import norm
+from lcapy.opts import Opts
 
 from typing import Union
 from abc import ABC, abstractmethod
@@ -32,7 +33,6 @@ class Component(ABC):
         self.nodes = []
         self.control = None
         self.attrs = ''
-        self.opts = []
         self.annotations = []
         self.label = ''
         self.voltage_label = ''
@@ -113,21 +113,33 @@ class Component(ABC):
         dp = array((dx, dy)) / r * (r - s) / 2
         p1p = p1 + dp
 
-        lw = kwargs.pop('lw', editor.preferences.lw)
-        if self.color != '':
-            kwargs['color'] = self.color
+        kwargs = self.make_kwargs(editor, **kwargs)
 
-        layer.sketch(self.sketch, offset=p1p, angle=angle, lw=lw,
+        layer.sketch(self.sketch, offset=p1p, angle=angle,
                      snap=True, **kwargs)
 
         if self.can_stretch:
             p2 = array((x2, y2))
             p2p = p2 - dp
 
-            layer.stroke_line(*p1, *p1p, lw=lw, **kwargs)
-            layer.stroke_line(*p2p, *p2, lw=lw, **kwargs)
+            layer.stroke_line(*p1, *p1p, **kwargs)
+            layer.stroke_line(*p2p, *p2, **kwargs)
 
         # TODO, add label, voltage_label, current_label, flow_label
+
+    def make_kwargs(self, editor, **kwargs):
+
+        opts = Opts(self.attrs)
+
+        kwargs['lw'] = kwargs.pop('lw', editor.preferences.lw)
+
+        for k, v in opts.items():
+            kwargs[k] = v
+
+        if self.color != '':
+            kwargs['color'] = self.color
+
+        return kwargs
 
     def length(self) -> float:
         """

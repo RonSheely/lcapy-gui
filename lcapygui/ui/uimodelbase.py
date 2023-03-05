@@ -413,7 +413,11 @@ class UIModelBase:
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
         for cpt in self.circuit.elements.values():
-            s += str(cpt)
+
+            net_string = str(cpt)
+            parts = net_string.split(';')
+            net_string = parts[0]
+            s += net_string
             if cpt.gcpt is not None:
                 s += '; ' + cpt.gcpt.attr_string(self.STEP) + '\n'
 

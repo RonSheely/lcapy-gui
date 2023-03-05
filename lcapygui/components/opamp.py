@@ -75,7 +75,13 @@ class Opamp(Component):
         dy = abs(self.nodes[3].y - self.nodes[2].y)
         size = dy * 5 / 4
 
-        return 'right=%s' % size
+        attr = 'right=%s' % size
+
+        # Add user defined attributes such as color=blue, thick, etc.
+        if self.attrs != '':
+            attr += ', ' + self.attrs
+
+        return attr
 
     def draw(self, editor, layer, **kwargs):
 
@@ -88,10 +94,15 @@ class Opamp(Component):
         dy = abs(self.nodes[3].y - self.nodes[2].y)
         size = dy * 5 / 4
 
-        lw = kwargs.pop('lw', editor.preferences.lw)
-        if self.color != '':
-            kwargs['color'] = self.color
+        kwargs = self.make_kwargs(editor, **kwargs)
 
-        print(size)
+        if 'mirror' in kwargs:
+            kwargs.pop('mirror')
+            print('TODO: add mirror')
+
+        if 'invert' in kwargs:
+            kwargs.pop('invert')
+            print('TODO: add invert')
+
         layer.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
-                     lw=lw, **kwargs)
+                     **kwargs)
