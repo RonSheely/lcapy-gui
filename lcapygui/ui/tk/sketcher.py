@@ -1,6 +1,8 @@
 from matplotlib.patches import PathPatch, Arc, Circle, Polygon
 from matplotlib.transforms import Affine2D
+from matplotlib.path import Path
 from math import degrees
+from numpy import array
 
 
 class Layer:
@@ -84,19 +86,20 @@ class Layer:
         gtransform = gtransform.translate(*offset)
 
         color = kwargs.pop('color', sketch.color)
-
-        if 'mirror' in kwargs:
-            kwargs.pop('mirror')
-            print('TODO: add mirror')
-
-        if 'invert' in kwargs:
-            kwargs.pop('invert')
-            print('TODO: add invert')
+        mirror = kwargs.pop('mirror', False)
+        invert = kwargs.pop('invert', False)
 
         patches = []
         for spath in sketch.paths:
             path = spath.path
             fill = spath.fill
+
+            if mirror:
+                vertices = path.vertices * (1, -1)
+                path = Path(vertices, path.codes)
+            if invert:
+                vertices = path.vertices * (-1, 1)
+                path = Path(vertices, path.codes)
 
             path = path.transformed(gtransform)
 

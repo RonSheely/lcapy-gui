@@ -96,13 +96,5 @@ class Opamp(Component):
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
-        if 'mirror' in kwargs:
-            kwargs.pop('mirror')
-            print('TODO: add mirror')
-
-        if 'invert' in kwargs:
-            kwargs.pop('invert')
-            print('TODO: add invert')
-
         sketcher.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
-                     **kwargs)
+                        **kwargs)

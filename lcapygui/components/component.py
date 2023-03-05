@@ -116,7 +116,7 @@ class Component(ABC):
         kwargs = self.make_kwargs(editor, **kwargs)
 
         sketcher.sketch(self.sketch, offset=p1p, angle=angle,
-                     snap=True, **kwargs)
+                        snap=True, **kwargs)
 
         if self.can_stretch:
             p2 = array((x2, y2))
@@ -134,6 +134,8 @@ class Component(ABC):
         kwargs['lw'] = kwargs.pop('lw', editor.preferences.lw)
 
         for k, v in opts.items():
+            if v == '':
+                v = True
             kwargs[k] = v
 
         if self.color != '':
