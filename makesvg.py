@@ -15,13 +15,14 @@ def make(cpt_type):
             print(cpt_type, kind, style)
 
 
-for k, v in UIModelBase.component_map.items():
+def make_all():
 
-    cpt_type = v[1]
-    make(cpt_type)
+    for k, v in UIModelBase.component_map.items():
 
+        cpt_type = v[1]
+        make(cpt_type)
 
-for k, v in UIModelBase.connection_map.items():
+    for k, v in UIModelBase.connection_map.items():
 
-    cpt_type = v[1]
-    make(cpt_type)
+        cpt_type = v[1]
+        make(cpt_type)

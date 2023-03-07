@@ -133,7 +133,7 @@ class LcapyTk(Tk):
 
         for key, val in self.uimodel_class.component_map.items():
             acc = key if len(key) == 1 else ''
-            component_menu.add_command(label=val[0],
+            component_menu.add_command(label=val[1],
                                        command=lambda foo=key: self.on_add_cpt(
                                            foo),
                                        accelerator=acc)
@@ -151,7 +151,7 @@ class LcapyTk(Tk):
 
         for key, val in self.uimodel_class.connection_map.items():
             acc = key if len(key) == 1 else ''
-            connection_menu.add_command(label=val[0], command=lambda
+            connection_menu.add_command(label=val[1], command=lambda
                                         foo=key: self.on_add_con(foo),
                                         accelerator=acc)
 

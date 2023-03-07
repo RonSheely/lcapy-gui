@@ -80,21 +80,11 @@ class UIModelMPH(UIModelBase):
             'delete': self.on_delete,
             'backspace': self.on_delete}
 
-        self.key_bindings_with_key = {
-            '0': self.on_add_con,
-            'c': self.on_add_cpt,
-            'd': self.on_add_cpt,
-            'e': self.on_add_cpt,
-            'f': self.on_add_cpt,
-            'g': self.on_add_cpt,
-            'h': self.on_add_cpt,
-            'i': self.on_add_cpt,
-            'l': self.on_add_cpt,
-            'o': self.on_add_cpt,
-            'p': self.on_add_cpt,
-            'r': self.on_add_cpt,
-            'v': self.on_add_cpt,
-            'w': self.on_add_cpt}
+        self.key_bindings_with_key = {}
+        for k, v in self.component_map.items():
+            self.key_bindings_with_key[k] = self.on_add_cpt
+        for k, v in self.connection_map.items():
+            self.key_bindings_with_key[k] = self.on_add_con
 
     def add_cursor(self, x, y):
 

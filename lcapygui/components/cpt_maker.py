@@ -1,5 +1,6 @@
 from .admittance import Admittance
 from .capacitor import Capacitor
+from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
 from .ground import Ground
@@ -23,6 +24,7 @@ class CptMaker:
     cpts = {
         'Ground': Ground,
         'C': Capacitor,
+        'CPE': CPE,
         'D': Diode,
         'E': VCVS,
         'Opamp': Opamp,

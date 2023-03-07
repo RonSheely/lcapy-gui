@@ -17,32 +17,34 @@ class UIModelBase:
     SNAP = 1
     SCALE = 0.25
 
+    # Short-cut key, name, type, kind
     component_map = {
-        'c': ('Capacitor', 'C', ''),
-        'd': ('Diode', 'D', ''),
-        'i': ('Current source', 'I', ''),
-        'l': ('Inductor', 'L', ''),
-        'r': ('Resistor', 'R', ''),
-        'nr': ('Noiseless resistor', 'R', ''),
-        'v': ('Voltage source', 'V', ''),
-        'w': ('Wire', 'W', ''),
-        'e': ('VCVS', 'E', ''),
-        'f': ('CCCS', 'F', ''),
-        'g': ('VCCS', 'G', ''),
-        'h': ('CCVS', 'H', ''),
-        'opamp': ('Opamp', 'Opamp', ''),
-        'p': ('Port', 'P', ''),
-        'y': ('Admittance', 'Y', ''),
-        'z': ('Impedance', 'Z', ''),
+        'c': ('c', 'Capacitor', 'C', ''),
+        'd': ('d', 'Diode', 'D', ''),
+        'i': ('i', 'Current source', 'I', ''),
+        'l': ('l', 'Inductor', 'L', ''),
+        'r': ('r', 'Resistor', 'R', ''),
+        'nr': ('', 'Noiseless resistor', 'R', ''),
+        'v': ('v', 'Voltage source', 'V', ''),
+        'w': ('w', 'Wire', 'W', ''),
+        'e': ('e', 'VCVS', 'E', ''),
+        'f': ('f', 'CCCS', 'F', ''),
+        'g': ('g', 'VCCS', 'G', ''),
+        'h': ('h', 'CCVS', 'H', ''),
+        'opamp': ('', 'Opamp', 'Opamp', ''),
+        'p': ('p', 'Port', 'P', ''),
+        'y': ('y', 'Admittance', 'Y', ''),
+        'z': ('z', 'Impedance', 'Z', ''),
+        'cpe': ('', 'CPE', 'CPE', ''),
     }
 
     connection_map = {
-        '0': ('0V', 'Ground', ''),
-        '0V': ('0V', 'Ground', '0V'),
-        'ground': ('Ground', 'Ground', ''),
-        'sground': ('Signal ground', 'Ground', 'sground'),
-        'rground': ('Rail ground', 'Ground', 'rground'),
-        'cground': ('Chassis ground', 'Ground', 'cground'),
+        '0': ('0', '0V', 'Ground', ''),
+        '0V': ('', '0V', 'Ground', '0V'),
+        'ground': ('', 'Ground', 'Ground', ''),
+        'sground': ('', 'Signal ground', 'Ground', 'sground'),
+        'rground': ('', 'Rail ground', 'Ground', 'rground'),
+        'cground': ('', 'Chassis ground', 'Ground', 'cground'),
         # 'vdd': ('VDD', 'A', 'vdd'),
         # 'vss': ('VSS', 'A', 'vss'),
         # 'input': ('Input', 'A', 'input'),
@@ -135,7 +137,7 @@ class UIModelBase:
         """Create a new connection."""
 
         try:
-            cpt_type = self.connection_map[con_key][1]
+            cpt_type = self.connection_map[con_key][2]
         except KeyError:
             return None
 
@@ -162,7 +164,7 @@ class UIModelBase:
             return
 
         try:
-            cpt_type = self.component_map[cpt_key][1]
+            cpt_type = self.component_map[cpt_key][2]
         except KeyError:
             return None
 
