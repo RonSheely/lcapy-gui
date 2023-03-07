@@ -19,9 +19,9 @@ class Cursor:
     def draw(self, color='red', radius=0.3):
 
         self.patch = self.sketcher.stroke_filled_circle(self.x, self.y,
-                                                     radius,
-                                                     color=color,
-                                                     alpha=0.5)
+                                                        radius,
+                                                        color=color,
+                                                        alpha=0.5)
 
     def remove(self):
 
@@ -144,12 +144,9 @@ class UIModelMPH(UIModelBase):
             if gcpt is None:
                 continue
 
-            lsq = gcpt.length() ** 2
-            mid = gcpt.midpoint
-            xm, ym = mid.x, mid.y
-            rsq = (xm - x)**2 + (ym - y)**2
-            if rsq < 0.1 * lsq:
+            if gcpt.is_within_bbox(x, y):
                 return cpt
+
         return None
 
     def closest_node(self, x, y):

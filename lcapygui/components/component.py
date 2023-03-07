@@ -247,6 +247,27 @@ class Component(ABC):
 
         return attr
 
+    def is_within_bbox(self, x, y):
+
+        m = array((self.midpoint.x, self.midpoint.y))
+
+        dx = self.nodes[1].x - self.nodes[0].x
+        dy = self.nodes[1].y - self.nodes[0].y
+        r = sqrt(dx**2 + dy**2)
+
+        R = array(((dx, -dy), (dy, dx))) / r
+
+        # Transform point into non-rotated box
+        p = array((x, y))
+        q = dot(R.T, (p - m))
+
+        l = self.length() - 0.2
+        h = 0.5 - 0.2
+        x, y = q
+
+        # Determine if transformed point is in the box
+        return x > -l / 2 and x < l / 2 and y > -h / 2 and y < h / 2
+
 
 class BipoleComponent(Component):
 
