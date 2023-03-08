@@ -26,6 +26,7 @@ class Component(ABC):
     default_style = ''
     schematic_kind = False
     label_offset = 0.6
+    angle_offset = 0
     fields = {'label': 'Label',
               'voltage_label': 'Voltage label',
               'current_label': 'Current label',
@@ -46,7 +47,6 @@ class Component(ABC):
         self.current_label = ''
         self.flow_label = ''
         self.color = ''
-        self.angle = 0
 
         self.mirror = False
         self.invert = False
@@ -74,8 +74,8 @@ class Component(ABC):
     def __str__(self) -> str:
 
         return self.type + ' ' + '(%s, %s) (%s, %s)' % \
-            (self.nodes[0].pos.x, self.nodes[0].pos.y,
-             self.nodes[1].pos.x, self.nodes[1].pos.y)
+            (self.node1.pos.x, self.node1.pos.y,
+             self.node2.pos.x, self.node2.pos.y)
 
     @property
     def sketch_key(self):
@@ -96,18 +96,18 @@ class Component(ABC):
         if self.sketch is None:
             return
 
-        x1, y1 = self.nodes[0].x, self.nodes[0].y
-        x2, y2 = self.nodes[1].x, self.nodes[1].y
-
+        x1, y1 = self.node1.x, self.node1.y
+        x2, y2 = self.node2.x, self.node2.y
         dx = x2 - x1
         dy = y2 - y1
-        r = sqrt(dx**2 + dy**2)
+
+        r = self.length
         if r == 0:
             editor.ui.show_warning_dialog(
                 'Ignoring zero size component ' + self.name)
             return
 
-        angle = degrees(atan2(dy, dx))
+        angle = self.angle
 
         # Width in cm
         s = self.sketch.width / 72 * 2.54
@@ -152,11 +152,12 @@ class Component(ABC):
 
         return kwargs
 
+    @property
     def length(self) -> float:
         """
         Computes the length of the component.
         """
-        return (self.nodes[1].pos - self.nodes[0].pos).norm()
+        return (self.node2.pos - self.node1.pos).norm()
 
     @property
     def midpoint(self):
@@ -164,7 +165,7 @@ class Component(ABC):
         Computes the midpoint of the component.
         """
 
-        return (self.nodes[0].pos + self.nodes[1].pos) * 0.5
+        return (self.node1.pos + self.node2.pos) * 0.5
 
     @property
     def vertical(self) -> bool:
@@ -172,8 +173,8 @@ class Component(ABC):
         Returns true if component essentially vertical.
         """
 
-        x1, y1 = self.nodes[0].x, self.nodes[0].y
-        x2, y2 = self.nodes[1].x, self.nodes[1].y
+        x1, y1 = self.node1.x, self.node1.y
+        x2, y2 = self.node2.x, self.node2.y
         return abs(y2 - y1) > abs(x2 - x1)
 
     @property
@@ -196,10 +197,28 @@ class Component(ABC):
 
         return array(((x1, y1), (x2, y2)))
 
+    @property
+    def node1(self):
+
+        return self.nodes[0]
+
+    @property
+    def node2(self):
+
+        return self.nodes[1]
+
+    @property
+    def angle(self):
+
+        x1, y1 = self.node1.x, self.node1.y
+        x2, y2 = self.node2.x, self.node2.y
+        angle = degrees(atan2(y2 - y1, x2 - x1))
+        return angle + self.angle_offset
+
     def attr_string(self, step=1):
 
-        x1, y1 = self.nodes[0].x, self.nodes[0].y
-        x2, y2 = self.nodes[1].x, self.nodes[1].y
+        x1, y1 = self.node1.x, self.node1.y
+        x2, y2 = self.node2.x, self.node2.y
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
         if r == 1:
@@ -218,7 +237,7 @@ class Component(ABC):
             else:
                 attr = 'up' + size
         else:
-            angle = degrees(atan2(y2 - y1, x2 - x1))
+            angle = self.angle
             attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
 
         if self.type == 'Eopamp':
@@ -251,8 +270,8 @@ class Component(ABC):
 
         m = array((self.midpoint.x, self.midpoint.y))
 
-        dx = self.nodes[1].x - self.nodes[0].x
-        dy = self.nodes[1].y - self.nodes[0].y
+        dx = self.node2.x - self.node1.x
+        dy = self.node2.y - self.node1.y
         r = sqrt(dx**2 + dy**2)
 
         R = array(((dx, -dy), (dy, dx))) / r
@@ -261,7 +280,7 @@ class Component(ABC):
         p = array((x, y))
         q = dot(R.T, (p - m))
 
-        l = self.length() - 0.2
+        l = self.length - 0.2
         h = 0.5 - 0.2
         x, y = q
 

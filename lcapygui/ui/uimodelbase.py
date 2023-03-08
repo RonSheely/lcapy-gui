@@ -23,6 +23,8 @@ class UIModelBase:
         'd': ('d', 'Diode', 'D', ''),
         'i': ('i', 'Current source', 'I', ''),
         'l': ('l', 'Inductor', 'L', ''),
+        'm': ('m', 'FET', 'M', ''),
+        'q': ('q', 'BJT', 'Q', ''),
         'r': ('r', 'Resistor', 'R', ''),
         'nr': ('', 'Noiseless resistor', 'R', ''),
         'v': ('v', 'Voltage source', 'V', ''),

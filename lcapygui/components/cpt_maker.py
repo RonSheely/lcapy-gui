@@ -1,8 +1,10 @@
 from .admittance import Admittance
+from .bjt import BJT
 from .capacitor import Capacitor
 from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
+from .fet import FET
 from .ground import Ground
 from .impedance import Impedance
 from .inductor import Inductor
@@ -17,6 +19,9 @@ from .ccvs import CCVS
 from .cccs import CCCS
 
 from .sketch import Sketch
+
+# Could use importlib.import_module to programmatically import
+# the component classes.
 
 
 class CptMaker:
@@ -33,7 +38,9 @@ class CptMaker:
         'H': CCVS,
         'I': CurrentSource,
         'L': Inductor,
+        'M': FET,
         'P': Port,
+        'Q': BJT,
         'R': Resistor,
         'NR': Resistor,         # Noise free resistor
         'V': VoltageSource,
