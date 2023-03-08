@@ -10,9 +10,14 @@ def make(cpt_type):
     kinds = cpt.kinds
     styles = cpt.styles
     for kind in kinds:
-        for style in styles:
-            cpt = cpt_make(cpt_type, kind=kind, style=style, create=True)
-            print(cpt_type, kind, style)
+        if styles == {}:
+            cpt = cpt_make(cpt_type, kind=kind, create=True)
+            print(cpt_type, kind)
+        else:
+            for style in styles:
+                cpt = cpt_make(cpt_type, kind=kind, style=style, create=True)
+                print(cpt_type, kind, style)
+    return cpt
 
 
 def make_all():

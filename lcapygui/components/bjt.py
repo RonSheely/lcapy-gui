@@ -7,8 +7,6 @@ from math import atan2
 class BJT(Component):
 
     type = "Q"
-    sketch_net = 'Q 1 2 3'
-    sketch_key = 'Q'
     label_offset = 0
     angle_offset = 90
     can_stretch = True
@@ -51,3 +49,11 @@ class BJT(Component):
     def node2(self):
 
         return self.nodes[2]
+
+    @property
+    def sketch_net(self):
+
+        s = self.type + ' 1 2 3; right'
+        if self.kind != '':
+            s += ', kind=' + self.kind
+        return s

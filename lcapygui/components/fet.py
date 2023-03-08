@@ -7,8 +7,6 @@ from math import atan2
 class FET(Component):
 
     type = "M"
-    sketch_net = 'M 1 2 3'
-    sketch_key = 'M'
     label_offset = 0
     angle_offset = 90
     can_stretch = True
@@ -55,3 +53,11 @@ class FET(Component):
     def node2(self):
 
         return self.nodes[2]
+
+    @property
+    def sketch_net(self):
+
+        s = self.type + ' 1 2 3; right'
+        if self.kind != '':
+            s += ', kind=' + self.kind
+        return s
