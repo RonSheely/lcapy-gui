@@ -5,11 +5,12 @@ from math import degrees
 from numpy import array
 
 
-class Layer:
+class Sketcher:
 
-    def __init__(self, ax):
+    def __init__(self, ax, debug=0):
 
         self.ax = ax
+        self.debug = debug
 
     def stroke_line(self, xstart, ystart, xend, yend, color='black', **kwargs):
 
@@ -96,7 +97,8 @@ class Layer:
         invert = kwargs.pop('invert', False)
 
         patches = []
-        for spath in sketch.paths:
+
+        for m, spath in enumerate(sketch.paths):
             path = spath.path
             fill = spath.fill
 
@@ -113,6 +115,10 @@ class Layer:
                 print(path.vertices)
 
             fill = kwargs.pop('fill', fill)
+
+            if self.debug:
+                color = ['red', 'yellow', 'orange',
+                         'green', 'blue', 'violet'][m % 6]
 
             patch = PathPatch(path, fill=fill, color=color, **kwargs)
             patches.append(patch)
