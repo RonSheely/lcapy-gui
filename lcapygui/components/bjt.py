@@ -1,7 +1,4 @@
 from .transistor import Transistor
-from numpy import array, sqrt, dot, degrees
-from numpy.linalg import norm
-from math import atan2
 
 
 class BJT(Transistor):
