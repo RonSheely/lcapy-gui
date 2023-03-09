@@ -23,7 +23,8 @@ class Transistor(Component):
         ym = (y1 + y2) / 2
         xm = (x1 + x2) / 2
 
-        xg, yg = dot(R.T, (0, -2))
+        # TODO: The offset might change with transistor types
+        xg, yg = dot(R.T, (0, -1.1))
         xg += xm
         yg += ym
 
