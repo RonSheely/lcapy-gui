@@ -147,18 +147,6 @@ class UIModelMPH(UIModelBase):
                 return node
         return None
 
-    def draw_node_select(self, x, y):
-
-        x, y = self.snap(x, y)
-
-        if self.node_cursor is not None:
-            self.node_cursor.remove()
-
-        cursor = Cursor(self.ui, x, y)
-        cursor.draw('black', 0.2)
-        self.node_cursor = cursor
-        self.ui.refresh()
-
     def exception(self, message):
         self.ui.show_error_dialog(message)
 
@@ -169,7 +157,13 @@ class UIModelMPH(UIModelBase):
 
     def on_add_node(self, x, y):
 
-        x, y = self.snap(x, y)
+        # Snap to known node then snap to grid.
+        node = self.closest_node(x, y)
+        if node is None:
+            x, y = self.snap(x, y)
+        else:
+            x, y = node.x, node.y
+
         self.add_cursor(x, y)
 
     def on_add_cpt(self, cpt_key):
