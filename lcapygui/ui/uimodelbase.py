@@ -551,7 +551,7 @@ class UIModelBase:
 
     def view(self):
 
-        cct = self.circuit
+        cct = Circuit(self.schematic())
         cct.draw()
 
     def voltage_annotate(self, cpt):

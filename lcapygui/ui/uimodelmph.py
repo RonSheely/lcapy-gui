@@ -1,5 +1,6 @@
 from .uimodelbase import UIModelBase
 from lcapy.mnacpts import Cpt
+from lcapy import Circuit
 
 
 class Cursor:
@@ -568,7 +569,8 @@ class UIModelMPH(UIModelBase):
         from os import remove
 
         schtex_filename = tmpfilename('.schtex')
-        cct = self.circuit
+
+        cct = Circuit(self.schematic())
         cct.draw(schtex_filename)
 
         with open(schtex_filename) as f:

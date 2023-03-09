@@ -213,7 +213,7 @@ class Component(ABC):
         x1, y1 = self.node1.x, self.node1.y
         x2, y2 = self.node2.x, self.node2.y
         angle = degrees(atan2(y2 - y1, x2 - x1))
-        return angle + self.angle_offset
+        return angle
 
     def attr_string(self, step=1):
 
@@ -226,18 +226,16 @@ class Component(ABC):
         else:
             size = '=' + str(round(r, 2)).rstrip('0').rstrip('.')
 
-        if y1 == y2:
-            if x1 > x2:
-                attr = 'left' + size
-            else:
-                attr = 'right' + size
-        elif x1 == x2:
-            if y1 > y2:
-                attr = 'down' + size
-            else:
-                attr = 'up' + size
+        angle = self.angle + self.angle_offset
+        if angle == 0:
+            attr = 'right' + size
+        elif angle in (90, -270):
+            attr = 'up' + size
+        elif angle in (180, -180):
+            attr = 'left' + size
+        elif angle in (270, -90):
+            attr = 'down' + size
         else:
-            angle = self.angle
             attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
 
         if self.type == 'Eopamp':

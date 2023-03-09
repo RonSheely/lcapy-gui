@@ -8,8 +8,8 @@ class FET(Component):
 
     type = "M"
     label_offset = 0
-    angle_offset = 90
     can_stretch = True
+    angle_offset = 90
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
@@ -31,10 +31,11 @@ class FET(Component):
         r = sqrt(dx**2 + dy**2)
         R = array(((dx, -dy), (dy, dx))) / r
 
+        # Midpoint
         ym = (y1 + y2) / 2
         xm = (x1 + x2) / 2
 
-        xg, yg = dot(R, (0, -1))
+        xg, yg = dot(R.T, (0, -2))
         xg += xm
         yg += ym
 
@@ -57,7 +58,8 @@ class FET(Component):
     @property
     def sketch_net(self):
 
-        s = self.type + ' 1 2 3; right'
+        # With up, drain is down.
+        s = self.type + ' 1 2 3; up'
         if self.kind != '':
             s += ', kind=' + self.kind
         return s

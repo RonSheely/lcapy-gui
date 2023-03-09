@@ -102,7 +102,11 @@ class Sketcher:
             path = spath.path
             fill = spath.fill
 
-            if mirror:
+            # Note, the SVG coordinate system has y going down the screen
+            # but Matplotlib's coordinate system has y going up the screen.
+            # Thus we need to invert the sense of mirror.
+
+            if not mirror:
                 vertices = path.vertices * (1, -1)
                 path = Path(vertices, path.codes)
             if invert:

@@ -89,13 +89,26 @@ class Sketch:
         yoffset = None
 
         # Look for pair of horizontal wires
+        candidates = []
         for path in self.paths:
-            if len(path.path) == 4 and all(path.path.codes == (1, 2, 1, 2)):
+            if len(path.path) >= 4 and all(path.path.codes[0:4] == (1, 2, 1, 2)):
                 vertices = path.path.vertices
                 if vertices[0][1] == vertices[1][1]:
                     xoffset = vertices[0][0]
                     yoffset = vertices[0][1]
-                    return 0, yoffset
+                    candidates.append((xoffset, yoffset))
+
+        if candidates != []:
+            # Search for horizontal line with longest extent.
+            # This is needed for fet/bjt.
+            xmin = 1000
+            yoffset = 0
+            for candidate in candidates:
+                if candidate[0] < xmin:
+                    xmin = candidate[0]
+                    yoffset = candidate[1]
+
+            return 0, yoffset
 
         # Look for vertical wire (for ground, sground, cground, rground)
         # Note, if look for horizontal wire first, get incorrect offset for rground
