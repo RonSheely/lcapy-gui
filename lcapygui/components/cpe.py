@@ -1,4 +1,4 @@
-from .component import BipoleComponent
+from .bipole import BipoleComponent
 
 
 class CPE(BipoleComponent):

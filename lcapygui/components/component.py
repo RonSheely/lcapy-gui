@@ -286,16 +286,6 @@ class Component(ABC):
         return x > -l / 2 and x < l / 2 and y > -h / 2 and y < h / 2
 
 
-class BipoleComponent(Component):
-
-    can_stretch = True
-
-    @property
-    def sketch_net(self):
-
-        return self.type + ' 1 2'
-
-
 class ControlledComponent(Component):
 
     can_stretch = True

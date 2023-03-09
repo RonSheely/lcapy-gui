@@ -1,4 +1,4 @@
-from .component import Component
+from .bipole import Component
 
 
 class Port(Component):
