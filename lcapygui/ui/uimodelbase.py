@@ -280,7 +280,12 @@ class UIModelBase:
 
     def cpt_remake(self, cpt):
 
+        node_positions = [node.pos for node in cpt.nodes]
         newcpt = cpt._change_kind(cpt.gcpt.kind)
+        # This should be done in Lcapy.
+        for node, pos in zip(newcpt.nodes, node_positions):
+            node.pos = pos
+
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)
 

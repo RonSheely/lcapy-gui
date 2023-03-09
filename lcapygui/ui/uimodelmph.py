@@ -89,8 +89,6 @@ class UIModelMPH(UIModelBase):
 
     def add_cursor(self, x, y):
 
-        x, y = self.snap(x, y)
-
         cursor = Cursor(self.ui, x, y)
 
         if len(self.cursors) == 0:
@@ -171,6 +169,7 @@ class UIModelMPH(UIModelBase):
 
     def on_add_node(self, x, y):
 
+        x, y = self.snap(x, y)
         self.add_cursor(x, y)
 
     def on_add_cpt(self, cpt_key):
@@ -247,7 +246,9 @@ class UIModelMPH(UIModelBase):
         self.invalidate()
         # Component name may have changed
         self.clear()
+
         if isinstance(cpt, Cpt):
+
             # If kind has changed need to remake the sketch
             # and remake the cpt.
             self.cpt_remake(cpt)
@@ -368,8 +369,8 @@ class UIModelMPH(UIModelBase):
             if self.ui.debug:
                 print('Selected ' + cpt.name)
             self.cursors.remove()
-            self.add_cursor(cpt.nodes[0].pos.x, cpt.nodes[0].pos.y)
-            self.add_cursor(cpt.nodes[1].pos.x, cpt.nodes[1].pos.y)
+            self.add_cursor(cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y)
+            self.add_cursor(cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y)
         else:
             if self.ui.debug:
                 print('Add node at (%s, %s)' % (x, y))
