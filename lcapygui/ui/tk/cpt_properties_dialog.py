@@ -87,9 +87,17 @@ class CptPropertiesDialog:
 
         try:
             if self.cpt.is_capacitor:
-                self.cpt.cpt.v0 = self.labelentries.get('v0')
+                v0 = self.labelentries.get('v0')
+                cpt = self.cpt.cpt
+                # Create new oneport (this should be improved).
+                self.cpt._cpt = cpt.__class__(cpt.C, v0)
+                self.cpt.args[-1] = v0
             elif self.cpt.is_inductor:
-                self.cpt.cpt.i0 = self.labelentries.get('i0')
+                i0 = self.labelentries.get('i0')
+                cpt = self.cpt.cpt
+                # Create new oneport (this should be improved).
+                self.cpt._cpt = cpt.__class__(cpt.L, i0)
+                self.cpt.args[-1] = i0
         except KeyError:
             pass
 
