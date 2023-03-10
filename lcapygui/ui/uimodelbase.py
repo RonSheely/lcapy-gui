@@ -345,13 +345,37 @@ class UIModelBase:
         for cpt in self.circuit.elements.values():
             if cpt.type == 'XX' and 'nodes' in cpt.opts:
                 positions = parse_nodes(cpt.opts['nodes'])
+                break
 
-        if positions is None:
-            self.exception('Node positions not defined')
-            return
+        if positions is not None:
 
-        for k, v in self.circuit.nodes.items():
-            v.pos = positions[k]
+            for k, v in self.circuit.nodes.items():
+                v.pos = positions[k]
+
+        else:
+
+            # Node positions not defined.
+
+            sch = self.circuit.sch
+
+            try:
+                # This will fail if have detached components.
+                calculated = sch._positions_calculate()
+            except (AttributeError, ValueError, RuntimeError) as e:
+                self.exception(e)
+                return
+
+            width, height = sch.width * self.STEP, sch.height * self.STEP
+
+            # Centre the schematic.
+            xsize = self.ui.canvas.drawing.xsize
+            ysize = self.ui.canvas.drawing.ysize
+            offsetx, offsety = self.snap((xsize - width) / 2,
+                                         (ysize - height) / 2)
+            for node in sch.nodes.values():
+                node.pos.x += offsetx
+                node.pos.y += offsety
+                circuit.nodes[node.name].pos = node.pos
 
         self.remove_directives()
 
