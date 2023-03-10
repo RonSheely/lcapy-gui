@@ -12,3 +12,5 @@ class BJT(Transistor):
 
     kinds = {'': '', 'nigbt': 'nigbt', 'pigbt': 'pigbt', 'Lnigbt': 'Lnigbt',
              'Lpigbt': 'Lpigbt'}
+
+    # TODO: add base offset for Lnigbt, Lpigbt

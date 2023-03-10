@@ -48,3 +48,5 @@ attributes unless clever
 22. Reposition component labels to match circuitikz
 
 23. Fix fullscreen
+
+24. Fix transistor menagerie

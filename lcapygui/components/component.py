@@ -137,6 +137,8 @@ class Component(ABC):
         kwargs['lw'] = kwargs.pop('lw', editor.preferences.lw)
 
         for k, v in opts.items():
+            if k in ('bodydiode', ):
+                continue
             if v == '':
                 v = True
             kwargs[k] = v

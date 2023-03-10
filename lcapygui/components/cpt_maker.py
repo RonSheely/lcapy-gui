@@ -4,10 +4,11 @@ from .capacitor import Capacitor
 from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
-from .fet import FET
 from .ground import Ground
 from .impedance import Impedance
 from .inductor import Inductor
+from .jfet import JFET
+from .mosfet import MOSFET
 from .opamp import Opamp
 from .port import Port
 from .resistor import Resistor
@@ -37,8 +38,9 @@ class CptMaker:
         'G': VCCS,
         'H': CCVS,
         'I': CurrentSource,
+        'J': JFET,
         'L': Inductor,
-        'M': FET,
+        'M': MOSFET,
         'P': Port,
         'Q': BJT,
         'R': Resistor,
