@@ -121,9 +121,14 @@ class Component(ABC):
         sketcher.sketch(self.sketch, offset=p1p, angle=angle,
                         snap=True, **kwargs)
 
+        # Add stretchable wires
         if self.can_stretch:
             p2 = array((x2, y2))
             p2p = p2 - dp
+
+            # TODO: generalize
+            kwargs.pop('mirror', False)
+            kwargs.pop('invert', False)
 
             sketcher.stroke_line(*p1, *p1p, **kwargs)
             sketcher.stroke_line(*p2p, *p2, **kwargs)

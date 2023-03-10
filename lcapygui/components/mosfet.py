@@ -8,8 +8,6 @@ class MOSFET(Transistor):
     can_stretch = True
     angle_offset = 90
 
-    extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
-
     kinds = {'': '', 'nmos': 'nmos', 'pmos': 'pmos', 'nmosd': 'nmosd', 'pmosd': 'pmosd',
              'nfet': 'nfet', 'pfet': 'pfet',
              'nfet-bodydiode': 'nfet-bodydiode',

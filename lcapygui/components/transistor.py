@@ -7,6 +7,7 @@ from math import atan2
 class Transistor(Component):
 
     schematic_kind = True
+    # extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.

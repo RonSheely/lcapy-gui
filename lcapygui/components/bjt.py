@@ -8,8 +8,6 @@ class BJT(Transistor):
     can_stretch = True
     angle_offset = 90
 
-    extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
-
     kinds = {'': '', 'nigbt': 'nigbt', 'pigbt': 'pigbt', 'Lnigbt': 'Lnigbt',
              'Lpigbt': 'Lpigbt'}
 
