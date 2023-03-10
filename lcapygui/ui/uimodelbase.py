@@ -331,11 +331,16 @@ class UIModelBase:
                 return
 
         try:
-            self.circuit = Circuit(filename)
+            circuit = Circuit(filename)
         except Exception as e:
             self.exception(e)
             return
 
+        return self.load_from_circuit(circuit)
+
+    def load_from_circuit(self, circuit):
+
+        self.circuit = circuit
         positions = None
         for cpt in self.circuit.elements.values():
             if cpt.type == 'XX' and 'nodes' in cpt.opts:

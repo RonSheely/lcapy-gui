@@ -543,6 +543,8 @@ class UIModelMPH(UIModelBase):
     def on_show_new_circuit(self, cct):
 
         model = self.ui.new()
+        # TODO: Fix node positions, especially new nodes...
+        self.ui.show_warning_dialog('This is currently broken')
         model.load_from_circuit(cct)
 
     def on_undo(self):
