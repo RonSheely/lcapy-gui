@@ -6,7 +6,7 @@ from math import atan2
 
 class Transistor(Component):
 
-    schematic_kind = True
+    label_offset = 0.6
     # extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
     def assign_positions(self, x1, y1, x2, y2) -> array:
@@ -50,6 +50,6 @@ class Transistor(Component):
 
         # With up, drain is down.
         s = self.type + ' 1 2 3; up'
-        if self.kind != '':
-            s += ', kind=' + self.kind
+        if self.symbol_kind != '':
+            s += ', kind=' + self.symbol_kind
         return s

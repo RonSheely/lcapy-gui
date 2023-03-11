@@ -281,14 +281,10 @@ class UIModelBase:
 
     def cpt_remake(self, cpt):
 
-        if cpt.gcpt.schematic_kind:
+        if cpt.gcpt.cpt_kind == cpt._kind:
             newcpt = cpt
         else:
-            node_positions = [node.pos for node in cpt.nodes]
-            newcpt = cpt._change_kind(cpt.gcpt.kind)
-            # This should be done in Lcapy.
-            for node, pos in zip(newcpt.nodes, node_positions):
-                node.pos = pos
+            newcpt = cpt._change_kind(cpt.gcpt.cpt_kind)
 
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)

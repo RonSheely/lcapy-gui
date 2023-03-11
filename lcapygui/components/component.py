@@ -24,7 +24,6 @@ class Component(ABC):
     can_stretch = False
     default_kind = ''
     default_style = ''
-    schematic_kind = False
     label_offset = 0.6
     angle_offset = 0
     fields = {'label': 'Label',
@@ -86,6 +85,18 @@ class Component(ABC):
         if self.style != '':
             s += '-' + self.style
         return s
+
+    @property
+    def cpt_kind(self):
+
+        parts = self.kind.split('-')
+        return parts[0]
+
+    @property
+    def symbol_kind(self):
+
+        parts = self.kind.split('-')
+        return '-'.join(parts[1:])
 
     def draw(self, editor, sketcher, **kwargs):
         """
@@ -263,8 +274,9 @@ class Component(ABC):
         if self.attrs != '':
             attr += ', ' + self.attrs
 
-        if self.schematic_kind and self.kind not in (None, ''):
-            attr += ', kind=' + self.kind
+        kind = self.symbol_kind
+        if kind not in (None, ''):
+            attr += ', kind=' + kind
 
         if self.style not in (None, ''):
             attr += ', style=' + self.style

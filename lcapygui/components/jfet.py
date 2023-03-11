@@ -4,10 +4,11 @@ from .transistor import Transistor
 class JFET(Transistor):
 
     type = "J"
-    label_offset = 0
     can_stretch = True
     angle_offset = 90
+    default_kind = 'njf-'
 
-    kinds = {}
+    kinds = {'njf-': 'NJFET',
+             'pjf-': 'PJFET'}
 
     # TODO: add gate offset

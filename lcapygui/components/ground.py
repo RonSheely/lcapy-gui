@@ -4,10 +4,10 @@ from .connection import Connection
 class Ground(Connection):
 
     type = "A"
-    default_kind = 'ground'
+    default_kind = '-ground'
 
-    kinds = {'': '', 'ground': 'Ground', 'sground': 'Signal ground',
-             'rground': 'Rail ground', 'cground': 'Chassis ground'}
+    kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
+             '-rground': 'Rail ground', '-cground': 'Chassis ground'}
 
     @property
     def sketch_net(self):
