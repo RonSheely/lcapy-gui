@@ -14,7 +14,7 @@
 <path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 20.160375 12.728437 L 20.160375 1.216719 " transform="matrix(1,0,0,-1,0.199,31.58)"/>
 <path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 28.347875 31.181562 L 4.961156 31.181562 " transform="matrix(1,0,0,-1,0.199,31.58)"/>
 <g clip-path="url(#clip1)" clip-rule="nonzero">
-<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 51.734594 31.181562 L 0.00021875 31.181562 M 20.160375 1.415937 L 36.566625 0.001875 M 4.961156 31.181562 L 56.695531 31.181562 " transform="matrix(1,0,0,-1,0.199,31.58)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 51.734594 31.181562 L 56.695531 31.181562 M 20.160375 1.415937 L 20.125219 0.001875 M 4.961156 31.181562 L 0.00021875 31.181562 " transform="matrix(1,0,0,-1,0.199,31.58)"/>
 </g>
 </g>
 </svg>

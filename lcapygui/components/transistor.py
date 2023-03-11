@@ -49,7 +49,7 @@ class Transistor(Component):
     def sketch_net(self):
 
         # With up, drain is down.
-        s = self.type + ' 1 2 3; up'
+        s = self.type + ' 1 2 3 ' + self.cpt_kind + '; up'
         if self.symbol_kind != '':
             s += ', kind=' + self.symbol_kind
         return s

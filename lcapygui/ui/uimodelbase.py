@@ -261,8 +261,8 @@ class UIModelBase:
                     continue
 
                 x, y = node.pos.x, node.pos.y
-                x += 0.2
-                y += 0.2
+                x += 0.1
+                y += 0.1
                 ann = Annotation(self.ui, x, y, node.name)
                 ann.draw(fontsize=18)
                 gcpt.annotations.append(ann)

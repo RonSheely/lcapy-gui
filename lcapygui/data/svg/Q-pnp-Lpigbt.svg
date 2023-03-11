@@ -18,7 +18,7 @@
 <path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;" d="M 20.539062 4.773438 L 22.664062 3.601562 L 23.144531 9.515625 L 18.410156 5.941406 Z M 20.539062 4.773438 "/>
 <path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 18.992406 15.365375 L 18.992406 5.470844 " transform="matrix(1,0,0,-1,0.199,31.381)"/>
 <g clip-path="url(#clip2)" clip-rule="nonzero">
-<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 51.734594 31.181781 L 0.00021875 31.181781 M 18.992406 5.670062 L 28.347875 -0.0018125 M 4.961156 31.181781 L 56.695531 31.181781 " transform="matrix(1,0,0,-1,0.199,31.381)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 51.734594 31.181781 L 56.695531 31.181781 M 18.992406 5.670062 L 28.347875 -0.0018125 M 4.961156 31.181781 L 0.00021875 31.181781 " transform="matrix(1,0,0,-1,0.199,31.381)"/>
 </g>
 </g>
 </svg>

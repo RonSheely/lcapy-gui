@@ -88,7 +88,7 @@ class CptMaker:
 
         self.sketches[sketch_key] = sketch
 
-        # TODO: remove duck type
+        # TODO: remove duck typing
         cpt.sketch = sketch
 
     def __call__(self, cpt_type, kind='', style='', create=False):
