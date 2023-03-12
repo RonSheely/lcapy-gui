@@ -433,7 +433,7 @@ class UIModelMPH(UIModelBase):
 
     def on_noise_model(self):
 
-        cct = self.analysis_circuit.noise_model()
+        cct = self.circuit.noise_model()
         self.on_show_new_circuit(cct)
 
     def on_paste(self):
