@@ -263,6 +263,7 @@ class UIModelBase:
                     continue
 
                 x, y = node.pos.x, node.pos.y
+                # Should be x -= 0.1 but need to right justify.
                 x += 0.1
                 y += 0.1
                 ann = Annotation(self.ui, x, y, node.name)

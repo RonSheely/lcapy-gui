@@ -4,7 +4,6 @@ from .transistor import Transistor
 class BJT(Transistor):
 
     type = "Q"
-    can_stretch = True
     angle_offset = 90
     default_kind = 'npn-'
 

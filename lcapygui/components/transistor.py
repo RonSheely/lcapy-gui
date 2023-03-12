@@ -6,6 +6,7 @@ from math import atan2
 
 class Transistor(Component):
 
+    can_stretch = True
     label_offset = 0.6
     # extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
@@ -24,8 +25,9 @@ class Transistor(Component):
         ym = (y1 + y2) / 2
         xm = (x1 + x2) / 2
 
-        # TODO: The offset might change with transistor types
-        xg, yg = dot(R.T, (0, -1.1))
+        # TODO: The offset might change with transistor types.
+        # Note, the transistor base/gate is down.
+        xg, yg = dot(R, (0, 2.2))
         xg += xm
         yg += ym
 

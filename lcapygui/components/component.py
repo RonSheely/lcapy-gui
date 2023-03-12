@@ -121,11 +121,11 @@ class Component(ABC):
         angle = self.angle
 
         # Width in cm
-        s = self.sketch.width / 72 * 2.54
+        w = self.sketch.width / 72 * 2.54
 
         p1 = array((x1, y1))
-        dp = array((dx, dy)) / r * (r - s) / 2
-        p1p = p1 + dp
+        dw = array((dx, dy)) / r * (r - w) / 2
+        p1p = p1 + dw
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
@@ -134,8 +134,9 @@ class Component(ABC):
 
         # Add stretchable wires
         if self.can_stretch:
+
             p2 = array((x2, y2))
-            p2p = p2 - dp
+            p2p = p2 - dw
 
             # TODO: generalize
             kwargs.pop('mirror', False)
@@ -143,6 +144,25 @@ class Component(ABC):
 
             sketcher.stroke_line(*p1, *p1p, **kwargs)
             sketcher.stroke_line(*p2p, *p2, **kwargs)
+
+            # For transistors.
+            if len(self.nodes) == 3:
+
+                x3, y3 = self.nodes[1].x, self.nodes[1].y
+
+                mx = (x1 + x2) / 2
+                my = (y1 + y2) / 2
+                dx = mx - x3
+                dy = my - y3
+                r = sqrt(dx**2 + dy**2)
+
+                p3 = array((x3, y3))
+
+                # Height in cm
+                h = self.sketch.height / 72 * 2.54
+                dh = array((dx, dy)) / r * (r - h)
+                p3p = p3 + dh
+                sketcher.stroke_line(*p3, *p3p, **kwargs)
 
         # TODO, add label, voltage_label, current_label, flow_label
 

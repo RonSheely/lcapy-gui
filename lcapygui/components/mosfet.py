@@ -4,7 +4,6 @@ from .transistor import Transistor
 class MOSFET(Transistor):
 
     type = "M"
-    can_stretch = True
     angle_offset = 90
     default_kind = 'nmos-nfet'
 
