@@ -5,7 +5,7 @@ from ..components.cpt_maker import cpt_make, cpt_remake
 
 from copy import copy
 from math import atan2, degrees, sqrt
-from lcapy import Circuit
+from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt, Eopamp
 from lcapy.nodes import parse_nodes
 from lcapy.schemmisc import Pos
@@ -210,7 +210,7 @@ class UIModelBase:
         name = cpt.name
 
         try:
-            value = cpt.args[0]
+            value = '$' + expr(cpt.args[0]).latex() + '$'
         except IndexError:
             value = None
 
