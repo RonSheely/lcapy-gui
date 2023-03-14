@@ -218,7 +218,7 @@ class UIModelBase:
             value = ''
 
         if label_cpts == 'name+value':
-            if name != value:
+            if name != value and gcpt.type != 'P':
                 label = name + '=' + value
             else:
                 label = name
