@@ -270,24 +270,35 @@ class UIModelBase:
                 ann.draw(fontsize=18)
                 gcpt.annotations.append(ann)
 
-    def cpt_find(self, n1, n2):
+    def cpt_find(self, node_name1, node_name2):
 
-        cpt2 = None
+        fcpt = None
         for cpt in self.circuit:
-            if (cpt.nodes[0].name == n1 and cpt.nodes[1].name == n2):
-                cpt2 = cpt
+            if (cpt.nodes[0].name == node_name1 and cpt.nodes[1].name == node_name2):
+                fcpt = cpt
                 break
-        if cpt2 is None:
+        if fcpt is None:
             self.exception(
-                'Cannot find a component with nodes %s and %s' % (n1, n2))
-        return cpt2
+                'Cannot find a component with nodes %s and %s' % (node_name1, node_name2))
+        return fcpt
 
     def cpt_remake(self, cpt):
 
-        if cpt.gcpt.cpt_kind == cpt._kind:
+        gcpt = cpt.gcpt
+        if gcpt.cpt_kind == cpt._kind:
             newcpt = cpt
         else:
-            newcpt = cpt._change_kind(cpt.gcpt.cpt_kind)
+            newcpt = cpt._change_kind(gcpt.cpt_kind)
+
+        if newcpt.is_dependent_source:
+            try:
+                ccpt = self.circuit[gcpt.control]
+            except Exception as e:
+                self.exception('Control component %s for %s deleted' %
+                               (gcpt.control, cpt.name))
+                return
+            newcpt.nodes[2] = ccpt.nodes[0]
+            newcpt.nodes[3] = ccpt.nodes[1]
 
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)
@@ -410,6 +421,12 @@ class UIModelBase:
 
         return self.thing_create(self.clipboard.type, x1, y1, x2, y2)
 
+    def possible_control_names(self):
+
+        cpts = self.circuit.elements.values()
+        names = [c.name for c in cpts if c.name[0] != 'W']
+        return names
+
     def remove_directives(self):
 
         elt_list = list(self.circuit.elements.values())
@@ -473,11 +490,11 @@ class UIModelBase:
 
         cpt_name = self.choose_cpt_name(gcpt.type)
         gcpt.name = cpt_name
-        net_parts = [cpt_name]
 
         nodes = list(self.circuit.nodes)
         positions = gcpt.assign_positions(x1, y1, x2, y2)
 
+        parts = [cpt_name]
         for m, position in enumerate(positions):
             node = self.circuit.nodes.by_position(position)
             if node is None:
@@ -485,14 +502,22 @@ class UIModelBase:
                 nodes.append(node_name)
             else:
                 node_name = node.name
-            net_parts.append(node_name)
+            parts.append(node_name)
 
-        net = ' '.join(net_parts)
+        if cpt_type in ('E', 'G'):
+            # Use cpt for its control.  This is temporary until the
+            # user changes it.
+            parts.extend([parts[1], parts[2]])
+            gcpt.control = cpt_name
+        elif cpt_type in ('F', 'H'):
+            parts.append('X')
+
+        netitem = ' '.join(parts)
 
         if self.ui.debug:
-            print('Adding ' + net)
+            print('Adding ' + netitem)
 
-        cct = self.circuit.add(net)
+        cct = self.circuit.add(netitem)
         cpt = cct[cpt_name]
 
         for m, position in enumerate(positions):

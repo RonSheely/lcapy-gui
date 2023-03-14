@@ -1,7 +1,3 @@
-from ...components.vcvs import VCVS
-from ...components.vccs import VCCS
-from ...components.ccvs import CCVS
-from ...components.cccs import CCCS
 from tkinter import Tk, Button
 from .labelentries import LabelEntry, LabelEntries
 
@@ -44,8 +40,8 @@ class CptPropertiesDialog:
         elif cpt.is_inductor:
             entries.append(LabelEntry('i0', 'i0', self.cpt.cpt.i0,
                                       command=self.on_update))
-        elif isinstance(cpt, (VCVS, VCCS, CCVS, CCCS)):
-            names = [c.name for c in ui.model.components if c.name[0] != 'W']
+        elif cpt.is_dependent_source:
+            names = ui.model.possible_control_names()
             entries.append(LabelEntry('control', 'Control',
                                       self.gcpt.control, names,
                                       command=self.on_update))

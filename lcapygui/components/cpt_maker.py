@@ -104,7 +104,7 @@ cpt_maker = CptMaker()
 
 
 def cpt_make(cpt_type, kind='', style='', create=False):
-    """Factory to create the path required to draw a component
+    """Factory to create the sketch required to draw a component
     of `cpt_type`."""
 
     return cpt_maker(cpt_type, kind, style, create)
