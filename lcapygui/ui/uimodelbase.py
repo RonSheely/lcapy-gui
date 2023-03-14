@@ -285,20 +285,18 @@ class UIModelBase:
     def cpt_remake(self, cpt):
 
         gcpt = cpt.gcpt
-        if gcpt.cpt_kind == cpt._kind:
-            newcpt = cpt
-        else:
-            newcpt = cpt._change_kind(gcpt.cpt_kind)
 
-        if newcpt.is_dependent_source:
+        if cpt.is_dependent_source:
             try:
-                ccpt = self.circuit[gcpt.control]
-            except Exception as e:
+                newcpt = cpt._change_control(gcpt.control)
+            except Exception:
                 self.exception('Control component %s for %s deleted' %
                                (gcpt.control, cpt.name))
                 return
-            newcpt.nodes[2] = ccpt.nodes[0]
-            newcpt.nodes[3] = ccpt.nodes[1]
+        elif gcpt.cpt_kind == cpt._kind:
+            newcpt = cpt
+        else:
+            newcpt = cpt._change_kind(gcpt.cpt_kind)
 
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)
