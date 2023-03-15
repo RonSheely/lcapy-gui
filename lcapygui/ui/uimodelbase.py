@@ -210,21 +210,23 @@ class UIModelBase:
         name = cpt.name
 
         try:
-            value = '$' + expr(cpt.args[0]).latex() + '$'
+            value = cpt.args[0]
+            value_latex = '$' + expr(value).latex() + '$'
         except IndexError:
             value = None
 
         if value is None:
             value = ''
+            value_latex = ''
 
         if label_cpts == 'name+value':
-            if name != value and gcpt.type != 'P':
-                label = name + '=' + value
+            if name != value and gcpt.type not in ('D', 'J', 'M', 'P', 'Q'):
+                label = name + '=' + value_latex
             else:
                 label = name
         elif label_cpts == 'value':
             if value != '':
-                label = value
+                label = value_latex
             else:
                 label = name
         elif label_cpts == 'name':
