@@ -6,6 +6,7 @@ class Wire(BipoleComponent):
     type = 'W'
     args = ()
     sketch_net = 'W 1 2'
+    has_value = False
 
     def draw(self, editor, sketcher, **kwargs):
 

@@ -221,7 +221,7 @@ class UIModelBase:
             value_latex = ''
 
         if label_cpts == 'name+value':
-            if name != value and gcpt.type not in ('D', 'J', 'M', 'P', 'Q'):
+            if name != value and gcpt.has_value:
                 label = name + '=' + value_latex
             else:
                 label = name

@@ -12,6 +12,7 @@ class Diode(BipoleComponent):
     styles = {'empty': 'Empty', 'full': 'Full', 'stroke': 'Stroke'}
     default_kind = '-'
     default_style = 'empty'
+    has_value = False
 
     @property
     def sketch_net(self):

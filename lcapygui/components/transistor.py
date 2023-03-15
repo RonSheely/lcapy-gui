@@ -8,6 +8,7 @@ class Transistor(Component):
 
     can_stretch = True
     label_offset = 0.6
+    has_value = False
     # extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
     def assign_positions(self, x1, y1, x2, y2) -> array:

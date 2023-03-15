@@ -4,6 +4,7 @@ from .capacitor import Capacitor
 from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
+from .ferritebead import FerriteBead
 from .ground import Ground
 from .impedance import Impedance
 from .inductor import Inductor
@@ -35,6 +36,7 @@ class CptMaker:
         'E': VCVS,
         'Opamp': Opamp,
         'F': CCCS,
+        'FB': FerriteBead,
         'G': VCCS,
         'H': CCVS,
         'I': CurrentSource,

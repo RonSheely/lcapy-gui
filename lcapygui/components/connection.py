@@ -1,5 +1,6 @@
 from .component import Component
 from numpy import array
+from math import sqrt
 
 
 class Connection(Component):
@@ -7,7 +8,7 @@ class Connection(Component):
     def __str__(self) -> str:
 
         return self.type + ' ' + '(%s, %s)' % \
-            (self.nodes[0].position[0], self.nodes[0].position[1])
+            (self.nodes[0].pos[0], self.nodes[0].pos[1])
 
     @property
     def midpoint(self) -> array:
@@ -15,7 +16,7 @@ class Connection(Component):
         Computes the midpoint of the component.
         """
 
-        return array(self.nodes[0].position) + array((0, -0.5))
+        return self.nodes[0].pos + array((0, -0.5))
 
     def length(self) -> float:
         """
@@ -30,6 +31,17 @@ class Connection(Component):
 
     def draw(self, editor, sketcher, **kwargs):
 
-        x1, y1 = self.nodes[0].position
-        sketcher.sketch(self.sketch, offset=(x1, y1),
-                     angle=180, lw=2, **kwargs)
+        x1, y1 = self.node1.pos.x, self.node1.pos.y
+
+        kwargs = self.make_kwargs(editor, **kwargs)
+
+        sketcher.sketch(self.sketch, offset=(x1, y1), angle=180,
+                        **kwargs)
+
+    def is_within_bbox(self, x, y):
+
+        xm = self.midpoint.x
+        ym = self.midpoint.y
+
+        r = sqrt((x - xm)**2 + (y - ym)**2)
+        return r < 0.5
