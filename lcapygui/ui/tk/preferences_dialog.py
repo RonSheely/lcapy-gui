@@ -47,7 +47,11 @@ class PreferencesDialog:
                               command=self.on_update),
                    LabelEntry('ysize', 'Height',
                               self.model.preferences.ysize,
-                              command=self.on_update)
+                              command=self.on_update),
+                   LabelEntry('snap_grid', 'Snap to grid',
+                              self.model.preferences.snap_grid,
+                              ('true', 'false'),
+                              command=self.on_update),
                    ]
 
         self.labelentries = LabelEntries(self.master, ui, entries)
@@ -68,6 +72,7 @@ class PreferencesDialog:
         self.model.preferences.show_units = self.labelentries.get('show_units')
         self.model.preferences.xsize = self.labelentries.get('xsize')
         self.model.preferences.ysize = self.labelentries.get('ysize')
+        self.model.preferences.snap_grid = self.labelentries.get('snap_grid')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...

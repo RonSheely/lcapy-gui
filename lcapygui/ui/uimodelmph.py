@@ -160,7 +160,9 @@ class UIModelMPH(UIModelBase):
         # Snap to known node then snap to grid.
         node = self.closest_node(x, y)
         if node is None:
-            x, y = self.snap(x, y)
+            if self.preferences.snap_grid == 'true':
+                x, y = self.snap(x, y)
+            # Could be smarter and try to align with nearby node.
         else:
             x, y = node.x, node.y
 
