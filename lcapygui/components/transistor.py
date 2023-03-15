@@ -27,7 +27,7 @@ class Transistor(Component):
 
         # TODO: The offset might change with transistor types.
         # Note, the transistor base/gate is down.
-        xg, yg = dot(R, (0, 2.2))
+        xg, yg = dot(R, (0, 2))
         xg += xm
         yg += ym
 
