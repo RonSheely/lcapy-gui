@@ -21,6 +21,7 @@ class UIModelBase:
     component_map = {
         'c': ('c', 'Capacitor', 'C', ''),
         'd': ('d', 'Diode', 'D', ''),
+        'fb': ('', 'Ferrite bead', 'FB', ''),
         'i': ('i', 'Current source', 'I', ''),
         'j': ('j', 'JFET', 'J', ''),
         'l': ('l', 'Inductor', 'L', ''),
