@@ -402,6 +402,7 @@ class UIModelBase:
                 # FIXME.
                 gcpt.name = cpt.name
                 gcpt.nodes = cpt.nodes
+                gcpt.set_attrs(cpt.opts)
             except Exception as e:
                 cgpt = None
                 self.exception(e)
@@ -489,7 +490,7 @@ class UIModelBase:
 
         gcpt = cpt_make(cpt_type)
 
-        cpt_name = self.choose_cpt_name(gcpt.type)
+        cpt_name = self.choose_cpt_name(cpt_type)
         gcpt.name = cpt_name
 
         nodes = list(self.circuit.nodes)

@@ -324,6 +324,20 @@ class Component(ABC):
         # Determine if transformed point is in the box
         return x > -l / 2 and x < l / 2 and y > -h / 2 and y < h / 2
 
+    def set_attrs(self, opts):
+
+        parts = []
+        for k, v in opts.items():
+            if k in ('color', 'colour'):
+                self.color = v
+            elif k == 'mirror':
+                self.mirror = True
+            elif k == 'invert':
+                self.invert = True
+            elif k not in ('left', 'right', 'up', 'down', 'angle', 'thick'):
+                parts.append(k + '=' + v)
+        self.attrs = ', '.join(parts)
+
 
 class ControlledComponent(Component):
 

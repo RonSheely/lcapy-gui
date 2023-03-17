@@ -109,6 +109,10 @@ def cpt_make(cpt_type, kind='', style='', create=False):
     """Factory to create the sketch required to draw a component
     of `cpt_type`."""
 
+    # There are two ways a cpt is made:
+    # 1. From a specified pair of coordinates and a cpt type.
+    # 2. When loading from a file where the nodes are known.
+
     return cpt_maker(cpt_type, kind, style, create)
 
 
