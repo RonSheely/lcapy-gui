@@ -179,6 +179,9 @@ class Component(ABC):
                 v = True
             kwargs[k] = v
 
+        if kwargs.pop('thick', False):
+            kwargs['lw'] = kwargs['lw'] * 2
+
         if self.color != '':
             kwargs['color'] = self.color
 
