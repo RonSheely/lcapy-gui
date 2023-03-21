@@ -121,6 +121,9 @@ class UIModelBase:
 
     def choose_cpt_name(self, cpt_type):
 
+        if cpt_type == 'Ground':
+            cpt_type = 'W'
+
         num = 1
         while True:
             name = cpt_type + str(num)
@@ -141,6 +144,8 @@ class UIModelBase:
         """Create a new connection."""
 
         try:
+            import pdb
+            pdb.set_trace()
             cpt_type = self.connection_map[con_key][2]
         except KeyError:
             return None
@@ -398,11 +403,8 @@ class UIModelBase:
                 cpt_type = cpt.type
                 if isinstance(cpt, Eopamp):
                     cpt_type = 'Opamp'
-                gcpt = cpt_make(cpt_type, kind=cpt._kind)
-                # FIXME.
-                gcpt.name = cpt.name
-                gcpt.nodes = cpt.nodes
-                gcpt.set_attrs(cpt.opts)
+                gcpt = cpt_make(cpt_type, kind=cpt._kind, name=cpt.name,
+                                nodes=cpt.nodes, opts=cpt.opts)
             except Exception as e:
                 cgpt = None
                 self.exception(e)
@@ -493,15 +495,16 @@ class UIModelBase:
         cpt_name = self.choose_cpt_name(cpt_type)
         gcpt.name = cpt_name
 
-        nodes = list(self.circuit.nodes)
+        node_names = list(self.circuit.nodes)
         positions = gcpt.assign_positions(x1, y1, x2, y2)
 
+        # FIXME, need correct name for implicit wire
         parts = [cpt_name]
         for m, position in enumerate(positions):
             node = self.circuit.nodes.by_position(position)
             if node is None:
-                node_name = self.choose_node_name(nodes)
-                nodes.append(node_name)
+                node_name = self.choose_node_name(node_names)
+                node_names.append(node_name)
             else:
                 node_name = node.name
             parts.append(node_name)

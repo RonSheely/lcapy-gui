@@ -3,7 +3,7 @@ from .connection import Connection
 
 class Ground(Connection):
 
-    type = "A"
+    type = "W"
     default_kind = '-ground'
 
     kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
@@ -12,8 +12,8 @@ class Ground(Connection):
     @property
     def sketch_net(self):
 
-        return self.type + ' 1' '; down, ' + self.kind
+        return 'W 1 0; down=0, ' + self.kind
 
     def attr_string(self, step=1):
 
-        return 'down, ' + self.kind
+        return 'down=0, ' + self.kind

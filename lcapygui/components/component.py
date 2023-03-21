@@ -34,10 +34,16 @@ class Component(ABC):
               'attrs': 'Attributes'}
     extra_fields = {}
 
-    def __init__(self, kind='', style=''):
+    def __init__(self, kind='', style='', name=None, nodes=None, opts=None):
 
-        self.name = None
-        self.nodes = []
+        if nodes is None:
+            nodes = []
+        if opts is None:
+            opts = Opts()
+
+        self.name = name
+        self.nodes = nodes
+        self.opts = opts
         self.control = None
         self.attrs = ''
         self.annotations = []
@@ -59,6 +65,23 @@ class Component(ABC):
             style = self.default_style
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
+
+        opts = self.filter_opts(opts)
+
+        parts = []
+        for k, v in opts.items():
+            if k in ('color', 'colour'):
+                self.color = v
+            elif k == 'mirror':
+                self.mirror = True
+            elif k == 'invert':
+                self.invert = True
+            elif k not in ('left', 'right', 'up', 'down', 'angle', 'thick'):
+                parts.append(k + '=' + v)
+        self.attrs = ', '.join(parts)
+
+    def filter_opts(self, opts):
+        return opts
 
     @property
     @classmethod
@@ -327,19 +350,14 @@ class Component(ABC):
         # Determine if transformed point is in the box
         return x > -l / 2 and x < l / 2 and y > -h / 2 and y < h / 2
 
-    def set_attrs(self, opts):
+    @property
+    def netitem(self):
 
-        parts = []
-        for k, v in opts.items():
-            if k in ('color', 'colour'):
-                self.color = v
-            elif k == 'mirror':
-                self.mirror = True
-            elif k == 'invert':
-                self.invert = True
-            elif k not in ('left', 'right', 'up', 'down', 'angle', 'thick'):
-                parts.append(k + '=' + v)
-        self.attrs = ', '.join(parts)
+        parts = [self.name]
+        for node in self.nodes:
+            parts.append(node.name)
+
+        return ' '.join(parts)
 
 
 class ControlledComponent(Component):

@@ -68,14 +68,17 @@ class CptMaker:
                 'Could not find data file for ' + cpt.sketch_key)
         return sketch
 
-    def _make_cpt(self, cpt_type, kind='', style=''):
+    def _make_cpt(self, cpt_type, kind='', style='', name=None,
+                  nodes=None, opts=None):
 
         cls = self.cpts[cpt_type]
 
         try:
-            cpt = cls(kind=kind, style=style)
+            cpt = cls(kind=kind, style=style,
+                      name=name, nodes=nodes, opts=opts)
         except TypeError:
-            cpt = cls(None, kind=kind, style=style)
+            cpt = cls(None, kind=kind, style=style, name=name,
+                      nodes=None, opts=opts)
 
         return cpt
 
@@ -93,9 +96,10 @@ class CptMaker:
         # TODO: remove duck typing
         cpt.sketch = sketch
 
-    def __call__(self, cpt_type, kind='', style='', create=False):
+    def __call__(self, cpt_type, kind='', style='', name=None,
+                 nodes=None, opts=None, create=False):
 
-        cpt = self._make_cpt(cpt_type, kind, style)
+        cpt = self._make_cpt(cpt_type, kind, style, name, nodes, opts)
 
         self._add_sketch(cpt, create)
 
@@ -105,7 +109,8 @@ class CptMaker:
 cpt_maker = CptMaker()
 
 
-def cpt_make(cpt_type, kind='', style='', create=False):
+def cpt_make(cpt_type, kind='', style='', name=None,
+             nodes=None, opts=None, create=False):
     """Factory to create the sketch required to draw a component
     of `cpt_type`."""
 
@@ -113,7 +118,7 @@ def cpt_make(cpt_type, kind='', style='', create=False):
     # 1. From a specified pair of coordinates and a cpt type.
     # 2. When loading from a file where the nodes are known.
 
-    return cpt_maker(cpt_type, kind, style, create)
+    return cpt_maker(cpt_type, kind, style, name, nodes, opts, create)
 
 
 def cpt_remake(cpt):
