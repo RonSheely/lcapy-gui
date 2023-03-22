@@ -5,8 +5,11 @@ class Wire(BipoleComponent):
 
     type = 'W'
     args = ()
-    sketch_net = 'W 1 2'
     has_value = False
+    default_kind = '-'
+
+    kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
+             '-rground': 'Rail ground', '-cground': 'Chassis ground'}
 
     connection_keys = ('input', 'output', 'bidir', 'pad')
     ground_keys = ('ground', 'sground', 'rground',
@@ -18,7 +21,14 @@ class Wire(BipoleComponent):
 
     def filter_opts(self, opts):
 
-        stripped = opts.strip(*self.implicit_keys)
+        stripped = list(opts.strip(*self.implicit_keys))
+        if len(stripped) > 1:
+            raise ValueError('Multiple wire kinds: ' + ', '.join(stripped))
+        elif len(stripped) == 1:
+            kind = stripped[0]
+            if kind == 'implicit':
+                kind = 'ground'
+            self.kind = kind
         return opts
 
     def draw(self, editor, sketcher, **kwargs):
@@ -28,3 +38,19 @@ class Wire(BipoleComponent):
 
         kwargs = self.make_kwargs(editor, **kwargs)
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)
+
+        if self.kind != '':
+
+            if self.kind in ('vcc', 'vdd'):
+                offset = x1, y1
+            else:
+                offset = x2, y2
+
+            # TODO, draw vcc, vdd on positive node.
+            sketcher.sketch(self.sketch, offset=offset,
+                            angle=self.angle + 90, snap=False, **kwargs)
+
+    @property
+    def sketch_net(self):
+
+        return 'W 1 0; down=0, ' + self.symbol_kind

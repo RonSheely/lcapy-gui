@@ -76,7 +76,12 @@ class Component(ABC):
                 self.mirror = True
             elif k == 'invert':
                 self.invert = True
-            elif k not in ('left', 'right', 'up', 'down', 'angle', 'thick'):
+            elif k == 'kind':
+                self.kind = '-' + v
+            elif k == 'style':
+                self.style = v
+            elif k not in ('left', 'right', 'up', 'down', 'angle',
+                           'thick'):
                 parts.append(k + '=' + v)
         self.attrs = ', '.join(parts)
 
@@ -103,10 +108,10 @@ class Component(ABC):
     def sketch_key(self):
 
         s = self.type
-        if self.kind != '':
-            s += '-' + self.kind
-        if self.style != '':
-            s += '-' + self.style
+        s += '-' + self.cpt_kind
+        s += '-' + self.symbol_kind
+        s += '-' + self.style
+        s = s.strip('-')
         return s
 
     @property

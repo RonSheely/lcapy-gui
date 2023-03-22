@@ -18,8 +18,8 @@ class Diode(BipoleComponent):
     def sketch_net(self):
 
         s = self.type + ' 1 2; right'
-        if self.kind != '':
-            s += ', kind=' + self.kind
+        if self.symbol_kind != '':
+            s += ', kind=' + self.symbol_kind
         if self.style != '':
             s += ', style=' + self.style
         return s
