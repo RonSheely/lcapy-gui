@@ -34,6 +34,9 @@ class Component(ABC):
               'attrs': 'Attributes'}
     extra_fields = {}
 
+    # TODO: add class methods to construct Component from
+    # an Lcapy cpt or from a cpt type.
+
     def __init__(self, kind='', style='', name=None, nodes=None, opts=None):
 
         if nodes is None:

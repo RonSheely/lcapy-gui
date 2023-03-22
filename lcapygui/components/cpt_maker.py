@@ -57,51 +57,37 @@ class CptMaker:
 
         self.sketches = {}
 
-    def _make_sketch(self, cpt, create=False):
-
-        if create:
-            sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
-
-        sketch = Sketch.load(cpt.sketch_key)
-        if sketch is None:
-            raise FileNotFoundError(
-                'Could not find data file for ' + cpt.sketch_key)
-        return sketch
-
     def _make_cpt(self, cpt_type, kind='', style='', name=None,
                   nodes=None, opts=None):
 
         cls = self.cpts[cpt_type]
 
-        try:
-            cpt = cls(kind=kind, style=style,
-                      name=name, nodes=nodes, opts=opts)
-        except TypeError:
-            cpt = cls(None, kind=kind, style=style, name=name,
-                      nodes=None, opts=opts)
-
+        cpt = cls(kind=kind, style=style,
+                  name=name, nodes=nodes, opts=opts)
         return cpt
 
-    def _add_sketch(self, cpt, create=False):
+    def _add_sketch(self, cpt):
 
         sketch_key = cpt.sketch_key
 
         try:
             sketch = self.sketches[sketch_key]
         except KeyError:
-            sketch = self._make_sketch(cpt, create)
-
-        self.sketches[sketch_key] = sketch
+            sketch = Sketch.load(cpt.sketch_key)
+            if sketch is None:
+                raise FileNotFoundError(
+                    'Could not find data file for ' + cpt.sketch_key)
+            self.sketches[sketch_key] = sketch
 
         # TODO: remove duck typing
         cpt.sketch = sketch
 
     def __call__(self, cpt_type, kind='', style='', name=None,
-                 nodes=None, opts=None, create=False):
+                 nodes=None, opts=None):
 
         cpt = self._make_cpt(cpt_type, kind, style, name, nodes, opts)
 
-        self._add_sketch(cpt, create)
+        self._add_sketch(cpt)
 
         return cpt
 
@@ -109,18 +95,25 @@ class CptMaker:
 cpt_maker = CptMaker()
 
 
-def cpt_make(cpt_type, kind='', style='', name=None,
-             nodes=None, opts=None, create=False):
-    """Factory to create the sketch required to draw a component
-    of `cpt_type`."""
+def cpt_make_from_cpt(cpt):
 
-    # There are two ways a cpt is made:
-    # 1. From a specified pair of coordinates and a cpt type.
-    # 2. When loading from a file where the nodes are known.
+    # TODO: what about style?
+    return cpt_maker(cpt.type, kind=cpt._kind, name=cpt.name,
+                     nodes=cpt.nodes, opts=cpt.opts)
 
-    return cpt_maker(cpt_type, kind, style, name, nodes, opts, create)
+
+def cpt_make_from_type(cpt_type, cpt_name, kind='', style=''):
+
+    return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style)
 
 
 def cpt_remake(cpt):
 
     return cpt_maker._add_sketch(cpt)
+
+
+def cpt_sketch_make(cpt):
+
+    # Could make method of cpt.
+    sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
+    return sketch

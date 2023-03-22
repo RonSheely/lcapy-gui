@@ -1,7 +1,7 @@
 from ..annotation import Annotation
 from ..annotations import Annotations
 from .preferences import Preferences
-from ..components.cpt_maker import cpt_make, cpt_remake
+from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type, cpt_remake
 
 from copy import copy
 from math import atan2, degrees, sqrt
@@ -144,8 +144,6 @@ class UIModelBase:
         """Create a new connection."""
 
         try:
-            import pdb
-            pdb.set_trace()
             cpt_type = self.connection_map[con_key][2]
         except KeyError:
             return None
@@ -400,14 +398,11 @@ class UIModelBase:
                 cpt.gcpt = None
                 continue
             try:
-                cpt_type = cpt.type
-                if isinstance(cpt, Eopamp):
-                    cpt_type = 'Opamp'
-                gcpt = cpt_make(cpt_type, kind=cpt._kind, name=cpt.name,
-                                nodes=cpt.nodes, opts=cpt.opts)
+                gcpt = cpt_make_from_cpt(cpt)
             except Exception as e:
                 cgpt = None
                 self.exception(e)
+                return
 
             cpt.gcpt = gcpt
 
@@ -490,10 +485,10 @@ class UIModelBase:
 
     def thing_create(self, cpt_type, x1, y1, x2, y2):
 
-        gcpt = cpt_make(cpt_type)
-
         cpt_name = self.choose_cpt_name(cpt_type)
-        gcpt.name = cpt_name
+        gcpt = cpt_make_from_type(cpt_type, cpt_name)
+        if gcpt is None:
+            return
 
         node_names = list(self.circuit.nodes)
         positions = gcpt.assign_positions(x1, y1, x2, y2)
@@ -516,6 +511,8 @@ class UIModelBase:
             gcpt.control = cpt_name
         elif cpt_type in ('F', 'H'):
             parts.append('X')
+        elif cpt_type in ('M', 'Q', 'J'):
+            parts.append(gcpt.cpt_kind)
 
         netitem = ' '.join(parts)
 
