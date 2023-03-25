@@ -54,3 +54,13 @@ class Wire(BipoleComponent):
     def sketch_net(self):
 
         return 'W 1 0; right=0, ' + self.symbol_kind
+
+    @property
+    def label_nodes(self):
+
+        if self.kind == '':
+            return self.nodes
+        elif self.kind in ('vcc', 'vdd'):
+            return self.nodes[1:]
+        else:
+            return self.nodes[:1]

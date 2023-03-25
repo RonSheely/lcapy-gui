@@ -264,7 +264,7 @@ class UIModelBase:
 
         label_nodes = self.preferences.label_nodes
         if label_nodes != 'none':
-            for node in cpt.nodes:
+            for node in gcpt.label_nodes:
                 if node.name[0] == '_':
                     continue
 

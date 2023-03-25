@@ -130,6 +130,11 @@ class Component(ABC):
         parts = self.kind.split('-')
         return '-'.join(parts[1:])
 
+    @property
+    def label_nodes(self):
+
+        return self.nodes
+
     def draw(self, editor, sketcher, **kwargs):
         """
         Handles drawing specific features of components.
