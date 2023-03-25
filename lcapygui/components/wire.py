@@ -9,7 +9,8 @@ class Wire(BipoleComponent):
     default_kind = '-'
 
     kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
-             '-rground': 'Rail ground', '-cground': 'Chassis ground'}
+             '-rground': 'Rail ground', '-cground': 'Chassis ground',
+             '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS'}
 
     connection_keys = ('input', 'output', 'bidir', 'pad')
     ground_keys = ('ground', 'sground', 'rground',
@@ -39,16 +40,21 @@ class Wire(BipoleComponent):
         kwargs = self.make_kwargs(editor, **kwargs)
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)
 
-        if self.kind != '':
+        if self.symbol_kind != '':
 
-            if self.kind in ('vcc', 'vdd'):
+            if self.symbol_kind in ('vcc', 'vdd'):
                 offset = x1, y1
+                angle = self.angle + 90
+            elif self.symbol_kind in ('vee', 'vss'):
+                offset = x2, y2
+                angle = self.angle + 90
             else:
                 offset = x2, y2
+                angle = self.angle
 
             # TODO, draw vcc, vdd on positive node.
             sketcher.sketch(self.sketch, offset=offset,
-                            angle=self.angle, snap=False, **kwargs)
+                            angle=angle, snap=False, **kwargs)
 
     @property
     def sketch_net(self):
@@ -58,9 +64,9 @@ class Wire(BipoleComponent):
     @property
     def label_nodes(self):
 
-        if self.kind == '':
+        if self.symbol_kind == '':
             return self.nodes
-        elif self.kind in ('vcc', 'vdd'):
+        elif self.symbol_kind in ('vcc', 'vdd'):
             return self.nodes[1:]
         else:
             return self.nodes[:1]
