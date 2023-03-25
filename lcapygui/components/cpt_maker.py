@@ -102,7 +102,7 @@ def cpt_make_from_cpt(cpt):
                      nodes=cpt.nodes, opts=cpt.opts)
 
 
-def cpt_make_from_type(cpt_type, cpt_name, kind='', style=''):
+def cpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
 
     return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style)
 

@@ -48,9 +48,9 @@ class Wire(BipoleComponent):
 
             # TODO, draw vcc, vdd on positive node.
             sketcher.sketch(self.sketch, offset=offset,
-                            angle=self.angle + 90, snap=False, **kwargs)
+                            angle=self.angle, snap=False, **kwargs)
 
     @property
     def sketch_net(self):
 
-        return 'W 1 0; down=0, ' + self.symbol_kind
+        return 'W 1 0; right=0, ' + self.symbol_kind

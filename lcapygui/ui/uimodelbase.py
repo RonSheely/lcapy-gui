@@ -214,7 +214,7 @@ class UIModelBase:
         name = cpt.name
 
         try:
-            if cpt.type == 'F':
+            if cpt.type in ('F', 'H'):
                 value = cpt.args[1]
             else:
                 value = cpt.args[0]
