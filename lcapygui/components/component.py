@@ -33,6 +33,7 @@ class Component(ABC):
               'color': 'Color',
               'attrs': 'Attributes'}
     extra_fields = {}
+    has_value = True
 
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.

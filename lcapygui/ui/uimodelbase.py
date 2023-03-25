@@ -214,7 +214,10 @@ class UIModelBase:
         name = cpt.name
 
         try:
-            value = cpt.args[0]
+            if cpt.type == 'F':
+                value = cpt.args[1]
+            else:
+                value = cpt.args[0]
             value_latex = '$' + expr(value).latex() + '$'
         except IndexError:
             value = None

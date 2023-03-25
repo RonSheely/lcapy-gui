@@ -31,6 +31,8 @@ class CptPropertiesDialog:
                                   command=self.on_update))
 
         for m, arg in enumerate(self.gcpt.args):
+            if arg == 'Control':
+                continue
             entries.append(LabelEntry(arg, arg, self.cpt.args[m],
                                       command=self.on_update))
 
@@ -78,6 +80,8 @@ class CptPropertiesDialog:
             self.ui.show_error_dialog('Cannot change component type')
 
         for m, arg in enumerate(self.gcpt.args):
+            if arg == 'Control':
+                continue
             value = self.labelentries.get(arg)
             self.cpt.args[m] = value
 
