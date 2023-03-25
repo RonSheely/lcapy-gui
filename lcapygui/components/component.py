@@ -352,8 +352,8 @@ class Component(ABC):
         p = array((x, y))
         q = dot(R.T, (p - m))
 
-        l = self.length - 0.2
-        h = 0.5 - 0.2
+        l = self.length - 0.3
+        h = 0.3
         x, y = q
 
         # Determine if transformed point is in the box
