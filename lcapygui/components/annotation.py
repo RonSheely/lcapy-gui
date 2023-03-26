@@ -20,4 +20,4 @@ class Annotation(Connection):
 
     def attr_string(self, step=1):
 
-        return 'down=0, ' + self.symbol_kind
+        return self.symbol_kind

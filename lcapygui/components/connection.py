@@ -35,7 +35,12 @@ class Connection(Component):
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
-        sketcher.sketch(self.sketch, offset=(x1, y1), angle=-90,
+        if self.symbol_kind in ('vcc', 'vdd', 'vee', 'vss'):
+            angle = 0
+        else:
+            angle = -90
+
+        sketcher.sketch(self.sketch, offset=(x1, y1), angle=angle,
                         **kwargs)
 
     def is_within_bbox(self, x, y):
@@ -45,3 +50,8 @@ class Connection(Component):
 
         r = sqrt((x - xm)**2 + (y - ym)**2)
         return r < 0.5
+
+    @property
+    def node2(self):
+
+        return None
