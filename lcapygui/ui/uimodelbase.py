@@ -49,11 +49,13 @@ class UIModelBase:
         'sground': ('', 'Signal ground', 'A', 'sground'),
         'rground': ('', 'Rail ground', 'A', 'rground'),
         'cground': ('', 'Chassis ground', 'A', 'cground'),
-        # 'vdd': ('VDD', 'A', 'vdd'),
-        # 'vss': ('VSS', 'A', 'vss'),
-        # 'input': ('Input', 'A', 'input'),
-        # 'output': ('Output', 'A', 'output'),
-        # 'bidir': ('Bidirectional', 'A', 'bidir')
+        'vdd': ('', 'VDD', 'A', 'vdd'),
+        'vss': ('', 'VSS', 'A', 'vss'),
+        'vcc': ('', 'VCC', 'A', 'vcc'),
+        'vee': ('', 'VEE', 'A', 'vee'),
+        'input': ('', 'Input', 'A', 'input'),
+        'output': ('', 'Output', 'A', 'output'),
+        'bidir': ('', 'Bidirectional', 'A', 'bidir')
     }
 
     def __init__(self, ui):

@@ -10,7 +10,8 @@ class Annotation(Connection):
 
     kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
              '-rground': 'Rail ground', '-cground': 'Chassis ground',
-             '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS'}
+             '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS',
+             '-input': 'Input', '-output': 'Output', '-bidir': 'Bidirectional'}
 
     @property
     def sketch_net(self):
