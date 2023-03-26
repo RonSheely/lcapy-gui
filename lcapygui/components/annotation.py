@@ -1,0 +1,22 @@
+from .connection import Connection
+
+
+class Annotation(Connection):
+
+    type = "A"
+    args = ()
+    default_kind = '-ground'
+    angle_offset = 90
+
+    kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
+             '-rground': 'Rail ground', '-cground': 'Chassis ground',
+             '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS'}
+
+    @property
+    def sketch_net(self):
+
+        return 'A 0; right, ' + self.symbol_kind
+
+    def attr_string(self, step=1):
+
+        return 'down=0, ' + self.symbol_kind

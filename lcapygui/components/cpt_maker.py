@@ -1,11 +1,11 @@
 from .admittance import Admittance
+from .annotation import Annotation
 from .bjt import BJT
 from .capacitor import Capacitor
 from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
 from .ferritebead import FerriteBead
-from .ground import Ground
 from .impedance import Impedance
 from .inductor import Inductor
 from .jfet import JFET
@@ -29,7 +29,7 @@ from .sketch import Sketch
 class CptMaker:
 
     cpts = {
-        'Ground': Ground,
+        'A': Annotation,
         'C': Capacitor,
         'CPE': CPE,
         'D': Diode,

@@ -35,7 +35,7 @@ class Connection(Component):
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
-        sketcher.sketch(self.sketch, offset=(x1, y1), angle=180,
+        sketcher.sketch(self.sketch, offset=(x1, y1), angle=-90,
                         **kwargs)
 
     def is_within_bbox(self, x, y):

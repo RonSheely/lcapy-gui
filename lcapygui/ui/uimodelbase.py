@@ -43,12 +43,12 @@ class UIModelBase:
     }
 
     connection_map = {
-        '0': ('0', '0V', 'Ground', ''),
-        '0V': ('', '0V', 'Ground', '0V'),
-        'ground': ('', 'Ground', 'Ground', ''),
-        'sground': ('', 'Signal ground', 'Ground', 'sground'),
-        'rground': ('', 'Rail ground', 'Ground', 'rground'),
-        'cground': ('', 'Chassis ground', 'Ground', 'cground'),
+        '0': ('0', '0V', 'A', ''),
+        '0V': ('', '0V', 'A', '0V'),
+        'ground': ('', 'Ground', 'A', ''),
+        'sground': ('', 'Signal ground', 'A', 'sground'),
+        'rground': ('', 'Rail ground', 'A', 'rground'),
+        'cground': ('', 'Chassis ground', 'A', 'cground'),
         # 'vdd': ('VDD', 'A', 'vdd'),
         # 'vss': ('VSS', 'A', 'vss'),
         # 'input': ('Input', 'A', 'input'),
@@ -121,9 +121,6 @@ class UIModelBase:
 
     def choose_cpt_name(self, cpt_type):
 
-        if cpt_type == 'Ground':
-            cpt_type = 'W'
-
         num = 1
         while True:
             name = cpt_type + str(num)
@@ -151,7 +148,7 @@ class UIModelBase:
         if cpt_type == '':
             return None
 
-        return self.thing_create(cpt_type, x1, y1, x2, y2)
+        return self.thing_create(cpt_type, x1, y1, x2, y2, kind='-' + con_key)
 
     def copy(self, cpt):
 
@@ -486,10 +483,10 @@ class UIModelBase:
         s += '; ' + self.preferences.schematic_preferences() + '\n'
         return s
 
-    def thing_create(self, cpt_type, x1, y1, x2, y2):
+    def thing_create(self, cpt_type, x1, y1, x2, y2, kind=''):
 
         cpt_name = self.choose_cpt_name(cpt_type)
-        gcpt = cpt_make_from_type(cpt_type, cpt_name)
+        gcpt = cpt_make_from_type(cpt_type, cpt_name, kind=kind)
         if gcpt is None:
             return
 
