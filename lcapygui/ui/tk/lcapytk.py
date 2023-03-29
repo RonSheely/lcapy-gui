@@ -44,6 +44,8 @@ class LcapyTk(Tk):
         self.file_menu = Menu(self.menu, tearoff=0,
                               bg='lightgrey', fg='black')
 
+        self.file_menu.add_command(label='Clone', command=self.on_clone,
+                                   underline=0)
         self.file_menu.add_command(label='New', command=self.on_new,
                                    underline=0, accelerator='Ctrl+n')
         self.file_menu.add_command(label='Open', command=self.on_load,
@@ -318,6 +320,10 @@ class LcapyTk(Tk):
                 self.model.on_left_click(event.xdata, event.ydata)
             elif event.button == 3:
                 self.model.on_right_click(event.xdata, event.ydata)
+
+    def on_clone(self):
+
+        self.model.on_clone()
 
     def on_copy(self, *args):
 

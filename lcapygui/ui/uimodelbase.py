@@ -391,7 +391,9 @@ class UIModelBase:
             for node in sch.nodes.values():
                 node.pos.x += offsetx
                 node.pos.y += offsety
-                circuit.nodes[node.name].pos = node.pos
+                # May have split nodes...
+                if node.name in circuit.nodes:
+                    circuit.nodes[node.name].pos = node.pos
 
         self.remove_directives()
 
@@ -402,9 +404,8 @@ class UIModelBase:
             try:
                 gcpt = cpt_make_from_cpt(cpt)
             except Exception as e:
-                cgpt = None
+                gcpt = None
                 self.exception(e)
-                return
 
             cpt.gcpt = gcpt
 

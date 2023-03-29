@@ -224,6 +224,32 @@ class UIModelMPH(UIModelBase):
         self.ui.set_view(xmin - 2, ymin - 2, xmax + 2, ymax + 2)
         self.ui.refresh()
 
+    def on_clone(self):
+
+        def new_name(filename):
+
+            from os.path import splitext
+
+            base, ext = splitext(filename)
+            parts = base.split('_')
+            if len(parts) == 0:
+                suffix = '1'
+            else:
+                try:
+                    suffix = str(int(parts[-1]) + 1)
+                    base = '_'.join(parts[0:-1])
+                except ValueError:
+                    suffix = '1'
+            return base + '_' + suffix + ext
+
+        filename = new_name(self.filename)
+        self.save(filename)
+
+        model = self.ui.new()
+        model.load(filename)
+        self.ui.set_filename(filename)
+        self.ui.refresh()
+
     def on_close(self):
 
         self.ui.quit()
