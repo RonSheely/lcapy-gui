@@ -37,12 +37,12 @@ class CptPropertiesDialog:
                                       command=self.on_update))
 
         if cpt.is_capacitor:
-            v0 = self.cpt.cpt.v0 if self.cpt.cpt.has_ic else 0
-            entries.append(LabelEntry('v0', 'v0', str(v0),
+            v0 = str(self.cpt.cpt.v0) if self.cpt.cpt.has_ic else ''
+            entries.append(LabelEntry('v0', 'v0', v0,
                                       command=self.on_update))
         elif cpt.is_inductor:
-            i0 = self.cpt.cpt.i0 if self.cpt.cpt.has_ic else 0
-            entries.append(LabelEntry('i0', 'i0', str(i0),
+            i0 = str(self.cpt.cpt.i0) if self.cpt.cpt.has_ic else ''
+            entries.append(LabelEntry('i0', 'i0', i0,
                                       command=self.on_update))
         elif cpt.is_dependent_source:
             names = ui.model.possible_control_names()
