@@ -90,6 +90,25 @@ class Component(ABC):
         self.attrs = ', '.join(parts)
 
     def filter_opts(self, opts):
+
+        connection_keys = ('input', 'output', 'bidir', 'pad')
+        ground_keys = ('ground', 'sground', 'rground',
+                       'cground', 'nground', 'pground', '0V')
+        supply_positive_keys = ('vcc', 'vdd')
+        supply_negative_keys = ('vee', 'vss')
+        supply_keys = supply_positive_keys + supply_negative_keys
+        implicit_keys = ('implicit', ) + ground_keys + supply_keys
+
+        stripped = list(opts.strip(*implicit_keys))
+        if len(stripped) > 1:
+            raise ValueError('Multiple connection kinds: ' +
+                             ', '.join(stripped))
+        elif len(stripped) == 1:
+            kind = stripped[0]
+            if kind == 'implicit':
+                kind = 'ground'
+            self.kind = kind
+
         return opts
 
     @property

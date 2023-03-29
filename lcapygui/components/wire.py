@@ -12,26 +12,6 @@ class Wire(BipoleComponent):
              '-rground': 'Rail ground', '-cground': 'Chassis ground',
              '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS'}
 
-    connection_keys = ('input', 'output', 'bidir', 'pad')
-    ground_keys = ('ground', 'sground', 'rground',
-                   'cground', 'nground', 'pground', '0V')
-    supply_positive_keys = ('vcc', 'vdd')
-    supply_negative_keys = ('vee', 'vss')
-    supply_keys = supply_positive_keys + supply_negative_keys
-    implicit_keys = ('implicit', ) + ground_keys + supply_keys
-
-    def filter_opts(self, opts):
-
-        stripped = list(opts.strip(*self.implicit_keys))
-        if len(stripped) > 1:
-            raise ValueError('Multiple wire kinds: ' + ', '.join(stripped))
-        elif len(stripped) == 1:
-            kind = stripped[0]
-            if kind == 'implicit':
-                kind = 'ground'
-            self.kind = kind
-        return opts
-
     def draw(self, editor, sketcher, **kwargs):
 
         x1, y1 = self.node1.x, self.node1.y

@@ -32,8 +32,6 @@ attributes unless clever
 
 15. Name opamps E1, E2, etc
 
-16. Flip/mirror opamps
-
 17. Make Lcapy more robust to nodes being changed when node positions
     are defined
 
@@ -49,4 +47,6 @@ attributes unless clever
 
 23. Fix fullscreen
 
-24. Fix transistor menagerie
+24. Fix transistor menagerie if base/gate offset
+
+25. Add transfer function dialog (transimpedance, transadmittance)
