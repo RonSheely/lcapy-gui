@@ -306,10 +306,18 @@ class UIModelBase:
         elif gcpt.cpt_kind == cpt._kind:
             newcpt = cpt
         else:
-            newcpt = cpt._change_kind(gcpt.cpt_kind)
+            try:
+                newcpt = cpt._change_kind(gcpt.cpt_kind)
+            except Exception:
+                self.exception('Cannot change kind for %s' % cpt.name)
+                return
 
         if gcpt.name != cpt.name:
-            newcpt = newcpt._change_name(gcpt.name)
+            try:
+                newcpt = newcpt._change_name(gcpt.name)
+            except Exception:
+                self.exception('Cannot change name for %s' % cpt.name)
+                return
 
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)
