@@ -306,6 +306,9 @@ class UIModelBase:
         else:
             newcpt = cpt._change_kind(gcpt.cpt_kind)
 
+        if gcpt.name != cpt.name:
+            newcpt = newcpt._change_name(gcpt.name)
+
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)
 

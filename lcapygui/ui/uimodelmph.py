@@ -273,6 +273,7 @@ class UIModelMPH(UIModelBase):
 
             # If kind has changed need to remake the sketch
             # and remake the cpt.
+            # If name changed need to remake the cpt.
             self.cpt_remake(cpt)
         else:
             # Node name may have changed...
