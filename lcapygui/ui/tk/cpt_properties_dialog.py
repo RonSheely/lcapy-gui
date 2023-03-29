@@ -37,10 +37,12 @@ class CptPropertiesDialog:
                                       command=self.on_update))
 
         if cpt.is_capacitor:
-            entries.append(LabelEntry('v0', 'v0', self.cpt.cpt.v0,
+            v0 = self.cpt.cpt.v0 if self.cpt.cpt.has_ic else 0
+            entries.append(LabelEntry('v0', 'v0', str(v0),
                                       command=self.on_update))
         elif cpt.is_inductor:
-            entries.append(LabelEntry('i0', 'i0', self.cpt.cpt.i0,
+            i0 = self.cpt.cpt.i0 if self.cpt.cpt.has_ic else 0
+            entries.append(LabelEntry('i0', 'i0', str(i0),
                                       command=self.on_update))
         elif cpt.is_dependent_source:
             names = ui.model.possible_control_names()
@@ -88,16 +90,24 @@ class CptPropertiesDialog:
         try:
             if self.cpt.is_capacitor:
                 v0 = self.labelentries.get('v0')
+                self.cpt.args[-1] = v0
+                if v0 == '':
+                    v0 = None
+                else:
+                    v0 = float(v0)
                 cpt = self.cpt.cpt
                 # Create new oneport (this should be improved).
                 self.cpt._cpt = cpt.__class__(cpt.C, v0)
-                self.cpt.args[-1] = v0
             elif self.cpt.is_inductor:
                 i0 = self.labelentries.get('i0')
+                self.cpt.args[-1] = i0
+                if i0 == '':
+                    i0 = None
+                else:
+                    i0 = float(i0)
                 cpt = self.cpt.cpt
                 # Create new oneport (this should be improved).
                 self.cpt._cpt = cpt.__class__(cpt.L, i0)
-                self.cpt.args[-1] = i0
         except KeyError:
             pass
 
