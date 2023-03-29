@@ -215,16 +215,20 @@ class UIModelBase:
         try:
             if cpt.type in ('F', 'H'):
                 value = cpt.args[1]
+            elif cpt.type in ('P', ):
+                value = None
             else:
                 value = cpt.args[0]
-            value_latex = '$' + expr(value).latex() + '$'
         except IndexError:
             value = None
 
         if value is None:
             value = ''
             value_latex = ''
+        else:
+            value_latex = '$' + expr(value).latex() + '$'
 
+        label = ''
         if label_cpts == 'name+value':
             if name != value and gcpt.has_value:
                 label = name + '=' + value_latex
@@ -233,8 +237,6 @@ class UIModelBase:
         elif label_cpts == 'value':
             if value != '':
                 label = value_latex
-            else:
-                label = name
         elif label_cpts == 'name':
             label = name
         elif label_cpts == 'none':
