@@ -65,7 +65,9 @@ class Preferences:
 
         if self.label_cpts == 'name':
             s += ', label_ids=true'
+            s += ', label_values=false'
         elif self.label_cpts == 'value':
+            s += ', label_ids=false'
             s += ', label_values=true'
         elif self.label_cpts == 'value+name':
             s += ', label_ids=true'

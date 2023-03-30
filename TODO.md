@@ -50,3 +50,7 @@ attributes unless clever
 24. Fix transistor menagerie if base/gate offset
 
 25. Add transfer function dialog (transimpedance, transadmittance)
+
+26. Add voltage, current, and flow labels
+
+27. Add generic labels
