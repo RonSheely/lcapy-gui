@@ -40,8 +40,8 @@ def main(argv=None):
     parser.add_argument('--debug', type=int,
                         dest='debug', default=None,
                         help="enable debugging")
-    parser.add_argument('filenames', type=str, nargs='+',
-                        help='schematic filename(s)', default=None)
+    parser.add_argument('filenames', type=str, nargs='*',
+                        help='schematic filename(s)', default=[])
 
     args = parser.parse_args()
 

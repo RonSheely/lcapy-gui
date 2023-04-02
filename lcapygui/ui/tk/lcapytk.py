@@ -198,6 +198,9 @@ class LcapyTk(Tk):
         for filename in filenames:
             self.load(filename)
 
+        if filenames == []:
+            model = self.new()
+
     def clear(self, grid='on'):
 
         self.canvas.drawing.clear(grid)

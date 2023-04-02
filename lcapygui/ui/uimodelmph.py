@@ -147,7 +147,10 @@ class UIModelMPH(UIModelBase):
                 return node
         return None
 
-    def exception(self, message):
+    def exception(self, e):
+        message = str(e)
+        if self.filename != '':
+            message += ' in ' + self.filename
         self.ui.show_error_dialog(message)
 
     def unselect(self):
