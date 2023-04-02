@@ -40,15 +40,15 @@ def main(argv=None):
     parser.add_argument('--debug', type=int,
                         dest='debug', default=None,
                         help="enable debugging")
-    parser.add_argument('filename', type=str, nargs='?',
-                        help='schematic filename', default=None)
+    parser.add_argument('filenames', type=str, nargs='+',
+                        help='schematic filename(s)', default=None)
 
     args = parser.parse_args()
 
     if args.pdb:
         sys.excepthook = schtex_exception
 
-    e = LcapyTk(args.filename, debug=args.debug)
+    e = LcapyTk(args.filenames, debug=args.debug)
     e.display()
 
     return 0

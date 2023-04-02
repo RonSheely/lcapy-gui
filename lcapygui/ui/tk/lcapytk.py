@@ -19,7 +19,7 @@ class LcapyTk(Tk):
 
     NAME = 'lcapy-tk'
 
-    def __init__(self, filename=None, uimodel_class=None, debug=0):
+    def __init__(self, filenames=None, uimodel_class=None, debug=0):
 
         from ... import __version__
 
@@ -192,7 +192,11 @@ class LcapyTk(Tk):
 
         self.canvas = None
 
-        self.load(filename)
+        if filenames is None:
+            filenames = []
+
+        for filename in filenames:
+            self.load(filename)
 
     def clear(self, grid='on'):
 
