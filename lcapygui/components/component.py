@@ -312,10 +312,8 @@ class Component(ABC):
         angle = degrees(atan2(y2 - y1, x2 - x1))
         return angle
 
-    def attr_string(self, step=1):
+    def attr_string(self, x1, y1, x2, y2, step=1):
 
-        x1, y1 = self.node1.x, self.node1.y
-        x2, y2 = self.node2.x, self.node2.y
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
         if r == 1:
@@ -323,7 +321,8 @@ class Component(ABC):
         else:
             size = '=' + str(round(r, 2)).rstrip('0').rstrip('.')
 
-        angle = self.angle + self.angle_offset
+        angle = degrees(atan2(y2 - y1, x2 - x1)) + self.angle_offset
+
         if angle == 0:
             attr = 'right' + size
         elif angle in (90, -270):

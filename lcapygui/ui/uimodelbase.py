@@ -486,13 +486,7 @@ class UIModelBase:
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
         for cpt in self.circuit.elements.values():
-
-            net_string = str(cpt)
-            parts = net_string.split(';')
-            net_string = parts[0]
-            s += net_string
-            if cpt.gcpt is not None:
-                s += '; ' + cpt.gcpt.attr_string(self.STEP) + '\n'
+            s += str(cpt) + '\n'
 
         # FIXME, remove other preference string
         # Note, need a newline so string treated as a netlist string
@@ -531,7 +525,7 @@ class UIModelBase:
             parts.append(gcpt.cpt_kind)
 
         netitem = ' '.join(parts)
-
+        netitem += '; ' + gcpt.attr_string(x1, y1, x2, y2, self.STEP) + '\n'
         if self.ui.debug:
             print('Adding ' + netitem)
 
@@ -542,8 +536,8 @@ class UIModelBase:
             cpt.nodes[m].pos = Pos(position)
 
         # Duck type
-        cpt.gcpt = gcpt
         gcpt.nodes = cpt.nodes
+        cpt.gcpt = gcpt
 
         self.cpt_draw(cpt)
 
