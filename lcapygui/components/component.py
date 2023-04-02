@@ -110,7 +110,7 @@ class Component(ABC):
             kind = stripped[0]
             if kind == 'implicit':
                 kind = 'ground'
-            self.kind = kind
+            self.kind = '-' + kind
 
         return opts
 

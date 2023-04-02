@@ -377,7 +377,6 @@ class UIModelBase:
                 break
 
         if positions is not None:
-
             for k, v in self.circuit.nodes.items():
                 v.pos = positions[k]
 
