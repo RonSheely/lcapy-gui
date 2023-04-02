@@ -71,10 +71,10 @@ class Opamp(Component):
         diff = (pos - self.nodes[0].pos) * 0.5
         return diff.norm()
 
-    def attr_string(self, step=1):
+    def attr_string(self, x1, y1, x2, y2, step=1):
 
         # TODO: Handle rotation
-        dy = abs(self.nodes[3].y - self.nodes[2].y)
+        dy = abs(y2 - y1)
         size = dy * 5 / 4
 
         attr = 'right=%s' % size
