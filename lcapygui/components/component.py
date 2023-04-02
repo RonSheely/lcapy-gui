@@ -84,9 +84,12 @@ class Component(ABC):
                 self.kind = '-' + v
             elif k == 'style':
                 self.style = v
+            elif k in ('f', 'i', 'v'):
+                # TODO, handle labels.
+                pass
             elif k not in ('left', 'right', 'up', 'down', 'angle',
-                           'thick'):
-                parts.append(k + '=' + v)
+                           'thick', 'rotate'):
+                print('Ignoring attribute %s=%s' % (k, v))
         self.attrs = ', '.join(parts)
 
     def filter_opts(self, opts):
