@@ -354,7 +354,7 @@ class Component(ABC):
         if self.flow_label != '':
             attr += ', f=' + self.flow_label
 
-        # Add user defined attributes such as color=blue, thick, etc.
+        # Add user defined attributes such as thick, dashed, etc.
         if self.attrs != '':
             attr += ', ' + self.attrs
 
@@ -366,6 +366,11 @@ class Component(ABC):
             attr += ', style=' + self.style
 
         return attr
+
+    def attr_string_update(self, step=1):
+
+        return self.attr_string(self.node1.x, self.node1.y,
+                                self.node2.x, self.node2.y, step=step)
 
     def is_within_bbox(self, x, y):
 

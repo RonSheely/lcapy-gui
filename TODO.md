@@ -54,3 +54,13 @@ attributes unless clever
 26. Add voltage, current, and flow labels
 
 27. Add generic labels
+
+28. American/European symbol options (use separate dirs of svgs)
+
+29. RP/EF options for voltage sources
+
+30. Use suffixes for component values (u, p, M, etc)
+
+31. Handle exception when creating circuitiz image
+
+32. Fix circuitikz image creation to use node positions

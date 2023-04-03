@@ -319,6 +319,8 @@ class UIModelBase:
                 self.exception('Cannot change name for %s' % cpt.name)
                 return
 
+        cpt.opts.add(gcpt.attr_string_update(self.STEP))
+
         newcpt.gcpt = cpt.gcpt
         cpt_remake(newcpt.gcpt)
 
