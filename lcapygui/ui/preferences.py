@@ -20,6 +20,7 @@ class Preferences:
         self.xsize = 36
         self.ysize = 22
         self.snap_grid = 'true'
+        self.voltage_dir = 'RP'
 
         self.load()
 
@@ -56,7 +57,7 @@ class Preferences:
 
     def schematic_preferences(self):
 
-        opts = ('draw_nodes', 'label_nodes', 'style')
+        opts = ('draw_nodes', 'label_nodes', 'style', 'voltage_dir')
 
         foo = []
         for opt in opts:

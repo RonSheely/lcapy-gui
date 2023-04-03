@@ -28,6 +28,10 @@ class PreferencesDialog:
                               self.model.preferences.style,
                               ('american', 'british', 'european'),
                               command=self.on_update),
+                   LabelEntry('voltage_dir', 'Voltage dir',
+                              self.model.preferences.voltage_dir,
+                              ('RP', 'EF'),
+                              command=self.on_update),
                    LabelEntry('grid', 'Grid',
                               self.model.preferences.grid,
                               ('on', 'off'),
@@ -66,6 +70,8 @@ class PreferencesDialog:
         self.model.preferences.draw_nodes = self.labelentries.get('draw_nodes')
         self.model.preferences.label_cpts = self.labelentries.get('label_cpts')
         self.model.preferences.style = self.labelentries.get('style')
+        self.model.preferences.voltage_dir = self.labelentries.get(
+            'voltage_dir')
         self.model.preferences.grid = self.labelentries.get('grid')
         self.model.preferences.lw = self.labelentries.get('lw')
         self.model.preferences.node_size = self.labelentries.get('node_size')
