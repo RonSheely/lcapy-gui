@@ -188,6 +188,9 @@ class Component(ABC):
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
+        if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
+            return
+
         sketcher.sketch(self.sketch, offset=p1p, angle=angle,
                         snap=True, **kwargs)
 
