@@ -87,9 +87,13 @@ class Component(ABC):
             elif k in ('f', 'i', 'v'):
                 # TODO, handle labels.
                 pass
-            elif k not in ('left', 'right', 'up', 'down', 'angle',
-                           'thick', 'rotate'):
-                print('Ignoring attribute %s=%s' % (k, v))
+            elif k in ('left', 'right', 'up', 'down', 'rotate'):
+                pass
+            else:
+                if v == '':
+                    parts.append(k)
+                else:
+                    parts.append(k + '=' + v)
         self.attrs = ', '.join(parts)
 
     def filter_opts(self, opts):
@@ -252,6 +256,12 @@ class Component(ABC):
 
         if self.invert:
             kwargs['invert'] = True
+
+        if kwargs.pop('dashed', False):
+            kwargs['linestyle'] = '--'
+
+        if kwargs.pop('dotted', False):
+            kwargs['linestyle'] = ':'
 
         return kwargs
 

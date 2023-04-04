@@ -14,7 +14,7 @@ class Sketcher:
 
     def stroke_line(self, xstart, ystart, xend, yend, color='black', **kwargs):
 
-        return self.ax.plot((xstart, xend), (ystart, yend), '-',
+        return self.ax.plot((xstart, xend), (ystart, yend),
                             color=color, **kwargs)
 
     def stroke_arc(self, x, y, r, theta1, theta2, **kwargs):

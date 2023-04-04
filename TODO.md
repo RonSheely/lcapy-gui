@@ -64,3 +64,5 @@ attributes unless clever
 31. Handle exception when creating circuitiz image
 
 32. Fix circuitikz image creation to use node positions
+
+33. Add variable kind for R, C, L, etc.
