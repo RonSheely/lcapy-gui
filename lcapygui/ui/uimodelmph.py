@@ -152,6 +152,9 @@ class UIModelMPH(UIModelBase):
         if self.filename != '':
             message += ' in ' + self.filename
         self.ui.show_error_dialog(message)
+        if self.ui.debug:
+            import pdb
+            pdb.set_trace()
 
     def unselect(self):
 
