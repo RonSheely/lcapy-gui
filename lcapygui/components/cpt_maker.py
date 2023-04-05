@@ -1,7 +1,7 @@
 from .admittance import Admittance
-from .annotation import Annotation
 from .bjt import BJT
 from .capacitor import Capacitor
+from .connection import Connection
 from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
@@ -29,7 +29,6 @@ from .sketch import Sketch
 class CptMaker:
 
     cpts = {
-        'A': Annotation,
         'C': Capacitor,
         'CPE': CPE,
         'D': Diode,
@@ -49,6 +48,7 @@ class CptMaker:
         'NR': Resistor,         # Noise free resistor
         'V': VoltageSource,
         'W': Wire,
+        'X': Connection,
         'Y': Admittance,
         'Z': Impedance
     }
@@ -60,7 +60,10 @@ class CptMaker:
     def _make_cpt(self, cpt_type, kind='', style='', name=None,
                   nodes=None, opts=None):
 
-        cls = self.cpts[cpt_type]
+        if cpt_type == 'W' and kind != '':
+            cls = Connection
+        else:
+            cls = self.cpts[cpt_type]
 
         cpt = cls(kind=kind, style=style,
                   name=name, nodes=nodes, opts=opts)
@@ -98,8 +101,15 @@ cpt_maker = CptMaker()
 
 def cpt_make_from_cpt(cpt):
 
-    # TODO: what about style?
-    return cpt_maker(cpt.type, kind=cpt._kind, name=cpt.name,
+    ctype = cpt.type
+    if ctype == 'W':
+
+        for kind in Connection.kinds:
+            if kind[1:] in cpt.opts:
+                ctype = 'X'
+                break
+
+    return cpt_maker(ctype, kind=cpt._kind, name=cpt.name,
                      nodes=cpt.nodes, opts=cpt.opts)
 
 
