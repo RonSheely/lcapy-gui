@@ -44,6 +44,8 @@ class Component(ABC):
             nodes = []
         if opts is None:
             opts = Opts()
+        else:
+            opts = opts.copy()
 
         self.name = name
         self.nodes = nodes
