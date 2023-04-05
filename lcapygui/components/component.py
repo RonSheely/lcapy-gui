@@ -338,9 +338,6 @@ class Component(ABC):
 
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
-        if r == 0:
-            print('Zero length component; this will be drawn to the right')
-
         if r == 1:
             size = ''
         else:
@@ -348,7 +345,10 @@ class Component(ABC):
 
         angle = degrees(atan2(y2 - y1, x2 - x1)) + self.angle_offset
 
-        if angle == 0:
+        if r == 0:
+            attr = 'down=0'
+            print('Zero length component; this will be drawn down')
+        elif angle == 0:
             attr = 'right' + size
         elif angle in (90, -270):
             attr = 'up' + size
