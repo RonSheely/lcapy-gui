@@ -9,6 +9,7 @@ from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt, Eopamp
 from lcapy.nodes import parse_nodes
 from lcapy.schemmisc import Pos
+from lcapy.opts import Opts
 
 
 class UIModelBase:
@@ -522,11 +523,12 @@ class UIModelBase:
             gcpt.control = cpt_name
         elif cpt_type in ('F', 'H'):
             parts.append('X')
-        elif cpt_type in ('M', 'Q', 'J'):
+        elif cpt_type in ('J', 'M', 'Q'):
             parts.append(gcpt.cpt_kind)
 
         netitem = ' '.join(parts)
-        netitem += '; ' + gcpt.attr_string(x1, y1, x2, y2, self.STEP) + '\n'
+        attr_string = gcpt.attr_string(x1, y1, x2, y2, self.STEP)
+        netitem += '; ' + attr_string + '\n'
         if self.ui.debug:
             print('Adding ' + netitem)
 
@@ -536,8 +538,9 @@ class UIModelBase:
         for m, position in enumerate(positions):
             cpt.nodes[m].pos = Pos(position)
 
+        gcpt.update(nodes=cpt.nodes, opts=Opts(attr_string))
+
         # Duck type
-        gcpt.nodes = cpt.nodes
         cpt.gcpt = gcpt
 
         self.cpt_draw(cpt)
@@ -639,7 +642,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @property
+    @ property
     def ground_node(self):
 
         return self.node_find('0')

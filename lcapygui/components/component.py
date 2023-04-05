@@ -189,8 +189,12 @@ class Component(ABC):
         w = self.sketch.width / 72 * 2.54
 
         p1 = array((x1, y1))
-        dw = array((dx, dy)) / r * (r - w) / 2
-        p1p = p1 + dw
+        if r != 0:
+            dw = array((dx, dy)) / r * (r - w) / 2
+            p1p = p1 + dw
+        else:
+            # For zero length wires
+            p1p = p1
 
         kwargs = self.make_kwargs(editor, **kwargs)
 
@@ -334,6 +338,9 @@ class Component(ABC):
 
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
+        if r == 0:
+            print('Zero length component; this will be drawn to the right')
+
         if r == 1:
             size = ''
         else:
@@ -392,6 +399,9 @@ class Component(ABC):
         dy = self.node2.y - self.node1.y
         r = sqrt(dx**2 + dy**2)
 
+        if r == 0:
+            r = 0.3
+
         R = array(((dx, -dy), (dy, dx))) / r
 
         # Transform point into non-rotated box
@@ -413,6 +423,14 @@ class Component(ABC):
             parts.append(node.name)
 
         return ' '.join(parts)
+
+    def update(self, opts=None, nodes=None):
+
+        if nodes is not None:
+            self.nodes = nodes
+
+        if opts is not None:
+            self.opts = opts
 
 
 class ControlledComponent(Component):
