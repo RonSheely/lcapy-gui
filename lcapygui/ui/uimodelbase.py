@@ -43,19 +43,19 @@ class UIModelBase:
     }
 
     connection_map = {
-        '0': ('0', '0V', 'A', ''),
-        '0V': ('', '0V', 'A', '0V'),
-        'ground': ('', 'Ground', 'A', ''),
-        'sground': ('', 'Signal ground', 'A', 'sground'),
-        'rground': ('', 'Rail ground', 'A', 'rground'),
-        'cground': ('', 'Chassis ground', 'A', 'cground'),
-        'vdd': ('', 'VDD', 'A', 'vdd'),
-        'vss': ('', 'VSS', 'A', 'vss'),
-        'vcc': ('', 'VCC', 'A', 'vcc'),
-        'vee': ('', 'VEE', 'A', 'vee'),
-        'input': ('', 'Input', 'A', 'input'),
-        'output': ('', 'Output', 'A', 'output'),
-        'bidir': ('', 'Bidirectional', 'A', 'bidir')
+        '0': ('0', '0V', 'W', ''),
+        '0V': ('', '0V', 'W', '0V'),
+        'ground': ('', 'Ground', 'W', ''),
+        'sground': ('', 'Signal ground', 'W', 'sground'),
+        'rground': ('', 'Rail ground', 'W', 'rground'),
+        'cground': ('', 'Chassis ground', 'W', 'cground'),
+        'vdd': ('', 'VDD', 'W', 'vdd'),
+        'vss': ('', 'VSS', 'W', 'vss'),
+        'vcc': ('', 'VCC', 'W', 'vcc'),
+        'vee': ('', 'VEE', 'W', 'vee'),
+        'input': ('', 'Input', 'W', 'input'),
+        'output': ('', 'Output', 'W', 'output'),
+        'bidir': ('', 'Bidirectional', 'W', 'bidir')
     }
 
     def __init__(self, ui):
