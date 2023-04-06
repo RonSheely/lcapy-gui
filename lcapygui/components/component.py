@@ -379,7 +379,10 @@ class Component(ABC):
 
         kind = self.symbol_kind
         if kind not in (None, ''):
-            attr += ', kind=' + kind
+            if self.type == 'X':
+                attr += ', ' + kind
+            else:
+                attr += ', kind=' + kind
 
         if self.style not in (None, ''):
             attr += ', style=' + self.style
@@ -431,6 +434,15 @@ class Component(ABC):
 
         if opts is not None:
             self.opts = opts
+
+    def choose_node_name(self, m, nodes):
+
+        num = 1
+        while True:
+            name = str(num)
+            if name not in nodes:
+                return name
+            num += 1
 
 
 class ControlledComponent(Component):

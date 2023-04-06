@@ -131,15 +131,6 @@ class UIModelBase:
                 return name
             num += 1
 
-    def choose_node_name(self, nodes):
-
-        num = 1
-        while True:
-            name = str(num)
-            if name not in nodes:
-                return name
-            num += 1
-
     def con_create(self, con_key, x1, y1, x2, y2):
         """Create a new connection."""
 
@@ -510,7 +501,7 @@ class UIModelBase:
         for m, position in enumerate(positions):
             node = self.circuit.nodes.by_position(position)
             if node is None:
-                node_name = self.choose_node_name(node_names)
+                node_name = gcpt.choose_node_name(m, node_names)
                 node_names.append(node_name)
             else:
                 node_name = node.name

@@ -125,3 +125,14 @@ class Connection(BipoleComponent):
 
         r = sqrt((x - xm)**2 + (y - ym)**2)
         return r < 0.5
+
+    def choose_node_name(self, m, nodes):
+
+        if m == 0 and self.symbol_kind in ('vcc', 'vdd'):
+            return self.symbol_kind
+
+        if m == 1 and self.symbol_kind in ('vee', 'vss', '0V', 'ground',
+                                           'rground', 'sground', 'cground'):
+            return '0'
+
+        return super().choose_node_name(m, nodes)
