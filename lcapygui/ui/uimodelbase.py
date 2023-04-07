@@ -244,7 +244,7 @@ class UIModelBase:
 
         draw_nodes = self.preferences.draw_nodes
         if draw_nodes != 'none':
-            for node in cpt.nodes:
+            for node in gcpt.drawn_nodes:
                 if node.port:
                     self.node_draw(node)
                     continue
@@ -257,8 +257,8 @@ class UIModelBase:
 
         label_nodes = self.preferences.label_nodes
         if label_nodes != 'none':
-            for node in gcpt.label_nodes:
-                if node.name[0] == '_':
+            for node in gcpt.labelled_nodes:
+                if node.name[0] == '_' or node.implicit:
                     continue
 
                 if label_nodes == 'alpha' and not node.name[0].isalpha():
@@ -633,7 +633,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @ property
+    @property
     def ground_node(self):
 
         return self.node_find('0')

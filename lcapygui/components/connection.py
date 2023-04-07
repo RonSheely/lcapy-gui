@@ -23,7 +23,7 @@ class Connection(BipoleComponent):
         kwargs = self.make_kwargs(editor, **kwargs)
 
         if self.symbol_kind in ('vcc', 'vdd'):
-            x1, y1, angle = self.split_node_pos(x2, y2, editor.STEP)
+            x1, y1, angle = self.split_node_pos(x2, y2, editor.STEP, True)
             offset = x1, y1
             angle = angle + 90
         elif self.symbol_kind in ('vee', 'vss'):
@@ -42,7 +42,7 @@ class Connection(BipoleComponent):
 
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)
 
-    def split_node_pos(self, x, y, step=1):
+    def split_node_pos(self, x, y, step=1, flip=False):
 
         def get_value(direction):
 
@@ -52,26 +52,24 @@ class Connection(BipoleComponent):
             else:
                 value = float(val)
 
-            value -= 0.5
-            if value < 0:
-                value = 0
-
             return value * step
+
+        scale = -1 if flip else 1
 
         # TODO fix if positive node unknown, say for vdd, vcc.
 
         if 'down' in self.opts:
             angle = -90
-            y -= get_value('down')
+            y -= get_value('down') * scale
         elif 'up' in self.opts:
             angle = 90
-            y += get_value('up')
+            y += get_value('up') * scale
         elif 'right' in self.opts:
             angle = 0
-            x += get_value('right')
+            x += get_value('right') * scale
         elif 'left' in self.opts:
             angle = 180
-            x -= get_value('left')
+            x -= get_value('left') * scale
         elif 'angle' in self.opts:
             angle = get_value('angle')
             if 'size' in self.opts:
@@ -90,10 +88,10 @@ class Connection(BipoleComponent):
     @property
     def sketch_net(self):
 
-        return 'W 1 0; right=0, ' + self.symbol_kind
+        return 'X 1 0; right=0, ' + self.symbol_kind
 
     @property
-    def label_nodes(self):
+    def labelled_nodes(self):
 
         if self.symbol_kind == '':
             return self.nodes
@@ -103,19 +101,14 @@ class Connection(BipoleComponent):
             return self.nodes[:1]
 
     @property
-    def midpoint(self) -> array:
-        """
-        Computes the midpoint of the component.
-        """
+    def drawn_nodes(self):
 
-        # FIXME
-        return self.nodes[0].pos + array((0, -0.5))
-
-    def length(self) -> float:
-        """
-        Computes the length of the component.
-        """
-        return 0.5
+        if self.symbol_kind == '':
+            return self.nodes
+        elif self.symbol_kind in ('vcc', 'vdd'):
+            return self.nodes[1:]
+        else:
+            return self.nodes[:1]
 
     def is_within_bbox(self, x, y):
 

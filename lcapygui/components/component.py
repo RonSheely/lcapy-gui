@@ -159,7 +159,12 @@ class Component(ABC):
         return '-'.join(parts[1:])
 
     @property
-    def label_nodes(self):
+    def labelled_nodes(self):
+
+        return self.nodes
+
+    @property
+    def drawn_nodes(self):
 
         return self.nodes
 
@@ -337,6 +342,9 @@ class Component(ABC):
     def attr_string(self, x1, y1, x2, y2, step=1):
 
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
+
+        if self.type == 'X' and r > 0.5:
+            r -= 0.5
 
         if r == 1:
             size = ''
