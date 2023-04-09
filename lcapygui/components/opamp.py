@@ -64,6 +64,7 @@ class Opamp(Component):
 
         return (self.nodes[0].pos + pos) * 0.5
 
+    @property
     def length(self) -> float:
 
         pos = (self.nodes[2].pos + self.nodes[3].pos) * 0.5

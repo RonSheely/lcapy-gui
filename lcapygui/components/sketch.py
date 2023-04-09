@@ -61,7 +61,7 @@ class Sketch:
             sketch_path = sketch_path.transform(Affine2D(svga_path.transform))
             sketch_paths.append(sketch_path)
 
-        sketch = cls(sketch_paths, svg.width, svg.height).align()
+        sketch = cls(sketch_paths, svg.width, svg.height).align(sketch_key)
         return sketch
 
     @classmethod
@@ -83,7 +83,11 @@ class Sketch:
         a.draw(str(svg_filename), label_values=False, label_ids=False,
                label_nodes=False, draw_nodes=False)
 
-    def offsets1(self):
+    def offsets1(self, sketch_key):
+
+        # TODO, use sketch_key to help find offset.
+        if sketch_key == 'opamp':
+            return 0, self.height / 2
 
         xoffset = None
         yoffset = None
@@ -131,15 +135,15 @@ class Sketch:
 
         return self.width / 2, self.height / 2
 
-    def offsets(self):
+    def offsets(self, sketch_key):
 
-        xoffset, yoffset = self.offsets1()
+        xoffset, yoffset = self.offsets1(sketch_key)
         return xoffset, yoffset
 
-    def align(self):
+    def align(self, sketch_key):
         """Remove yoffset from component."""
 
-        xoffset, yoffset = self.offsets()
+        xoffset, yoffset = self.offsets(sketch_key)
 
         if xoffset is None:
             return self
