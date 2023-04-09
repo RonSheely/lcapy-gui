@@ -563,12 +563,9 @@ class UIModelMPH(UIModelBase):
     def on_select(self, x, y):
 
         cpt = self.closest_cpt(x, y)
-        node = self.closest_node(x, y)
 
-        if cpt and node:
-            self.ui.show_error_dialog(
-                'Selected both node %s and cpt %s' % (node, cpt))
-            return
+        if cpt is None:
+            node = self.closest_node(x, y)
 
         if cpt:
             self.select(cpt)
