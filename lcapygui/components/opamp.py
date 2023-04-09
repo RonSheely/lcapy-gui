@@ -3,6 +3,19 @@ from numpy import array, sqrt
 from numpy.linalg import norm
 
 
+def point_in_triangle(x, y, x0, y0, x1, y1, x2, y2):
+
+    s = (x0 - x2) * (y - y2) - (y0 - y2) * (x - x2)
+    t = (x1 - x0) * (y - y0) - (y1 - y0) * (x - x0)
+
+    if ((s < 0) != (t < 0) and s != 0 and t != 0):
+        return False
+
+    d = (x2 - x1) * (y - y1) - (y2 - y1) * (x - x1)
+
+    return d == 0 or (d < 0) == (s + t <= 0)
+
+
 class Opamp(Component):
 
     type = "Eopamp"
@@ -111,3 +124,23 @@ class Opamp(Component):
         for node_name in node_names[2:]:
             parts.append(node_name)
         return parts
+
+    def is_within_bbox(self, x, y):
+
+        x0, y0 = self.nodes[0].pos.x, self.nodes[0].pos.y
+        x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
+        x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
+
+        # TODO, adjust for actual triangle
+
+        return point_in_triangle(x, y, x0, y0, x1, y1, x2, y2)
+
+    @property
+    def node1(self):
+
+        return self.nodes[2]
+
+    @property
+    def node2(self):
+
+        return self.nodes[3]
