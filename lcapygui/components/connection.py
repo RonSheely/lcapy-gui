@@ -88,7 +88,7 @@ class Connection(BipoleComponent):
     @property
     def sketch_net(self):
 
-        return 'X 1 0; right=0, ' + self.symbol_kind
+        return 'W 1 0; right=0, ' + self.symbol_kind + ', l='
 
     @property
     def labelled_nodes(self):
