@@ -34,6 +34,7 @@ class Component(ABC):
               'attrs': 'Attributes'}
     extra_fields = {}
     has_value = True
+    netitem_args = ()
 
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.
@@ -105,8 +106,9 @@ class Component(ABC):
                        'cground', 'nground', 'pground', '0V')
         supply_positive_keys = ('vcc', 'vdd')
         supply_negative_keys = ('vee', 'vss')
+        io_keys = ('input', 'output', 'bidir')
         supply_keys = supply_positive_keys + supply_negative_keys
-        implicit_keys = ('implicit', ) + ground_keys + supply_keys
+        implicit_keys = ('implicit', ) + ground_keys + supply_keys + io_keys
 
         stripped = list(opts.strip(*implicit_keys))
         if len(stripped) > 1:
@@ -426,14 +428,26 @@ class Component(ABC):
         # Determine if transformed point is in the box
         return x > -l / 2 and x < l / 2 and y > -h / 2 and y < h / 2
 
-    @property
-    def netitem(self):
+    def netitem_nodes(self, node_names):
+
+        parts = []
+        for node_name in node_names:
+            parts.append(node_name)
+        return parts
+
+    def netitem(self, node_names, x1, y1, x2, y2, step=1):
 
         parts = [self.name]
-        for node in self.nodes:
-            parts.append(node.name)
-
-        return ' '.join(parts)
+        parts.extend(self.netitem_nodes(node_names))
+        if self.type in ('E', 'G'):
+            # Need to use known nodes to start with.
+            parts.extend([node_names[0], node_names[1]])
+        else:
+            parts.extend(self.netitem_args)
+        netitem = ' '.join(parts)
+        attr_string = self.attr_string(x1, y1, x2, y2, step)
+        netitem += '; ' + attr_string + '\n'
+        return netitem
 
     def update(self, opts=None, nodes=None):
 

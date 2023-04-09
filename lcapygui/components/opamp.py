@@ -5,7 +5,7 @@ from numpy.linalg import norm
 
 class Opamp(Component):
 
-    type = "E"
+    type = "Eopamp"
     sketch_net = 'E 1 2 opamp 3 4'
     sketch_key = 'opamp'
     label_offset = 0
@@ -100,3 +100,13 @@ class Opamp(Component):
 
         sketcher.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
                         **kwargs)
+
+    def netitem_nodes(self, node_names):
+
+        parts = []
+        for node_name in node_names[0:2]:
+            parts.append(node_name)
+        parts.append('opamp')
+        for node_name in node_names[2:]:
+            parts.append(node_name)
+        return parts

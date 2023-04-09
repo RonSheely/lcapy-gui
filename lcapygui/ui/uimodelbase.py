@@ -1,12 +1,13 @@
 from ..annotation import Annotation
 from ..annotations import Annotations
 from .preferences import Preferences
+from ..components.opamp import Opamp
 from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type, cpt_remake
 
 from copy import copy
 from math import atan2, degrees, sqrt
 from lcapy import Circuit, expr
-from lcapy.mnacpts import Cpt, Eopamp
+from lcapy.mnacpts import Cpt
 from lcapy.nodes import parse_nodes
 from lcapy.schemmisc import Pos
 from lcapy.opts import Opts
@@ -123,6 +124,9 @@ class UIModelBase:
         return xmin, ymin, xmax, ymax
 
     def choose_cpt_name(self, cpt_type):
+
+        if cpt_type == 'Opamp':
+            cpt_type = 'E'
 
         num = 1
         while True:
@@ -493,33 +497,21 @@ class UIModelBase:
         if gcpt is None:
             return
 
-        node_names = list(self.circuit.nodes)
+        all_node_names = list(self.circuit.nodes)
+        node_names = []
         positions = gcpt.assign_positions(x1, y1, x2, y2)
 
-        # FIXME, need correct name for implicit wire
-        parts = [cpt_name]
         for m, position in enumerate(positions):
             node = self.circuit.nodes.by_position(position)
             if node is None:
-                node_name = gcpt.choose_node_name(m, node_names)
-                node_names.append(node_name)
+                node_name = gcpt.choose_node_name(m, all_node_names)
+                all_node_names.append(node_name)
             else:
                 node_name = node.name
-            parts.append(node_name)
+            node_names.append(node_name)
 
-        if cpt_type in ('E', 'G'):
-            # Use cpt for its control.  This is temporary until the
-            # user changes it.
-            parts.extend([parts[1], parts[2]])
-            gcpt.control = cpt_name
-        elif cpt_type in ('F', 'H'):
-            parts.append('X')
-        elif cpt_type in ('J', 'M', 'Q'):
-            parts.append(gcpt.cpt_kind)
+        netitem = gcpt.netitem(node_names, x1, y1, x2, y2, self.STEP)
 
-        netitem = ' '.join(parts)
-        attr_string = gcpt.attr_string(x1, y1, x2, y2, self.STEP)
-        netitem += '; ' + attr_string + '\n'
         if self.ui.debug:
             print('Adding ' + netitem)
 
@@ -529,6 +521,7 @@ class UIModelBase:
         for m, position in enumerate(positions):
             cpt.nodes[m].pos = Pos(position)
 
+        attr_string = netitem.split(';', 1)[1]
         gcpt.update(nodes=cpt.nodes, opts=Opts(attr_string))
 
         # Duck type
