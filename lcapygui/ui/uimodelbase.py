@@ -292,7 +292,7 @@ class UIModelBase:
 
         gcpt = cpt.gcpt
 
-        if cpt.is_dependent_source:
+        if cpt.is_dependent_source and gcpt.type != 'Eopamp':
             try:
                 newcpt = cpt._change_control(gcpt.control)
             except Exception:
@@ -301,12 +301,14 @@ class UIModelBase:
                 return
         elif gcpt.cpt_kind == cpt._kind:
             newcpt = cpt
-        else:
+        elif gcpt.type != 'Eopamp':
             try:
                 newcpt = cpt._change_kind(gcpt.cpt_kind)
             except Exception:
                 self.exception('Cannot change kind for %s' % cpt.name)
                 return
+        else:
+            newcpt = cpt
 
         if gcpt.name != cpt.name:
             try:

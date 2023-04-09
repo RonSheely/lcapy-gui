@@ -44,7 +44,7 @@ class CptPropertiesDialog:
             i0 = str(self.cpt.cpt.i0) if self.cpt.cpt.has_ic else ''
             entries.append(LabelEntry('i0', 'i0', i0,
                                       command=self.on_update))
-        elif cpt.is_dependent_source:
+        elif cpt.is_dependent_source and self.gcpt.type != 'Eopamp':
             names = ui.model.possible_control_names()
             entries.append(LabelEntry('control', 'Control',
                                       self.gcpt.control, names,
