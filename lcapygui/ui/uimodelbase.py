@@ -258,7 +258,7 @@ class UIModelBase:
         label_nodes = self.preferences.label_nodes
         if label_nodes != 'none':
             for node in gcpt.labelled_nodes:
-                if node.name[0] == '_' or node.implicit:
+                if node.name[0] == '_':
                     continue
 
                 if label_nodes == 'alpha' and not node.name[0].isalpha():
