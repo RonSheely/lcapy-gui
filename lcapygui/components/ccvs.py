@@ -1,4 +1,4 @@
-from .component import ControlledComponent
+from .controlledcomponent import ControlledComponent
 
 
 class CCVS(ControlledComponent):

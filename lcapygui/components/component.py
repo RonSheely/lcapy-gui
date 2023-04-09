@@ -451,13 +451,3 @@ class Component(ABC):
             if name not in nodes:
                 return name
             num += 1
-
-
-class ControlledComponent(Component):
-
-    can_stretch = True
-
-    @property
-    def sketch_net(self):
-
-        return self.type + ' 1 2 3 4'
