@@ -343,7 +343,7 @@ class Component(ABC):
 
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
-        if self.type == 'X' and r > 0.5:
+        if self.type == 'X' and r >= 0.5:
             r -= 0.5
 
         if r == 1:
