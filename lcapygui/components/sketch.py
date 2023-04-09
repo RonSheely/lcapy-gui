@@ -83,7 +83,7 @@ class Sketch:
         a.draw(str(svg_filename), label_values=False, label_ids=False,
                label_nodes=False, draw_nodes=False)
 
-    def offsets(self):
+    def offsets1(self):
 
         xoffset = None
         yoffset = None
@@ -130,6 +130,11 @@ class Sketch:
                     return 0, yoffset
 
         return self.width / 2, self.height / 2
+
+    def offsets(self):
+
+        xoffset, yoffset = self.offsets1()
+        return xoffset, yoffset
 
     def align(self):
         """Remove yoffset from component."""

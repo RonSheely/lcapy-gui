@@ -31,8 +31,8 @@ class Connection(BipoleComponent):
             offset = x2, y2
             angle = angle + 90
         elif self.symbol_kind in ('input', ):
-            x1, y1, angle = self.split_node_pos(x2, y2, editor.STEP)
-            offset = x1, y1
+            x2, y2, angle = self.split_node_pos(x1, y1, editor.STEP)
+            offset = x2, y2
         else:
             x2, y2, angle = self.split_node_pos(x1, y1, editor.STEP)
             offset = x2, y2
