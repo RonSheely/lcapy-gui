@@ -48,8 +48,8 @@ class Opamp(Component):
 
         # TODO: handle rotation
 
-        xo = (x2 + x1) / 2
-        yo = r * 4 / 5
+        xo = (x2 + x1) / 2 + r * 5 / 2
+        yo = (y2 + y1) / 2
 
         positions = array(((xo, yo),
                            (0, 0),

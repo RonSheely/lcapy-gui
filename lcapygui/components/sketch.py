@@ -85,9 +85,10 @@ class Sketch:
 
     def offsets1(self, sketch_key):
 
-        # TODO, use sketch_key to help find offset.
         if sketch_key == 'opamp':
             return 0, self.height / 2
+
+        # TODO, use sketch_key to help find offset.
 
         xoffset = None
         yoffset = None
