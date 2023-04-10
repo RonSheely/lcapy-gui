@@ -62,6 +62,8 @@ class CptMaker:
 
         if cpt_type == 'W' and kind != '':
             cls = Connection
+        elif cpt_type == 'E' and kind == 'opamp':
+            cls = Opamp
         else:
             cls = self.cpts[cpt_type]
 
@@ -102,8 +104,9 @@ cpt_maker = CptMaker()
 def cpt_make_from_cpt(cpt):
 
     ctype = cpt.type
-    if ctype == 'W':
 
+    # Convert wire with implicit connection to a connection component.
+    if ctype == 'W':
         for kind in Connection.kinds:
             if kind[1:] in cpt.opts:
                 ctype = 'X'

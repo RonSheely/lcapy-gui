@@ -6,7 +6,7 @@ def make(cpt_type):
 
     print(cpt_type)
     cpt = cpt_make_from_type(cpt_type, add_sketch=False)
-    cpt_sketch_make(cpt)
+    sketch = cpt_sketch_make(cpt)
 
     kinds = cpt.kinds
     styles = cpt.styles

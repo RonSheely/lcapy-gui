@@ -73,6 +73,11 @@ class Component(ABC):
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
 
+        for k, v in self.extra_fields.items():
+            if k in opts:
+                opts.remove(k)
+                setattr(self, k, True)
+
         opts = self.filter_opts(opts)
 
         parts = []
