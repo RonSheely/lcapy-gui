@@ -139,3 +139,10 @@ class Opamp(Component):
     def node2(self):
 
         return self.nodes[3]
+
+    def choose_node_name(self, m, nodes):
+
+        # Handle the special ground node.
+        if m == 1:
+            return '0'
+        return super().choose_node_name(m, nodes)
