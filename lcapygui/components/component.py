@@ -346,7 +346,7 @@ class Component(ABC):
         angle = degrees(atan2(y2 - y1, x2 - x1))
         return angle
 
-    def attr_string(self, x1, y1, x2, y2, step=1):
+    def attr_dir_string(self, x1, y1, x2, y2, step=1):
 
         r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
 
@@ -374,9 +374,11 @@ class Component(ABC):
         else:
             attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
 
-        if self.type == 'Eopamp':
-            # TODO: fix for other orientations
-            attr = 'right'
+        return attr
+
+    def attr_string(self, x1, y1, x2, y2, step=1):
+
+        attr = self.attr_dir_string(x1, y1, x2, y2, step)
 
         if self.color != '':
             attr += ', color=' + self.color
@@ -387,6 +389,10 @@ class Component(ABC):
             attr += ', i=' + self.current_label
         if self.flow_label != '':
             attr += ', f=' + self.flow_label
+        if self.mirror:
+            attr += ', mirror'
+        if self.invert:
+            attr += ', invert'
 
         # Add user defined attributes such as thick, dashed, etc.
         if self.attrs != '':

@@ -1,3 +1,5 @@
+% markdown-cleanup-list-numbers
+
 1. Highlight selected component ?
 
 2. Add misc operations: poles, zeros, etc.
@@ -14,61 +16,51 @@ Stop if reach one of the branch nodes
 6. Rotate components?  Perhaps just delete and re-enter but lose
 attributes unless clever
 
-7. Configuration file
+7. User levels to hide many options
 
-8. User levels to hide many options
+8. Add numerical analysis
 
-9. Add numerical analysis
+9. Add node in middle of wire?   Need to delete wire or split into two.
 
-10. Add node in middle of wire?   Need to delete wire or split into two.
+10. Draw nodes after drawing cpts (for port nodes)
 
-11. Draw nodes after drawing cpts (for port nodes)
+11. Close/quit
 
-12. Close/quit
+12. Add labels, voltage labels, current labels to cpt attributes
 
-13. Add labels, voltage labels, current labels to cpt attributes
+13. Connect opamp negative output node to ground
 
-14. Connect opamp negative output node to ground
-
-15. Name opamps E1, E2, etc
-
-17. Make Lcapy more robust to nodes being changed when node positions
+14. Make Lcapy more robust to nodes being changed when node positions
     are defined
 
-18. Improve opamp label placement
+15. Add frequency and phase to AC sources
 
-19. Add frequency and phase to AC sources
+16. Fill open nodes so not transparent to wire underneath
 
-20. Fill open nodes so not transparent to wire underneath
+17. Fix Lcapy to simplify condition expression for t >= 0
 
-21. Fix Lcapy to simplify condition expression for t >= 0
+18. Reposition component labels to match circuitikz
 
-22. Reposition component labels to match circuitikz
+19. Fix fullscreen
 
-23. Fix fullscreen
+20. Fix transistor menagerie if base/gate offset
 
-24. Fix transistor menagerie if base/gate offset
+21. Add transfer function dialog (transimpedance, transadmittance)
 
-25. Add transfer function dialog (transimpedance, transadmittance)
+22. Add voltage, current, and flow labels
 
-26. Add voltage, current, and flow labels
+23. Add generic labels
 
-27. Add generic labels
+24. American/European symbol options (use separate dirs of svgs)
 
-28. American/European symbol options (use separate dirs of svgs)
+25. Use suffixes for component values (u, p, M, etc)
 
-29. RP/EF options for voltage sources
+26. Handle exception when creating circuitiz image
 
-30. Use suffixes for component values (u, p, M, etc)
+27. Fix circuitikz image creation to use node positions
 
-31. Handle exception when creating circuitiz image
+28. Add variable kind for R, C, L, etc.
 
-32. Fix circuitikz image creation to use node positions
+29. Fix invert for opamp
 
-33. Add variable kind for R, C, L, etc.
-
-34. Save mirror/invert attributes
-
-35. Switch nodes if mirrored
-
-36. Fix invert for opamp
+30. Add label position modifiers

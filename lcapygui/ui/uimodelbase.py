@@ -317,9 +317,19 @@ class UIModelBase:
                 self.exception('Cannot change name for %s' % cpt.name)
                 return
 
-        cpt.opts.add(gcpt.attr_string_update(self.STEP))
+        if gcpt.mirror ^ ('mirror' in newcpt.opts):
+            # TODO, add mirror method...
+            if gcpt.type == 'Eopamp':
+                newcpt.nodes[2], newcpt.nodes[3] = newcpt.nodes[3], newcpt.nodes[2]
+            elif gcpt.type in ('J', 'M', 'Q'):
+                newcpt.nodes[2], newcpt.nodes[0] = newcpt.nodes[0], newcpt.nodes[2]
+            else:
+                print('Trying to change mirror for ' + str(newcpt))
 
-        newcpt.gcpt = cpt.gcpt
+        newcpt.opts.strip('mirror', 'invert')
+        newcpt.opts.add(gcpt.attr_string_update(self.STEP))
+
+        newcpt.gcpt = gcpt
         cpt_remake(newcpt.gcpt)
 
     def cut(self, cpt):
