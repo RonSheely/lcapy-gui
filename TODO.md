@@ -66,3 +66,9 @@ attributes unless clever
 32. Fix circuitikz image creation to use node positions
 
 33. Add variable kind for R, C, L, etc.
+
+34. Save mirror/invert attributes
+
+35. Switch nodes if mirrored
+
+36. Fix invert for opamp
