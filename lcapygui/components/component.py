@@ -59,6 +59,7 @@ class Component(ABC):
         self.current_label = ''
         self.flow_label = ''
         self.color = ''
+        self.scale = 1
 
         self.mirror = False
         self.invert = False
@@ -84,6 +85,11 @@ class Component(ABC):
         for k, v in opts.items():
             if k in ('color', 'colour'):
                 self.color = v
+            elif k == 'scale':
+                try:
+                    self.scale = float(v)
+                except:
+                    self.scale = 1.0
             elif k == 'mirror':
                 self.mirror = True
             elif k == 'invert':
@@ -95,7 +101,7 @@ class Component(ABC):
             elif k in ('f', 'i', 'v'):
                 # TODO, handle labels.
                 pass
-            elif k in ('left', 'right', 'up', 'down', 'rotate'):
+            elif k in ('left', 'right', 'up', 'down', 'size', 'rotate'):
                 pass
             else:
                 if v == '':

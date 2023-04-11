@@ -37,6 +37,7 @@ class UIModelBase:
         'f': ('f', 'CCCS', 'F', ''),
         'g': ('g', 'VCCS', 'G', ''),
         'h': ('h', 'CCVS', 'H', ''),
+        'o': ('o', 'Open circuit', 'O', ''),
         'opamp': ('', 'Opamp', 'Opamp', ''),
         'p': ('p', 'Port', 'P', ''),
         'y': ('y', 'Admittance', 'Y', ''),

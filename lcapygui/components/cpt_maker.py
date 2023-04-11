@@ -11,6 +11,7 @@ from .inductor import Inductor
 from .jfet import JFET
 from .mosfet import MOSFET
 from .opamp import Opamp
+from .opencircuit import OpenCircuit
 from .port import Port
 from .resistor import Resistor
 from .voltage_source import VoltageSource
@@ -42,6 +43,7 @@ class CptMaker:
         'J': JFET,
         'L': Inductor,
         'M': MOSFET,
+        'O': OpenCircuit,
         'P': Port,
         'Q': BJT,
         'R': Resistor,
