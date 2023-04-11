@@ -102,7 +102,8 @@ class Component(ABC):
                 # TODO, handle labels.
                 pass
             elif k in ('left', 'right', 'up', 'down', 'size', 'rotate',
-                       'pinnodes', 'pinnames', 'pins'):
+                       'pinnodes', 'pinnames', 'pins', 'pinlabels',
+                       'mirrorinputs'):
                 pass
             else:
                 if v == '':
