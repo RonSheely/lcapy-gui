@@ -326,7 +326,7 @@ class UIModelBase:
             else:
                 print('Trying to change mirror for ' + str(newcpt))
 
-        newcpt.opts.strip('mirror', 'invert')
+        newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string_update(self.STEP))
 
         newcpt.gcpt = gcpt
