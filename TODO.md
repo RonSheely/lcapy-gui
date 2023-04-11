@@ -64,3 +64,7 @@ attributes unless clever
 29. Fix invert for opamp
 
 30. Add label position modifiers
+
+31. Add U components
+
+32. Add fdopamp; perhaps add opamp, fdopamp to vcvs as kinds?
