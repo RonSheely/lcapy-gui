@@ -101,7 +101,8 @@ class Component(ABC):
             elif k in ('f', 'i', 'v'):
                 # TODO, handle labels.
                 pass
-            elif k in ('left', 'right', 'up', 'down', 'size', 'rotate'):
+            elif k in ('left', 'right', 'up', 'down', 'size', 'rotate',
+                       'pinnodes', 'pinnames', 'pins'):
                 pass
             else:
                 if v == '':

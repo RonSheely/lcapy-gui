@@ -646,6 +646,10 @@ class UIModelBase:
 
     def node_draw(self, node):
 
+        if node.pos is None:
+            print('Pos unknown for ' + str(node))
+            return
+
         if node.port:
             self.ui.sketcher.stroke_circle(
                 node.x, node.y, self.preferences.node_size,
