@@ -36,6 +36,24 @@ class Component(ABC):
     has_value = True
     netitem_args = ()
 
+    voltage_keys = ('v', 'v_', 'v^', 'v_>', 'v_<', 'v^>', 'v^<',
+                    'v<', 'v>')
+    current_keys = ('i', 'i_', 'i^', 'i_>',  'i_<', 'i^>', 'i^<',
+                    'i>_', 'i<_', 'i>^', 'i<^', 'i>', 'i<', 'ir')
+    flow_keys = ('f', 'f_', 'f^', 'f_>',  'f_<', 'f^>', 'f^<',
+                 'f>_', 'f<_', 'f>^', 'f<^', 'f>', 'f<')
+    label_keys = ('l', 'l_', 'l^')
+    annotation_keys = ('a', 'a_', 'a^')
+
+    # These are not passed to the sktecher.
+    ignore_keys = ('left', 'right', 'up', 'down', 'size', 'rotate',
+                   'pinnodes', 'pinnames', 'pins', 'pinlabels',
+                   'mirrorinputs', 'free', 'ignore', 'nosim', 'arrow',
+                   'startarrow', 'endarrow', 'bus', 'anchor', 'fixed')
+
+    all_keys = voltage_keys + current_keys + flow_keys + \
+        label_keys + annotation_keys + ignore_keys
+
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.
 
@@ -98,12 +116,7 @@ class Component(ABC):
                 self.kind = '-' + v
             elif k == 'style':
                 self.style = v
-            elif k in ('f', 'i', 'v'):
-                # TODO, handle labels.
-                pass
-            elif k in ('left', 'right', 'up', 'down', 'size', 'rotate',
-                       'pinnodes', 'pinnames', 'pins', 'pinlabels',
-                       'mirrorinputs'):
+            elif k in self.all_keys:
                 pass
             else:
                 if v == '':

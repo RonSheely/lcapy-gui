@@ -8,4 +8,7 @@ class BipoleComponent(Component):
     @property
     def sketch_net(self):
 
-        return self.type + ' 1 2'
+        s = self.type + ' 1 2; right'
+        if self.symbol_kind != '':
+            s += ', kind=' + self.symbol_kind
+        return s
