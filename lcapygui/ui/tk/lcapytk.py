@@ -96,6 +96,8 @@ class LcapyTk(Tk):
                                    accelerator='Ctrl+u')
         self.view_menu.add_command(label='Circuitikz macros',
                                    command=self.on_view_macros)
+        self.view_menu.add_command(label='Simple netlist',
+                                   command=self.on_simple_netlist)
         self.view_menu.add_command(label='Netlist',
                                    command=self.on_netlist)
         self.view_menu.add_command(label='Nodal equations',
@@ -461,6 +463,10 @@ class LcapyTk(Tk):
     def on_screenshot(self, *args):
 
         self.model.on_screenshot()
+
+    def on_simple_netlist(self, *args):
+
+        self.model.on_simple_netlist()
 
     def on_tab_selected(self, event):
 

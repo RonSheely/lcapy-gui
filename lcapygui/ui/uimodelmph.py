@@ -440,7 +440,7 @@ class UIModelMPH(UIModelBase):
 
         self.move(xshift, yshift)
 
-    def on_netlist(self):
+    def on_simple_netlist(self):
 
         netlist = []
         lines = self.circuit.netlist().split('\n')
@@ -448,6 +448,11 @@ class UIModelMPH(UIModelBase):
             parts = line.split(';')
             netlist.append(parts[0].strip())
         s = '\n'.join(netlist)
+        self.ui.show_message_dialog(s, 'Netlist')
+
+    def on_netlist(self):
+
+        s = self.schematic()
         self.ui.show_message_dialog(s, 'Netlist')
 
     def on_nodal_equations(self):

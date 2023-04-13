@@ -38,7 +38,7 @@ class UIModelBase:
         'g': ('g', 'VCCS', 'G', ''),
         'h': ('h', 'CCVS', 'H', ''),
         'o': ('o', 'Open circuit', 'O', ''),
-        'opamp': ('', 'Opamp', 'Opamp', ''),
+        'opamp': ('', 'Opamp', 'opamp', ''),
         'p': ('p', 'Port', 'P', ''),
         'y': ('y', 'Admittance', 'Y', ''),
         'z': ('z', 'Impedance', 'Z', ''),
@@ -126,7 +126,7 @@ class UIModelBase:
 
     def choose_cpt_name(self, cpt_type):
 
-        if cpt_type == 'Opamp':
+        if cpt_type == 'opamp':
             cpt_type = 'E'
 
         num = 1
