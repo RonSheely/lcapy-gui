@@ -34,7 +34,6 @@ class Component(ABC):
               'attrs': 'Attributes'}
     extra_fields = {}
     has_value = True
-    netitem_args = ()
 
     voltage_keys = ('v', 'v_', 'v^', 'v_>', 'v_<', 'v^>', 'v^<',
                     'v<', 'v>')
@@ -113,7 +112,7 @@ class Component(ABC):
             elif k == 'invert':
                 self.invert = True
             elif k == 'kind':
-                self.kind = '-' + v
+                self.kind += '-' + v
             elif k == 'style':
                 self.style = v
             elif k in self.all_keys:
@@ -466,6 +465,13 @@ class Component(ABC):
         for node_name in node_names:
             parts.append(node_name)
         return parts
+
+    @property
+    def netitem_args(self):
+
+        if self.cpt_kind == '':
+            return ()
+        return (self.cpt_kind, )
 
     def netitem(self, node_names, x1, y1, x2, y2, step=1):
 
