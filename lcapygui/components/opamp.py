@@ -65,7 +65,7 @@ class Opamp(Component):
         yo = (y2 + y1) / 2
 
         positions = array(((xo, yo),
-                           (0, 0),
+                           None,
                            (x1, y1),
                            (x1, y2)))
         return positions

@@ -389,7 +389,10 @@ class UIModelBase:
 
         if positions is not None:
             for k, v in self.circuit.nodes.items():
-                v.pos = positions[k]
+                try:
+                    v.pos = positions[k]
+                except KeyError:
+                    v.pos = None
 
         else:
 
@@ -492,7 +495,8 @@ class UIModelBase:
         s = '# Created by ' + self.ui.NAME + ' V' + self.ui.version + '\n'
 
         # Define node positions
-        foo = [str(node) for node in self.circuit.nodes.values()]
+        foo = [str(node) for node in self.circuit.nodes.values()
+               if node.pos is not None]
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
         for cpt in self.circuit.elements.values():
@@ -515,6 +519,9 @@ class UIModelBase:
         positions = gcpt.assign_positions(x1, y1, x2, y2)
 
         for m, position in enumerate(positions):
+            if position is None:
+                continue
+
             node = self.circuit.nodes.by_position(position)
             if node is None:
                 node_name = gcpt.choose_node_name(m, all_node_names)

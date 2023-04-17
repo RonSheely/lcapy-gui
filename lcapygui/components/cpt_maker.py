@@ -34,7 +34,7 @@ class CptMaker:
         'CPE': CPE,
         'D': Diode,
         'E': VCVS,
-        'Opamp': Opamp,
+        'opamp': Opamp,
         'F': CCCS,
         'FB': FerriteBead,
         'G': VCCS,

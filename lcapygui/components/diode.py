@@ -13,13 +13,3 @@ class Diode(BipoleComponent):
     default_kind = '-'
     default_style = 'empty'
     has_value = False
-
-    @property
-    def sketch_net(self):
-
-        s = self.type + ' 1 2; right'
-        if self.symbol_kind != '':
-            s += ', kind=' + self.symbol_kind
-        if self.style != '':
-            s += ', style=' + self.style
-        return s
