@@ -14,7 +14,7 @@ class TransferFunctionDialog:
 
         elements = ui.model.circuit.elements
         names = [elt.name for elt in elements.values()
-                 if elt.type not in ('W', 'O')]
+                 if elt.type not in ('W', 'O', 'V', 'I')]
 
         entries.append(LabelEntry('input', 'Input',
                                   names[0], names))
@@ -38,8 +38,12 @@ class TransferFunctionDialog:
         output_cpt = self.labelentries.get('output')
         kind = self.labelentries.get('kind')
 
+        # Remove independent sources
         cct = self.ui.model.circuit
-        # TODO, remove independent sources
+        cct = cct.copy()
+        for cpt in cct.elements.values():
+            if cpt.is_independent_source:
+                cct.remove(cpt.name)
 
         if kind == 'Voltage ratio':
             H = cct.voltage_gain(input_cpt, output_cpt)
