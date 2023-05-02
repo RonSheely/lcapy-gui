@@ -156,6 +156,10 @@ class UIModelMPH(UIModelBase):
             import pdb
             pdb.set_trace()
 
+    def inspect_transfer_function(self, cpt):
+
+        self.ui.show_transfer_function_dialog(cpt)
+
     def unselect(self):
 
         self.cursors.remove()
@@ -376,6 +380,10 @@ class UIModelMPH(UIModelBase):
             return
 
         self.inspect_thevenin_impedance(self.selected)
+
+    def on_inspect_transfer_function(self):
+
+        self.inspect_transfer_function(self.selected)
 
     def on_inspect_voltage(self):
 

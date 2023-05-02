@@ -126,6 +126,9 @@ class LcapyTk(Tk):
         inspect_menu.add_command(label='Norton admittance',
                                  underline=0,
                                  command=self.on_inspect_norton_admittance)
+        inspect_menu.add_command(label='Transfer function',
+                                 underline=1,
+                                 command=self.on_inspect_transfer_function)
 
         self.menu.add_cascade(label='Inspect', underline=0,
                               menu=self.inspect_menu)
@@ -403,6 +406,10 @@ class LcapyTk(Tk):
 
         self.model.on_inspect_thevenin_impedance()
 
+    def on_inspect_transfer_function(self, *args):
+
+        self.model.on_inspect_transfer_function()
+
     def on_inspect_voltage(self, *args):
 
         self.model.on_inspect_voltage()
@@ -570,6 +577,12 @@ class LcapyTk(Tk):
         from .preferences_dialog import PreferencesDialog
 
         self.preferences_dialog = PreferencesDialog(self, on_changed)
+
+    def show_transfer_function_dialog(self, cpt):
+
+        from .transfer_function_dialog import TransferFunctionDialog
+
+        self.transfer_function_dialog = TransferFunctionDialog(self, cpt)
 
     def show_info_dialog(self, message):
 
