@@ -20,7 +20,7 @@ class TransferFunctionDialog:
                                   names[0], names))
 
         entries.append(LabelEntry('output', 'Output',
-                                  names[0], names))
+                                  names[-1], names))
 
         entries.append(LabelEntry('kind', 'Kind', 'Voltage ratio',
                                   ['Voltage ratio', 'Current ratio',
@@ -38,6 +38,20 @@ class TransferFunctionDialog:
         output_cpt = self.labelentries.get('output')
         kind = self.labelentries.get('kind')
 
-        print(input_cpt, output_cpt, kind)
+        cct = self.ui.model.circuit
+        # TODO, remove independent sources
+
+        if kind == 'Voltage ratio':
+            H = cct.voltage_gain(input_cpt, output_cpt)
+        elif kind == 'Current ratio':
+            H = cct.current_gain(input_cpt, output_cpt)
+        elif kind == 'Transimpedance':
+            H = cct.transimpedance(input_cpt, output_cpt)
+        elif kind == 'Transadmittance':
+            H = cct.transadmittance(input_cpt, output_cpt)
+        else:
+            raise ValueError('Unknown kind')
+
+        self.ui.show_expr_dialog(H, kind)
 
         self.master.destroy()
