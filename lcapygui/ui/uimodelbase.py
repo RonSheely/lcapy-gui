@@ -6,6 +6,7 @@ from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type, cpt_re
 
 from copy import copy
 from math import atan2, degrees, sqrt
+from numpy import nan, isnan
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
 from lcapy.nodes import parse_nodes
@@ -496,7 +497,8 @@ class UIModelBase:
 
         # Define node positions
         foo = [str(node) for node in self.circuit.nodes.values()
-               if node.pos is not None]
+               if not isnan(node.pos.x)]
+
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
         for cpt in self.circuit.elements.values():

@@ -1,5 +1,5 @@
 from .component import Component
-from numpy import array, sqrt
+from numpy import array, sqrt, nan
 from numpy.linalg import norm
 
 
@@ -65,7 +65,7 @@ class Opamp(Component):
         yo = (y2 + y1) / 2
 
         positions = array(((xo, yo),
-                           None,
+                           (nan, nan),
                            (x1, y1),
                            (x1, y2)))
         return positions
