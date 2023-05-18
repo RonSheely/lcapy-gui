@@ -156,6 +156,10 @@ class UIModelMPH(UIModelBase):
             import pdb
             pdb.set_trace()
 
+    def inspect_state_space(self, cpt):
+
+        self.ui.show_state_space_dialog(cpt)
+
     def inspect_transfer_function(self, cpt):
 
         self.ui.show_transfer_function_dialog(cpt)
@@ -373,6 +377,10 @@ class UIModelMPH(UIModelBase):
             return
 
         self.inspect_norton_admittance(self.selected)
+
+    def on_inspect_state_space(self):
+
+        self.inspect_state_space(self.selected)
 
     def on_inspect_thevenin_impedance(self):
 

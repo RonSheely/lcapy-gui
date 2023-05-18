@@ -33,6 +33,9 @@ class ExprDialog:
         button = Button(self.master, text="Simplify", command=self.on_simplify)
         button.grid(row=1, column=2, sticky='w')
 
+        button = Button(self.master, text="Python", command=self.on_python)
+        button.grid(row=1, column=3, sticky='w')
+
         self.update()
 
     def update(self):
@@ -53,6 +56,10 @@ class ExprDialog:
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 
+    def on_advanced(self):
+
+        self.ui.show_expr_advanced_dialog(self.expr, self.title)
+
     def on_plot(self):
 
         if not isinstance(self.expr, Expr):
@@ -61,9 +68,21 @@ class ExprDialog:
 
         self.ui.show_plot_properties_dialog(self.expr)
 
-    def on_advanced(self):
+    def on_python(self):
 
-        self.ui.show_expr_advanced_dialog(self.expr, self.title)
+        s = ''
+        for sym in self.expr.symbols:
+            # Skip domain variables
+            if sym in ('f', 's', 't', 'w', 'omega',
+                       'jf', 'jw', 'jomega', 'n', 'k', 'z'):
+                continue
+
+            # TODO, add assumptions
+            s += "%s = symbol('%s')\n" % (sym, sym)
+        # TODO, fix Lcapy to provide static classes
+        s += repr(self.expr)
+
+        self.ui.show_message_dialog(s, 'Python expression')
 
     def on_simplify(self):
 

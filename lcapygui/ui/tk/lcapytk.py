@@ -129,6 +129,9 @@ class LcapyTk(Tk):
         inspect_menu.add_command(label='Transfer function',
                                  underline=1,
                                  command=self.on_inspect_transfer_function)
+        inspect_menu.add_command(label='State space',
+                                 underline=0,
+                                 command=self.on_inspect_state_space)
 
         self.menu.add_cascade(label='Inspect', underline=0,
                               menu=self.inspect_menu)
@@ -402,6 +405,10 @@ class LcapyTk(Tk):
 
         self.model.on_inspect_norton_admittance()
 
+    def on_inspect_state_space(self, *args):
+
+        self.model.on_inspect_state_space()
+
     def on_inspect_thevenin_impedance(self, *args):
 
         self.model.on_inspect_thevenin_impedance()
@@ -577,6 +584,12 @@ class LcapyTk(Tk):
         from .preferences_dialog import PreferencesDialog
 
         self.preferences_dialog = PreferencesDialog(self, on_changed)
+
+    def show_state_space_dialog(self, cpt):
+
+        from .state_space_dialog import TransferFunctionDialog
+
+        self.state_space_dialog = TransferFunctionDialog(self, cpt)
 
     def show_transfer_function_dialog(self, cpt):
 
