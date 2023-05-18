@@ -29,10 +29,10 @@ class TransferFunctionDialog:
 
         self.labelentries = LabelEntries(self.master, ui, entries)
 
-        button = Button(self.master, text="OK", command=self.on_ok)
+        button = Button(self.master, text="Show", command=self.on_show)
         button.grid(row=self.labelentries.row)
 
-    def on_ok(self):
+    def on_show(self):
 
         input_cpt = self.labelentries.get('input')
         output_cpt = self.labelentries.get('output')
@@ -41,7 +41,8 @@ class TransferFunctionDialog:
         # Remove independent sources
         cct = self.ui.model.circuit
         cct = cct.copy()
-        for cpt in cct.elements.values():
+        values = list(cct.elements.values())
+        for cpt in values:
             if cpt.is_independent_source:
                 cct.remove(cpt.name)
 
@@ -57,5 +58,3 @@ class TransferFunctionDialog:
             raise ValueError('Unknown kind')
 
         self.ui.show_expr_dialog(H, kind)
-
-        self.master.destroy()
