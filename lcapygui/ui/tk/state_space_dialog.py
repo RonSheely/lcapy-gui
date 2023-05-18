@@ -10,7 +10,9 @@ class TransferFunctionDialog:
         self.master = Tk()
         self.master.title('State space')
         self.ss = ui.model.circuit.ss
-        self.kindmap = {'State matrix, A': 'A',
+        self.kindmap = {'State equations': 'state_equations',
+                        'Output equations': 'output_equations',
+                        'State matrix, A': 'A',
                         'Input matrix, B': 'B',
                         'Output matrix, C': 'C',
                         'Feed through matrix, D': 'D',
@@ -32,13 +34,21 @@ class TransferFunctionDialog:
         entries = []
         kinds = list(self.kindmap.keys())
 
-        entries.append(LabelEntry('kind', 'Aspect', kinds[0], kinds,
-                                  self.on_update))
+        entries.append(LabelEntry('kind', 'Aspect', kinds[0], kinds))
 
         self.labelentries = LabelEntries(self.master, ui, entries)
 
-    def on_update(self, foo):
+        button = Button(self.master, text="Show", command=self.on_show)
+        button.grid(row=self.labelentries.row)
+
+    def on_show(self):
 
         kind = self.labelentries.get('kind')
 
-        self.ui.show_expr_dialog(getattr(self.ss, self.kindmap[kind]), kind)
+        attr = getattr(self.ss, self.kindmap[kind])
+        try:
+            expr = attr()
+        except (AttributeError, TypeError):
+            expr = attr
+
+        self.ui.show_expr_dialog(expr)
