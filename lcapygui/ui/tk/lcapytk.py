@@ -178,10 +178,10 @@ class LcapyTk(Tk):
         self.manipulation_menu.add_command(label='Remove independent sources',
                                            command=self.on_manipulation_remove_sources)
 
-        self.manipulation_menu.add_command(label='Laplace',
+        self.manipulation_menu.add_command(label='Laplace model',
                                            command=self.on_laplace_model)
 
-        self.manipulation_menu.add_command(label='Noise',
+        self.manipulation_menu.add_command(label='Noise model',
                                            command=self.on_noise_model)
 
         self.menu.add_cascade(label='Manipulation', underline=0,
