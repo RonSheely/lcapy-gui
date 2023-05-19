@@ -168,18 +168,24 @@ class LcapyTk(Tk):
         self.menu.add_cascade(label='Connection', underline=0,
                               menu=self.connection_menu)
 
-        # Model menu
-        self.model_menu = Menu(self.menu, tearoff=0,
-                               bg='lightgrey', fg='black')
+        # Manipulation menu
+        self.manipulation_menu = Menu(self.menu, tearoff=0,
+                                      bg='lightgrey', fg='black')
 
-        self.model_menu.add_command(label='Laplace',
-                                    command=self.on_laplace_model)
+        self.manipulation_menu.add_command(label='Kill independent sources',
+                                           command=self.on_manipulation_kill)
 
-        self.model_menu.add_command(label='Noise',
-                                    command=self.on_noise_model)
+        self.manipulation_menu.add_command(label='Remove independent sources',
+                                           command=self.on_manipulation_remove_sources)
 
-        self.menu.add_cascade(label='Model', underline=0,
-                              menu=self.model_menu)
+        self.manipulation_menu.add_command(label='Laplace',
+                                           command=self.on_laplace_model)
+
+        self.manipulation_menu.add_command(label='Noise',
+                                           command=self.on_noise_model)
+
+        self.menu.add_cascade(label='Manipulation', underline=0,
+                              menu=self.manipulation_menu)
 
         # Help menu
         self.help_menu = Menu(self.menu, tearoff=0,
@@ -424,6 +430,14 @@ class LcapyTk(Tk):
     def on_laplace_model(self, *args):
 
         self.model.on_laplace_model()
+
+    def on_manipulation_kill(self, *args):
+
+        self.model.on_manipulation_kill()
+
+    def on_manipulation_remove_sources(self, *args):
+
+        self.model.on_manipulation_remove_sources()
 
     def on_library(self, *args):
         from lcapygui import __libdir__

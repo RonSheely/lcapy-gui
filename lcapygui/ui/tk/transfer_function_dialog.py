@@ -13,6 +13,8 @@ class TransferFunctionDialog:
         entries = []
 
         elements = ui.model.circuit.elements
+
+        # TODO, allow V or I
         names = [elt.name for elt in elements.values()
                  if elt.type not in ('W', 'O', 'V', 'I')]
 

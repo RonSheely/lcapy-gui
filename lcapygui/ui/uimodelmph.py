@@ -438,6 +438,27 @@ class UIModelMPH(UIModelBase):
         self.ui.set_filename(filename)
         self.ui.refresh()
 
+    def on_manipulation_kill(self):
+
+        # Could have a dialog to select what to kill
+
+        cct = self.circuit.kill()
+        self.on_show_new_circuit(cct)
+
+    def on_manipulation_remove_sources(self):
+
+        # Could have a dialog to select what to remove
+
+        # Remove independent sources
+        cct = self.circuit.copy()
+        cct = cct.copy()
+        values = list(cct.elements.values())
+        for cpt in values:
+            if cpt.is_independent_source:
+                cct.remove(cpt.name)
+
+        self.on_show_new_circuit(cct)
+
     def on_mesh_equations(self):
 
         if self.ground_node is None:
