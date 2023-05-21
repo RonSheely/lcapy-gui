@@ -85,6 +85,8 @@ class CptPropertiesDialog:
             if arg == 'Control':
                 continue
             value = self.labelentries.get(arg)
+            if value == '':
+                value = self.gcpt.name
             self.cpt.args[m] = value
 
         try:
@@ -94,7 +96,12 @@ class CptPropertiesDialog:
                 if v0 == '':
                     v0 = None
                 else:
-                    v0 = float(v0)
+                    try:
+                        v0 = float(v0)
+                    except ValueError:
+                        # Symbolic
+                        pass
+
                 cpt = self.cpt.cpt
                 # Create new oneport (this should be improved).
                 self.cpt._cpt = cpt.__class__(cpt.C, v0)
@@ -104,7 +111,11 @@ class CptPropertiesDialog:
                 if i0 == '':
                     i0 = None
                 else:
-                    i0 = float(i0)
+                    try:
+                        i0 = float(i0)
+                    except ValueError:
+                        # Symbolic
+                        pass
                 cpt = self.cpt.cpt
                 # Create new oneport (this should be improved).
                 self.cpt._cpt = cpt.__class__(cpt.L, i0)
