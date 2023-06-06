@@ -67,7 +67,7 @@ class UIModelBase:
         self.circuit = Circuit()
         self.ui = ui
         self._analysis_circuit = None
-        self.filename = ''
+        self.pathname = ''
         self.voltage_annotations = Annotations()
         self.selected = None
         self.last_expr = None
@@ -350,29 +350,29 @@ class UIModelBase:
             return
         cpt.draw(**kwargs)
 
-    def export(self, filename):
+    def export(self, pathname):
 
         cct = self.circuit
-        cct.draw(filename)
+        cct.draw(pathname)
 
     def invalidate(self):
 
         self._analysis_circuit = None
 
-    def load(self, filename):
+    def load(self, pathname):
 
         from lcapy import Circuit
 
-        self.filename = filename
+        self.pathname = pathname
 
-        with open(filename) as f:
+        with open(pathname) as f:
             line = f.readline()
             if line.startswith(r'\begin{tikz'):
                 self.ui.show_error_dialog('Cannot load Circuitikz macro file')
                 return
 
         try:
-            circuit = Circuit(filename)
+            circuit = Circuit(pathname)
         except Exception as e:
             self.exception(e)
             return
@@ -483,11 +483,11 @@ class UIModelBase:
         # TODO
         pass
 
-    def save(self, filename):
+    def save(self, pathname):
 
         s = self.schematic()
 
-        with open(filename, 'w') as fhandle:
+        with open(pathname, 'w') as fhandle:
             fhandle.write(s)
         self.dirty = False
 

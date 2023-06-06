@@ -19,7 +19,7 @@ class LcapyTk(Tk):
 
     NAME = 'lcapy-tk'
 
-    def __init__(self, filenames=None, uimodel_class=None, debug=0):
+    def __init__(self, pathnames=None, uimodel_class=None, debug=0):
 
         from ... import __version__
 
@@ -91,6 +91,9 @@ class LcapyTk(Tk):
         self.view_menu = Menu(self.menu, tearoff=0,
                               bg='lightgrey', fg='black')
 
+        self.view_menu.add_command(label='Expression',
+                                   command=self.on_expression,
+                                   accelerator='Ctrl+e')
         self.view_menu.add_command(label='Circuitikz image',
                                    command=self.on_view,
                                    accelerator='Ctrl+u')
@@ -206,13 +209,13 @@ class LcapyTk(Tk):
 
         self.canvas = None
 
-        if filenames is None:
-            filenames = []
+        if pathnames is None:
+            pathnames = []
 
-        for filename in filenames:
-            self.load(filename)
+        for pathname in pathnames:
+            self.load(pathname)
 
-        if filenames == []:
+        if pathnames == []:
             model = self.new()
 
     def clear(self, grid='on'):
@@ -232,20 +235,20 @@ class LcapyTk(Tk):
         if self.debug:
             print(self.notebook.tab(self.notebook.select(), "text"))
 
-    def load(self, filename):
+    def load(self, pathname):
 
         model = self.new()
 
-        if filename is None:
+        if pathname is None:
             return
 
-        model.load(filename)
-        self.set_filename(filename)
+        model.load(pathname)
+        self.set_filename(pathname)
 
-    def set_filename(self, filename):
+    def set_filename(self, pathname):
 
-        name = basename(filename)
-        self.set_canvas_title(name)
+        filename = basename(pathname)
+        self.set_canvas_title(filename)
 
     def create_canvas(self, name, model):
 
@@ -366,6 +369,10 @@ class LcapyTk(Tk):
             print('Enter %s, %s' % (event.x, event.y))
 
         self.enter(self.canvases[0])
+
+    def on_expression(self, *args):
+
+        self.model.on_expression()
 
     def on_key_press_event(self, event):
 
@@ -526,14 +533,14 @@ class LcapyTk(Tk):
 
         exit()
 
-    def save(self, filename):
+    def save(self, pathname):
 
-        name = basename(filename)
+        name = basename(pathname)
         self.set_canvas_title(name)
 
-    def screenshot(self, filename):
+    def screenshot(self, pathname):
 
-        self.canvas.drawing.savefig(filename)
+        self.canvas.drawing.savefig(pathname)
 
     def set_canvas_title(self, name):
 
@@ -639,35 +646,36 @@ class LcapyTk(Tk):
 
         from tkinter.filedialog import askopenfilename
 
-        filename = askopenfilename(initialdir=initialdir,
+        pathname = askopenfilename(initialdir=initialdir,
                                    title="Select file",
                                    filetypes=(("Lcapy netlist", "*.sch"),))
-        return filename
+        return pathname
 
-    def save_file_dialog(self, filename):
+    def save_file_dialog(self, pathname):
 
         from tkinter.filedialog import asksaveasfilename
         from os.path import dirname, splitext, basename
 
-        dirname = dirname(filename)
-        basename, ext = splitext(basename(filename))
+        dirname = dirname(pathname)
+        filename = basename(pathname)
+        basename, ext = splitext(filename)
 
         options = {}
         options['defaultextension'] = ext
         options['filetypes'] = (("Lcapy netlist", "*.sch"),)
         options['initialdir'] = dirname
-        options['initialfile'] = filename
+        options['initialfile'] = basename
         options['title'] = "Save file"
 
         return asksaveasfilename(**options)
 
-    def export_file_dialog(self, filename, default_ext=None):
+    def export_file_dialog(self, pathname, default_ext=None):
 
         from tkinter.filedialog import asksaveasfilename
         from os.path import dirname, splitext, basename
 
-        dirname = dirname(filename)
-        basename, ext = splitext(basename(filename))
+        dirname = dirname(pathname)
+        basename, ext = splitext(basename(pathname))
 
         if default_ext is not None:
             ext = default_ext

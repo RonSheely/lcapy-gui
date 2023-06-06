@@ -149,8 +149,8 @@ class UIModelMPH(UIModelBase):
 
     def exception(self, e):
         message = str(e)
-        if self.filename != '':
-            message += ' in ' + self.filename
+        if self.pathname != '':
+            message += ' in ' + self.pathname
         self.ui.show_error_dialog(message)
         if self.ui.debug:
             import pdb
@@ -240,11 +240,13 @@ class UIModelMPH(UIModelBase):
 
     def on_clone(self):
 
-        def new_name(filename):
+        from os.path import basename
+
+        def new_name(pathname):
 
             from os.path import splitext
 
-            base, ext = splitext(filename)
+            base, ext = splitext(pathname)
             parts = base.split('_')
             if len(parts) == 0:
                 suffix = '1'
@@ -256,11 +258,12 @@ class UIModelMPH(UIModelBase):
                     suffix = '1'
             return base + '_' + suffix + ext
 
-        filename = new_name(self.filename)
-        self.save(filename)
+        pathname = new_name(self.pathname)
+        self.save(pathname)
 
         model = self.ui.new()
-        model.load(filename)
+        model.load(pathname)
+        filename = basename(pathname)
         self.ui.set_filename(filename)
         self.ui.refresh()
 
@@ -344,10 +347,17 @@ class UIModelMPH(UIModelBase):
 
     def on_export(self):
 
-        filename = self.ui.export_file_dialog(self.filename)
-        if filename == '':
+        pathname = self.ui.export_file_dialog(self.pathname)
+        if pathname == '':
             return
-        self.export(filename)
+        self.export(pathname)
+
+    def on_expression(self):
+
+        from lcapy import expr
+
+        e = self.last_expr if self.last_expr is not None else expr(0)
+        self.ui.show_expr_advanced_dialog(e)
 
     def on_help(self):
 
@@ -429,13 +439,13 @@ class UIModelMPH(UIModelBase):
 
     def on_load(self, initial_dir='.'):
 
-        filename = self.ui.open_file_dialog(initial_dir)
-        if filename == '' or filename == ():
+        pathname = self.ui.open_file_dialog(initial_dir)
+        if pathname == '' or pathname == ():
             return
 
         model = self.ui.new()
-        model.load(filename)
-        self.ui.set_filename(filename)
+        model.load(pathname)
+        self.ui.set_filename(pathname)
         self.ui.refresh()
 
     def on_manipulation_kill(self):
@@ -580,27 +590,27 @@ class UIModelMPH(UIModelBase):
 
     def on_save(self):
 
-        filename = self.filename
-        if filename == '':
+        pathname = self.pathname
+        if pathname == '':
             return
-        self.save(filename)
-        self.ui.save(filename)
+        self.save(pathname)
+        self.ui.save(pathname)
 
     def on_save_as(self):
 
-        filename = self.ui.save_file_dialog(self.filename)
-        if filename == '' or filename == ():
+        pathname = self.ui.save_file_dialog(self.pathname)
+        if pathname == '' or pathname == ():
             return
-        self.save(filename)
-        self.ui.save(filename)
+        self.save(pathname)
+        self.ui.save(pathname)
 
     def on_screenshot(self):
 
-        filename = self.ui.export_file_dialog(self.filename,
+        pathname = self.ui.export_file_dialog(self.pathname,
                                               default_ext='.png')
-        if filename == '' or filename == ():
+        if pathname == '' or pathname == ():
             return
-        self.ui.screenshot(filename)
+        self.ui.screenshot(pathname)
 
     def on_select(self, x, y):
 
