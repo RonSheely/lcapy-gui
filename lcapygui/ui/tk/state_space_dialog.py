@@ -29,7 +29,9 @@ class TransferFunctionDialog:
                         'State vector, x': 'x',
                         'State initial value vector, x0': 'x0',
                         'Output vector, y': 'y',
-                        'System impulse responses matrix, h': 'h'}
+                        'System impulse responses matrix, h': 'h',
+                        'Controllability matrix': 'controllability_matrix',
+                        'Observability matrix': 'observability_matrix'}
 
         entries = []
         kinds = list(self.kindmap.keys())
