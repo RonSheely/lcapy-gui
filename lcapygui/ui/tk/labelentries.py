@@ -5,7 +5,7 @@ from tkinter.ttk import Checkbutton
 class LabelEntry:
 
     def __init__(self, name, text, default, options=None,
-                 command=None, width=None):
+                 command=None, **kwargs):
 
         self.name = name
         self.text = text
@@ -15,7 +15,8 @@ class LabelEntry:
         self.cls = default.__class__
         self.options = options
         self.command = command
-        self.width = width
+        # width, etc.
+        self.kwargs = kwargs
 
 
 class LabelEntries(dict):
@@ -41,11 +42,9 @@ class LabelEntries(dict):
                     entry = Checkbutton(
                         master, variable=var, command=labelentry.command)
                 else:
-                    if labelentry.width is not None:
-                        entry = Entry(master, textvariable=var,
-                                      width=labelentry.width)
-                    else:
-                        entry = Entry(master, textvariable=var)
+                    entry = Entry(master, textvariable=var,
+                                  **labelentry.kwargs)
+
                     # if labelentry.command:
                     #    var.trace_add('write', labelentry.command)
                     if labelentry.command:
