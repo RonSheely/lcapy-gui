@@ -8,6 +8,7 @@ Usage: lcapy-tk [infile.sch]
 from argparse import ArgumentParser
 import sys
 from lcapygui import LcapyTk
+from lcapy import expr as lcapify
 
 
 def schtex_exception(type, value, tb):
@@ -40,6 +41,9 @@ def main(argv=None):
     parser.add_argument('--debug', type=int,
                         dest='debug', default=None,
                         help="enable debugging")
+    parser.add_argument('--expr', type=str,
+                        dest='expr', default=None,
+                        help="Lcapy expression")
     parser.add_argument('filenames', type=str, nargs='*',
                         help='schematic filename(s)', default=[])
 
@@ -49,6 +53,10 @@ def main(argv=None):
         sys.excepthook = schtex_exception
 
     e = LcapyTk(args.filenames, debug=args.debug)
+
+    if args.expr is not None:
+        e.show_expr_advanced_dialog(lcapify(args.expr))
+
     e.display()
 
     return 0

@@ -19,7 +19,7 @@ class ExprAdvancedDialog:
         self.ui = ui
         self.labelentries = None
 
-        self.operation = 'result'
+        self.expression = 'result'
 
         self.format = ''
 
@@ -30,8 +30,6 @@ class ExprAdvancedDialog:
                         'Partial fraction': 'partfrac',
                         'Time constant': 'timeconst'}
 
-        self.domain = ''
-
         self.domains = {'': '',
                         'Time': 'time',
                         'Phasor': 'phasor',
@@ -41,11 +39,17 @@ class ExprAdvancedDialog:
                         'Angular Fourier': 'angular_fourier',
                         'Angular Frequency': 'angular_frequency_response'}
 
+        try:
+            self.domain = next(key for key, value in self.domains.items()
+                               if value == expr.domain)
+        except Exception:
+            self.domain = ''
+
         self.master = Tk()
         self.master.title(title)
 
-        entries = [LabelEntry('operation', 'Operation', self.operation,
-                              None, self.on_operation),
+        entries = [LabelEntry('expression', 'Expression', self.expression,
+                              None, self.on_expression),
                    LabelEntry('domain', 'Domain', self.domain,
                               list(self.domains.keys()), self.on_domain),
                    LabelEntry('format', 'Format', self.format,
@@ -57,10 +61,17 @@ class ExprAdvancedDialog:
         self.expr_label.grid(row=self.labelentries.row, columnspan=4)
 
         button = Button(self.master, text="Plot", command=self.on_plot)
-        button.grid(row=self.labelentries.row + 1, sticky='w')
+        button.grid(row=self.labelentries.row + 1, column=0, sticky='w')
 
         button = Button(self.master, text="LaTeX", command=self.on_latex)
         button.grid(row=self.labelentries.row + 1, column=1, sticky='w')
+
+        button = Button(self.master, text="Python", command=self.on_python)
+        button.grid(row=self.labelentries.row + 1, column=2, sticky='w')
+
+        button = Button(self.master, text="Attributes",
+                        command=self.on_attributes)
+        button.grid(row=self.labelentries.row + 1, column=3, sticky='w')
 
         self.update()
 
@@ -78,18 +89,18 @@ class ExprAdvancedDialog:
         self.domain = domain
         self.update()
 
-    def on_operation(self, *args):
+    def on_expression(self, *args):
 
-        self.operation = self.labelentries.get_text('operation')
+        self.expression = self.labelentries.get_text('expression')
         self.update()
 
     def update(self):
 
-        operation = self.operation
+        expression = self.expression
         format = self.format
         domain = self.domain
 
-        command = '(' + operation + ')'
+        command = '(' + expression + ')'
         if domain != '':
             command += '.' + self.domains[domain] + '()'
         if format != '':
@@ -102,7 +113,7 @@ class ExprAdvancedDialog:
         global_dict['result'] = self.expr
         try:
             # Perhaps evaluate domain and transform steps
-            # separately if operation is not an Lcapy Expr?
+            # separately if expression is not an Lcapy Expr?
             self.expr_tweak = eval(command, global_dict)
             # self.show_pretty(e)
             self.show_img(self.expr_tweak)
@@ -131,3 +142,25 @@ class ExprAdvancedDialog:
     def on_latex(self):
 
         self.ui.show_message_dialog(self.expr_tweak.latex())
+
+    def on_python(self):
+
+        e = self.expr_tweak
+
+        s = ''
+        for sym in e.symbols:
+            # Skip domain variables
+            if sym in ('f', 's', 't', 'w', 'omega',
+                       'jf', 'jw', 'jomega', 'n', 'k', 'z'):
+                continue
+
+            # TODO, add assumptions
+            s += "%s = symbol('%s')\n" % (sym, sym)
+        # TODO, fix Lcapy to provide static classes
+        s += repr(e)
+
+        self.ui.show_message_dialog(s, 'Python expression')
+
+    def on_attributes(self):
+        # TODO
+        pass
