@@ -19,6 +19,7 @@ class ExprAdvancedDialog:
         self.ui = ui
         self.labelentries = None
 
+        # Perhaps show full expr string?
         self.expression = 'result'
 
         self.format = ''
@@ -49,7 +50,7 @@ class ExprAdvancedDialog:
         self.master.title(title)
 
         entries = [LabelEntry('expression', 'Expression', self.expression,
-                              None, self.on_expression),
+                              None, self.on_expression, width=50),
                    LabelEntry('domain', 'Domain', self.domain,
                               list(self.domains.keys()), self.on_domain),
                    LabelEntry('format', 'Format', self.format,
