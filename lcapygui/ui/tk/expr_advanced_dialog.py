@@ -2,7 +2,6 @@ from tkinter import Tk
 from tkinter.ttk import Button, Label, Frame
 from PIL import Image, ImageTk
 from lcapy import Expr
-from .labelentries import LabelEntry, LabelEntries
 from .exprimage import ExprImage
 
 
@@ -15,54 +14,19 @@ class ExprAdvancedDialog:
     def __init__(self, expr, ui, title=''):
 
         self.expr = expr
-        self.expr_tweak = expr
         self.ui = ui
-        self.labelentries = None
 
         # Perhaps show full expr string?
         self.expression = 'result'
 
-        self.format = ''
-
-        self.formats = {'': '',
-                        'Canonical': 'canonical',
-                        'Standard': 'standard',
-                        'ZPK': 'ZPK',
-                        'Partial fraction': 'partfrac',
-                        'Time constant': 'timeconst'}
-
-        self.domains = {'': '',
-                        'Time': 'time',
-                        'Phasor': 'phasor',
-                        'Laplace': 'laplace',
-                        'Fourier': 'fourier',
-                        'Frequency': 'frequency_response',
-                        'Angular Fourier': 'angular_fourier',
-                        'Angular Frequency': 'angular_frequency_response'}
-
-        try:
-            self.domain = next(key for key, value in self.domains.items()
-                               if value == expr.domain)
-        except Exception:
-            self.domain = ''
-
         self.master = Tk()
         self.master.title(title)
 
-        entries = [LabelEntry('expression', 'Expression', self.expression,
-                              None, self.on_expression, width=50),
-                   LabelEntry('domain', 'Domain', self.domain,
-                              list(self.domains.keys()), self.on_domain),
-                   LabelEntry('format', 'Format', self.format,
-                              list(self.formats.keys()), self.on_format)]
-
-        self.labelentries = LabelEntries(self.master, ui, entries)
-
         self.expr_label = Label(self.master, text='')
-        self.expr_label.grid(row=self.labelentries.row)
+        self.expr_label.grid(row=0)
 
         button_frame = Frame(self.master)
-        button_frame.grid(row=self.labelentries.row + 2, column=0, sticky='w')
+        button_frame.grid(row=1, column=0, sticky='w')
 
         button = Button(button_frame, text="Plot", command=self.on_plot)
         button.grid(row=0, column=0, sticky='w')
@@ -77,50 +41,32 @@ class ExprAdvancedDialog:
                         command=self.on_attributes)
         button.grid(row=0, column=3, sticky='w')
 
-        self.update()
+        button = Button(button_frame, text="Simplify",
+                        command=self.on_simplify)
+        button.grid(row=0, column=4, sticky='w')
 
-    def on_format(self, format):
+        button = Button(button_frame, text="Approximate",
+                        command=self.on_approximate)
+        button.grid(row=0, column=5, sticky='w')
 
-        if format == self.format:
-            return
-        self.format = format
-        self.update()
+        button = Button(button_frame, text="Transform",
+                        command=self.on_transform)
+        button.grid(row=0, column=6, sticky='w')
 
-    def on_domain(self, domain):
+        button = Button(button_frame, text="Format",
+                        command=self.on_format)
+        button.grid(row=0, column=7, sticky='w')
 
-        if domain == self.domain:
-            return
-        self.domain = domain
-        self.update()
+        button = Button(button_frame, text="Edit",
+                        command=self.on_edit)
+        button.grid(row=0, column=8, sticky='w')
 
-    def on_expression(self, *args):
-
-        self.expression = self.labelentries.get_text('expression')
         self.update()
 
     def update(self):
 
-        expression = self.expression
-        format = self.format
-        domain = self.domain
-
-        command = '(' + expression + ')'
-        if domain != '':
-            command += '.' + self.domains[domain] + '()'
-        if format != '':
-            command += '.' + self.formats[format] + '()'
-
-        if self.ui.debug:
-            print('Expression command: ' + command)
-            print(self.expr)
-
-        global_dict['result'] = self.expr
         try:
-            # Perhaps evaluate domain and transform steps
-            # separately if expression is not an Lcapy Expr?
-            self.expr_tweak = eval(command, global_dict)
-            # self.show_pretty(e)
-            self.show_img(self.expr_tweak)
+            self.show_img(self.expr)
         except Exception as e:
             self.expr_label.config(text=e)
 
@@ -137,19 +83,19 @@ class ExprAdvancedDialog:
 
     def on_plot(self):
 
-        if not isinstance(self.expr_tweak, Expr):
+        if not isinstance(self.expr, Expr):
             self.ui.info_dialog('Cannot plot expression')
             return
 
-        self.ui.show_plot_properties_dialog(self.expr_tweak)
+        self.ui.show_plot_properties_dialog(self.expr)
 
     def on_latex(self):
 
-        self.ui.show_message_dialog(self.expr_tweak.latex())
+        self.ui.show_message_dialog(self.expr.latex())
 
     def on_python(self):
 
-        e = self.expr_tweak
+        e = self.expr
 
         s = ''
         for sym in e.symbols:
@@ -168,3 +114,25 @@ class ExprAdvancedDialog:
     def on_attributes(self):
         # TODO
         pass
+
+    def on_simplify(self):
+
+        expr = self.expr.simplify()
+        # Perhaps have simplify dialog?
+        self.ui.show_expr_advanced_dialog(expr)
+
+    def on_approximate(self):
+
+        self.ui.show_approximate_dialog(self.expr)
+
+    def on_transform(self):
+
+        self.ui.show_transform_dialog(self.expr)
+
+    def on_format(self):
+
+        self.ui.show_format_dialog(self.expr)
+
+    def on_edit(self):
+        # TODO
+        self.ui.show_edit_dialog(self.expr)

@@ -5,7 +5,8 @@ from lcapy import Expr
 from .exprimage import ExprImage
 
 
-# Add print (LaTeX, python, ...)
+global_dict = {}
+exec('from lcapy import *', global_dict)
 
 
 class ExprDialog:
@@ -21,22 +22,25 @@ class ExprDialog:
         self.master.title(title)
 
         self.expr_label = Label(self.master, text='')
-        self.expr_label.grid(row=0, columnspan=5)
+        self.expr_label.grid(row=0, columnspan=4)
 
-        button = Button(self.master, text="Simplify", command=self.on_simplify)
-        button.grid(row=1, column=1, sticky='w')
-
-        button = Button(self.master, text="Advanced", command=self.on_advanced)
-        button.grid(row=1, column=2, sticky='w')
+        ops = {'Simplify': 'simplify',
+               ', B': 'B',
 
         button = Button(self.master, text="Plot", command=self.on_plot)
-        button.grid(row=1, column=3, sticky='w')
+        button.grid(row=1, sticky='w')
+
+        button = Button(self.master, text="Advanced", command=self.on_advanced)
+        button.grid(row=1, column=1, sticky='w')
+
+        button = Button(self.master, text="Simplify", command=self.on_simplify)
+        button.grid(row=1, column=2, sticky='w')
 
         button = Button(self.master, text="Python", command=self.on_python)
-        button.grid(row=1, column=4, sticky='w')
+        button.grid(row=1, column=3, sticky='w')
 
         button = Button(self.master, text="LaTeX", command=self.on_latex)
-        button.grid(row=1, column=5, sticky='w')
+        button.grid(row=1, column=4, sticky='w')
 
         self.update()
 

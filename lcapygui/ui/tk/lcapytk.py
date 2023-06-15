@@ -550,6 +550,12 @@ class LcapyTk(Tk):
 
         self.canvas.drawing.set_view(xmin, ymin, xmax, ymax)
 
+    def show_approximate_dialog(self, expr):
+
+        from .approximate_dialog import ApproximateDialog
+
+        self.approximate_dialog = ApproximateDialog(expr, self)
+
     def show_equations_dialog(self, expr, title=''):
 
         from .equations_dialog import EquationsDialog
@@ -567,6 +573,12 @@ class LcapyTk(Tk):
         from .expr_advanced_dialog import ExprAdvancedDialog
 
         self.expr_advanced_dialog = ExprAdvancedDialog(expr, self, title)
+
+    def show_format_dialog(self, expr):
+
+        from .format_dialog import FormatDialog
+
+        self.format_dialog = FormatDialog(expr, self)
 
     def show_help_dialog(self):
 
@@ -635,6 +647,12 @@ class LcapyTk(Tk):
         from .message_dialog import MessageDialog
 
         self.message_dialog = MessageDialog(message, title)
+
+    def show_transform_dialog(self, expr):
+
+        from .transform_dialog import TransformDialog
+
+        self.transform_dialog = TransformDialog(expr, self)
 
     def show_warning_dialog(self, message):
 
