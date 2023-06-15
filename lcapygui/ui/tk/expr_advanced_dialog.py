@@ -1,5 +1,5 @@
 from tkinter import Tk
-from tkinter.ttk import Button, Label
+from tkinter.ttk import Button, Label, Frame
 from PIL import Image, ImageTk
 from lcapy import Expr
 from .labelentries import LabelEntry, LabelEntries
@@ -59,20 +59,23 @@ class ExprAdvancedDialog:
         self.labelentries = LabelEntries(self.master, ui, entries)
 
         self.expr_label = Label(self.master, text='')
-        self.expr_label.grid(row=self.labelentries.row, columnspan=4)
+        self.expr_label.grid(row=self.labelentries.row)
 
-        button = Button(self.master, text="Plot", command=self.on_plot)
-        button.grid(row=self.labelentries.row + 1, column=0, sticky='w')
+        button_frame = Frame(self.master)
+        button_frame.grid(row=self.labelentries.row + 2, column=0, sticky='w')
 
-        button = Button(self.master, text="LaTeX", command=self.on_latex)
-        button.grid(row=self.labelentries.row + 1, column=1, sticky='w')
+        button = Button(button_frame, text="Plot", command=self.on_plot)
+        button.grid(row=0, column=0, sticky='w')
 
-        button = Button(self.master, text="Python", command=self.on_python)
-        button.grid(row=self.labelentries.row + 1, column=2, sticky='w')
+        button = Button(button_frame, text="LaTeX", command=self.on_latex)
+        button.grid(row=0, column=1, sticky='w')
 
-        button = Button(self.master, text="Attributes",
+        button = Button(button_frame, text="Python", command=self.on_python)
+        button.grid(row=0, column=2, sticky='w')
+
+        button = Button(button_frame, text="Attributes",
                         command=self.on_attributes)
-        button.grid(row=self.labelentries.row + 1, column=3, sticky='w')
+        button.grid(row=0, column=3, sticky='w')
 
         self.update()
 
