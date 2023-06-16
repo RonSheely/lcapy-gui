@@ -636,6 +636,12 @@ class LcapyTk(Tk):
 
         showinfo('', message)
 
+    def show_edit_dialog(self, expr):
+
+        from .edit_dialog import EditDialog
+
+        self.edit_dialog = EditDialog(expr, self)
+
     def show_error_dialog(self, message):
 
         from tkinter.messagebox import showerror
