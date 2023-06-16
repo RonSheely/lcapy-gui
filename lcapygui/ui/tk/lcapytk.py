@@ -574,6 +574,12 @@ class LcapyTk(Tk):
 
         self.expr_advanced_dialog = ExprAdvancedDialog(expr, self, title)
 
+    def show_expr_attributes_dialog(self, expr):
+
+        from .expr_attributes_dialog import ExprAttributesDialog
+
+        self.expr_attributes_dialog = ExprAttributesDialog(expr, self)
+
     def show_format_dialog(self, expr):
 
         from .format_dialog import FormatDialog

@@ -112,8 +112,8 @@ class ExprAdvancedDialog:
         self.ui.show_message_dialog(s, 'Python expression')
 
     def on_attributes(self):
-        # TODO
-        pass
+
+        self.ui.show_expr_attributes_dialog(self.expr)
 
     def on_simplify(self):
 
