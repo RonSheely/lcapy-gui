@@ -28,6 +28,10 @@ class MenuBar:
 
     def make(self, window):
 
+        def doit(menuitem):
+
+            menuitem.command(menuitem.label)
+
         # Create the drop down menus
         self.menubar = Menu(window, bg='lightgrey', fg='black')
 
@@ -39,8 +43,7 @@ class MenuBar:
 
             for menuitem in menudropdown.menuitems:
                 menu.add_command(label=menuitem.label,
-                                 command=lambda a=menuitem.label: menuitem.command(
-                                     a),
+                                 command=lambda a=menuitem: doit(a),
                                  underline=menuitem.underline,
                                  accelerator=menuitem.accelerator)
 

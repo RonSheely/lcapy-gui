@@ -22,7 +22,8 @@ class ExprDialog:
             MenuDropdown('View', 0,
                          [MenuItem('Plot', self.on_plot),
                           MenuItem('LaTeX', self.on_latex),
-                          MenuItem('Python', self.on_python)]),
+                          MenuItem('Python', self.on_python),
+                          MenuItem('Attributes', self.on_attributes)]),
             MenuDropdown('Edit', 0,
                          [MenuItem('Expression', self.on_edit)]),
             MenuDropdown('Format', 0,
@@ -68,6 +69,41 @@ class ExprDialog:
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 
+    def on_attributes(self, a):
+
+        self.ui.show_expr_attributes_dialog(self.expr)
+
+    def on_edit(self, a):
+
+        self.ui.show_message_dialog(self.expr)
+
+    def on_format(self, arg):
+
+        formats = {'Canonical': 'canonical',
+                   'Standard': 'standard',
+                   'General': 'general',
+                   'Time constant': 'timeconst',
+                   'ZPK': 'ZPK',
+                   'Partial fraction': 'partfrac',
+                   'Time constant': 'timeconst'}
+
+        method = formats[arg]
+
+        e = ExprCalc(self.expr)
+        expr = e.method(method)
+        self.ui.show_expr_dialog(expr)
+
+    def on_latex(self, a):
+
+        self.ui.show_message_dialog(self.expr.latex())
+
+    def on_ops(self, arg):
+
+        if arg == 'Approximate':
+            self.ui.show_approximate_dialog(self.expr)
+        elif arg == 'Simplify':
+            self.ui.show_expr_dialog(self.expr.simplify())
+
     def on_plot(self, a):
 
         if not isinstance(self.expr, Expr):
@@ -92,29 +128,6 @@ class ExprDialog:
 
         self.ui.show_message_dialog(s, 'Python expression')
 
-    def on_format(self, arg):
-
-        formats = {'Canonical': 'canonical',
-                   'Standard': 'standard',
-                   'General': 'general',
-                   'Time constant': 'timeconst',
-                   'ZPK': 'ZPK',
-                   'Partial fraction': 'partfrac',
-                   'Time constant': 'timeconst'}
-
-        method = formats[arg]
-
-        e = ExprCalc(self.expr)
-        expr = e.method(method)
-        self.ui.show_expr_dialog(expr)
-
-    def on_ops(self, arg):
-
-        if arg == 'approximate':
-            self.ui.show_approximate_dialog(self.expr)
-        elif arg == 'simplify':
-            self.ui.show_expr_dialog(self.expr.simplify())
-
     def on_transform(self, arg):
 
         domains = {'Time': 'time',
@@ -130,11 +143,3 @@ class ExprDialog:
         e = ExprCalc(self.expr)
         expr = e.method(method)
         self.ui.show_expr_dialog(expr)
-
-    def on_edit(self, a):
-
-        self.ui.show_message_dialog(self.expr)
-
-    def on_latex(self, a):
-
-        self.ui.show_message_dialog(self.expr.latex())
