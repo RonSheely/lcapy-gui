@@ -7,8 +7,8 @@ class TransferFunctionDialog:
     def __init__(self, ui):
 
         self.ui = ui
-        self.master = Tk()
-        self.master.title('Transfer function')
+        self.window = Tk()
+        self.window.title('Transfer function')
 
         entries = []
 
@@ -20,9 +20,9 @@ class TransferFunctionDialog:
         entries.append(LabelEntry('output', 'Output',
                                   names[0], names))
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.master, text="OK", command=self.on_ok)
+        button = Button(self.window, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
 
     def on_ok(self):
@@ -32,4 +32,4 @@ class TransferFunctionDialog:
 
         print(input_cpt, output_cpt)
 
-        self.master.destroy()
+        self.window.destroy()

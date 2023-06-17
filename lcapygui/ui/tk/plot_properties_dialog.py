@@ -10,8 +10,8 @@ class PlotPropertiesDialog:
         self.expr = expr
         self.ui = ui
 
-        self.master = Tk()
-        self.master.title('Plot properties')
+        self.window = Tk()
+        self.window.title('Plot properties')
 
         entries = [LabelEntry('min', 'Min', 0.0),
                    LabelEntry('max', 'Max', 1.0),
@@ -34,9 +34,9 @@ class PlotPropertiesDialog:
                 kinds.append(key)
 
         entries.append(LabelEntry('kind', 'Plot type', 'Plot', kinds))
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.master, text="Plot", command=self.on_update)
+        button = Button(self.window, text="Plot", command=self.on_update)
         button.grid(row=self.labelentries.row)
 
     def on_update(self):

@@ -10,8 +10,8 @@ class ApproximateDialog:
         self.expr = expr
         self.ui = ui
 
-        self.master = Tk()
-        self.master.title('Plot properties')
+        self.window = Tk()
+        self.window.title('Plot properties')
 
         entries = []
 
@@ -22,15 +22,15 @@ class ApproximateDialog:
                 entries.append(LabelEntry(key, key, 0.0))
                 self.symbols.append(key)
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.master, text="Approximate",
+        button = Button(self.window, text="Approximate",
                         command=self.on_update)
         button.grid(row=self.labelentries.row)
 
     def on_update(self):
 
-        self.master.destroy()
+        self.window.destroy()
 
         defs = {}
         for key in self.symbols:
@@ -42,4 +42,4 @@ class ApproximateDialog:
             defs[key] = val
 
         expr = self.expr.approximate_dominant(defs)
-        self.ui.show_expr_advanced_dialog(expr)
+        self.ui.show_expr_dialog(expr)

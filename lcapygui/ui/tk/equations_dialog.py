@@ -28,13 +28,13 @@ class EquationsDialog:
         s += '\\end{tabular}\n'
         self.s = s
 
-        self.master = Tk()
-        self.master.title(title)
+        self.window = Tk()
+        self.window.title(title)
 
-        self.expr_label = Label(self.master, text='')
+        self.expr_label = Label(self.window, text='')
         self.expr_label.grid(row=0)
 
-        button = Button(self.master, text="LaTeX", command=self.on_latex)
+        button = Button(self.window, text="LaTeX", command=self.on_latex)
         button.grid(row=1, sticky='w')
 
         self.update()
@@ -49,7 +49,7 @@ class EquationsDialog:
     def show_img(self):
 
         png_filename = LatexImage(self.s).image()
-        img = ImageTk.PhotoImage(Image.open(png_filename), master=self.master)
+        img = ImageTk.PhotoImage(Image.open(png_filename), master=self.window)
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 

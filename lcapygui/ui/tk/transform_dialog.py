@@ -11,8 +11,8 @@ class TransformDialog:
         self.expr = expr
         self.ui = ui
 
-        self.master = Tk()
-        self.master.title('Transform')
+        self.window = Tk()
+        self.window.title('Transform')
 
         self.domains = {'': '',
                         'Time': 'time',
@@ -32,11 +32,11 @@ class TransformDialog:
         entries = [LabelEntry('domain', 'Domain', self.domain,
                               list(self.domains.keys()), self.on_domain)]
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
     def on_domain(self, domain):
 
-        self.master.destroy()
+        self.window.destroy()
 
         if domain == self.domain:
             return

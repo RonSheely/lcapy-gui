@@ -7,8 +7,8 @@ class TransferFunctionDialog:
     def __init__(self, ui, cpt):
 
         self.ui = ui
-        self.master = Tk()
-        self.master.title('Transfer function')
+        self.window = Tk()
+        self.window.title('Transfer function')
 
         entries = []
 
@@ -29,9 +29,9 @@ class TransferFunctionDialog:
                                    'Transimpedance',
                                    'Transadmittance']))
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.master, text="Show", command=self.on_show)
+        button = Button(self.window, text="Show", command=self.on_show)
         button.grid(row=self.labelentries.row)
 
     def on_show(self):

@@ -8,8 +8,8 @@ class InspectDialog:
         self.uimodel = uimodel
         self.cpt = cpt
 
-        self.master = Tk()
-        self.master.title(title)
+        self.window = Tk()
+        self.window.title(title)
 
         buttons = [('Voltage', self.on_voltage),
                    ('Current', self.on_current),
@@ -18,7 +18,7 @@ class InspectDialog:
                    ('Thevenin impedance', self.on_thevenin_impedance),
                    ('Norton admittance', self.on_norton_admittance)]
         for b in buttons:
-            button = Button(self.master, text=b[0], command=b[1])
+            button = Button(self.window, text=b[0], command=b[1])
             button.pack()
 
     def on_voltage(self):

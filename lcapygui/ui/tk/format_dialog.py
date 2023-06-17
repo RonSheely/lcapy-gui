@@ -11,8 +11,8 @@ class FormatDialog:
         self.expr = expr
         self.ui = ui
 
-        self.master = Tk()
-        self.master.title('Format')
+        self.window = Tk()
+        self.window.title('Format')
 
         self.format = ''
 
@@ -26,11 +26,11 @@ class FormatDialog:
         entries = [LabelEntry('format', 'Format', self.format,
                               list(self.formats.keys()), self.on_format)]
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
     def on_format(self, fmt):
 
-        self.master.destroy()
+        self.window.destroy()
 
         if fmt == self.format:
             return

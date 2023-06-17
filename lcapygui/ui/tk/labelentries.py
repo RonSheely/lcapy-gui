@@ -21,28 +21,28 @@ class LabelEntry:
 
 class LabelEntries(dict):
 
-    def __init__(self, master, ui, entries):
+    def __init__(self, window, ui, entries):
 
         self.row = 0
         self.ui = ui
 
         for labelentry in entries:
 
-            var = StringVar(master)
+            var = StringVar(window)
             var.set(labelentry.default)
             self[labelentry.name] = (var, labelentry.cls)
 
-            label = Label(master, text=labelentry.text + ': ', anchor='w')
+            label = Label(window, text=labelentry.text + ': ', anchor='w')
             if isinstance(labelentry.options, (tuple, list)):
                 entry = OptionMenu(
-                    master, var, *labelentry.options,
+                    window, var, *labelentry.options,
                     command=labelentry.command)
             else:
                 if isinstance(labelentry.default, bool):
                     entry = Checkbutton(
-                        master, variable=var, command=labelentry.command)
+                        window, variable=var, command=labelentry.command)
                 else:
-                    entry = Entry(master, textvariable=var,
+                    entry = Entry(window, textvariable=var,
                                   **labelentry.kwargs)
 
                     # if labelentry.command:

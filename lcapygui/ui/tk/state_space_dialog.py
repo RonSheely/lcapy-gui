@@ -7,8 +7,8 @@ class TransferFunctionDialog:
     def __init__(self, ui, cpt):
 
         self.ui = ui
-        self.master = Tk()
-        self.master.title('State space')
+        self.window = Tk()
+        self.window.title('State space')
         self.ss = ui.model.circuit.ss
         self.kindmap = {'State equations': 'state_equations',
                         'Output equations': 'output_equations',
@@ -38,9 +38,9 @@ class TransferFunctionDialog:
 
         entries.append(LabelEntry('kind', 'Aspect', kinds[0], kinds))
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.master, text="Show", command=self.on_show)
+        button = Button(self.window, text="Show", command=self.on_show)
         button.grid(row=self.labelentries.row)
 
     def on_show(self):

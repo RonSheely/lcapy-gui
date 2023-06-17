@@ -568,23 +568,11 @@ class LcapyTk(Tk):
 
         self.expr_dialog = ExprDialog(expr, self, title)
 
-    def show_expr_advanced_dialog(self, expr, title=''):
-
-        from .expr_advanced_dialog import ExprAdvancedDialog
-
-        self.expr_advanced_dialog = ExprAdvancedDialog(expr, self, title)
-
     def show_expr_attributes_dialog(self, expr):
 
         from .expr_attributes_dialog import ExprAttributesDialog
 
         self.expr_attributes_dialog = ExprAttributesDialog(expr, self)
-
-    def show_format_dialog(self, expr):
-
-        from .format_dialog import FormatDialog
-
-        self.format_dialog = FormatDialog(expr, self)
 
     def show_help_dialog(self):
 
@@ -659,12 +647,6 @@ class LcapyTk(Tk):
         from .message_dialog import MessageDialog
 
         self.message_dialog = MessageDialog(message, title)
-
-    def show_transform_dialog(self, expr):
-
-        from .transform_dialog import TransformDialog
-
-        self.transform_dialog = TransformDialog(expr, self)
 
     def show_warning_dialog(self, message):
 

@@ -9,11 +9,11 @@ class ExprAttributesDialog:
         self.expr = expr
         self.ui = ui
 
-        self.master = Tk()
-        self.master.title('Expression attributes')
+        self.window = Tk()
+        self.window.title('Expression attributes')
 
         entries = [LabelEntry('units', 'Units', expr.units),
                    LabelEntry('domain', 'Domain', expr.domain),
                    LabelEntry('quantity', 'Quantity', expr.quantity)]
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)

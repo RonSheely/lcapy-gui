@@ -5,10 +5,10 @@ class MessageDialog:
 
     def __init__(self, message, title=''):
 
-        self.master = Tk()
-        self.master.title(title)
+        self.window = Tk()
+        self.window.title(title)
 
-        text = Text(self.master)
+        text = Text(self.window)
         text.pack()
 
         text.insert(END, message)

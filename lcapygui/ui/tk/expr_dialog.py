@@ -3,9 +3,8 @@ from PIL import Image, ImageTk
 
 from lcapy import Expr
 from .exprimage import ExprImage
-
-
-# Add print (LaTeX, python, ...)
+from .expr_calc import ExprCalc
+from .menu import MenuBar, MenuDropdown, MenuItem
 
 
 class ExprDialog:
@@ -14,29 +13,40 @@ class ExprDialog:
 
         self.expr = expr
         self.ui = ui
-        self.labelentries = None
         self.title = title
 
-        self.master = Tk()
-        self.master.title(title)
+        self.window = Tk()
+        self.window.title(title)
 
-        self.expr_label = Label(self.master, text='')
-        self.expr_label.grid(row=0, columnspan=5)
+        menudropdowns = [
+            MenuDropdown('View', 0,
+                         [MenuItem('Plot', self.on_plot),
+                          MenuItem('LaTeX', self.on_latex),
+                          MenuItem('Python', self.on_python)]),
+            MenuDropdown('Edit', 0,
+                         [MenuItem('Expression', self.on_edit)]),
+            MenuDropdown('Format', 0,
+                         [MenuItem('ZPK', self.on_format),
+                          MenuItem('Canonical', self.on_format),
+                          MenuItem('Time constant', self.on_format),
+                          MenuItem('General', self.on_format),
+                          MenuItem('Standard', self.on_format),
+                          MenuItem('Partial fraction', self.on_format)]),
+            MenuDropdown('Transform', 0,
+                         [MenuItem('Time', self.on_transform),
+                          MenuItem('Laplace', self.on_transform),
+                          MenuItem('Fourier', self.on_transform)]),
+            MenuDropdown('Ops', 0,
+                         [MenuItem('Simplify', self.on_ops),
+                          MenuItem('Approximate', self.on_ops)])
+        ]
 
-        button = Button(self.master, text="Simplify", command=self.on_simplify)
-        button.grid(row=1, column=1, sticky='w')
+        self.menubar = MenuBar(menudropdowns)
+        self.menubar.make(self.window)
 
-        button = Button(self.master, text="Advanced", command=self.on_advanced)
-        button.grid(row=1, column=2, sticky='w')
-
-        button = Button(self.master, text="Plot", command=self.on_plot)
-        button.grid(row=1, column=3, sticky='w')
-
-        button = Button(self.master, text="Python", command=self.on_python)
-        button.grid(row=1, column=4, sticky='w')
-
-        button = Button(self.master, text="LaTeX", command=self.on_latex)
-        button.grid(row=1, column=5, sticky='w')
+        # TODO: dynamically twek width of rlong expressions
+        self.expr_label = Label(self.window, text='', width=400)
+        self.expr_label.grid(row=0, column=0)
 
         self.update()
 
@@ -54,15 +64,11 @@ class ExprDialog:
         #    e = e * e.units
 
         png_filename = ExprImage(e).image()
-        img = ImageTk.PhotoImage(Image.open(png_filename), master=self.master)
+        img = ImageTk.PhotoImage(Image.open(png_filename), master=self.window)
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 
-    def on_advanced(self):
-
-        self.ui.show_expr_advanced_dialog(self.expr, self.title)
-
-    def on_plot(self):
+    def on_plot(self, a):
 
         if not isinstance(self.expr, Expr):
             self.ui.info_dialog('Cannot plot expression')
@@ -70,7 +76,7 @@ class ExprDialog:
 
         self.ui.show_plot_properties_dialog(self.expr)
 
-    def on_python(self):
+    def on_python(self, a):
 
         s = ''
         for sym in self.expr.symbols:
@@ -86,11 +92,49 @@ class ExprDialog:
 
         self.ui.show_message_dialog(s, 'Python expression')
 
-    def on_simplify(self):
+    def on_format(self, arg):
 
-        self.expr = self.expr.simplify()
-        self.update()
+        formats = {'Canonical': 'canonical',
+                   'Standard': 'standard',
+                   'General': 'general',
+                   'Time constant': 'timeconst',
+                   'ZPK': 'ZPK',
+                   'Partial fraction': 'partfrac',
+                   'Time constant': 'timeconst'}
 
-    def on_latex(self):
+        method = formats[arg]
 
-        self.ui.show_message_dialog(self.expr_tweak.latex())
+        e = ExprCalc(self.expr)
+        expr = e.method(method)
+        self.ui.show_expr_dialog(expr)
+
+    def on_ops(self, arg):
+
+        if arg == 'approximate':
+            self.ui.show_approximate_dialog(self.expr)
+        elif arg == 'simplify':
+            self.ui.show_expr_dialog(self.expr.simplify())
+
+    def on_transform(self, arg):
+
+        domains = {'Time': 'time',
+                   'Phasor': 'phasor',
+                   'Laplace': 'laplace',
+                   'Fourier': 'fourier',
+                   'Frequency': 'frequency_response',
+                   'Angular Fourier': 'angular_fourier',
+                   'Angular Frequency': 'angular_frequency_response'}
+
+        method = domains[arg]
+
+        e = ExprCalc(self.expr)
+        expr = e.method(method)
+        self.ui.show_expr_dialog(expr)
+
+    def on_edit(self, a):
+
+        self.ui.show_message_dialog(self.expr)
+
+    def on_latex(self, a):
+
+        self.ui.show_message_dialog(self.expr.latex())

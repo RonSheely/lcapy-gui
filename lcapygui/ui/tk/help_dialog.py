@@ -43,8 +43,8 @@ and  <a href="https://lcapy.readthedocs.io"> https://lcapy.readthedocs.io </a>
 
     def __init__(self):
 
-        master = Tk()
-        master.title('Help!')
-        html_label = HTMLLabel(master, html=self.message)
+        window = Tk()
+        window.title('Help!')
+        html_label = HTMLLabel(window, html=self.message)
         html_label.pack(fill="both", expand=True)
         html_label.fit_height()

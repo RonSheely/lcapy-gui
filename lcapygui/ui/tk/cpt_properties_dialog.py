@@ -11,8 +11,8 @@ class CptPropertiesDialog:
         self.update = update
         self.ui = ui
 
-        self.master = Tk()
-        self.master.title(title)
+        self.window = Tk()
+        self.window.title(title)
 
         entries = []
         if self.gcpt.kinds != {}:
@@ -58,9 +58,9 @@ class CptPropertiesDialog:
             entries.append(LabelEntry(k, v, getattr(self.gcpt, k),
                                       command=self.on_update))
 
-        self.labelentries = LabelEntries(self.master, ui, entries)
+        self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.master, text="OK", command=self.on_ok)
+        button = Button(self.window, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
 
     def on_update(self, arg=None):
@@ -140,4 +140,4 @@ class CptPropertiesDialog:
 
         self.on_update()
 
-        self.master.destroy()
+        self.window.destroy()
