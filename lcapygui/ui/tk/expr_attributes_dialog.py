@@ -4,13 +4,13 @@ from .labelentries import LabelEntry, LabelEntries
 
 class ExprAttributesDialog:
 
-    def __init__(self, expr, ui):
+    def __init__(self, expr, ui, title='Expression attributes'):
 
         self.expr = expr
         self.ui = ui
 
         self.window = Tk()
-        self.window.title('Expression attributes')
+        self.window.title(title)
 
         entries = [LabelEntry('units', 'Units', expr.units),
                    LabelEntry('domain', 'Domain', expr.domain),

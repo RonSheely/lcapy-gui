@@ -568,11 +568,11 @@ class LcapyTk(Tk):
 
         self.expr_dialog = ExprDialog(expr, self, title)
 
-    def show_expr_attributes_dialog(self, expr):
+    def show_expr_attributes_dialog(self, expr, title=''):
 
         from .expr_attributes_dialog import ExprAttributesDialog
 
-        self.expr_attributes_dialog = ExprAttributesDialog(expr, self)
+        self.expr_attributes_dialog = ExprAttributesDialog(expr, self, title)
 
     def show_help_dialog(self):
 

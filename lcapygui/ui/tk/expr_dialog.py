@@ -30,6 +30,7 @@ class ExprDialog:
                          [MenuItem('ZPK', self.on_format),
                           MenuItem('Canonical', self.on_format),
                           MenuItem('Time constant', self.on_format),
+                          MenuItem('Time constant terms', self.on_format),
                           MenuItem('General', self.on_format),
                           MenuItem('Standard', self.on_format),
                           MenuItem('Partial fraction', self.on_format)]),
@@ -46,7 +47,23 @@ class ExprDialog:
                           MenuItem('Evaluate', self.on_operations),
                           MenuItem('Parameterize', self.on_operations),
                           MenuItem('Poles', self.on_operations),
-                          MenuItem('Simplify', self.on_operations),
+                          MenuDropdown('Simplify', 0,
+                                       [MenuItem('Simplify', self.on_operations),
+                                        MenuItem('Simplify conjugates',
+                                                 self.on_operations),
+                                        MenuItem('Simplify factors',
+                                                 self.on_operations),
+                                        MenuItem('Simplify terms',
+                                                 self.on_operations),
+                                        MenuItem('Simplify sin/cos',
+                                                 self.on_operations),
+                                        MenuItem('Simplify Dirac delta',
+                                                 self.on_operations),
+                                        MenuItem('Simplify Heaviside',
+                                                 self.on_operations),
+                                        MenuItem('Simplify rect',
+                                                 self.on_operations),
+                                        ]),
                           MenuItem('Solve', self.on_operations),
                           MenuItem('Subs', self.on_operations),
                           MenuItem('Zeros', self.on_operations),
@@ -84,6 +101,14 @@ class ExprDialog:
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 
+    def apply_method(self, methods, arg):
+
+        method = methods[arg]
+
+        e = ExprCalc(self.expr)
+        expr = e.method(method)
+        self.ui.show_expr_dialog(expr, title=self.title)
+
     def on_attributes(self, a):
 
         self.ui.show_expr_attributes_dialog(self.expr, title=self.title)
@@ -98,15 +123,12 @@ class ExprDialog:
                    'Standard': 'standard',
                    'General': 'general',
                    'Time constant': 'timeconst',
+                   'Time constant terms': 'timeconst_terms',
                    'ZPK': 'ZPK',
                    'Partial fraction': 'partfrac',
                    'Time constant': 'timeconst'}
 
-        method = formats[arg]
-
-        e = ExprCalc(self.expr)
-        expr = e.method(method)
-        self.ui.show_expr_dialog(expr, title=self.title)
+        self.apply_method(formats, arg)
 
     def on_latex(self, a):
 
@@ -127,8 +149,15 @@ class ExprDialog:
                 self.ui.show_expr_dialog(
                     self.expr.poles(), title=self.title)
             elif arg == 'Simplify':
-                self.ui.show_expr_dialog(
-                    self.expr.simplify(), title=self.title)
+                methods = {'Simplify': 'simplify',
+                           'Simplify conjugates': 'simplify_conjugates',
+                           'Simplify factors': 'simplify_factors',
+                           'Simplify terms': 'simplify_terms',
+                           'Simplify sin/cos': 'simplify_sin_cos',
+                           'Simplify Dirac delta': 'simplify_dirac_delta',
+                           'Simplify Heaviside': 'simplify_heaviside',
+                           'Simplify rect': 'simplify_rect'}
+                self.apply_method(methods, arg)
             elif arg == 'Solve':
                 self.ui.show_expr_dialog(
                     self.expr.solve(), title=self.title)
@@ -174,8 +203,4 @@ class ExprDialog:
                    'Angular Fourier': 'angular_fourier',
                    'Angular frequency': 'angular_frequency_response'}
 
-        method = domains[arg]
-
-        e = ExprCalc(self.expr)
-        expr = e.method(method)
-        self.ui.show_expr_dialog(expr, title=self.title)
+        self.apply_method(domains, arg)
