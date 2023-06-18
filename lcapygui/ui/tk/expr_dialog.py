@@ -30,8 +30,12 @@ class ExprDialog:
                          [MenuItem('Real', self.on_part),
                           MenuItem('Imaginary', self.on_part),
                           MenuItem('Magnitude', self.on_part),
+                          MenuItem('dB', self.on_part),
+                          MenuItem('sign', self.on_part),
                           MenuItem('Phase degrees', self.on_part),
                           MenuItem('Phase radians', self.on_part),
+                          MenuItem('Polar', self.on_part),
+                          MenuItem('Cartesian', self.on_part),
                           ]),
             MenuDropdown('Format', 0,
                          [MenuItem('ZPK', self.on_format),
@@ -70,9 +74,13 @@ class ExprDialog:
                                                  self.on_operations),
                                         MenuItem('Simplify rect',
                                                  self.on_operations),
+                                        MenuItem('Rationalize denominator',
+                                                 self.on_operations),
+                                        MenuItem('Cancel terms',
+                                                 self.on_operations),
                                         ]),
                           MenuItem('Solve', self.on_operations),
-                          MenuItem('Subs', self.on_operations),
+                          MenuItem('Substitute', self.on_operations),
                           MenuItem('Zeros', self.on_operations),
                           ])
         ]
@@ -171,12 +179,14 @@ class ExprDialog:
                            'Simplify sin/cos': 'simplify_sin_cos',
                            'Simplify Dirac delta': 'simplify_dirac_delta',
                            'Simplify Heaviside': 'simplify_heaviside',
-                           'Simplify rect': 'simplify_rect'}
+                           'Simplify rect': 'simplify_rect',
+                           'Cancel terms': 'cancel_terms',
+                           'Rationalize denominator': 'rationalize_denominator'}
                 self.apply_method(methods, arg)
             elif arg == 'Solve':
                 self.ui.show_expr_dialog(
                     self.expr.solve(), title=self.title)
-            elif arg == 'Subs':
+            elif arg == 'Substitute':
                 self.ui.show_subs_dialog(self.expr, title=self.title)
             elif arg == 'Zeros':
                 self.ui.show_expr_dialog(
@@ -189,6 +199,10 @@ class ExprDialog:
         parts = {'Real': 'real',
                  'Imaginary': 'imag',
                  'Magnitude': 'magnitude',
+                 'dB': 'dB',
+                 'Polar': 'polar',
+                 'Cartesian': 'cartesian',
+                 'Sign': 'sign',
                  'Phase degrees': 'phase_degrees',
                  'Phase radian': 'phase_radians'}
 
