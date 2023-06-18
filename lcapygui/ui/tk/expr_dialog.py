@@ -49,9 +49,13 @@ class ExprDialog:
         self.menubar = MenuBar(menudropdowns)
         self.menubar.make(self.window)
 
-        # TODO: dynamically twek width of rlong expressions
-        self.expr_label = Label(self.window, text='', width=500)
-        self.expr_label.grid(row=0, column=0)
+        # TODO: dynamically tweak width of long expressions
+        self.expr_label = Label(self.window, text='')
+        self.expr_label.pack(fill='x')
+
+        #self.expr_label.place(anchor="c", relx=.50, rely=.50)
+
+        self.window.minsize(500, 100)
 
         self.update()
 
