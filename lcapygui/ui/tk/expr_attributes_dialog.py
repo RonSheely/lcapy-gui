@@ -14,6 +14,11 @@ class ExprAttributesDialog:
 
         entries = [LabelEntry('units', 'Units', expr.units),
                    LabelEntry('domain', 'Domain', expr.domain),
-                   LabelEntry('quantity', 'Quantity', expr.quantity)]
+                   LabelEntry('quantity', 'Quantity', expr.quantity),
+                   LabelEntry('causal', 'Causal', expr.is_causal, command=self.causal)]
 
         self.labelentries = LabelEntries(self.window, ui, entries)
+
+    def causal(self):
+
+        self.expr.is_causal = self.labelentries.get('causal')
