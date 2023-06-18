@@ -15,7 +15,7 @@ class EditDialog:
         self.var = StringVar(self.window)
         self.var.set(str(expr))
 
-        self.entry = Entry(self.window, textvariable=self.var, width=50)
+        self.entry = Entry(self.window, textvariable=self.var)
         self.entry.grid(row=0)
 
         button = Button(self.window, text="Show", command=self.on_show)

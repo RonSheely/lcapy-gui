@@ -31,7 +31,7 @@ class ExprDialog:
                           MenuItem('Imaginary', self.on_part),
                           MenuItem('Magnitude', self.on_part),
                           MenuItem('dB', self.on_part),
-                          MenuItem('sign', self.on_part),
+                          MenuItem('Sign', self.on_part),
                           MenuItem('Phase degrees', self.on_part),
                           MenuItem('Phase radians', self.on_part),
                           MenuItem('Polar', self.on_part),
@@ -118,19 +118,25 @@ class ExprDialog:
 
     def apply_attribute(self, attributes, arg):
 
-        attribute = attributes[arg]
+        try:
+            attribute = attributes[arg]
 
-        e = ExprCalc(self.expr)
-        expr = e.attribute(attribute)
-        self.ui.show_expr_dialog(expr, title=self.title)
+            e = ExprCalc(self.expr)
+            expr = e.attribute(attribute)
+            self.ui.show_expr_dialog(expr, title=self.title)
+        except Exception as e:
+            self.ui.show_error_dialog(e)
 
     def apply_method(self, methods, arg):
 
-        method = methods[arg]
+        try:
+            method = methods[arg]
 
-        e = ExprCalc(self.expr)
-        expr = e.method(method)
-        self.ui.show_expr_dialog(expr, title=self.title)
+            e = ExprCalc(self.expr)
+            expr = e.method(method)
+            self.ui.show_expr_dialog(expr, title=self.title)
+        except Exception as e:
+            self.ui.show_error_dialog(e)
 
     def on_attributes(self, arg):
 
@@ -159,6 +165,17 @@ class ExprDialog:
 
     def on_operations(self, arg):
 
+        simplify = {'Simplify': 'simplify',
+                    'Simplify conjugates': 'simplify_conjugates',
+                    'Simplify factors': 'simplify_factors',
+                    'Simplify terms': 'simplify_terms',
+                    'Simplify sin/cos': 'simplify_sin_cos',
+                    'Simplify Dirac delta': 'simplify_dirac_delta',
+                    'Simplify Heaviside': 'simplify_heaviside',
+                    'Simplify rect': 'simplify_rect',
+                    'Cancel terms': 'cancel_terms',
+                    'Rationalize denominator': 'rationalize_denominator'}
+
         try:
             if arg == 'Approximate':
                 self.ui.show_approximate_dialog(self.expr, title=self.title)
@@ -171,18 +188,8 @@ class ExprDialog:
             elif arg == 'Poles':
                 self.ui.show_expr_dialog(
                     self.expr.poles(), title=self.title)
-            elif arg == 'Simplify':
-                methods = {'Simplify': 'simplify',
-                           'Simplify conjugates': 'simplify_conjugates',
-                           'Simplify factors': 'simplify_factors',
-                           'Simplify terms': 'simplify_terms',
-                           'Simplify sin/cos': 'simplify_sin_cos',
-                           'Simplify Dirac delta': 'simplify_dirac_delta',
-                           'Simplify Heaviside': 'simplify_heaviside',
-                           'Simplify rect': 'simplify_rect',
-                           'Cancel terms': 'cancel_terms',
-                           'Rationalize denominator': 'rationalize_denominator'}
-                self.apply_method(methods, arg)
+            elif arg in simplify:
+                self.apply_method(simplify, arg)
             elif arg == 'Solve':
                 self.ui.show_expr_dialog(
                     self.expr.solve(), title=self.title)
