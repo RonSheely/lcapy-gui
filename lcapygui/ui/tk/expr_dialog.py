@@ -26,6 +26,13 @@ class ExprDialog:
                           MenuItem('Attributes', self.on_attributes)]),
             MenuDropdown('Edit', 0,
                          [MenuItem('Expression', self.on_edit)]),
+            MenuDropdown('Part', 0,
+                         [MenuItem('Real', self.on_part),
+                          MenuItem('Imaginary', self.on_part),
+                          MenuItem('Magnitude', self.on_part),
+                          MenuItem('Phase degrees', self.on_part),
+                          MenuItem('Phase radians', self.on_part),
+                          ]),
             MenuDropdown('Format', 0,
                          [MenuItem('ZPK', self.on_format),
                           MenuItem('Canonical', self.on_format),
@@ -101,6 +108,14 @@ class ExprDialog:
         self.expr_label.config(image=img)
         self.expr_label.photo = img
 
+    def apply_attribute(self, attributes, arg):
+
+        attribute = attributes[arg]
+
+        e = ExprCalc(self.expr)
+        expr = e.attribute(attribute)
+        self.ui.show_expr_dialog(expr, title=self.title)
+
     def apply_method(self, methods, arg):
 
         method = methods[arg]
@@ -109,11 +124,11 @@ class ExprDialog:
         expr = e.method(method)
         self.ui.show_expr_dialog(expr, title=self.title)
 
-    def on_attributes(self, a):
+    def on_attributes(self, arg):
 
         self.ui.show_expr_attributes_dialog(self.expr, title=self.title)
 
-    def on_edit(self, a):
+    def on_edit(self, arg):
 
         self.ui.show_edit_dialog(self.expr)
 
@@ -130,7 +145,7 @@ class ExprDialog:
 
         self.apply_method(formats, arg)
 
-    def on_latex(self, a):
+    def on_latex(self, arg):
 
         self.ui.show_message_dialog(self.expr.latex())
 
@@ -169,7 +184,17 @@ class ExprDialog:
         except Exception as e:
             self.ui.show_error_dialog(e)
 
-    def on_plot(self, a):
+    def on_part(self, arg):
+
+        parts = {'Real': 'real',
+                 'Imaginary': 'imag',
+                 'Magnitude': 'magnitude',
+                 'Phase degrees': 'phase_degrees',
+                 'Phase radian': 'phase_radians'}
+
+        self.apply_attribute(parts, arg)
+
+    def on_plot(self, arg):
 
         if not isinstance(self.expr, Expr):
             self.ui.info_dialog('Cannot plot expression')
@@ -177,7 +202,7 @@ class ExprDialog:
 
         self.ui.show_plot_properties_dialog(self.expr)
 
-    def on_python(self, a):
+    def on_python(self, arg):
 
         s = ''
         for sym in self.expr.symbols:
