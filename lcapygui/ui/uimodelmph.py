@@ -357,7 +357,7 @@ class UIModelMPH(UIModelBase):
         from lcapy import expr
 
         e = self.last_expr if self.last_expr is not None else expr(0)
-        self.ui.show_expr_advanced_dialog(e)
+        self.ui.show_expr_dialog(e)
 
     def on_help(self):
 

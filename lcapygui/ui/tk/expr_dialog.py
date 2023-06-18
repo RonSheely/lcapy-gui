@@ -45,8 +45,11 @@ class ExprDialog:
                          [MenuItem('Approximate', self.on_operations),
                           MenuItem('Evaluate', self.on_operations),
                           MenuItem('Parameterize', self.on_operations),
+                          MenuItem('Poles', self.on_operations),
                           MenuItem('Simplify', self.on_operations),
+                          MenuItem('Solve', self.on_operations),
                           MenuItem('Subs', self.on_operations),
+                          MenuItem('Zeros', self.on_operations),
                           ])
         ]
 
@@ -120,11 +123,20 @@ class ExprDialog:
             elif arg == 'Parameterize':
                 self.ui.show_expr_dialog(ExprTuple(self.expr.parameterize()),
                                          title=self.title)
+            elif arg == 'Poles':
+                self.ui.show_expr_dialog(
+                    self.expr.poles(), title=self.title)
             elif arg == 'Simplify':
                 self.ui.show_expr_dialog(
                     self.expr.simplify(), title=self.title)
+            elif arg == 'Solve':
+                self.ui.show_expr_dialog(
+                    self.expr.solve(), title=self.title)
             elif arg == 'Subs':
                 self.ui.show_subs_dialog(self.expr, title=self.title)
+            elif arg == 'Zeros':
+                self.ui.show_expr_dialog(
+                    self.expr.zeros(), title=self.title)
         except Exception as e:
             self.ui.show_error_dialog(e)
 

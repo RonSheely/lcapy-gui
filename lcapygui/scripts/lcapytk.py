@@ -55,7 +55,6 @@ def main(argv=None):
     e = LcapyTk(args.filenames, debug=args.debug)
 
     if args.expr is not None:
-        # e.show_expr_advanced_dialog(lcapify(args.expr))
         e.show_expr_dialog(lcapify(args.expr))
 
     e.display()
