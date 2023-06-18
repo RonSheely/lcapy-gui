@@ -90,7 +90,7 @@ class ExprDialog:
 
     def on_edit(self, a):
 
-        self.ui.show_message_dialog(self.expr)
+        self.ui.show_edit_dialog(self.expr)
 
     def on_format(self, arg):
 
