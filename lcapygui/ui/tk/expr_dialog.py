@@ -36,7 +36,11 @@ class ExprDialog:
             MenuDropdown('Transform', 0,
                          [MenuItem('Time', self.on_transform),
                           MenuItem('Laplace', self.on_transform),
-                          MenuItem('Fourier', self.on_transform)]),
+                          MenuItem('Phasor', self.on_transform),
+                          MenuItem('Fourier', self.on_transform),
+                          MenuItem('Angular Fourier', self.on_transform),
+                          MenuItem('Frequency', self.on_transform),
+                          MenuItem('Angular frequency', self.on_transform)]),
             MenuDropdown('Operations', 0,
                          [MenuItem('Approximate', self.on_operations),
                           MenuItem('Evaluate', self.on_operations),
@@ -156,7 +160,7 @@ class ExprDialog:
                    'Fourier': 'fourier',
                    'Frequency': 'frequency_response',
                    'Angular Fourier': 'angular_fourier',
-                   'Angular Frequency': 'angular_frequency_response'}
+                   'Angular frequency': 'angular_frequency_response'}
 
         method = domains[arg]
 
