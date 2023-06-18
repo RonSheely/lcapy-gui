@@ -3,9 +3,9 @@ from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
 
 
-class ApproximateDialog:
+class SubsDialog:
 
-    def __init__(self, expr, ui, title='Approximation'):
+    def __init__(self, expr, ui, title='Substitution'):
 
         self.expr = expr
         self.ui = ui
@@ -24,7 +24,7 @@ class ApproximateDialog:
 
         self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.window, text="Approximate",
+        button = Button(self.window, text="Subs",
                         command=self.on_update)
         button.grid(row=self.labelentries.row)
 
@@ -41,5 +41,5 @@ class ApproximateDialog:
             val = self.labelentries.get(key)
             defs[key] = val
 
-        expr = self.expr.approximate_dominant(defs)
+        expr = self.expr.subs(defs)
         self.ui.show_expr_dialog(expr)

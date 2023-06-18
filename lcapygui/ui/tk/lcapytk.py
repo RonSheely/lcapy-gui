@@ -550,11 +550,11 @@ class LcapyTk(Tk):
 
         self.canvas.drawing.set_view(xmin, ymin, xmax, ymax)
 
-    def show_approximate_dialog(self, expr):
+    def show_approximate_dialog(self, expr, title=''):
 
         from .approximate_dialog import ApproximateDialog
 
-        self.approximate_dialog = ApproximateDialog(expr, self)
+        self.approximate_dialog = ApproximateDialog(expr, self, title)
 
     def show_equations_dialog(self, expr, title=''):
 
@@ -617,6 +617,12 @@ class LcapyTk(Tk):
         from .state_space_dialog import TransferFunctionDialog
 
         self.state_space_dialog = TransferFunctionDialog(self, cpt)
+
+    def show_subs_dialog(self, expr, title=''):
+
+        from .subs_dialog import SubsDialog
+
+        self.subs_dialog = SubsDialog(expr, self, title)
 
     def show_transfer_function_dialog(self, cpt):
 

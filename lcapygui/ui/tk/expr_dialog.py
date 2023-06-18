@@ -1,7 +1,7 @@
 from tkinter import Tk, Button, Label
 from PIL import Image, ImageTk
 
-from lcapy import Expr
+from lcapy import Expr, ExprTuple
 from .exprimage import ExprImage
 from .expr_calc import ExprCalc
 from .menu import MenuBar, MenuDropdown, MenuItem
@@ -37,16 +37,20 @@ class ExprDialog:
                          [MenuItem('Time', self.on_transform),
                           MenuItem('Laplace', self.on_transform),
                           MenuItem('Fourier', self.on_transform)]),
-            MenuDropdown('Ops', 0,
-                         [MenuItem('Simplify', self.on_ops),
-                          MenuItem('Approximate', self.on_ops)])
+            MenuDropdown('Operations', 0,
+                         [MenuItem('Approximate', self.on_operations),
+                          MenuItem('Evaluate', self.on_operations),
+                          MenuItem('Parameterize', self.on_operations),
+                          MenuItem('Simplify', self.on_operations),
+                          MenuItem('Subs', self.on_operations),
+                          ])
         ]
 
         self.menubar = MenuBar(menudropdowns)
         self.menubar.make(self.window)
 
         # TODO: dynamically twek width of rlong expressions
-        self.expr_label = Label(self.window, text='', width=400)
+        self.expr_label = Label(self.window, text='', width=500)
         self.expr_label.grid(row=0, column=0)
 
         self.update()
@@ -71,7 +75,7 @@ class ExprDialog:
 
     def on_attributes(self, a):
 
-        self.ui.show_expr_attributes_dialog(self.expr)
+        self.ui.show_expr_attributes_dialog(self.expr, title=self.title)
 
     def on_edit(self, a):
 
@@ -91,18 +95,30 @@ class ExprDialog:
 
         e = ExprCalc(self.expr)
         expr = e.method(method)
-        self.ui.show_expr_dialog(expr)
+        self.ui.show_expr_dialog(expr, title=self.title)
 
     def on_latex(self, a):
 
         self.ui.show_message_dialog(self.expr.latex())
 
-    def on_ops(self, arg):
+    def on_operations(self, arg):
 
-        if arg == 'Approximate':
-            self.ui.show_approximate_dialog(self.expr)
-        elif arg == 'Simplify':
-            self.ui.show_expr_dialog(self.expr.simplify())
+        try:
+            if arg == 'Approximate':
+                self.ui.show_approximate_dialog(self.expr, title=self.title)
+            elif arg == 'Evaluate':
+                self.ui.show_approximate_dialog(
+                    self.expr.evaluate(), title=self.title)
+            elif arg == 'Parameterize':
+                self.ui.show_expr_dialog(ExprTuple(self.expr.parameterize()),
+                                         title=self.title)
+            elif arg == 'Simplify':
+                self.ui.show_expr_dialog(
+                    self.expr.simplify(), title=self.title)
+            elif arg == 'Subs':
+                self.ui.show_subs_dialog(self.expr, title=self.title)
+        except Exception as e:
+            self.ui.show_error_dialog(e)
 
     def on_plot(self, a):
 
@@ -142,4 +158,4 @@ class ExprDialog:
 
         e = ExprCalc(self.expr)
         expr = e.method(method)
-        self.ui.show_expr_dialog(expr)
+        self.ui.show_expr_dialog(expr, title=self.title)
