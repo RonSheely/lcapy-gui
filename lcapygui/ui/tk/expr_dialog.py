@@ -1,4 +1,4 @@
-from tkinter import Tk, Button, Label
+from tkinter import Tk, Button, Label, Frame
 from PIL import Image, ImageTk
 
 from lcapy import Expr, ExprTuple
@@ -34,8 +34,6 @@ class ExprDialog:
                           MenuItem('Sign', self.on_part),
                           MenuItem('Phase degrees', self.on_part),
                           MenuItem('Phase radians', self.on_part),
-                          MenuItem('Polar', self.on_part),
-                          MenuItem('Cartesian', self.on_part),
                           ]),
             MenuDropdown('Format', 0,
                          [MenuItem('ZPK', self.on_format),
@@ -44,7 +42,10 @@ class ExprDialog:
                           MenuItem('Time constant terms', self.on_format),
                           MenuItem('General', self.on_format),
                           MenuItem('Standard', self.on_format),
-                          MenuItem('Partial fraction', self.on_format)]),
+                          MenuItem('Partial fraction', self.on_format),
+                          MenuItem('Polar', self.on_format),
+                          MenuItem('Cartesian', self.on_format),
+                          ]),
             MenuDropdown('Transform', 0,
                          [MenuItem('Time', self.on_transform),
                           MenuItem('Laplace', self.on_transform),
@@ -88,11 +89,14 @@ class ExprDialog:
         self.menubar = MenuBar(menudropdowns)
         self.menubar.make(self.window)
 
+        self.frame = Frame(self.window)
+        self.frame.pack()
+
         # TODO: dynamically tweak width of long expressions
         self.expr_label = Label(self.window, text='')
-        self.expr_label.pack(fill='x')
+        self.expr_label.pack()
 
-        #self.expr_label.place(anchor="c", relx=.50, rely=.50)
+        self.expr_label.place(anchor="c", relx=.50, rely=.50)
 
         self.window.minsize(500, 100)
 
@@ -155,9 +159,15 @@ class ExprDialog:
                    'Time constant terms': 'timeconst_terms',
                    'ZPK': 'ZPK',
                    'Partial fraction': 'partfrac',
-                   'Time constant': 'timeconst'}
+                   'Time constant': 'timeconst',
+                   'Polar': 'polar',
+                   'Cartesian': 'cartesian'}
 
-        self.apply_method(formats, arg)
+        if arg in ('Polar', 'Cartesian'):
+            # What was I thinking?
+            self.apply_attribute(formats, arg)
+        else:
+            self.apply_method(formats, arg)
 
     def on_latex(self, arg):
 
@@ -207,8 +217,6 @@ class ExprDialog:
                  'Imaginary': 'imag',
                  'Magnitude': 'magnitude',
                  'dB': 'dB',
-                 'Polar': 'polar',
-                 'Cartesian': 'cartesian',
                  'Sign': 'sign',
                  'Phase degrees': 'phase_degrees',
                  'Phase radian': 'phase_radians'}
