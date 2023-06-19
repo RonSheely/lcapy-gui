@@ -1,4 +1,4 @@
-from tkinter import Tk, Entry, Button, StringVar
+from tkinter import Tk, Entry, Button, Text, BOTH, END
 from lcapy import expr
 
 
@@ -12,18 +12,18 @@ class EditDialog:
         self.window = Tk()
         self.window.title('Expression editor')
 
-        self.var = StringVar(self.window)
-        self.var.set(str(expr))
+        s = str(expr)
 
-        self.entry = Entry(self.window, textvariable=self.var)
-        self.entry.grid(row=0)
+        self.text = Text(self.window)
+        self.text.pack(fill=BOTH, expand=1)
+        self.text.insert(END, s)
 
-        button = Button(self.window, text="Show", command=self.on_show)
-        button.grid(row=1)
+        button = Button(self.window, text='Show', command=self.on_show)
+        button.pack()
 
     def on_show(self):
 
-        expr_str = self.var.get()
+        expr_str = self.text.get('1.0', END).strip()
 
         try:
             self.ui.show_expr_dialog(expr(expr_str))
