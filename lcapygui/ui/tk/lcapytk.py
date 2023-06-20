@@ -612,6 +612,12 @@ class LcapyTk(Tk):
 
         self.preferences_dialog = PreferencesDialog(self, on_changed)
 
+    def show_python_dialog(self, expr):
+
+        from .python_dialog import PythonDialog
+
+        self.python_dialog = PythonDialog(expr, self)
+
     def show_state_space_dialog(self, cpt):
 
         from .state_space_dialog import TransferFunctionDialog

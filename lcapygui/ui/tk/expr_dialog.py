@@ -19,21 +19,61 @@ class ExprDialog:
         self.window.title(title)
 
         menudropdowns = [
+            MenuDropdown('Edit', 0,
+                         [MenuItem('Expression', self.on_edit),
+                          MenuItem('Python', self.on_edit_python)
+                          ]),
             MenuDropdown('View', 0,
                          [MenuItem('Plot', self.on_plot),
                           MenuItem('LaTeX', self.on_latex),
                           MenuItem('Python', self.on_python),
                           MenuItem('Attributes', self.on_attributes)]),
-            MenuDropdown('Edit', 0,
-                         [MenuItem('Expression', self.on_edit)]),
-            MenuDropdown('Part', 0,
-                         [MenuItem('Real', self.on_part),
-                          MenuItem('Imaginary', self.on_part),
-                          MenuItem('Magnitude', self.on_part),
-                          MenuItem('dB', self.on_part),
-                          MenuItem('Sign', self.on_part),
-                          MenuItem('Phase degrees', self.on_part),
-                          MenuItem('Phase radians', self.on_part),
+            MenuDropdown('Manipulate', 0,
+                         [MenuItem('Approximate', self.on_manipulate),
+                          MenuItem('Evaluate', self.on_manipulate),
+                          MenuItem('Parameterize', self.on_manipulate),
+                          MenuItem('Poles', self.on_manipulate),
+                          MenuDropdown('Simplify', 0,
+                                       [MenuItem('Simplify', self.on_manipulate),
+                                        MenuItem('Simplify conjugates',
+                                                 self.on_manipulate),
+                                        MenuItem('Simplify factors',
+                                                 self.on_manipulate),
+                                        MenuItem('Simplify terms',
+                                                 self.on_manipulate),
+                                        MenuItem('Simplify sin/cos',
+                                                 self.on_manipulate),
+                                        MenuItem('Simplify Dirac delta',
+                                                 self.on_manipulate),
+                                        MenuItem('Simplify Heaviside',
+                                                 self.on_manipulate),
+                                        MenuItem('Simplify rect',
+                                                 self.on_manipulate),
+                                        MenuItem('Rationalize denominator',
+                                                 self.on_manipulate),
+                                        MenuItem('Cancel terms',
+                                                 self.on_manipulate),
+                                        ]),
+                          MenuItem('Solve', self.on_manipulate),
+                          MenuItem('Substitute', self.on_manipulate),
+                          MenuItem('Zeros', self.on_manipulate),
+                          ]),
+            MenuDropdown('Transform', 0,
+                         [MenuItem('Time', self.on_transform),
+                          MenuItem('Laplace', self.on_transform),
+                          MenuItem('Phasor', self.on_transform),
+                          MenuItem('Fourier', self.on_transform),
+                          MenuItem('Angular Fourier', self.on_transform),
+                          MenuItem('Frequency', self.on_transform),
+                          MenuItem('Angular frequency', self.on_transform)]),
+            MenuDropdown('Select', 0,
+                         [MenuItem('Real', self.on_select),
+                          MenuItem('Imaginary', self.on_select),
+                          MenuItem('Magnitude', self.on_select),
+                          MenuItem('dB', self.on_select),
+                          MenuItem('Sign', self.on_select),
+                          MenuItem('Phase degrees', self.on_select),
+                          MenuItem('Phase radians', self.on_select),
                           ]),
             MenuDropdown('Format', 0,
                          [MenuItem('ZPK', self.on_format),
@@ -46,44 +86,6 @@ class ExprDialog:
                           MenuItem('Polar', self.on_format),
                           MenuItem('Cartesian', self.on_format),
                           ]),
-            MenuDropdown('Transform', 0,
-                         [MenuItem('Time', self.on_transform),
-                          MenuItem('Laplace', self.on_transform),
-                          MenuItem('Phasor', self.on_transform),
-                          MenuItem('Fourier', self.on_transform),
-                          MenuItem('Angular Fourier', self.on_transform),
-                          MenuItem('Frequency', self.on_transform),
-                          MenuItem('Angular frequency', self.on_transform)]),
-            MenuDropdown('Operations', 0,
-                         [MenuItem('Approximate', self.on_operations),
-                          MenuItem('Evaluate', self.on_operations),
-                          MenuItem('Parameterize', self.on_operations),
-                          MenuItem('Poles', self.on_operations),
-                          MenuDropdown('Simplify', 0,
-                                       [MenuItem('Simplify', self.on_operations),
-                                        MenuItem('Simplify conjugates',
-                                                 self.on_operations),
-                                        MenuItem('Simplify factors',
-                                                 self.on_operations),
-                                        MenuItem('Simplify terms',
-                                                 self.on_operations),
-                                        MenuItem('Simplify sin/cos',
-                                                 self.on_operations),
-                                        MenuItem('Simplify Dirac delta',
-                                                 self.on_operations),
-                                        MenuItem('Simplify Heaviside',
-                                                 self.on_operations),
-                                        MenuItem('Simplify rect',
-                                                 self.on_operations),
-                                        MenuItem('Rationalize denominator',
-                                                 self.on_operations),
-                                        MenuItem('Cancel terms',
-                                                 self.on_operations),
-                                        ]),
-                          MenuItem('Solve', self.on_operations),
-                          MenuItem('Substitute', self.on_operations),
-                          MenuItem('Zeros', self.on_operations),
-                          ])
         ]
 
         self.menubar = MenuBar(menudropdowns)
@@ -150,6 +152,10 @@ class ExprDialog:
 
         self.ui.show_edit_dialog(self.expr)
 
+    def on_edit_python(self, arg):
+
+        self.ui.show_python_dialog(self.expr)
+
     def on_format(self, arg):
 
         formats = {'Canonical': 'canonical',
@@ -173,7 +179,7 @@ class ExprDialog:
 
         self.ui.show_message_dialog(self.expr.latex())
 
-    def on_operations(self, arg):
+    def on_manipulate(self, arg):
 
         simplify = {'Simplify': 'simplify',
                     'Simplify conjugates': 'simplify_conjugates',
@@ -211,7 +217,7 @@ class ExprDialog:
         except Exception as e:
             self.ui.show_error_dialog(e)
 
-    def on_part(self, arg):
+    def on_select(self, arg):
 
         parts = {'Real': 'real',
                  'Imaginary': 'imag',
