@@ -190,6 +190,7 @@ class UIModelBase:
             pass
 
         self.circuit.remove(cpt.name)
+        self.invalidate()
 
         if redraw:
             self.ui.clear()
@@ -538,6 +539,7 @@ class UIModelBase:
             print('Adding ' + netitem)
 
         cct = self.circuit.add(netitem)
+        self.invalidate()
         cpt = cct[cpt_name]
 
         for m, position in enumerate(positions):
