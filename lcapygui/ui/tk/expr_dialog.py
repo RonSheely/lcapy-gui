@@ -239,16 +239,21 @@ class ExprDialog:
 
     def on_python(self, arg):
 
+        symbols = self.expr.symbols
+
         s = ''
-        for sym in self.expr.symbols:
+        for sym in symbols:
             # Skip domain variables
             if sym in ('f', 's', 't', 'w', 'omega',
                        'jf', 'jw', 'jomega', 'n', 'k', 'z'):
                 continue
 
-            # TODO, add assumptions
-            s += "%s = symbol('%s')\n" % (sym, sym)
-        # TODO, fix Lcapy to provide static classes
+            # TODO, add other assumptions
+            if symbols[sym].is_positive:
+                s += "%s = symbol('%s', positive=True)\n" % (sym, sym)
+            else:
+                s += "%s = symbol('%s')\n" % (sym, sym)
+
         s += repr(self.expr)
 
         self.ui.show_message_dialog(s, 'Python expression')
