@@ -1,6 +1,7 @@
 from .uimodelbase import UIModelBase
 from lcapy.mnacpts import Cpt
 from lcapy import Circuit
+from os.path import basename
 
 
 class Cursor:
@@ -169,6 +170,22 @@ class UIModelMPH(UIModelBase):
         self.cursors.remove()
         self.ui.refresh()
 
+    def new_name(self, pathname):
+
+        from os.path import splitext
+
+        base, ext = splitext(pathname)
+        parts = base.split('_')
+        if len(parts) == 0:
+            suffix = '1'
+        else:
+            try:
+                suffix = str(int(parts[-1]) + 1)
+                base = '_'.join(parts[0:-1])
+            except ValueError:
+                suffix = '1'
+        return base + '_' + suffix + ext
+
     def on_add_node(self, x, y):
 
         # Snap to known node then snap to grid.
@@ -240,25 +257,7 @@ class UIModelMPH(UIModelBase):
 
     def on_clone(self):
 
-        from os.path import basename
-
-        def new_name(pathname):
-
-            from os.path import splitext
-
-            base, ext = splitext(pathname)
-            parts = base.split('_')
-            if len(parts) == 0:
-                suffix = '1'
-            else:
-                try:
-                    suffix = str(int(parts[-1]) + 1)
-                    base = '_'.join(parts[0:-1])
-                except ValueError:
-                    suffix = '1'
-            return base + '_' + suffix + ext
-
-        pathname = new_name(self.pathname)
+        pathname = self.new_name(self.pathname)
         self.save(pathname)
 
         model = self.ui.new()
@@ -630,6 +629,11 @@ class UIModelMPH(UIModelBase):
 
         model = self.ui.new()
         model.load_from_circuit(cct)
+
+        pathname = self.new_name(self.pathname)
+        filename = basename(pathname)
+        self.ui.set_filename(filename)
+        self.ui.refresh()
 
     def on_undo(self):
 

@@ -84,6 +84,9 @@ class LcapyTk(Tk):
         self.edit_menu.add_command(label='Paste',
                                    command=self.on_paste,
                                    accelerator='Ctrl+v')
+        self.edit_menu.add_command(label='Values',
+                                   command=self.on_edit_values,
+                                   accelerator='Ctrl+V')
 
         self.menu.add_cascade(label='Edit', underline=0, menu=self.edit_menu)
 
@@ -402,6 +405,10 @@ class LcapyTk(Tk):
             print('Key2', event, func)
         func()
 
+    def on_edit_values(self, *args):
+
+        self.show_edit_values_dialog()
+
     def on_export(self, *args):
 
         self.model.on_export()
@@ -647,6 +654,12 @@ class LcapyTk(Tk):
         from .edit_dialog import EditDialog
 
         self.edit_dialog = EditDialog(expr, self)
+
+    def show_edit_values_dialog(self):
+
+        from .edit_values_dialog import EditValuesDialog
+
+        self.edit_values_dialog = EditValuesDialog(self.model.circuit, self)
 
     def show_error_dialog(self, message):
 
