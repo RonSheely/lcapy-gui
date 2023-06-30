@@ -12,19 +12,16 @@ from .labelentries import LabelEntry, LabelEntries
 
 class EditValuesDialog:
 
-    def __init__(self, circuit, ui, title='Component values'):
+    def __init__(self, ui, title='Component values'):
 
         self.ui = ui
         self.window = Tk()
         self.window.title(title)
-        self.circuit = circuit
-        self.symbols = circuit.symbols
+        self.circuit = ui.model.circuit
+        self.symbols = self.circuit.undefined_symbols
 
         entries = []
         for key in self.symbols:
-            # Ignore domain and misc symbols
-            if self.symbols.kind(key) != 'expr':
-                continue
             entries.append(LabelEntry(key, key, ''))
 
         self.labelentries = LabelEntries(self.window, ui, entries)
@@ -39,9 +36,6 @@ class EditValuesDialog:
 
         defs = {}
         for key in self.symbols:
-            # Ignore domain and misc symbols
-            if self.symbols.kind(key) != 'expr':
-                continue
             val = self.labelentries.get(key)
             if val == '':
                 continue

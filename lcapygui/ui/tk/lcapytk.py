@@ -114,6 +114,8 @@ class LcapyTk(Tk):
                                    command=self.on_best_fit)
         self.view_menu.add_command(label='Default fit',
                                    command=self.on_default_fit)
+        self.view_menu.add_command(label='Plots',
+                                   command=self.on_plots)
 
         self.menu.add_cascade(label='View', underline=0, menu=self.view_menu)
 
@@ -482,6 +484,10 @@ class LcapyTk(Tk):
 
         self.model.on_new()
 
+    def on_plots(self, *args):
+
+        self.show_multiplot_dialog()
+
     def on_preferences(self, *args):
 
         self.model.on_preferences()
@@ -563,11 +569,29 @@ class LcapyTk(Tk):
 
         self.approximate_dialog = ApproximateDialog(expr, self, title)
 
+    def show_edit_dialog(self, expr):
+
+        from .edit_dialog import EditDialog
+
+        self.edit_dialog = EditDialog(expr, self)
+
+    def show_edit_values_dialog(self):
+
+        from .edit_values_dialog import EditValuesDialog
+
+        self.edit_values_dialog = EditValuesDialog(self)
+
     def show_equations_dialog(self, expr, title=''):
 
         from .equations_dialog import EquationsDialog
 
         self.equations_dialog = EquationsDialog(expr, self, title)
+
+    def show_error_dialog(self, message):
+
+        from tkinter.messagebox import showerror
+
+        showerror('', message)
 
     def show_expr_dialog(self, expr, title=''):
 
@@ -599,6 +623,24 @@ class LcapyTk(Tk):
 
         self.cpt_properties_dialog = CptPropertiesDialog(self, cpt,
                                                          on_changed, title)
+
+    def show_info_dialog(self, message):
+
+        from tkinter.messagebox import showinfo
+
+        showinfo('', message)
+
+    def show_message_dialog(self, message, title=''):
+
+        from .message_dialog import MessageDialog
+
+        self.message_dialog = MessageDialog(message, title)
+
+    def show_multiplot_dialog(self):
+
+        from .multiplot_dialog import MultiplotDialog
+
+        self.multiplot_dialog = MultiplotDialog(self)
 
     def show_node_properties_dialog(self, node, on_changed=None, title=''):
 
@@ -642,36 +684,6 @@ class LcapyTk(Tk):
         from .transfer_function_dialog import TransferFunctionDialog
 
         self.transfer_function_dialog = TransferFunctionDialog(self, cpt)
-
-    def show_info_dialog(self, message):
-
-        from tkinter.messagebox import showinfo
-
-        showinfo('', message)
-
-    def show_edit_dialog(self, expr):
-
-        from .edit_dialog import EditDialog
-
-        self.edit_dialog = EditDialog(expr, self)
-
-    def show_edit_values_dialog(self):
-
-        from .edit_values_dialog import EditValuesDialog
-
-        self.edit_values_dialog = EditValuesDialog(self.model.circuit, self)
-
-    def show_error_dialog(self, message):
-
-        from tkinter.messagebox import showerror
-
-        showerror('', message)
-
-    def show_message_dialog(self, message, title=''):
-
-        from .message_dialog import MessageDialog
-
-        self.message_dialog = MessageDialog(message, title)
 
     def show_warning_dialog(self, message):
 
