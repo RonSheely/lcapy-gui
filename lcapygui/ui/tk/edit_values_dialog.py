@@ -1,6 +1,7 @@
 from tkinter import Tk, Button
 from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
+from .menu import MenuBar, MenuDropdown, MenuItem
 
 # Perhaps iterate over components and annotate values;
 # value, v0, phi, omega etc.
@@ -19,6 +20,14 @@ class EditValuesDialog:
         self.window.title(title)
         self.circuit = ui.model.circuit
         self.symbols = self.circuit.undefined_symbols
+
+        menudropdowns = [
+            MenuDropdown('File', 0,
+                         [MenuItem('Load', self.on_load),
+                          ])]
+
+        self.menubar = MenuBar(menudropdowns)
+        self.menubar.make(self.window)
 
         entries = []
         for key in self.symbols:
@@ -40,6 +49,31 @@ class EditValuesDialog:
             if val == '':
                 continue
             defs[key] = float(val)
+
+        cct = self.circuit.subs(defs)
+
+        self.ui.model.on_show_new_circuit(cct)
+
+    def on_load(self, arg):
+
+        self.window.destroy()
+
+        pathname = self.ui.open_file_dialog(doc='Definitions', ext='.csv')
+
+        defs = {}
+        with open(pathname) as f:
+            for line in f.readlines():
+                if ',' in line:
+                    delim = ','
+                else:
+                    delim = ' '
+                parts = line.split(delim)
+                if len(parts) != 2:
+                    raise ValueError(
+                        'Need comma or space separated definitions')
+                name = parts[0].strip()
+                value = float(parts[1].strip())
+                defs[name] = value
 
         cct = self.circuit.subs(defs)
 

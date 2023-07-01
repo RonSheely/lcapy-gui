@@ -691,13 +691,14 @@ class LcapyTk(Tk):
 
         showwarning('', message)
 
-    def open_file_dialog(self, initialdir='.'):
+    def open_file_dialog(self, initialdir='.', doc='Lcapy netlist',
+                         ext='*.sch'):
 
         from tkinter.filedialog import askopenfilename
 
         pathname = askopenfilename(initialdir=initialdir,
                                    title="Select file",
-                                   filetypes=(("Lcapy netlist", "*.sch"),))
+                                   filetypes=((doc, ext),))
         return pathname
 
     def save_file_dialog(self, pathname):
