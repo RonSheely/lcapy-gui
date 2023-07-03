@@ -119,6 +119,23 @@ class LcapyTk(Tk):
 
         self.menu.add_cascade(label='View', underline=0, menu=self.view_menu)
 
+        # Create menu
+        self.create_menu = Menu(self.menu, tearoff=0,
+                                bg='lightgrey', fg='black')
+        create_menu = self.create_menu
+
+        create_menu.add_command(label='Transfer function',
+                                underline=1,
+                                command=self.on_inspect_transfer_function)
+        create_menu.add_command(label='Twoport',
+                                underline=1,
+                                command=self.on_inspect_twoport)
+        create_menu.add_command(label='State space',
+                                underline=0,
+                                command=self.on_inspect_state_space)
+        self.menu.add_cascade(label='Create', underline=0,
+                              menu=self.create_menu)
+
         # Inspect menu
         self.inspect_menu = Menu(self.menu, tearoff=0,
                                  bg='lightgrey', fg='black')
@@ -134,15 +151,6 @@ class LcapyTk(Tk):
         inspect_menu.add_command(label='Norton admittance',
                                  underline=0,
                                  command=self.on_inspect_norton_admittance)
-        inspect_menu.add_command(label='Transfer function',
-                                 underline=1,
-                                 command=self.on_inspect_transfer_function)
-        inspect_menu.add_command(label='Twoport',
-                                 underline=1,
-                                 command=self.on_inspect_twoport)
-        inspect_menu.add_command(label='State space',
-                                 underline=0,
-                                 command=self.on_inspect_state_space)
 
         self.menu.add_cascade(label='Inspect', underline=0,
                               menu=self.inspect_menu)
