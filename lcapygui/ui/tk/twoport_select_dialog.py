@@ -12,7 +12,7 @@ class TwoportSelectDialog:
         self.window.title('Twoport')
 
         models = ('A', 'B', 'G', 'H', 'S', 'T', 'Y', 'Z')
-        elements = ('11', '12', '21', '22')
+        elements = ('matrix', '11', '12', '21', '22')
 
         entries = []
         entries.append(LabelEntry('model', 'Twoport model',
@@ -32,7 +32,9 @@ class TwoportSelectDialog:
         TP = self.TP
 
         if model == 'A':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Aparams
+            elif element == '11':
                 expr = TP.A11
             elif element == '12':
                 expr = TP.A12
@@ -41,7 +43,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.A22
         elif model == 'B':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Bparams
+            elif element == '11':
                 expr = TP.B11
             elif element == '12':
                 expr = TP.B12
@@ -50,7 +54,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.B22
         elif model == 'G':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Gparams
+            elif element == '11':
                 expr = TP.G11
             elif element == '12':
                 expr = TP.G12
@@ -59,7 +65,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.G22
         elif model == 'H':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Hparams
+            elif element == '11':
                 expr = TP.H11
             elif element == '12':
                 expr = TP.H12
@@ -68,7 +76,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.H22
         elif model == 'S':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Sparams
+            elif element == '11':
                 expr = TP.S11
             elif element == '12':
                 expr = TP.S12
@@ -77,7 +87,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.S22
         elif model == 'T':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Tparams
+            elif element == '11':
                 expr = TP.T11
             elif element == '12':
                 expr = TP.T12
@@ -86,7 +98,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.T22
         elif model == 'Y':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Yparams
+            elif element == '11':
                 expr = TP.Y11
             elif element == '12':
                 expr = TP.Y12
@@ -95,7 +109,9 @@ class TwoportSelectDialog:
             elif element == '22':
                 expr = TP.Y22
         elif model == 'Z':
-            if element == '11':
+            if element == 'matrix':
+                expr = TP.Zparams
+            elif element == '11':
                 expr = TP.Z11
             elif element == '12':
                 expr = TP.Z12

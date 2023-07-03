@@ -26,10 +26,10 @@ class TwoportDialog:
 
         self.labelentries = LabelEntries(self.window, ui, entries)
 
-        button = Button(self.window, text="Show", command=self.on_show)
+        button = Button(self.window, text="Create", command=self.on_create)
         button.grid(row=self.labelentries.row)
 
-    def on_show(self):
+    def on_create(self):
 
         input_cpt = self.labelentries.get('input')
         output_cpt = self.labelentries.get('output')
