@@ -1,5 +1,13 @@
 from tkinter import Tk, StringVar, Label, Entry, Button
 
+# Perhaps add subplots, each of a specific domain with specified
+# min and max x and y values.
+# Best to not allow overplotting of different quantities (v and i, etc.)
+# Maybe specify domain and quantity (time, voltage) then specify
+# components (or perhaps nodes)
+# Could have a fixed number for the maximum number of plots, say 8
+# and then have 8 dropdown lists.
+
 
 class MultiplotDialog:
 

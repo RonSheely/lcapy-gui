@@ -165,6 +165,10 @@ class UIModelMPH(UIModelBase):
 
         self.ui.show_transfer_function_dialog(cpt)
 
+    def inspect_twoport(self, cpt):
+
+        self.ui.show_twoport_dialog(cpt)
+
     def unselect(self):
 
         self.cursors.remove()
@@ -401,6 +405,10 @@ class UIModelMPH(UIModelBase):
     def on_inspect_transfer_function(self):
 
         self.inspect_transfer_function(self.selected)
+
+    def on_inspect_twoport(self):
+
+        self.inspect_twoport(self.selected)
 
     def on_inspect_voltage(self):
 

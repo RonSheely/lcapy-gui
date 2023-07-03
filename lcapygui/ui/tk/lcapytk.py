@@ -137,6 +137,9 @@ class LcapyTk(Tk):
         inspect_menu.add_command(label='Transfer function',
                                  underline=1,
                                  command=self.on_inspect_transfer_function)
+        inspect_menu.add_command(label='Twoport',
+                                 underline=1,
+                                 command=self.on_inspect_twoport)
         inspect_menu.add_command(label='State space',
                                  underline=0,
                                  command=self.on_inspect_state_space)
@@ -439,6 +442,10 @@ class LcapyTk(Tk):
 
         self.model.on_inspect_transfer_function()
 
+    def on_inspect_twoport(self, *args):
+
+        self.model.on_inspect_twoport()
+
     def on_inspect_voltage(self, *args):
 
         self.model.on_inspect_voltage()
@@ -684,6 +691,18 @@ class LcapyTk(Tk):
         from .transfer_function_dialog import TransferFunctionDialog
 
         self.transfer_function_dialog = TransferFunctionDialog(self, cpt)
+
+    def show_twoport_dialog(self, cpt):
+
+        from .twoport_dialog import TwoportDialog
+
+        self.twoport_dialog = TwoportDialog(self, cpt)
+
+    def show_twoport_select_dialog(self, TP):
+
+        from .twoport_select_dialog import TwoportSelectDialog
+
+        self.twoport_select_dialog = TwoportSelectDialog(self, TP)
 
     def show_warning_dialog(self, message):
 
