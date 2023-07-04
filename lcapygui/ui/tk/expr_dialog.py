@@ -1,7 +1,7 @@
 from tkinter import Tk, Button, Label, Frame
 from PIL import Image, ImageTk
 
-from lcapy import Expr, ExprTuple
+from lcapy import Expr, ExprTuple, Matrix
 from .exprimage import ExprImage
 from .expr_calc import ExprCalc
 from .menu import MenuBar, MenuDropdown, MenuItem
@@ -17,6 +17,19 @@ class ExprDialog:
 
         self.window = Tk()
         self.window.title(title)
+
+        mdd = None
+        if isinstance(expr, Matrix):
+            nrows = expr.rows
+            ncols = expr.cols
+            delim = '' if nrows < 10 else ','
+            items = []
+            for i in range(nrows):
+                for j in range(ncols):
+                    items.append(MenuItem('A%d%s%d' % (i + 1, delim, j + 1),
+                                          self.on_element))
+
+            mdd = MenuDropdown('Element', 0, items)
 
         menudropdowns = [
             MenuDropdown('Edit', 0,
@@ -67,7 +80,8 @@ class ExprDialog:
                           MenuItem('Frequency', self.on_transform),
                           MenuItem('Angular frequency', self.on_transform)]),
             MenuDropdown('Select', 0,
-                         [MenuItem('Real', self.on_select),
+                         [mdd,
+                          MenuItem('Real', self.on_select),
                           MenuItem('Imaginary', self.on_select),
                           MenuItem('Magnitude', self.on_select),
                           MenuItem('dB', self.on_select),
@@ -228,6 +242,23 @@ class ExprDialog:
                  'Phase radian': 'phase_radians'}
 
         self.apply_attribute(parts, arg)
+
+    def on_element(self, arg):
+
+        arg = arg[1:]
+
+        if ',' in arg:
+            r, c = arg.split(',')
+        else:
+            r = arg[0]
+            c = arg[1]
+
+        row = int(r) - 1
+        col = int(c) - 1
+
+        e = ExprCalc(self.expr)
+        expr = e.eval('[%s, %d]' % (row, col))
+        self.ui.show_expr_dialog(expr, title=self.title)
 
     def on_plot(self, arg):
 

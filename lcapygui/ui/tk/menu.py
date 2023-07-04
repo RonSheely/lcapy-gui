@@ -46,6 +46,9 @@ class MenuBar:
 
             for menuitem in menudropdown.menuitems:
 
+                if menuitem is None:
+                    continue
+
                 if isinstance(menuitem, MenuDropdown):
 
                     submenu = Menu(self.menubar, tearoff=0,

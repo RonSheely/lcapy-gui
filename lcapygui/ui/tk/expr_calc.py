@@ -8,18 +8,17 @@ class ExprCalc:
 
         self.expr = expr
 
-    def attribute(self, name):
+    def eval(self, command):
 
         global_dict['result'] = self.expr
 
-        command = '(result).%s' % name
-        expr = eval(command, global_dict)
+        expr = eval('(result)' + command, global_dict)
         return expr
+
+    def attribute(self, name):
+
+        return self.eval('.%s' % name)
 
     def method(self, name):
 
-        global_dict['result'] = self.expr
-
-        command = '(result).%s()' % name
-        expr = eval(command, global_dict)
-        return expr
+        return self.eval('.%s()' % name)
