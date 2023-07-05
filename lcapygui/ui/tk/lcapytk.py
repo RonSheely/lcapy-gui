@@ -728,7 +728,8 @@ class LcapyTk(Tk):
                                    filetypes=((doc, ext),))
         return pathname
 
-    def save_file_dialog(self, pathname):
+    def save_file_dialog(self, pathname, doc='Lcapy netlist',
+                         ext='*.sch'):
 
         from tkinter.filedialog import asksaveasfilename
         from os.path import dirname, splitext, basename
@@ -739,7 +740,7 @@ class LcapyTk(Tk):
 
         options = {}
         options['defaultextension'] = ext
-        options['filetypes'] = (("Lcapy netlist", "*.sch"),)
+        options['filetypes'] = ((doc, ext),)
         options['initialdir'] = dirname
         options['initialfile'] = basename
         options['title'] = "Save file"
