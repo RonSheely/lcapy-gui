@@ -6,6 +6,31 @@ from PIL import Image, ImageTk
 from tkinter import Tk, Button, Label, Frame, BOTH, X
 
 
+def make_python(expr):
+    """Return Python code that can be evaluated to create the
+        expression."""
+
+    # Output imports?
+
+    symbols = expr.symbols
+
+    s = ''
+    for symbol in symbols:
+        # Skip domain variables
+        if symbol in ('f', 's', 't', 'w', 'omega',
+                      'jf', 'jw', 'jomega', 'n', 'k', 'z'):
+            continue
+
+        # TODO, add other assumptions
+        if symbols[symbol].is_positive:
+            s += "%s = symbol('%s', positive=True)\n" % (symbol, symbol)
+        else:
+            s += "%s = symbol('%s')\n" % (symbol, symbol)
+
+    s += repr(expr)
+    return s
+
+
 class ExprDialog:
 
     def __init__(self, expr, ui, title=''):
@@ -31,6 +56,10 @@ class ExprDialog:
             mdd = MenuDropdown('Element', 0, items)
 
         menudropdowns = [
+            MenuDropdown('File', 0,
+                         [MenuItem('Save Python', self.on_save_python),
+                          MenuItem('Save LaTeX', self.on_save_latex)
+                          ]),
             MenuDropdown('Edit', 0,
                          [MenuItem('Expression', self.on_edit),
                           MenuItem('Python', self.on_edit_python)
@@ -247,6 +276,26 @@ class ExprDialog:
         except Exception as e:
             self.ui.show_error_dialog(e)
 
+    def on_save_latex(self, arg):
+
+        pathname = self.ui.save_file_dialog('expr.tex', doc='LaTeX file',
+                                            ext='*.tex')
+        if pathname == '' or pathname == ():
+            return
+
+        with open(pathname, 'w') as f:
+            f.write(self.expr.latex())
+
+    def on_save_python(self, arg):
+
+        pathname = self.ui.save_file_dialog('expr.py', doc='Python file',
+                                            ext='*.py')
+        if pathname == '' or pathname == ():
+            return
+
+        with open(pathname, 'w') as f:
+            f.write(make_python(self.expr))
+
     def on_select(self, arg):
 
         parts = {'Real': 'real',
@@ -286,22 +335,7 @@ class ExprDialog:
 
     def on_python(self, arg):
 
-        symbols = self.expr.symbols
-
-        s = ''
-        for sym in symbols:
-            # Skip domain variables
-            if sym in ('f', 's', 't', 'w', 'omega',
-                       'jf', 'jw', 'jomega', 'n', 'k', 'z'):
-                continue
-
-            # TODO, add other assumptions
-            if symbols[sym].is_positive:
-                s += "%s = symbol('%s', positive=True)\n" % (sym, sym)
-            else:
-                s += "%s = symbol('%s')\n" % (sym, sym)
-
-        s += repr(self.expr)
+        s = make_python(self.expr)
 
         self.ui.show_message_dialog(s, 'Python expression')
 
