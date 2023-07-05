@@ -1,10 +1,9 @@
-from tkinter import Tk, Button, Label, Frame
-from PIL import Image, ImageTk
-
-from lcapy import Expr, ExprTuple, Matrix
-from .exprimage import ExprImage
-from .expr_calc import ExprCalc
 from .menu import MenuBar, MenuDropdown, MenuItem
+from .expr_calc import ExprCalc
+from .exprimage import ExprImage
+from lcapy import Expr, ExprTuple, Matrix
+from PIL import Image, ImageTk
+from tkinter import Tk, Button, Label, Frame, BOTH, X
 
 
 class ExprDialog:
@@ -105,14 +104,12 @@ class ExprDialog:
         self.menubar = MenuBar(menudropdowns)
         self.menubar.make(self.window)
 
-        self.frame = Frame(self.window)
-        self.frame.pack()
+        png_filename = ExprImage(expr).image()
+        image = Image.open(png_filename)
 
-        # TODO: dynamically tweak width of long expressions
-        self.expr_label = Label(self.window, text='')
-        self.expr_label.pack()
-
-        self.expr_label.place(anchor="c", relx=.50, rely=.50)
+        self.expr_label = Label(self.window, text='', width=image.width + 100,
+                                height=image.height + 100)
+        self.expr_label.pack(fill=BOTH, expand=True)
 
         self.window.minsize(500, 100)
 
@@ -125,16 +122,35 @@ class ExprDialog:
         except Exception as e:
             self.expr_label.config(text=e)
 
-    def show_img(self, e):
+    def show_img(self, e, pad=30):
 
         # TODO, fixme
         # if self.ui.model.preferences.show_units == 'true':
         #    e = e * e.units
 
         png_filename = ExprImage(e).image()
-        img = ImageTk.PhotoImage(Image.open(png_filename), master=self.window)
-        self.expr_label.config(image=img)
-        self.expr_label.photo = img
+
+        image = Image.open(png_filename)
+
+        right = pad
+        left = pad
+        top = pad
+        bottom = pad
+
+        width, height = image.size
+
+        new_width = width + right + left
+        new_height = height + top + bottom
+
+        # Add border
+        background = (245, 245, 245)
+        image_pad = Image.new(image.mode, (new_width, new_height), background)
+        image_pad.paste(image, (left, top))
+
+        img_pad = ImageTk.PhotoImage(image_pad, master=self.window)
+
+        self.expr_label.config(image=img_pad)
+        self.expr_label.photo = img_pad
 
     def apply_attribute(self, attributes, arg):
 
