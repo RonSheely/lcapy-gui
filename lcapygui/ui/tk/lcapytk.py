@@ -1,4 +1,4 @@
-from tkinter import Canvas, Tk, Menu, Frame, TOP, BOTH, BOTTOM, X
+from tkinter import Canvas, Tk, Menu, Frame, TOP, BOTH, BOTTOM, X, Button
 from tkinter.ttk import Notebook
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -24,6 +24,7 @@ class LcapyTk(Tk):
         from ... import __version__
 
         super().__init__()
+
         self.debug = debug
         self.version = __version__
         self.model = None
@@ -389,6 +390,22 @@ class LcapyTk(Tk):
 
         self.canvas.drawing.set_default_view()
         self.refresh()
+
+    def report_callback_exception(self, exc, val, tb):
+
+        # This catches exceptions but only for this window.
+        # Each class needs to hook into this.
+        from tkinter.messagebox import showerror
+
+        showerror("Error", message=str(val))
+
+    def on_exception(self, *args):
+
+        from tkinter import messagebox
+        import traceback
+
+        err = traceback.format_exception(*args)
+        messagebox.showerror('Exception', err)
 
     def on_enter(self, event):
 

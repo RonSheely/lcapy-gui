@@ -31,16 +31,16 @@ def make_python(expr):
     return s
 
 
-class ExprDialog:
+class ExprDialog(Tk):
 
     def __init__(self, expr, ui, title=''):
 
+        super().__init__()
+
+        self.report_callback_exception = ui.report_callback_exception
         self.expr = expr
         self.ui = ui
-        self.title = title
-
-        self.window = Tk()
-        self.window.title(title)
+        self.title(title)
 
         mdd = None
         if isinstance(expr, Matrix):
@@ -131,16 +131,16 @@ class ExprDialog:
         ]
 
         self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self.window)
+        self.menubar.make(self)
 
         png_filename = ExprImage(expr).image()
         image = Image.open(png_filename)
 
-        self.expr_label = Label(self.window, text='', width=image.width + 100,
+        self.expr_label = Label(self, text='', width=image.width + 100,
                                 height=image.height + 100)
         self.expr_label.pack(fill=BOTH, expand=True)
 
-        self.window.minsize(500, 100)
+        self.minsize(550, 100)
 
         self.update()
 
@@ -176,7 +176,7 @@ class ExprDialog:
         image_pad = Image.new(image.mode, (new_width, new_height), background)
         image_pad.paste(image, (left, top))
 
-        img_pad = ImageTk.PhotoImage(image_pad, master=self.window)
+        img_pad = ImageTk.PhotoImage(image_pad, master=self)
 
         self.expr_label.config(image=img_pad)
         self.expr_label.photo = img_pad
