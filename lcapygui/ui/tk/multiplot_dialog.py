@@ -6,7 +6,18 @@ from tkinter import Tk, StringVar, Label, Entry, Button
 # Maybe specify domain and quantity (time, voltage) then specify
 # components (or perhaps nodes)
 # Could have a fixed number for the maximum number of plots, say 8
-# and then have 8 dropdown lists.
+# and then have 8 dropdown lists.   This is probably easier than having a
+# menu item for adding another plot.
+# But also need a way to handle multiple subplots (these are not overdrawn)
+# Could have a specified number of rows and cols for the subplot grid.
+
+# Automatically add labels, R1 voltage, C1 current, etc.
+# Perhaps allow expressions, R1.V(t) - R2.V(t)?
+
+# What about real part, magnitude, phase etc?
+# Could use expression such as R1.V(f).phase
+
+# Expression  row  col  xmin  xmax  ymin  ymax colour style
 
 
 class MultiplotDialog:
@@ -19,6 +30,7 @@ class MultiplotDialog:
 
         circuit = ui.model.circuit
 
+        # TODO: need undefined_symbols for old Lcapy
         symbols = circuit.undefined_symbols
         if symbols != []:
             ui.show_error_dialog(

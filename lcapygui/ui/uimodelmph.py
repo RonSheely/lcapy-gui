@@ -148,6 +148,18 @@ class UIModelMPH(UIModelBase):
                 return node
         return None
 
+    def create_state_space(self, cpt):
+
+        self.ui.show_state_space_dialog(cpt)
+
+    def create_transfer_function(self, cpt):
+
+        self.ui.show_transfer_function_dialog(cpt)
+
+    def create_twoport(self, cpt):
+
+        self.ui.show_twoport_dialog(cpt)
+
     def exception(self, e):
         message = str(e)
         if self.pathname != '':
@@ -156,23 +168,6 @@ class UIModelMPH(UIModelBase):
         if self.ui.debug:
             import pdb
             pdb.set_trace()
-
-    def inspect_state_space(self, cpt):
-
-        self.ui.show_state_space_dialog(cpt)
-
-    def inspect_transfer_function(self, cpt):
-
-        self.ui.show_transfer_function_dialog(cpt)
-
-    def inspect_twoport(self, cpt):
-
-        self.ui.show_twoport_dialog(cpt)
-
-    def unselect(self):
-
-        self.cursors.remove()
-        self.ui.refresh()
 
     def new_name(self, pathname):
 
@@ -303,18 +298,17 @@ class UIModelMPH(UIModelBase):
         self.cursors.draw()
         self.ui.refresh()
 
-    def on_debug(self):
+    def on_create_state_space(self):
 
-        s = ''
-        s += 'Netlist.........\n'
-        s += self.schematic() + '\n'
-        s += 'Nodes...........\n'
-        s += self.circuit.nodes.debug() + '\n'
-        s += 'Cursors.........\n'
-        s += self.cursors.debug() + '\n'
-        s += 'Selected.........\n'
-        s += str(self.selected) + '\n'
-        self.ui.show_message_dialog(s, 'Debug')
+        self.create_state_space(self.selected)
+
+    def on_create_transfer_function(self):
+
+        self.create_transfer_function(self.selected)
+
+    def on_create_twoport(self):
+
+        self.create_twoport(self.selected)
 
     def on_cut(self):
 
@@ -328,6 +322,19 @@ class UIModelMPH(UIModelBase):
         self.cursors.draw()
 
         self.ui.refresh()
+
+    def on_debug(self):
+
+        s = ''
+        s += 'Netlist.........\n'
+        s += self.schematic() + '\n'
+        s += 'Nodes...........\n'
+        s += self.circuit.nodes.debug() + '\n'
+        s += 'Cursors.........\n'
+        s += self.cursors.debug() + '\n'
+        s += 'Selected.........\n'
+        s += str(self.selected) + '\n'
+        self.ui.show_message_dialog(s, 'Debug')
 
     def on_delete(self):
 
@@ -382,7 +389,9 @@ class UIModelMPH(UIModelBase):
         if not self.selected or not self.cpt_selected:
             return
 
+        win = self.ui.show_working_dialog('Calculating voltage')
         self.inspect_current(self.selected)
+        win.destroy()
 
     def on_inspect_norton_admittance(self):
 
@@ -391,10 +400,6 @@ class UIModelMPH(UIModelBase):
 
         self.inspect_norton_admittance(self.selected)
 
-    def on_inspect_state_space(self):
-
-        self.inspect_state_space(self.selected)
-
     def on_inspect_thevenin_impedance(self):
 
         if not self.selected or not self.cpt_selected:
@@ -402,20 +407,14 @@ class UIModelMPH(UIModelBase):
 
         self.inspect_thevenin_impedance(self.selected)
 
-    def on_inspect_transfer_function(self):
-
-        self.inspect_transfer_function(self.selected)
-
-    def on_inspect_twoport(self):
-
-        self.inspect_twoport(self.selected)
-
     def on_inspect_voltage(self):
 
         if not self.selected or not self.cpt_selected:
             return
 
+        win = self.ui.show_working_dialog('Calculating voltage')
         self.inspect_voltage(self.selected)
+        win.destroy()
 
     def on_laplace_model(self):
 
@@ -671,3 +670,8 @@ class UIModelMPH(UIModelBase):
         remove(schtex_filename)
 
         self.ui.show_message_dialog(content)
+
+    def unselect(self):
+
+        self.cursors.remove()
+        self.ui.refresh()

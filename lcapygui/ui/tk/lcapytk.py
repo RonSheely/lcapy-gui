@@ -126,13 +126,13 @@ class LcapyTk(Tk):
 
         create_menu.add_command(label='State space',
                                 underline=0,
-                                command=self.on_inspect_state_space)
+                                command=self.on_create_state_space)
         create_menu.add_command(label='Transfer function',
                                 underline=0,
-                                command=self.on_inspect_transfer_function)
+                                command=self.on_create_transfer_function)
         create_menu.add_command(label='Twoport',
                                 underline=1,
-                                command=self.on_inspect_twoport)
+                                command=self.on_create_twoport)
         self.menu.add_cascade(label='Create', underline=0,
                               menu=self.create_menu)
 
@@ -369,6 +369,18 @@ class LcapyTk(Tk):
 
         self.model.on_copy()
 
+    def on_create_state_space(self, *args):
+
+        self.model.on_create_state_space()
+
+    def on_create_transfer_function(self, *args):
+
+        self.model.on_create_transfer_function()
+
+    def on_create_twoport(self, *args):
+
+        self.model.on_create_twoport()
+
     def on_cut(self, *args):
 
         self.model.on_cut()
@@ -438,21 +450,9 @@ class LcapyTk(Tk):
 
         self.model.on_inspect_norton_admittance()
 
-    def on_inspect_state_space(self, *args):
-
-        self.model.on_inspect_state_space()
-
     def on_inspect_thevenin_impedance(self, *args):
 
         self.model.on_inspect_thevenin_impedance()
-
-    def on_inspect_transfer_function(self, *args):
-
-        self.model.on_inspect_transfer_function()
-
-    def on_inspect_twoport(self, *args):
-
-        self.model.on_inspect_twoport()
 
     def on_inspect_voltage(self, *args):
 
@@ -681,6 +681,13 @@ class LcapyTk(Tk):
         from .python_dialog import PythonDialog
 
         self.python_dialog = PythonDialog(expr, self)
+
+    def show_working_dialog(self, expr):
+
+        from .working_dialog import WorkingDialog
+
+        self.working_dialog = WorkingDialog(expr, self)
+        return self.working_dialog
 
     def show_state_space_dialog(self, cpt):
 
