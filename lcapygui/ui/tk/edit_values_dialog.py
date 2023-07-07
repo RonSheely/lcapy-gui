@@ -11,6 +11,20 @@ from .menu import MenuBar, MenuDropdown, MenuItem
 # this includes domain vars and delta_t etc.
 
 
+# Workaround for older version of Lcapy
+def undefined_symbols(cct):
+
+    from lcapy import expr
+
+    symbols = []
+    for k, elt in cct.elements.items():
+        cpt = elt.cpt
+        for arg in cpt.args:
+            symbols += expr(arg).symbols
+
+    return symbols
+
+
 class EditValuesDialog:
 
     def __init__(self, ui, title='Component values'):
@@ -19,7 +33,10 @@ class EditValuesDialog:
         self.window = Tk()
         self.window.title(title)
         self.circuit = ui.model.circuit
-        self.symbols = self.circuit.undefined_symbols
+        try:
+            self.symbols = self.circuit.undefined_symbols
+        except:
+            self.symbols = undefined_symbols(self.circuit)
 
         menudropdowns = [
             MenuDropdown('File', 0,
