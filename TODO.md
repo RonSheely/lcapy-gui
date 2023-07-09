@@ -68,3 +68,6 @@ attributes unless clever
 31. Add U components
 
 32. Add fdopamp; perhaps add opamp, fdopamp to vcvs as kinds?
+
+33. Check if opamp has node 0 as output reference and warn if have no
+    other node 0.

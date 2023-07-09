@@ -662,6 +662,12 @@ class LcapyTk(Tk):
 
         showinfo('', message)
 
+    def show_limit_dialog(self, expr, title=''):
+
+        from .limit_dialog import LimitDialog
+
+        self.limit_dialog = LimitDialog(expr, self, title)
+
     def show_message_dialog(self, message, title=''):
 
         from .message_dialog import MessageDialog

@@ -72,6 +72,7 @@ class ExprDialog(Tk):
             MenuDropdown('Manipulate', 0,
                          [MenuItem('Approximate', self.on_manipulate),
                           MenuItem('Evaluate', self.on_manipulate),
+                          MenuItem('Limit', self.on_manipulate),
                           MenuItem('Parameterize', self.on_manipulate),
                           MenuItem('Poles', self.on_manipulate),
                           MenuDropdown('Simplify', 0,
@@ -255,8 +256,10 @@ class ExprDialog(Tk):
             if arg == 'Approximate':
                 self.ui.show_approximate_dialog(self.expr, title=self.title)
             elif arg == 'Evaluate':
-                self.ui.show_approximate_dialog(
+                self.ui.show_expr_dialog(
                     self.expr.evaluate(), title=self.title)
+            elif arg == 'Limit':
+                self.ui.show_limit_dialog(self.expr, title=self.title)
             elif arg == 'Parameterize':
                 self.ui.show_expr_dialog(ExprTuple(self.expr.parameterize()),
                                          title=self.title)

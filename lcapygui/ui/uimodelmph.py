@@ -2,6 +2,7 @@ from .uimodelbase import UIModelBase
 from lcapy.mnacpts import Cpt
 from lcapy import Circuit
 from os.path import basename
+from warnings import warn
 
 
 class Cursor:
@@ -142,6 +143,11 @@ class UIModelMPH(UIModelBase):
     def closest_node(self, x, y):
 
         for node in self.circuit.nodes.values():
+            if node.pos is None:
+                # This happens with opamps.  Node 0 is the default
+                # reference pin.
+                warn('Ignoring node %s with no position' % node.name)
+                continue
             x1, y1 = node.pos.x, node.pos.y
             rsq = (x1 - x)**2 + (y1 - y)**2
             if rsq < 0.1:
