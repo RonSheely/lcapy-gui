@@ -4,7 +4,7 @@ from .labelentries import LabelEntry, LabelEntries
 
 class TwoportSelectDialog:
 
-    def __init__(self, ui, TP):
+    def __init__(self, ui, TP, model):
 
         self.ui = ui
         self.TP = TP
@@ -16,7 +16,7 @@ class TwoportSelectDialog:
 
         entries = []
         entries.append(LabelEntry('model', 'Twoport model',
-                                  models[0], models))
+                                  model, models))
         entries.append(LabelEntry('element', 'Twoport element',
                                   elements[0], elements))
 

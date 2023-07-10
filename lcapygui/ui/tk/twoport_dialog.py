@@ -4,9 +4,10 @@ from .labelentries import LabelEntry, LabelEntries
 
 class TwoportDialog:
 
-    def __init__(self, ui, cpt):
+    def __init__(self, ui, cpt, kind):
 
         self.ui = ui
+        self.kind = kind
         self.window = Tk()
         self.window.title('Twoport')
 
@@ -29,6 +30,8 @@ class TwoportDialog:
         button = Button(self.window, text="Create", command=self.on_create)
         button.grid(row=self.labelentries.row)
 
+        self.window.minsize(200, 50)
+
     def on_create(self):
 
         input_cpt = self.labelentries.get('input')
@@ -43,6 +46,6 @@ class TwoportDialog:
                 cct.remove(cpt.name)
 
         # Warn that might be slow
-        A = cct.twoport(input_cpt, output_cpt)
+        A = cct.twoport(input_cpt, output_cpt, model=self.kind)
 
-        self.ui.show_twoport_select_dialog(A)
+        self.ui.show_twoport_select_dialog(A, self.kind)

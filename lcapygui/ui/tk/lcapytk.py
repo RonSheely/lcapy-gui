@@ -120,10 +120,26 @@ class LcapyTk(Tk):
                                       self.on_create_state_space),
                              MenuItem('Transfer function',
                                       self.on_create_transfer_function),
-                             MenuItem('Twoport', self.on_create_twoport,
-                                      underline=1)
+                             MenuDropdown('Twoport', 0,
+                                          [
+                                              MenuItem(
+                                                  'A twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'B twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'G twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'H twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'S twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'T twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'Y twoport', self.on_create_twoport),
+                                              MenuItem(
+                                                  'Z twoport', self.on_create_twoport)
+                                          ])
                          ]),
-
             MenuDropdown('Inspect', 0,
                          [
                              MenuItem('Voltage', self.on_inspect_voltage),
@@ -313,9 +329,10 @@ class LcapyTk(Tk):
 
         self.model.on_create_transfer_function()
 
-    def on_create_twoport(self, *args):
+    def on_create_twoport(self, arg):
 
-        self.model.on_create_twoport()
+        kind = arg[0]
+        self.model.on_create_twoport(kind)
 
     def on_cut(self, *args):
 
@@ -665,17 +682,17 @@ class LcapyTk(Tk):
 
         self.transfer_function_dialog = TransferFunctionDialog(self, cpt)
 
-    def show_twoport_dialog(self, cpt):
+    def show_twoport_dialog(self, cpt, kind):
 
         from .twoport_dialog import TwoportDialog
 
-        self.twoport_dialog = TwoportDialog(self, cpt)
+        self.twoport_dialog = TwoportDialog(self, cpt, kind)
 
-    def show_twoport_select_dialog(self, TP):
+    def show_twoport_select_dialog(self, TP, kind):
 
         from .twoport_select_dialog import TwoportSelectDialog
 
-        self.twoport_select_dialog = TwoportSelectDialog(self, TP)
+        self.twoport_select_dialog = TwoportSelectDialog(self, TP, kind)
 
     def show_warning_dialog(self, message):
 

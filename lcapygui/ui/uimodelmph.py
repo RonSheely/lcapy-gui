@@ -162,9 +162,9 @@ class UIModelMPH(UIModelBase):
 
         self.ui.show_transfer_function_dialog(cpt)
 
-    def create_twoport(self, cpt):
+    def create_twoport(self, cpt, kind):
 
-        self.ui.show_twoport_dialog(cpt)
+        self.ui.show_twoport_dialog(cpt, kind)
 
     def exception(self, e):
         message = str(e)
@@ -312,9 +312,9 @@ class UIModelMPH(UIModelBase):
 
         self.create_transfer_function(self.selected)
 
-    def on_create_twoport(self):
+    def on_create_twoport(self, kind):
 
-        self.create_twoport(self.selected)
+        self.create_twoport(self.selected, kind)
 
     def on_cut(self):
 
