@@ -7,6 +7,7 @@ from os.path import basename
 from ..uimodelmph import UIModelMPH
 from .sketcher import Sketcher
 from .drawing import Drawing
+from .menu import MenuBar, MenuDropdown, MenuItem
 
 
 class LcapyTk(Tk):
@@ -38,186 +39,120 @@ class LcapyTk(Tk):
         self.title('Lcapy-tk ' + __version__)
         self.geometry(self.GEOMETRY)
 
-        # Create the drop down menus
-        self.menu = Menu(self, bg='lightgrey', fg='black')
-
-        # File menu
-        self.file_menu = Menu(self.menu, tearoff=0,
-                              bg='lightgrey', fg='black')
-
-        self.file_menu.add_command(label='Clone', command=self.on_clone,
-                                   underline=0)
-        self.file_menu.add_command(label='New', command=self.on_new,
-                                   underline=0, accelerator='Ctrl+n')
-        self.file_menu.add_command(label='Open', command=self.on_load,
-                                   underline=0, accelerator='Ctrl+o')
-        self.file_menu.add_command(label='Open library', command=self.on_library,
-                                   underline=6, accelerator='Ctrl+l')
-        self.file_menu.add_command(label='Save', command=self.on_save,
-                                   underline=0, accelerator='Ctrl+s')
-        self.file_menu.add_command(label='Save as', command=self.on_save_as,
-                                   underline=1, accelerator='Alt+s')
-        self.file_menu.add_command(label='Export', command=self.on_export,
-                                   underline=0, accelerator='Ctrl+e')
-        self.file_menu.add_command(label='Screenshot', command=self.on_screenshot,
-                                   underline=1)
-        self.file_menu.add_command(label='Quit', command=self.on_quit,
-                                   underline=0, accelerator='Ctrl+q')
-
-        self.menu.add_cascade(
-            label='File', underline=0, menu=self.file_menu)
-
-        # Edit menu
-        self.edit_menu = Menu(self.menu, tearoff=0,
-                              bg='lightgrey', fg='black')
-
-        self.edit_menu.add_command(label='Preferences',
-                                   command=self.on_preferences,
-                                   underline=0)
-        self.edit_menu.add_command(label='Undo', command=self.on_undo,
-                                   accelerator='Ctrl+z')
-        self.edit_menu.add_command(label='Cut',
-                                   command=self.on_cut,
-                                   accelerator='Ctrl+x')
-        self.edit_menu.add_command(label='Copy',
-                                   command=self.on_copy,
-                                   accelerator='Ctrl+c')
-        self.edit_menu.add_command(label='Paste',
-                                   command=self.on_paste,
-                                   accelerator='Ctrl+v')
-        self.edit_menu.add_command(label='Values',
-                                   command=self.on_edit_values,
-                                   accelerator='Ctrl+V')
-
-        self.menu.add_cascade(label='Edit', underline=0, menu=self.edit_menu)
-
-        # View menu
-        self.view_menu = Menu(self.menu, tearoff=0,
-                              bg='lightgrey', fg='black')
-
-        self.view_menu.add_command(label='Expression',
-                                   command=self.on_expression,
-                                   accelerator='Ctrl+e')
-        self.view_menu.add_command(label='Circuitikz image',
-                                   command=self.on_view,
-                                   accelerator='Ctrl+u')
-        self.view_menu.add_command(label='Circuitikz macros',
-                                   command=self.on_view_macros)
-        self.view_menu.add_command(label='Simple netlist',
-                                   command=self.on_simple_netlist)
-        self.view_menu.add_command(label='Netlist',
-                                   command=self.on_netlist)
-        self.view_menu.add_command(label='Nodal equations',
-                                   command=self.on_nodal_equations)
-        self.view_menu.add_command(label='Mesh equations',
-                                   command=self.on_mesh_equations)
-        self.view_menu.add_command(label='Best fit',
-                                   command=self.on_best_fit)
-        self.view_menu.add_command(label='Default fit',
-                                   command=self.on_default_fit)
-        self.view_menu.add_command(label='Plots',
-                                   command=self.on_plots)
-
-        self.menu.add_cascade(label='View', underline=0, menu=self.view_menu)
-
-        # Create menu
-        self.create_menu = Menu(self.menu, tearoff=0,
-                                bg='lightgrey', fg='black')
-        create_menu = self.create_menu
-
-        create_menu.add_command(label='State space',
-                                underline=0,
-                                command=self.on_create_state_space)
-        create_menu.add_command(label='Transfer function',
-                                underline=0,
-                                command=self.on_create_transfer_function)
-        create_menu.add_command(label='Twoport',
-                                underline=1,
-                                command=self.on_create_twoport)
-        self.menu.add_cascade(label='Create', underline=0,
-                              menu=self.create_menu)
-
-        # Inspect menu
-        self.inspect_menu = Menu(self.menu, tearoff=0,
-                                 bg='lightgrey', fg='black')
-        inspect_menu = self.inspect_menu
-
-        inspect_menu.add_command(label='Voltage', underline=0,
-                                 command=self.on_inspect_voltage)
-        inspect_menu.add_command(label='Current', underline=0,
-                                 command=self.on_inspect_current)
-        inspect_menu.add_command(label='Thevenin impedance',
-                                 underline=0,
-                                 command=self.on_inspect_thevenin_impedance)
-        inspect_menu.add_command(label='Norton admittance',
-                                 underline=0,
-                                 command=self.on_inspect_norton_admittance)
-
-        self.menu.add_cascade(label='Inspect', underline=0,
-                              menu=self.inspect_menu)
-
-        # Component menu
-        self.component_menu = Menu(self.menu, tearoff=0,
-                                   bg='lightgrey', fg='black')
-        component_menu = self.component_menu
-
+        items = []
         for key, val in self.uimodel_class.component_map.items():
             acc = key if len(key) == 1 else ''
-            component_menu.add_command(label=val[1],
-                                       command=lambda foo=key: self.on_add_cpt(
-                                           foo),
-                                       accelerator=acc)
-            # Callback called twice for some mysterious reason
-            # self.component_menu.bind(key,
-            #            lambda arg, foo=key: self.on_add_cpt(foo))
+            items.append(MenuItem(val[1], lambda foo=key: self.on_add_cpt(foo),
+                         accelerator=acc))
 
-        self.menu.add_cascade(label='Component', underline=0,
-                              menu=self.component_menu)
+        component_menu_dropdown = MenuDropdown('Components', 0, items)
 
-        # Connection menu
-        self.connection_menu = Menu(self.menu, tearoff=0,
-                                    bg='lightgrey', fg='black')
-        connection_menu = self.connection_menu
+        items = []
 
         for key, val in self.uimodel_class.connection_map.items():
             acc = key if len(key) == 1 else ''
-            connection_menu.add_command(label=val[1], command=lambda
-                                        foo=key: self.on_add_con(foo),
-                                        accelerator=acc)
+            items.append(MenuItem(val[1], lambda foo=key: self.on_add_con(foo),
+                         accelerator=acc))
 
-        self.menu.add_cascade(label='Connection', underline=0,
-                              menu=self.connection_menu)
+        connection_menu_dropdown = MenuDropdown('Connections', 0, items)
 
-        # Manipulation menu
-        self.manipulation_menu = Menu(self.menu, tearoff=0,
-                                      bg='lightgrey', fg='black')
+        menudropdowns = [
+            MenuDropdown('File', 0,
+                         [
+                             MenuItem('Clone', self.on_clone),
+                             MenuItem('New', self.on_new,
+                                      accelerator='Ctrl+n'),
+                             MenuItem('Open', self.on_load,
+                                      accelerator='Ctrl+o'),
+                             MenuItem('Open library', self.on_library,
+                                      underline=6, accelerator='Ctrl+l'),
+                             MenuItem('Save', self.on_save,
+                                      accelerator='Ctrl+s'),
+                             MenuItem('Save as', self.on_save_as,
+                                      underline=1, accelerator='Alt+s'),
+                             MenuItem('Export', self.on_export,
+                                      accelerator='Ctrl+e'),
+                             MenuItem('Screenshot',
+                                      self.on_screenshot, underline=1),
+                             MenuItem('Quit', self.on_quit,
+                                      accelerator='Ctrl+q')
+                         ]),
 
-        self.manipulation_menu.add_command(label='Kill independent sources',
-                                           command=self.on_manipulation_kill)
+            MenuDropdown('Edit', 0,
+                         [
+                             MenuItem('Preferences', self.on_preferences),
+                             MenuItem('Undo', self.on_undo,
+                                      accelerator='Ctrl+z'),
+                             MenuItem('Cut', self.on_cut,
+                                      accelerator='Ctrl+x'),
+                             MenuItem('Copy', self.on_copy,
+                                      accelerator='Ctrl+c'),
+                             MenuItem('Paste', self.on_paste,
+                                      accelerator='Ctrl+v'),
+                             MenuItem('Values', self.on_edit_values,
+                                      accelerator='Ctrl+V')
+                         ]),
 
-        self.manipulation_menu.add_command(label='Remove independent sources',
-                                           command=self.on_manipulation_remove_sources)
+            MenuDropdown('View', 0,
+                         [
 
-        self.manipulation_menu.add_command(label='Laplace model',
-                                           command=self.on_laplace_model)
+                             MenuItem('Expression', self.on_expression,
+                                      accelerator='Ctrl+e'),
+                             MenuItem('Circuitikz image', self.on_view,
+                                      accelerator='Ctrl+u'),
+                             MenuItem('Circuitikz macros',
+                                      self.on_view_macros),
+                             MenuItem('Simple netlist',
+                                      self.on_simple_netlist),
+                             MenuItem('Netlist', self.on_netlist),
+                             MenuItem('Nodal equations',
+                                      self.on_nodal_equations),
+                             MenuItem('Mesh equations',
+                                      self.on_mesh_equations),
+                             MenuItem('Best fit', self.on_best_fit),
+                             MenuItem('Default fit', self.on_default_fit),
+                             MenuItem('Plots', self.on_plots)
+                         ]),
 
-        self.manipulation_menu.add_command(label='Noise model',
-                                           command=self.on_noise_model)
+            MenuDropdown('Create', 0,
+                         [
+                             MenuItem('State space',
+                                      self.on_create_state_space),
+                             MenuItem('Transfer function',
+                                      self.on_create_transfer_function),
+                             MenuItem('Twoport', self.on_create_twoport,
+                                      underline=1)
+                         ]),
 
-        self.menu.add_cascade(label='Manipulation', underline=0,
-                              menu=self.manipulation_menu)
+            MenuDropdown('Inspect', 0,
+                         [
+                             MenuItem('Voltage', self.on_inspect_voltage),
+                             MenuItem('Current', self.on_inspect_current),
+                             MenuItem('Thevenin impedance',
+                                      self.on_inspect_thevenin_impedance),
+                             MenuItem('Norton admittance',
+                                      self.on_inspect_norton_admittance)
+                         ]),
+            component_menu_dropdown,
+            connection_menu_dropdown,
+            MenuDropdown('Manipulation', 0,
+                         [
+                             MenuItem('Kill independent sources',
+                                      self.on_manipulation_kill),
+                             MenuItem('Remove independent sources',
+                                      self.on_manipulation_remove_sources),
+                             MenuItem('Laplace model', self.on_laplace_model),
+                             MenuItem('Noise model', self.on_noise_model)
+                         ]),
+            MenuDropdown('Help', 0,
+                         [
+                             MenuItem('Help', self.on_help,
+                                      accelerator='Ctrl+h')
+                         ])
+        ]
 
-        # Help menu
-        self.help_menu = Menu(self.menu, tearoff=0,
-                              bg='lightgrey', fg='black')
-
-        self.help_menu.add_command(label='Help',
-                                   command=self.on_help, accelerator='Ctrl+h')
-
-        self.menu.add_cascade(label='Help', underline=0,
-                              menu=self.help_menu)
-
-        self.config(menu=self.menu)
+        self.menubar = MenuBar(menudropdowns)
+        self.menubar.make(self)
 
         # Notebook tabs
         self.notebook = Notebook(self)
@@ -362,7 +297,7 @@ class LcapyTk(Tk):
             elif event.button == 3:
                 self.model.on_right_click(event.xdata, event.ydata)
 
-    def on_clone(self):
+    def on_clone(self, *args):
 
         self.model.on_clone()
 
