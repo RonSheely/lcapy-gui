@@ -361,6 +361,11 @@ class UIModelMPH(UIModelBase):
         self.ui.show_message_dialog(self.circuit.description(),
                                     title='Description')
 
+    def on_expand(self):
+
+        cct = self.circuit.expand()
+        self.on_show_new_circuit(cct)
+
     def on_export(self):
 
         pathname = self.ui.export_file_dialog(self.pathname)

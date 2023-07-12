@@ -158,7 +158,8 @@ class LcapyTk(Tk):
                              MenuItem('Remove independent sources',
                                       self.on_manipulation_remove_sources),
                              MenuItem('Laplace model', self.on_laplace_model),
-                             MenuItem('Noise model', self.on_noise_model)
+                             MenuItem('Noise model', self.on_noise_model),
+                             MenuItem('Expand components', self.on_expand)
                          ]),
             MenuDropdown('Help', 0,
                          [
@@ -402,6 +403,10 @@ class LcapyTk(Tk):
     def on_edit_values(self, *args):
 
         self.show_edit_values_dialog()
+
+    def on_expand(self, *args):
+
+        self.model.on_expand()
 
     def on_export(self, *args):
 
