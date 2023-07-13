@@ -111,7 +111,8 @@ class LcapyTk(Tk):
                                       self.on_mesh_equations),
                              MenuItem('Best fit', self.on_best_fit),
                              MenuItem('Default fit', self.on_default_fit),
-                             MenuItem('Plots', self.on_plots)
+                             MenuItem('Plots', self.on_plots),
+                             MenuItem('Description', self.on_description)
                          ]),
 
             MenuDropdown('Create', 0,
@@ -343,6 +344,10 @@ class LcapyTk(Tk):
 
         self.canvas.drawing.set_default_view()
         self.refresh()
+
+    def on_description(self, *args):
+
+        self.show_message_dialog(self.model.circuit.description())
 
     def report_callback_exception(self, exc, val, tb):
 
