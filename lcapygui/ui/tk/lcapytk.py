@@ -152,12 +152,12 @@ class LcapyTk(Tk):
                          ]),
             component_menu_dropdown,
             connection_menu_dropdown,
-            MenuDropdown('Manipulation', 0,
+            MenuDropdown('Manipulate', 0,
                          [
                              MenuItem('Kill independent sources',
-                                      self.on_manipulation_kill),
+                                      self.on_manipulate_kill),
                              MenuItem('Remove independent sources',
-                                      self.on_manipulation_remove_sources),
+                                      self.on_manipulate_remove_sources),
                              MenuItem('Laplace model', self.on_laplace_model),
                              MenuItem('Noise model', self.on_noise_model),
                              MenuItem('Expand components', self.on_expand)
@@ -441,13 +441,13 @@ class LcapyTk(Tk):
 
         self.model.on_laplace_model()
 
-    def on_manipulation_kill(self, *args):
+    def on_manipulate_kill(self, *args):
 
-        self.model.on_manipulation_kill()
+        self.model.on_manipulate_kill()
 
-    def on_manipulation_remove_sources(self, *args):
+    def on_manipulate_remove_sources(self, *args):
 
-        self.model.on_manipulation_remove_sources()
+        self.model.on_manipulate_remove_sources()
 
     def on_library(self, *args):
         from lcapygui import __libdir__
@@ -676,9 +676,9 @@ class LcapyTk(Tk):
 
     def show_state_space_dialog(self, cpt):
 
-        from .state_space_dialog import TransferFunctionDialog
+        from .state_space_dialog import StateSpaceDialog
 
-        self.state_space_dialog = TransferFunctionDialog(self, cpt)
+        self.state_space_dialog = StateSpaceDialog(self, cpt)
 
     def show_subs_dialog(self, expr, title=''):
 

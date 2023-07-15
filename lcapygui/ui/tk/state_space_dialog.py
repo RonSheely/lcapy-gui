@@ -1,15 +1,17 @@
-from tkinter import Tk, Button
+from tkinter import Tk
+from .menu import MenuBar, MenuDropdown, MenuItem
 from .labelentries import LabelEntry, LabelEntries
 
 
-class TransferFunctionDialog:
+class StateSpaceDialog(Tk):
 
-    def __init__(self, ui, cpt):
+    def __init__(self, ui, ss):
+
+        super().__init__()
 
         self.ui = ui
-        self.window = Tk()
-        self.window.title('State space')
-        self.ss = ui.model.circuit.ss
+        self.title('State space')
+        self.ss = ss
         self.kindmap = {'State equations': 'state_equations',
                         'Output equations': 'output_equations',
                         'State matrix, A': 'A',
@@ -33,24 +35,39 @@ class TransferFunctionDialog:
                         'Controllability matrix': 'controllability_matrix',
                         'Observability matrix': 'observability_matrix'}
 
-        entries = []
-        kinds = list(self.kindmap.keys())
+        items = []
+        for v in self.kindmap:
+            items.append(MenuItem(v, self.on_view))
 
-        entries.append(LabelEntry('kind', 'Aspect', kinds[0], kinds))
+        mdd = MenuDropdown('View', 0, items)
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        menudropdowns = [
+            mdd,
+            MenuDropdown('Manipulate', 0,
+                         [MenuItem('Discretize', self.on_discretize)
+                          ])]
 
-        button = Button(self.window, text="Show", command=self.on_show)
-        button.grid(row=self.labelentries.row)
+        self.menubar = MenuBar(menudropdowns)
+        self.menubar.make(self)
 
-    def on_show(self):
+        self.minsize(200, 20)
 
-        kind = self.labelentries.get('kind')
+    def on_view(self, arg):
 
-        attr = getattr(self.ss, self.kindmap[kind])
+        attr = getattr(self.ss, self.kindmap[arg])
         try:
             expr = attr()
         except (AttributeError, TypeError):
             expr = attr
 
         self.ui.show_expr_dialog(expr)
+
+    def on_discretize(self, arg):
+
+        from lcapy.dtstatespace import DTStateSpace
+
+        if isinstance(arg, DTStateSpace):
+            return
+
+        ssd = self.ss.discretize()
+        self.ui.show_state_space_dialog(ssd)

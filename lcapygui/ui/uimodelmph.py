@@ -156,7 +156,8 @@ class UIModelMPH(UIModelBase):
 
     def create_state_space(self, cpt):
 
-        self.ui.show_state_space_dialog(cpt)
+        ss = self.circuit.ss
+        self.ui.show_state_space_dialog(ss)
 
     def create_transfer_function(self, cpt):
 
