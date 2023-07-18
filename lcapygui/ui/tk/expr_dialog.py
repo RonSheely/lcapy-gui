@@ -40,6 +40,7 @@ class ExprDialog(Tk):
         self.report_callback_exception = ui.report_callback_exception
         self.expr = expr
         self.ui = ui
+        self.titlestr = title
         self.title(title)
 
         mdd = None
@@ -119,7 +120,7 @@ class ExprDialog(Tk):
                           MenuItem('Phase radians', self.on_select),
                           ]),
             MenuDropdown('Format', 0,
-                         [MenuItem('ZPK', self.on_format),
+                         [MenuItem('Zero pole gain (ZPK)', self.on_format),
                           MenuItem('Canonical', self.on_format),
                           MenuItem('Time constant', self.on_format),
                           MenuItem('Time constant terms', self.on_format),
@@ -189,7 +190,7 @@ class ExprDialog(Tk):
 
             e = ExprCalc(self.expr)
             expr = e.attribute(attribute)
-            self.ui.show_expr_dialog(expr, title=self.title)
+            self.ui.show_expr_dialog(expr, title=self.titlestr)
         except Exception as e:
             self.ui.show_error_dialog(e)
 
@@ -200,13 +201,13 @@ class ExprDialog(Tk):
 
             e = ExprCalc(self.expr)
             expr = e.method(method)
-            self.ui.show_expr_dialog(expr, title=self.title)
+            self.ui.show_expr_dialog(expr, title=self.titlestr)
         except Exception as e:
             self.ui.show_error_dialog(e)
 
     def on_attributes(self, arg):
 
-        self.ui.show_expr_attributes_dialog(self.expr, title=self.title)
+        self.ui.show_expr_attributes_dialog(self.expr, title=self.titlestr)
 
     def on_edit(self, arg):
 
@@ -223,7 +224,7 @@ class ExprDialog(Tk):
                    'General': 'general',
                    'Time constant': 'timeconst',
                    'Time constant terms': 'timeconst_terms',
-                   'ZPK': 'ZPK',
+                   'Zero pole gain (ZPK)': 'ZPK',
                    'Partial fraction': 'partfrac',
                    'Time constant': 'timeconst',
                    'Polar': 'polar',
@@ -254,28 +255,28 @@ class ExprDialog(Tk):
 
         try:
             if arg == 'Approximate':
-                self.ui.show_approximate_dialog(self.expr, title=self.title)
+                self.ui.show_approximate_dialog(self.expr, title=self.titlestr)
             elif arg == 'Evaluate':
                 self.ui.show_expr_dialog(
-                    self.expr.evaluate(), title=self.title)
+                    self.expr.evaluate(), title=self.titlestr)
             elif arg == 'Limit':
-                self.ui.show_limit_dialog(self.expr, title=self.title)
+                self.ui.show_limit_dialog(self.expr, title=self.titlestr)
             elif arg == 'Parameterize':
                 self.ui.show_expr_dialog(ExprTuple(self.expr.parameterize()),
-                                         title=self.title)
+                                         title=self.titlestr)
             elif arg == 'Poles':
                 self.ui.show_expr_dialog(
-                    self.expr.poles(), title=self.title)
+                    self.expr.poles(), title=self.titlestr)
             elif arg in simplify:
                 self.apply_method(simplify, arg)
             elif arg == 'Solve':
                 self.ui.show_expr_dialog(
-                    self.expr.solve(), title=self.title)
+                    self.expr.solve(), title=self.titlestr)
             elif arg == 'Substitute':
-                self.ui.show_subs_dialog(self.expr, title=self.title)
+                self.ui.show_subs_dialog(self.expr, title=self.titlestr)
             elif arg == 'Zeros':
                 self.ui.show_expr_dialog(
-                    self.expr.zeros(), title=self.title)
+                    self.expr.zeros(), title=self.titlestr)
         except Exception as e:
             self.ui.show_error_dialog(e)
 
@@ -326,7 +327,7 @@ class ExprDialog(Tk):
 
         e = ExprCalc(self.expr)
         expr = e.eval('[%s, %d]' % (row, col))
-        self.ui.show_expr_dialog(expr, title=self.title)
+        self.ui.show_expr_dialog(expr, title=self.titlestr)
 
     def on_plot(self, arg):
 
