@@ -112,7 +112,8 @@ class LcapyTk(Tk):
                              MenuItem('Best fit', self.on_best_fit),
                              MenuItem('Default fit', self.on_default_fit),
                              MenuItem('Plots', self.on_plots),
-                             MenuItem('Description', self.on_description)
+                             MenuItem('Description', self.on_description),
+                             MenuItem('Circuit graph ', self.on_circuitgraph)
                          ]),
 
             MenuDropdown('Create', 0,
@@ -348,6 +349,13 @@ class LcapyTk(Tk):
     def on_description(self, *args):
 
         self.show_message_dialog(self.model.circuit.description())
+
+    def on_circuitgraph(self, *args):
+
+        # TODO, save to png file and then display file
+        self.model.circuit.cg.draw('/tmp/cg.png')
+        self.show_image_dialog(
+            '/tmp/cg.png', title='Circuit graph ' + self.model.pathname)
 
     def report_callback_exception(self, exc, val, tb):
 
@@ -604,6 +612,12 @@ class LcapyTk(Tk):
         from .help_dialog import HelpDialog
 
         self.help_dialog = HelpDialog()
+
+    def show_image_dialog(self, filename, title=''):
+
+        from .image_dialog import ImageDialog
+
+        self.image_dialog = ImageDialog(self, filename, title)
 
     def show_inspect_dialog(self, cpt, title=''):
 
