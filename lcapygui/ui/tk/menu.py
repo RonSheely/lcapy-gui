@@ -3,10 +3,11 @@ from tkinter import Menu
 
 class MenuItem:
 
-    def __init__(self, label, command=None, underline=0, accelerator=None):
+    def __init__(self, label, command=None, arg=None, underline=0, accelerator=None):
 
         self.label = label
         self.command = command
+        self.arg = arg
         self.underline = underline
         self.accelerator = accelerator
 
@@ -30,7 +31,11 @@ class MenuBar:
 
         def doit(menuitem):
 
-            menuitem.command(menuitem.label)
+            arg = menuitem.arg
+            if arg is None:
+                arg = menuitem.label
+
+            menuitem.command(arg)
 
         # Create the drop down menus
         self.menubar = Menu(window, bg='lightgrey', fg='black')

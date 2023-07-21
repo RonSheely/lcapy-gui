@@ -42,7 +42,7 @@ class LcapyTk(Tk):
         items = []
         for key, val in self.uimodel_class.component_map.items():
             acc = key if len(key) == 1 else ''
-            items.append(MenuItem(val[1], lambda foo=key: self.on_add_cpt(foo),
+            items.append(MenuItem(val[1], command=self.on_add_cpt, arg=key,
                          accelerator=acc))
 
         component_menu_dropdown = MenuDropdown('Components', 0, items)
@@ -51,7 +51,7 @@ class LcapyTk(Tk):
 
         for key, val in self.uimodel_class.connection_map.items():
             acc = key if len(key) == 1 else ''
-            items.append(MenuItem(val[1], lambda foo=key: self.on_add_con(foo),
+            items.append(MenuItem(val[1], command=self.on_add_con, arg=key,
                          accelerator=acc))
 
         connection_menu_dropdown = MenuDropdown('Connections', 0, items)
@@ -113,6 +113,7 @@ class LcapyTk(Tk):
                              MenuItem('Default fit', self.on_default_fit),
                              MenuItem('Plots', self.on_plots),
                              MenuItem('Description', self.on_description),
+                             MenuItem('Annotation', self.on_annotation),
                              MenuItem('Circuit graph ', self.on_circuitgraph)
                          ]),
 
@@ -290,6 +291,12 @@ class LcapyTk(Tk):
             print('Adding component ' + cptname)
 
         self.model.on_add_cpt(cptname)
+
+    def on_annotation(self, *args):
+
+        # TODO, add args
+        cct = self.model.circuit.annotate_voltages(None)
+        self.on_show_new_circuit(cct)
 
     def on_best_fit(self, *args):
 
