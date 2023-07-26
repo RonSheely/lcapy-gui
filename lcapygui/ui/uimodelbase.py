@@ -512,6 +512,8 @@ class UIModelBase:
 
     def thing_create(self, cpt_type, x1, y1, x2, y2, kind=''):
 
+        from lcapy.mnacpts import Cpt
+
         cpt_name = self.choose_cpt_name(cpt_type)
         gcpt = cpt_make_from_type(cpt_type, cpt_name, kind=kind)
         if gcpt is None:
@@ -540,6 +542,10 @@ class UIModelBase:
 
         cpt = self.circuit.add(netitem)
         self.invalidate()
+
+        if not isinstance(cpt, Cpt):
+            # Support older versions of Lcapy
+            cpt = self.circuit[cpt_name]
 
         for m, position in enumerate(positions):
             cpt.nodes[m].pos = Pos(position)
