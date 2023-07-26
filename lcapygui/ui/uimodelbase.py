@@ -538,9 +538,8 @@ class UIModelBase:
         if self.ui.debug:
             print('Adding ' + netitem)
 
-        cct = self.circuit.add(netitem)
+        cpt = self.circuit.add(netitem)
         self.invalidate()
-        cpt = cct[cpt_name]
 
         for m, position in enumerate(positions):
             cpt.nodes[m].pos = Pos(position)

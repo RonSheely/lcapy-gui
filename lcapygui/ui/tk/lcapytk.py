@@ -294,9 +294,10 @@ class LcapyTk(Tk):
 
     def on_annotation(self, *args):
 
-        # TODO, add args
+        # TODO: add args
+        # TODO: need to support voltage and current labels
         cct = self.model.circuit.annotate_voltages(None)
-        self.on_show_new_circuit(cct)
+        self.model.on_show_new_circuit(cct)
 
     def on_best_fit(self, *args):
 
