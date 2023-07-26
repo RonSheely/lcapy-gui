@@ -21,7 +21,7 @@ class LimitDialog:
         entries.append(LabelEntry('symbol', 'symbol',
                                   symbols[0], symbols))
 
-        entries.append(LabelEntry('limit', 'Limit', 0.0))
+        entries.append(LabelEntry('limit', 'Limit', '0'))
 
         entries.append(LabelEntry('dir', 'Direction',
                                   '+', ('+', '-')))
