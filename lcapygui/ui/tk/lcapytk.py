@@ -274,9 +274,10 @@ class LcapyTk(Tk):
 
         return canvas
 
-    def new(self, name='Untitled'):
+    def new(self, name='untitled.sch'):
 
         model = self.uimodel_class(self)
+        model.pathname = name
         canvas = self.create_canvas(name, model)
         self.model = model
         return model
