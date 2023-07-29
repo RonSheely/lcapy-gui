@@ -185,7 +185,10 @@ class LcapyTk(Tk):
             pathnames = []
 
         for pathname in pathnames:
-            self.load(pathname)
+            try:
+                self.load(pathname)
+            except FileNotFoundError:
+                self.new(pathname)
 
         if pathnames == []:
             model = self.new()
@@ -271,10 +274,10 @@ class LcapyTk(Tk):
 
         return canvas
 
-    def new(self):
+    def new(self, name='Untitled'):
 
         model = self.uimodel_class(self)
-        canvas = self.create_canvas('Untitled', model)
+        canvas = self.create_canvas(name, model)
         self.model = model
         return model
 
