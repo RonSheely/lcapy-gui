@@ -168,6 +168,7 @@ class UIModelMPH(UIModelBase):
         self.ui.show_twoport_dialog(cpt, kind)
 
     def exception(self, e):
+
         message = str(e)
         if self.pathname != '':
             message += ' in ' + self.pathname

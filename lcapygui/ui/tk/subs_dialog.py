@@ -18,8 +18,8 @@ class SubsDialog:
         self.symbols = []
         for key in expr.symbols:
             # Ignore domain variable
-            if key != expr.var.name:
-                entries.append(LabelEntry(key, key, 0.0))
+            if expr.var is None or key != expr.var.name:
+                entries.append(LabelEntry(key, key, key))
                 self.symbols.append(key)
 
         self.labelentries = LabelEntries(self.window, ui, entries)
