@@ -66,8 +66,10 @@ class CptMaker:
             cls = Connection
         elif cpt_type == 'E' and kind == 'opamp':
             cls = Opamp
-        else:
+        elif cpt_type in self.cpts:
             cls = self.cpts[cpt_type]
+        else:
+            raise ValueError('Unsupported component ' + cpt_type)
 
         cpt = cls(kind=kind, style=style,
                   name=name, nodes=nodes, opts=opts)
