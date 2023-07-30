@@ -14,6 +14,7 @@ from .opamp import Opamp
 from .opencircuit import OpenCircuit
 from .port import Port
 from .resistor import Resistor
+from .transformer import Transformer
 from .voltage_source import VoltageSource
 from .wire import Wire
 from .vcvs import VCVS
@@ -48,6 +49,7 @@ class CptMaker:
         'Q': BJT,
         'R': Resistor,
         'NR': Resistor,         # Noise free resistor
+        'TF': Transformer,
         'V': VoltageSource,
         'W': Wire,
         'X': Connection,

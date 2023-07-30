@@ -41,6 +41,7 @@ class UIModelBase:
         'o': ('o', 'Open circuit', 'O', ''),
         'opamp': ('', 'Opamp', 'opamp', ''),
         'p': ('p', 'Port', 'P', ''),
+        'tf': ('tf', 'Transformer', 'TF', ''),
         'y': ('y', 'Admittance', 'Y', ''),
         'z': ('z', 'Impedance', 'Z', ''),
         'cpe': ('', 'CPE', 'CPE', ''),

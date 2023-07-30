@@ -13,6 +13,6 @@ If the component is known to Lcapy (see lcapy.schemcpts.py):
 4. Create an SVG file by importing make from makesvg and calling it
    with the component type.
 
-5. Add the new SVG file to git
+5. Add the new SVG file in lcapygui/data/svg/ to git
 
 6. Install lcapy-gui (to copy new SVG file to correct location)
