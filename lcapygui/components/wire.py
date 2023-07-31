@@ -7,10 +7,12 @@ class Wire(BipoleComponent):
     args = ()
     has_value = False
 
-    def draw(self, editor, sketcher, **kwargs):
+    def draw(self, model, **kwargs):
+
+        sketcher = model.ui.sketcher
 
         x1, y1 = self.node1.x, self.node1.y
         x2, y2 = self.node2.x, self.node2.y
 
-        kwargs = self.make_kwargs(editor, **kwargs)
+        kwargs = self.make_kwargs(model, **kwargs)
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)

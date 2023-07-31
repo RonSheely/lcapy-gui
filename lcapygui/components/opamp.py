@@ -94,7 +94,10 @@ class Opamp(Component):
         attr = 'right=%s' % size
         return attr
 
-    def draw(self, editor, sketcher, **kwargs):
+    def draw(self, model, **kwargs):
+
+        sketch = self._sketch_lookup(model)
+        sketcher = model.ui.sketcher
 
         x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
         x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
@@ -105,9 +108,9 @@ class Opamp(Component):
         dy = abs(self.nodes[3].y - self.nodes[2].y)
         size = dy * 5 / 4
 
-        kwargs = self.make_kwargs(editor, **kwargs)
+        kwargs = self.make_kwargs(model, **kwargs)
 
-        sketcher.sketch(self.sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
+        sketcher.sketch(sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
                         **kwargs)
 
     def netitem_nodes(self, node_names):

@@ -15,29 +15,33 @@ class Connection(BipoleComponent):
              '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS',
              '-input': 'Input', '-output': 'Output', '-bidir': 'Bidirectional'}
 
-    def draw(self, editor, sketcher, **kwargs):
+    def draw(self, model, **kwargs):
+
+        sketch = self._sketch_lookup(model)
 
         x1, y1 = self.node1.x, self.node1.y
         x2, y2 = self.node2.x, self.node2.y
 
-        kwargs = self.make_kwargs(editor, **kwargs)
+        kwargs = self.make_kwargs(model, **kwargs)
 
         if self.symbol_kind in ('vcc', 'vdd'):
-            x1, y1, angle = self.split_node_pos(x2, y2, editor.STEP, True)
+            x1, y1, angle = self.split_node_pos(x2, y2, model.STEP, True)
             offset = x1, y1
             angle = angle + 90
         elif self.symbol_kind in ('vee', 'vss'):
-            x2, y2, angle = self.split_node_pos(x1, y1, editor.STEP)
+            x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
             offset = x2, y2
             angle = angle + 90
         elif self.symbol_kind in ('input', ):
-            x2, y2, angle = self.split_node_pos(x1, y1, editor.STEP)
+            x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
             offset = x2, y2
         else:
-            x2, y2, angle = self.split_node_pos(x1, y1, editor.STEP)
+            x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
             offset = x2, y2
 
-        sketcher.sketch(self.sketch, offset=offset,
+        sketcher = model.ui.sketcher
+
+        sketcher.sketch(sketch, offset=offset,
                         angle=angle, snap=False, **kwargs)
 
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)

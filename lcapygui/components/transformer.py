@@ -45,7 +45,10 @@ class Transformer(Component):
         attr = 'right=%s' % size
         return attr
 
-    def draw(self, editor, sketcher, **kwargs):
+    def draw(self, model, **kwargs):
+
+        sketch = self._sketch_lookup(model)
+        sketcher = model.ui.sketcher
 
         x1, y1 = self.nodes[0].pos.x, self.nodes[0].pos.y
         x2, y2 = self.nodes[1].pos.x, self.nodes[1].pos.y
@@ -53,9 +56,9 @@ class Transformer(Component):
         xc = (x1 + x2) / 2
         yc = (y1 + y2) / 2
 
-        kwargs = self.make_kwargs(editor, **kwargs)
+        kwargs = self.make_kwargs(model, **kwargs)
 
-        sketcher.sketch(self.sketch, offset=(xc, yc), angle=0, scale=1,
+        sketcher.sketch(sketch, offset=(xc, yc), angle=0, scale=1,
                         **kwargs)
 
     @property
