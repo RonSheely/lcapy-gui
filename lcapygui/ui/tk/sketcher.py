@@ -115,9 +115,6 @@ class Sketcher:
 
             path = path.transformed(gtransform)
 
-            if False and patches == []:
-                print(path.vertices)
-
             fill = kwargs.pop('fill', fill)
 
             if self.debug:

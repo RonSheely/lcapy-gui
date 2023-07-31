@@ -44,7 +44,7 @@ class Component(ABC):
     label_keys = ('l', 'l_', 'l^')
     annotation_keys = ('a', 'a_', 'a^')
 
-    # These are not passed to the sktecher.
+    # These are not passed to the sketcher.
     ignore_keys = ('left', 'right', 'up', 'down', 'size', 'rotate',
                    'pinnodes', 'pinnames', 'pins', 'pinlabels',
                    'mirrorinputs', 'free', 'ignore', 'nosim', 'arrow',
@@ -195,7 +195,7 @@ class Component(ABC):
 
         return self.nodes
 
-    def draw(self, editor, sketcher, **kwargs):
+    def draw(self, model, sketcher, **kwargs):
         """
         Handles drawing specific features of components.
         """
@@ -211,14 +211,17 @@ class Component(ABC):
 
         r = self.length
         if r == 0:
-            editor.ui.show_warning_dialog(
+            model.ui.show_warning_dialog(
                 'Ignoring zero size component ' + self.name)
             return
+
+        # TODO, lookup based on style
+        sketch = self.sketch
 
         angle = self.angle
 
         # Width in cm
-        w = self.sketch.width / 72 * 2.54
+        w = sketch.width / 72 * 2.54
 
         p1 = array((x1, y1))
         if r != 0:
@@ -228,12 +231,12 @@ class Component(ABC):
             # For zero length wires
             p1p = p1
 
-        kwargs = self.make_kwargs(editor, **kwargs)
+        kwargs = self.make_kwargs(model, **kwargs)
 
         if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
             return
 
-        sketcher.sketch(self.sketch, offset=p1p, angle=angle,
+        sketcher.sketch(sketch, offset=p1p, angle=angle,
                         snap=True, **kwargs)
 
         # Add stretchable wires
@@ -263,18 +266,18 @@ class Component(ABC):
                 p3 = array((x3, y3))
 
                 # Height in cm
-                h = self.sketch.height / 72 * 2.54
+                h = sketch.height / 72 * 2.54
                 dh = array((dx, dy)) / r * (r - h)
                 p3p = p3 + dh
                 sketcher.stroke_line(*p3, *p3p, **kwargs)
 
         # TODO, add label, voltage_label, current_label, flow_label
 
-    def make_kwargs(self, editor, **kwargs):
+    def make_kwargs(self, model, **kwargs):
 
         opts = Opts(self.attrs)
 
-        kwargs['lw'] = kwargs.pop('lw', editor.preferences.lw)
+        kwargs['lw'] = kwargs.pop('lw', model.preferences.lw)
 
         for k, v in opts.items():
             if k in ('bodydiode', ):

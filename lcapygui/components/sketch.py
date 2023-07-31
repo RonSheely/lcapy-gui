@@ -46,7 +46,7 @@ class Sketch:
 
         from lcapygui import __datadir__
 
-        dirname = __datadir__ / 'svg'
+        dirname = __datadir__ / 'svg' / 'american'
         svg_filename = dirname / (sketch_key + '.svg')
 
         if not svg_filename.exists():
