@@ -203,7 +203,7 @@ class UIModelBase:
         if gcpt is None:
             return
 
-        gcpt.draw(self, self.ui.sketcher)
+        gcpt.draw(self)
 
         label_cpts = self.preferences.label_cpts
 

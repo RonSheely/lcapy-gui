@@ -195,10 +195,13 @@ class Component(ABC):
 
         return self.nodes
 
-    def draw(self, model, sketcher, **kwargs):
+    def draw(self, model, **kwargs):
         """
         Handles drawing specific features of components.
         """
+
+        ui = model.ui
+        sketcher = ui.sketcher
 
         # Handle ports where nothing is drawn.
         if self.sketch is None:
@@ -211,7 +214,7 @@ class Component(ABC):
 
         r = self.length
         if r == 0:
-            model.ui.show_warning_dialog(
+            ui.show_warning_dialog(
                 'Ignoring zero size component ' + self.name)
             return
 
