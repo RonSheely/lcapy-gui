@@ -77,29 +77,10 @@ class CptMaker:
                   name=name, nodes=nodes, opts=opts)
         return cpt
 
-    def _add_sketch(self, cpt):
-
-        sketch_key = cpt.sketch_key
-
-        try:
-            sketch = self.sketches[sketch_key]
-        except KeyError:
-            sketch = Sketch.load(cpt.sketch_key)
-            if sketch is None:
-                raise FileNotFoundError(
-                    'Could not find data file for ' + cpt.sketch_key)
-            self.sketches[sketch_key] = sketch
-
-        # TODO: remove duck typing
-        cpt.sketch = sketch
-
     def __call__(self, cpt_type, kind='', style='', name=None,
                  nodes=None, opts=None, add_sketch=True):
 
         cpt = self._make_cpt(cpt_type, kind, style, name, nodes, opts)
-
-        if add_sketch:
-            self._add_sketch(cpt)
 
         return cpt
 
@@ -127,11 +108,6 @@ def cpt_make_from_type(cpt_type, cpt_name='', kind='', style='',
 
     return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style,
                      add_sketch=add_sketch)
-
-
-def cpt_remake(cpt):
-
-    return cpt_maker._add_sketch(cpt)
 
 
 def cpt_sketch_make(cpt):

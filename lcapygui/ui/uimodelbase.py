@@ -2,7 +2,7 @@ from ..annotation import Annotation
 from ..annotations import Annotations
 from .preferences import Preferences
 from ..components.opamp import Opamp
-from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type, cpt_remake
+from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
 
 from copy import copy
 from math import atan2, degrees, sqrt
@@ -334,7 +334,6 @@ class UIModelBase:
         newcpt.opts.add(gcpt.attr_string_update(self.STEP))
 
         newcpt.gcpt = gcpt
-        cpt_remake(newcpt.gcpt)
 
     def cut(self, cpt):
 

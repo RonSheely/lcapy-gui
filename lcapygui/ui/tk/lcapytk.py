@@ -8,7 +8,7 @@ from ..uimodelmph import UIModelMPH
 from .sketcher import Sketcher
 from .drawing import Drawing
 from .menu import MenuBar, MenuDropdown, MenuItem
-from ...sketch_library SketchLibrary
+from ...sketch_library import SketchLibrary
 
 
 class LcapyTk(Tk):
@@ -31,7 +31,7 @@ class LcapyTk(Tk):
         self.version = __version__
         self.model = None
         self.canvas = None
-        self.sketchlib = SketcherLibrary()
+        self.sketchlib = SketchLibrary()
 
         if uimodel_class is None:
             uimodel_class = UIModelMPH

@@ -42,14 +42,18 @@ class Sketch:
         return self.kwargs.get('color', 'black')
 
     @classmethod
-    def load(cls, sketch_key):
+    def load(cls, sketch_key, style='american', complain=True):
 
         from lcapygui import __datadir__
 
-        dirname = __datadir__ / 'svg' / 'american'
+        dirname = __datadir__ / 'svg' / style
         svg_filename = dirname / (sketch_key + '.svg')
 
         if not svg_filename.exists():
+
+            if complain:
+                raise FileNotFoundError('Could not find data file %s for %s' %
+                                        (svg_filename, sketch_key))
             return None
 
         svg = SVGParse(str(svg_filename))

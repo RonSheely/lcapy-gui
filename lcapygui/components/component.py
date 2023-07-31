@@ -202,9 +202,12 @@ class Component(ABC):
 
         ui = model.ui
         sketcher = ui.sketcher
+        style = model.preferences.style
+
+        sketch = ui.sketchlib.lookup(self.sketch_key, style)
 
         # Handle ports where nothing is drawn.
-        if self.sketch is None:
+        if sketch is None:
             return
 
         x1, y1 = self.node1.x, self.node1.y
@@ -217,9 +220,6 @@ class Component(ABC):
             ui.show_warning_dialog(
                 'Ignoring zero size component ' + self.name)
             return
-
-        # TODO, lookup based on style
-        sketch = self.sketch
 
         angle = self.angle
 
