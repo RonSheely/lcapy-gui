@@ -78,7 +78,7 @@ class CptMaker:
         return cpt
 
     def __call__(self, cpt_type, kind='', style='', name=None,
-                 nodes=None, opts=None, add_sketch=True):
+                 nodes=None, opts=None):
 
         cpt = self._make_cpt(cpt_type, kind, style, name, nodes, opts)
 
@@ -103,15 +103,6 @@ def cpt_make_from_cpt(cpt):
                      nodes=cpt.nodes, opts=cpt.opts)
 
 
-def cpt_make_from_type(cpt_type, cpt_name='', kind='', style='',
-                       add_sketch=True):
+def cpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
 
-    return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style,
-                     add_sketch=add_sketch)
-
-
-def cpt_sketch_make(cpt):
-
-    # Could make method of cpt.
-    sketch = Sketch.create(cpt.sketch_key, cpt.sketch_net)
-    return sketch
+    return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style)

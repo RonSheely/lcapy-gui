@@ -69,9 +69,9 @@ class Sketch:
         return sketch
 
     @classmethod
-    def create(cls, sketch_key, sketch_net):
+    def create(cls, sketch_key, sketch_net, style='american'):
 
-        dirname = join('lcapygui', 'data', 'svg')
+        dirname = join('lcapygui', 'data', 'svg', style)
         svg_filename = join(dirname, sketch_key + '.svg')
 
         a = Circuit()
@@ -85,7 +85,7 @@ class Sketch:
         a.add(net)
 
         a.draw(str(svg_filename), label_values=False, label_ids=False,
-               label_nodes=False, draw_nodes=False)
+               label_nodes=False, draw_nodes=False, style=style)
 
     def offsets1(self, sketch_key):
 

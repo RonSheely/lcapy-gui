@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="57.091pt" height="43.897pt" viewBox="0 0 57.091 43.897" version="1.1">
+<defs>
+<clipPath id="clip1">
+  <path d="M 0 6 L 57.089844 6 L 57.089844 43.898438 L 0 43.898438 Z M 0 6 "/>
+</clipPath>
+</defs>
+<g id="surface1">
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 4.761938 31.182375 L 20.160375 31.182375 L 20.160375 16.299563 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 16.652562 16.299563 L 40.039281 16.299563 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 28.347875 16.299563 L 28.347875 31.381594 M 36.531469 16.299563 L 36.531469 31.182375 L 51.933813 31.182375 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 19.961156 12.72925 L 36.730688 12.72925 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;" d="M 28.546875 23.503906 L 26.117188 23.503906 L 28.546875 18.09375 L 30.972656 23.503906 Z M 28.546875 23.503906 "/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 20.160375 12.72925 L 20.160375 1.217531 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 28.347875 31.182375 L 4.961156 31.182375 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 25.797094 40.112063 L 30.898656 36.920656 L 30.898656 43.299563 Z M 25.797094 40.112063 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 25.797094 43.299563 L 25.797094 36.920656 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 14.316625 31.182375 L 14.316625 40.112063 L 25.797094 40.112063 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 14.316625 32.030031 C 13.843969 32.030031 13.465063 31.651125 13.465063 31.182375 C 13.465063 30.713625 13.843969 30.330813 14.316625 30.330813 C 14.785375 30.330813 15.164281 30.713625 15.164281 31.182375 C 15.164281 31.651125 14.785375 32.030031 14.316625 32.030031 Z M 14.316625 32.030031 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 42.379125 31.182375 L 42.379125 40.112063 L 30.898656 40.112063 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<path style="fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 42.379125 32.030031 C 41.910375 32.030031 41.527563 31.651125 41.527563 31.182375 C 41.527563 30.713625 41.910375 30.330813 42.379125 30.330813 C 42.847875 30.330813 43.230688 30.713625 43.230688 31.182375 C 43.230688 31.651125 42.847875 32.030031 42.379125 32.030031 Z M 42.379125 32.030031 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+<g clip-path="url(#clip1)" clip-rule="nonzero">
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 51.734594 31.182375 L 56.695531 31.182375 M 20.160375 1.41675 L 20.125219 -0.00121875 M 4.961156 31.182375 L 0.00021875 31.182375 " transform="matrix(1,0,0,-1,0.199,43.698)"/>
+</g>
+</g>
+</svg>
