@@ -73,7 +73,10 @@ class PreferencesDialog:
         self.model.preferences.voltage_dir = self.labelentries.get(
             'voltage_dir')
         self.model.preferences.grid = self.labelentries.get('grid')
-        self.model.preferences.line_width = self.labelentries.get('line_width')
+        line_width = self.labelentries.get('line_width')
+        if not line_width.endswith('pt') and not line_width.endswith('mm'):
+            line_width += 'pt'
+        self.model.preferences.line_width = line_width
         self.model.preferences.node_size = self.labelentries.get('node_size')
         self.model.preferences.show_units = self.labelentries.get('show_units')
         self.model.preferences.xsize = self.labelentries.get('xsize')
