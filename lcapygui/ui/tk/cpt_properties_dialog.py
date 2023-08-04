@@ -62,6 +62,7 @@ class CptPropertiesDialog:
 
         button = Button(self.window, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
+        self.window.focus()
 
     def on_update(self, arg=None):
 
