@@ -36,8 +36,8 @@ class PreferencesDialog:
                               self.model.preferences.grid,
                               ('on', 'off'),
                               command=self.on_update),
-                   LabelEntry('lw', 'Line width',
-                              self.model.preferences.lw,
+                   LabelEntry('line_width', 'Line width',
+                              self.model.preferences.line_width,
                               command=self.on_update),
                    LabelEntry('node_size', 'Node size',
                               self.model.preferences.node_size,
@@ -73,7 +73,7 @@ class PreferencesDialog:
         self.model.preferences.voltage_dir = self.labelentries.get(
             'voltage_dir')
         self.model.preferences.grid = self.labelentries.get('grid')
-        self.model.preferences.lw = self.labelentries.get('lw')
+        self.model.preferences.line_width = self.labelentries.get('line_width')
         self.model.preferences.node_size = self.labelentries.get('node_size')
         self.model.preferences.show_units = self.labelentries.get('show_units')
         self.model.preferences.xsize = self.labelentries.get('xsize')

@@ -1,13 +1,17 @@
 from pathlib import Path
 import json
+from warnings import warn
 
+circuitikz_default_line_width = '0.3pt'
 
 # Perhaps make a dict?
+
+
 class Preferences:
 
     def __init__(self):
 
-        self.version = 1
+        self.version = 2
         self.label_nodes = 'none'
         self.draw_nodes = 'connections'
         self.label_cpts = 'name'
@@ -15,7 +19,7 @@ class Preferences:
         self.node_size = 0.1
         self.node_color = 'black'
         self.grid = 'on'
-        self.lw = 1.2
+        self.line_width = circuitikz_default_line_width,
         self.show_units = 'false'
         self.xsize = 36
         self.ysize = 22
@@ -43,7 +47,11 @@ class Preferences:
         s = self._filename.read_text()
         d = json.loads(s)
         for k, v in d.items():
-            setattr(self, k, v)
+            if k == 'lw':
+                warn('lw is superseded by line_width')
+                self.line_width = str(float(v) / 4) + 'pt'
+            else:
+                setattr(self, k, v)
 
     def save(self):
 
@@ -63,6 +71,9 @@ class Preferences:
         for opt in opts:
             foo.append(opt + '=' + getattr(self, opt))
         s = ', '.join(foo)
+
+        if self.line_width != circuitikz_default_line_width:
+            s += ', line width=' + self.line_width
 
         if self.label_cpts == 'name':
             s += ', label_ids=true'

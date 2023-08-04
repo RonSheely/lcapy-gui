@@ -281,17 +281,37 @@ class Component(ABC):
 
         # TODO, add label, voltage_label, current_label, flow_label
 
+    def _line_width_to_lw(self, model, line_width):
+        """Return line width as a float for use with matplotlib."""
+
+        # TODO, handle other units?
+        if line_width.endswith('pt'):
+            line_width = float(line_width[0:-2])
+        elif line_width.endswith('mm'):
+            line_width = float(line_width[0:-2]) * 72 / 25.4
+        else:
+            model.ui.show_warning_dialog('Assuming points for line width')
+            line_width = float(line_width)
+        # TODO, remove magic number
+        return line_width * 4
+
     def make_kwargs(self, model, **kwargs):
 
         opts = Opts(self.attrs)
 
-        kwargs['lw'] = kwargs.pop('lw', model.preferences.lw)
+        line_width = model.preferences.line_width
+        lw = self._line_width_to_lw(model, line_width)
+
+        kwargs['lw'] = kwargs.pop('lw', lw)
 
         for k, v in opts.items():
             if k in ('bodydiode', ):
                 continue
             if v == '':
                 v = True
+            if k == 'line width':
+                k = 'lw'
+                v = self._line_width_to_lw(model, v)
             kwargs[k] = v
 
         if kwargs.pop('thick', False):
