@@ -1,4 +1,4 @@
-from tkinter import Tk, Button
+from tkinter import Toplevel, Button
 from .labelentries import LabelEntry, LabelEntries
 
 
@@ -11,7 +11,7 @@ class CptPropertiesDialog:
         self.update = update
         self.ui = ui
 
-        self.window = Tk()
+        self.window = Toplevel()
         self.window.title(title)
 
         entries = []
@@ -63,6 +63,19 @@ class CptPropertiesDialog:
         button = Button(self.window, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
         self.window.focus()
+
+        self.window.protocol('WM_DELETE_WINDOW', self.on_close)
+
+    def focus(self):
+
+        # Put window on top
+        self.window.attributes('-topmost', True)
+        self.window.focus()
+
+    def on_close(self):
+
+        self.ui.dialogs.pop(self.cpt.name)
+        self.window.destroy()
 
     def on_update(self, arg=None):
 
@@ -140,5 +153,4 @@ class CptPropertiesDialog:
     def on_ok(self):
 
         self.on_update()
-
         self.window.destroy()

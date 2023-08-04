@@ -32,6 +32,7 @@ class LcapyTk(Tk):
         self.model = None
         self.canvas = None
         self.sketchlib = SketchLibrary()
+        self.dialogs = {}
 
         if uimodel_class is None:
             uimodel_class = UIModelMPH
@@ -643,8 +644,12 @@ class LcapyTk(Tk):
 
         from .cpt_properties_dialog import CptPropertiesDialog
 
-        self.cpt_properties_dialog = CptPropertiesDialog(self, cpt,
-                                                         on_changed, title)
+        name = cpt.name
+        if name in self.dialogs:
+            self.dialogs[name].focus()
+        else:
+            dialog = CptPropertiesDialog(self, cpt, on_changed, title)
+            self.dialogs[name] = dialog
 
     def show_info_dialog(self, message):
 
