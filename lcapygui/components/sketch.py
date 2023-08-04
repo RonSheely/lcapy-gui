@@ -91,6 +91,8 @@ class Sketch:
 
         if sketch_key == 'opamp':
             return 0, self.height / 2
+        elif sketch_key.startswith('TF'):
+            return -0.5, self.height / 2
 
         # TODO, use sketch_key to help find offset.
 
@@ -146,7 +148,7 @@ class Sketch:
         return xoffset, yoffset
 
     def align(self, sketch_key):
-        """Remove yoffset from component."""
+        """Remove xoffset, yoffset from component."""
 
         xoffset, yoffset = self.offsets(sketch_key)
 

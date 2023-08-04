@@ -7,5 +7,5 @@ class OpenCircuit(BipoleComponent):
     args = ()
     has_value = False
 
-    def draw(self, editor, sketcher, **kwargs):
+    def draw(self, model, **kwargs):
         pass
