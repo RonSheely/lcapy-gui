@@ -50,14 +50,15 @@ class Transformer(Component):
         sketch = self._sketch_lookup(model)
         sketcher = model.ui.sketcher
 
-        x1, y1 = self.nodes[0].pos.x, self.nodes[0].pos.y
-        x2, y2 = self.nodes[1].pos.x, self.nodes[1].pos.y
-
         # TODO: handle rotation
-        size = abs(y1 - y2)
 
-        xc = (x1 + x2) / 2
-        yc = (y1 + y2) / 2
+        x1, y1 = self.nodes[0].pos.x, self.nodes[0].pos.y
+        x4, y4 = self.nodes[3].pos.x, self.nodes[3].pos.y
+
+        size = abs(y1 - y4)
+
+        xc = (x1 + x4) / 2
+        yc = (y1 + y4) / 2
 
         kwargs = self.make_kwargs(model, **kwargs)
 
