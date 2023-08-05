@@ -202,13 +202,21 @@ class UIModelMPH(UIModelBase):
         node = self.closest_node(x, y)
         if node is None:
 
-            snap = self.preferences.snap_grid == 'true'
-            if snap and len(self.cursors) > 0:
-                # Don't snap to grid if other cursor is not on grid
-                if not self.is_on_grid(self.cursors[0].x, self.cursors[0].y):
-                    snap = False
-            if snap:
-                x, y = self.snap_to_grid(x, y)
+            if self.preferences.snap_grid == 'true':
+                if len(self.cursors) > 0:
+                    xc = self.cursors[0].x
+                    yc = self.cursors[0].y
+                    if self.is_close_to(x, xc):
+                        x = xc
+                    else:
+                        x = self.snap_to_grid_x(x)
+                    if self.is_close_to(y, yc):
+                        y = yc
+                    else:
+                        y = self.snap_to_grid_y(y)
+                else:
+                    x, y = self.snap_to_grid(x, y)
+
         else:
             x, y = node.x, node.y
 

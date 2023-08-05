@@ -630,6 +630,10 @@ class UIModelBase:
 
         self.selected = thing
 
+    def is_close_to(self, x, xc):
+
+        return abs(x - xc) < 0.3
+
     def is_on_grid_x(self, x):
 
         xs = self.snap_to_grid_x(x)
