@@ -1,5 +1,7 @@
 from .component import Component
 from numpy import array
+from lcapy.schemmisc import Pos
+
 
 # There is a lot more to do to support transformers.  Tapped
 # transformers have 6 nodes.  The user may want to select the input
@@ -75,13 +77,29 @@ class Transformer(Component):
 
         return self.nodes[3]
 
+    @property
+    def midpoint(self):
+        """
+        Computes the midpoint of the component.
+        """
+
+        x = array([node.x for node in self.nodes])
+        y = array([node.y for node in self.nodes])
+
+        return Pos(x.mean(), y.mean())
+
     def is_within_bbox(self, x, y):
 
         # TODO: handle rotation, see component.py
-        w = self.nodes[0].x - self.nodes[3].x
-        h = self.nodes[0].y - self.nodes[1].y
+        w = abs(self.nodes[2].x - self.nodes[0].x)
+        h = abs(self.nodes[0].y - self.nodes[1].y)
 
-        # TODO: select input or output
+        midpoint = self.midpoint
+
+        x -= midpoint.x
+        y -= midpoint.y
+
+        # TODO: perhaps select input or output pair of nodes
         return x > -w / 2 and x < w / 2 and y > -h / 2 and y < h / 2
 
     @property

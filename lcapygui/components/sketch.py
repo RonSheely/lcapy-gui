@@ -92,7 +92,6 @@ class Sketch:
         if sketch_key == 'opamp':
             return 0, self.height / 2
         elif sketch_key.startswith('TF'):
-            print(self.width, self.height)
             return self.width / 2 - 4.4, self.height / 2
 
         # TODO, use sketch_key to help find offset.
