@@ -501,7 +501,7 @@ class UIModelBase:
 
         # Define node positions
         foo = [str(node) for node in self.circuit.nodes.values()
-               if not isnan(node.pos.x)]
+               if node.pos is not None and not isnan(node.pos.x)]
 
         s += '; nodes={' + ', '.join(foo) + '}' + '\n'
 
