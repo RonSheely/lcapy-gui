@@ -91,6 +91,9 @@ class UIModelMPH(UIModelBase):
 
     def add_cursor(self, x, y):
 
+        # cursors[0] is the positive cursor
+        # cursors[1] is the negative cursor
+
         cursor = Cursor(self.ui, x, y)
 
         if len(self.cursors) == 0:
@@ -195,12 +198,17 @@ class UIModelMPH(UIModelBase):
 
     def on_add_node(self, x, y):
 
-        # Snap to known node then snap to grid.
+        # Snap to closest known node then snap to grid.
         node = self.closest_node(x, y)
         if node is None:
-            if self.preferences.snap_grid == 'true':
-                x, y = self.snap(x, y)
-            # Could be smarter and try to align with nearby node.
+
+            snap = self.preferences.snap_grid == 'true'
+            if snap and len(self.cursors) > 0:
+                # Don't snap to grid if other cursor is not on grid
+                if not self.is_on_grid(self.cursors[0].x, self.cursors[0].y):
+                    snap = False
+            if snap:
+                x, y = self.snap_to_grid(x, y)
         else:
             x, y = node.x, node.y
 

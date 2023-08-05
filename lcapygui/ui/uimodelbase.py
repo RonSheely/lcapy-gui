@@ -414,8 +414,8 @@ class UIModelBase:
             # Centre the schematic.
             xsize = self.ui.canvas.drawing.xsize
             ysize = self.ui.canvas.drawing.ysize
-            offsetx, offsety = self.snap((xsize - width) / 2,
-                                         (ysize - height) / 2)
+            offsetx, offsety = self.snap_to_grid((xsize - width) / 2,
+                                                 (ysize - height) / 2)
             for node in sch.nodes.values():
                 node.pos.x += offsetx
                 node.pos.y += offsety
@@ -630,7 +630,12 @@ class UIModelBase:
 
         self.selected = thing
 
-    def snap(self, x, y):
+    def is_on_grid(self, x, y):
+
+        xs, ys = self.snap_to_grid(x, y)
+        return x == xs and y == ys
+
+    def snap_to_grid(self, x, y):
 
         snap = self.SNAP
         x = (x + 0.5 * snap) // snap * snap
