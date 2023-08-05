@@ -11,13 +11,14 @@ from lcapy.schemmisc import Pos
 class Transformer(Component):
 
     type = "TF"
-    sketch_net = 'TF 1 2 3 4'
-    default_kind = 'TF'
+    default_kind = ''
 
-    kinds = {'TF': 'Default',
-             'TFcore': 'With core',
-             'TFtap': 'Center tapped',
-             'TFtapcore': 'Center tapped with core'}
+    kinds = {'': 'Default',
+             'core': 'With core',
+             # The taps require extra nodes...
+             #   'tap': 'Center tapped',
+             #   'tapcore': 'Center tapped with core'
+             }
 
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
@@ -104,7 +105,7 @@ class Transformer(Component):
     @property
     def sketch_net(self):
 
-        return self.kind + ' 1 2 3 4'
+        return 'TF 1 2 3 4 ' + self.kind
 
     @property
     def label_position(self):
