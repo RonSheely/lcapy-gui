@@ -292,8 +292,8 @@ class Component(ABC):
         else:
             model.ui.show_warning_dialog('Assuming points for line width')
             line_width = float(line_width)
-        # TODO, remove magic number
-        return line_width * 4
+
+        return line_width * model.preferences.line_width_scale
 
     def make_kwargs(self, model, **kwargs):
 

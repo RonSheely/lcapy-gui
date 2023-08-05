@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 from warnings import warn
 
-circuitikz_default_line_width = '0.3pt'
+circuitikz_default_line_width = '0.4pt'
 
 # Perhaps make a dict?
 
@@ -25,6 +25,7 @@ class Preferences:
         self.ysize = 22
         self.snap_grid = 'true'
         self.voltage_dir = 'RP'
+        self.line_width_scale = 3
 
         self.load()
 
@@ -47,11 +48,12 @@ class Preferences:
         s = self._filename.read_text()
         d = json.loads(s)
         for k, v in d.items():
-            if k == 'lw':
-                warn('lw is superseded by line_width')
-                self.line_width = str(float(v) / 4) + 'pt'
-            else:
-                setattr(self, k, v)
+            setattr(self, k, v)
+
+        if hasattr(self, 'lw'):
+            warn('lw is superseded by line_width')
+            self.line_width = str(float(v) / self.line_width_scale) + 'pt'
+            delattr(self, 'lw')
 
     def save(self):
 
