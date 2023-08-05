@@ -247,10 +247,6 @@ class LcapyTk(Tk):
         graph.draw()
         graph.get_tk_widget().pack(fill='both', expand=True)
 
-        toolbar = NavigationToolbar2Tk(graph, canvas, pack_toolbar=False)
-        toolbar.update()
-        toolbar.pack(side=BOTTOM, fill=X)
-
         drawing = Drawing(self, fig, model, self.debug)
         canvas.drawing = drawing
         canvas.tab = tab
@@ -259,6 +255,14 @@ class LcapyTk(Tk):
         tab.canvas = canvas
 
         self.canvases.append(canvas)
+
+        # Display x, y position of cursor
+        drawing.ax.format_coord = lambda x, y: "x:{0:.1f}, y:{1:.1f}".format(
+            x, y)
+
+        toolbar = NavigationToolbar2Tk(graph, canvas, pack_toolbar=False)
+        toolbar.update()
+        toolbar.pack(side=BOTTOM, fill=X)
 
         self.notebook.select(len(self.canvases) - 1)
 
