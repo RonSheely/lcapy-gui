@@ -89,7 +89,7 @@ class Opamp(Component):
 
         # TODO: Handle rotation
         dy = abs(y2 - y1)
-        size = dy * 5 / 4
+        size = dy / 2
 
         attr = 'right=%s' % size
         return attr
