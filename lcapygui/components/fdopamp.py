@@ -2,6 +2,9 @@ from .component import Component
 from numpy import array, sqrt
 from numpy.linalg import norm
 
+# Grrr, why is this different in size to an opamp in Circutikz?
+# It has a length of 2.2 compared to 2 for an opamp.
+
 
 def point_in_triangle(x, y, x0, y0, x1, y1, x2, y2):
 
@@ -111,7 +114,7 @@ class FDOpamp(Component):
 
         # TODO: Handle rotation
         dy = abs(y2 - y1)
-        size = dy * 5 / 4
+        size = dy / 2
 
         attr = 'right=%s' % size
         return attr

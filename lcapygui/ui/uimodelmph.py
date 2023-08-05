@@ -203,6 +203,8 @@ class UIModelMPH(UIModelBase):
         if node is None:
 
             if self.preferences.snap_grid == 'true':
+                import pdb
+                pdb.set_trace()
                 if len(self.cursors) > 0:
                     xc = self.cursors[0].x
                     yc = self.cursors[0].y
