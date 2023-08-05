@@ -8,40 +8,40 @@ class HelpDialog:
 
 <h1>Editing</h1>
 
-Click on the grid to place a red positive cursor then click elsewhere
+<p>Click on the grid to place a red positive cursor then click elsewhere
 to place a blue negative cursor.  Then enter c for a capacitor, i for
 a current source, l for an inductor, r for a resistor, v for a voltage
-source, etc.  Alternatively, use the Components menu.
+source, etc.  Alternatively, use the Components menu.</p>
 
-By default, the cursors snap to the grid and align with the other
+<p>By default, the cursors snap to the grid and align with the other
 cursor.  The escape key removes both the positive and negative
-cursors.  ctrl+t exchanges the cursors.
+cursors.  ctrl+t exchanges the cursors.</p>
 
-The attributes of a component (name, value, etc.) can be edited by
+<p>The attributes of a component (name, value, etc.) can be edited by
 right clicking on a component.  Note, voltage and current sources
 default to DC.  Select kind as step for transient analysis or specify
-the value as a time domain function.
+the value as a time domain function.</p>
 
-The attributes of a node can be edited by right clicking on a
-node.  This is useful for defining a ground node.
+<p>The attributes of a node can be edited by right clicking on a
+node.  This is useful for defining a ground node.</p>
 
 <h1>Analysis</h1>
 
-Select a component and use Inspect (ctrl+i) to find the voltage across
+<p>Select a component and use Inspect (ctrl+i) to find the voltage across
 a component or the current through a component.  Note the polarity is
-defined by the red (plus) and blue (minus) highlighted cursors.
+defined by the red (plus) and blue (minus) highlighted cursors.</p>
 
-Note, voltage and current sources default to DC.  This can be changed
+<p>Note, voltage and current sources default to DC.  This can be changed
 by right clicking on the source and selecting `DC`, `AC`, `step`, or
 `arbitrary`.  With `arbitrary`, the value can be an arbitrary
 time-domain expression, for example, `4 * H(t) + 2`, where `H(t)` is
-the Heaviside step.
+the Heaviside step.</p>
 
 <h1>Documentation</h1>
 
-For further information about Lcapy, see
+<p>For further information about Lcapy, see
  <a href="https://lcapy-gui.readthedocs.io"> https://lcapy-gui.readthedocs.io </a>
-and  <a href="https://lcapy.readthedocs.io"> https://lcapy.readthedocs.io </a>
+and  <a href="https://lcapy.readthedocs.io"> https://lcapy.readthedocs.io </a> </p>
 """
 
     def __init__(self):
