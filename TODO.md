@@ -45,13 +45,9 @@ attributes unless clever
 
 20. Fix transistor menagerie if base/gate offset
 
-21. Add transfer function dialog (transimpedance, transadmittance)
-
 22. Add voltage, current, and flow labels
 
 23. Add generic labels
-
-24. American/European symbol options (use separate dirs of svgs)
 
 25. Use suffixes for component values (u, p, M, etc)
 
@@ -59,15 +55,11 @@ attributes unless clever
 
 27. Fix circuitikz image creation to use node positions
 
-28. Add variable kind for R, C, L, etc.
-
 29. Fix invert for opamp
 
 30. Add label position modifiers
 
 31. Add U components
-
-32. Add fdopamp; perhaps add opamp, fdopamp to vcvs as kinds?
 
 33. Check if opamp has node 0 as output reference and warn if have no
     other node 0.
