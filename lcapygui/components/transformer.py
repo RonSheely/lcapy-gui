@@ -13,6 +13,8 @@ class Transformer(Component):
     type = "TF"
     sketch_net = 'TF 1 2 3 4'
     default_kind = 'TF'
+    # TODO: probably need a yoffset
+    label_offset = -0.2
 
     kinds = {'TF': 'Default',
              'TFcore': 'With core',
