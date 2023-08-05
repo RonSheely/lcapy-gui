@@ -64,7 +64,7 @@ class FDOpamp(Component):
 
         # TODO: handle rotation
 
-        xo = (x2 + x1) / 2 + r * 5 / 2
+        xo = (x2 + x1) / 2 + r * 2.1
         yo = (y2 + y1) / 2
 
         xop = xo
