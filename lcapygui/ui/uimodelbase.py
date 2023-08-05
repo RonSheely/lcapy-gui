@@ -630,17 +630,35 @@ class UIModelBase:
 
         self.selected = thing
 
+    def is_on_grid_x(self, x):
+
+        xs = self.snap_to_grid_x(x)
+        return x == xs
+
+    def is_on_grid_y(self, y):
+
+        ys = self.snap_to_grid_y(y)
+        return y == ys
+
     def is_on_grid(self, x, y):
 
-        xs, ys = self.snap_to_grid(x, y)
-        return x == xs and y == ys
+        return self.is_on_grid_x(x) and self.is_on_grid_y(y)
 
-    def snap_to_grid(self, x, y):
+    def snap_to_grid_x(self, x):
 
         snap = self.SNAP
         x = (x + 0.5 * snap) // snap * snap
+        return x
+
+    def snap_to_grid_y(self, y):
+
+        snap = self.SNAP
         y = (y + 0.5 * snap) // snap * snap
-        return x, y
+        return y
+
+    def snap_to_grid(self, x, y):
+
+        return self.snap_to_grid_x(x), self.snap_to_grid_y(y)
 
     def unselect(self):
         pass
