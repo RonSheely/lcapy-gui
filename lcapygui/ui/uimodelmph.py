@@ -72,6 +72,7 @@ class UIModelMPH(UIModelBase):
             'ctrl+o': self.on_load,
             'ctrl+s': self.on_save,
             'alt+s': self.on_save_as,
+            'ctrl+t': self.on_exchange_cursors,
             'ctrl+u': self.on_view,
             'ctrl+v': self.on_paste,
             'ctrl+w': self.on_quit,
@@ -203,8 +204,7 @@ class UIModelMPH(UIModelBase):
         if node is None:
 
             if self.preferences.snap_grid == 'true':
-                import pdb
-                pdb.set_trace()
+
                 if len(self.cursors) > 0:
                     xc = self.cursors[0].x
                     yc = self.cursors[0].y
@@ -380,6 +380,10 @@ class UIModelMPH(UIModelBase):
 
         self.ui.show_message_dialog(self.circuit.description(),
                                     title='Description')
+
+    def on_exchange_cursors(self):
+
+        self.exchange_cursors()
 
     def on_expand(self):
 
@@ -701,6 +705,17 @@ class UIModelMPH(UIModelBase):
         remove(schtex_filename)
 
         self.ui.show_message_dialog(content)
+
+    def exchange_cursors(self):
+
+        if len(self.cursors) < 2:
+            return
+        self.cursors[0], self.cursors[1] = self.cursors[1], self.cursors[0]
+        self.cursors[0].remove()
+        self.cursors[1].remove()
+        self.cursors[0].draw('red')
+        self.cursors[1].draw('blue')
+        self.ui.refresh()
 
     def unselect(self):
 

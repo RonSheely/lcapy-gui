@@ -8,11 +8,14 @@ class HelpDialog:
 
 <h1>Editing</h1>
 
-Click on the grid to place a red positive node then click elsewhere
-to place a blue negative node.  Then enter c for a capacitor, i for
+Click on the grid to place a red positive cursor then click elsewhere
+to place a blue negative cursor.  Then enter c for a capacitor, i for
 a current source, l for an inductor, r for a resistor, v for a voltage
-source, etc.  Alternatively, use the Components menu.  The escape key
-will remove both the positive and negative nodes.
+source, etc.  Alternatively, use the Components menu.
+
+By default, the cursors snap to the grid and align with the other
+cursor.  The escape key removes both the positive and negative
+cursors.  ctrl+t exchanges the cursors.
 
 The attributes of a component (name, value, etc.) can be edited by
 right clicking on a component.  Note, voltage and current sources
@@ -26,7 +29,7 @@ node.  This is useful for defining a ground node.
 
 Select a component and use Inspect (ctrl+i) to find the voltage across
 a component or the current through a component.  Note the polarity is
-defined by the red (plus) and blue (minus) highlighted nodes.
+defined by the red (plus) and blue (minus) highlighted cursors.
 
 Note, voltage and current sources default to DC.  This can be changed
 by right clicking on the source and selecting `DC`, `AC`, `step`, or
