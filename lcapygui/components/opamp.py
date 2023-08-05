@@ -97,7 +97,6 @@ class Opamp(Component):
     def draw(self, model, **kwargs):
 
         sketch = self._sketch_lookup(model)
-        sketcher = model.ui.sketcher
 
         x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
         x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
@@ -110,8 +109,8 @@ class Opamp(Component):
 
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketcher.sketch(sketch, offset=(xc, yc), angle=0, scale=size / 2.5,
-                        **kwargs)
+        sketch.draw(model, offset=(xc, yc), angle=0, scale=size / 2.5,
+                    **kwargs)
 
     def netitem_nodes(self, node_names):
 

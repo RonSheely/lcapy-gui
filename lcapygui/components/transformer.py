@@ -52,7 +52,6 @@ class Transformer(Component):
     def draw(self, model, **kwargs):
 
         sketch = self._sketch_lookup(model)
-        sketcher = model.ui.sketcher
 
         # TODO: handle rotation
 
@@ -66,8 +65,8 @@ class Transformer(Component):
 
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketcher.sketch(sketch, offset=(xc, yc), angle=0,
-                        scale=size / model.STEP, **kwargs)
+        sketch.draw(model, offset=(xc, yc), angle=0,
+                    scale=size / model.STEP, **kwargs)
 
     @property
     def node1(self):

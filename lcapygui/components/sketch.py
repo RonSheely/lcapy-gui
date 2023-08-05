@@ -161,3 +161,9 @@ class Sketch:
                 Affine2D().translate(-xoffset, -yoffset)))
 
         return self.__class__(paths, self.width, self.height, **self.kwargs)
+
+    def draw(self, model, offset=(0, 0), scale=1, angle=0, **kwargs):
+
+        sketcher = model.ui.sketcher
+
+        return sketcher.sketch(self, offset, scale, angle, **kwargs)

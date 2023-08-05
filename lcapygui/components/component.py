@@ -209,7 +209,6 @@ class Component(ABC):
         """
 
         sketch = self._sketch_lookup(model)
-        sketcher = model.ui.sketcher
 
         # Handle ports where nothing is drawn.
         if sketch is None:
@@ -244,8 +243,8 @@ class Component(ABC):
         if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
             return
 
-        sketcher.sketch(sketch, offset=p1p, angle=angle,
-                        snap=True, **kwargs)
+        sketch.draw(model, offset=p1p, angle=angle,
+                    snap=True, **kwargs)
 
         # Add stretchable wires
         if self.can_stretch:
@@ -257,6 +256,7 @@ class Component(ABC):
             kwargs.pop('mirror', False)
             kwargs.pop('invert', False)
 
+            sketcher = model.ui.sketcher
             sketcher.stroke_line(*p1, *p1p, **kwargs)
             sketcher.stroke_line(*p2p, *p2, **kwargs)
 
