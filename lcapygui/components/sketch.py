@@ -89,7 +89,7 @@ class Sketch:
 
     def offsets1(self, sketch_key):
 
-        if sketch_key == 'opamp':
+        if sketch_key in ('opamp', 'fdopamp'):
             return 0, self.height / 2
         elif sketch_key.startswith('TF'):
             return self.width / 2 - 4.2, self.height / 2

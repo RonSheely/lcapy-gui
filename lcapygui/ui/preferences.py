@@ -25,6 +25,7 @@ class Preferences:
         self.ysize = 22
         self.snap_grid = 'true'
         self.voltage_dir = 'RP'
+        # This is the scaling used to set the matplotlib lw argument
         self.line_width_scale = 3
 
         self.load()

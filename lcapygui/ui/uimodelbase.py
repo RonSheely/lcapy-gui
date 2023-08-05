@@ -33,6 +33,7 @@ class UIModelBase:
         'z': ('z', 'Impedance', 'Z', ''),
         'l': ('l', 'Inductor', 'L', ''),
         'opamp': ('', 'Opamp', 'opamp', ''),
+        'fdopamp': ('', 'Opamp (fully differential)', 'fdopamp', ''),
         'o': ('o', 'Open circuit', 'O', ''),
         'p': ('p', 'Port', 'P', ''),
         'r': ('r', 'Resistor', 'R', ''),
@@ -128,7 +129,7 @@ class UIModelBase:
 
     def choose_cpt_name(self, cpt_type):
 
-        if cpt_type == 'opamp':
+        if cpt_type in ('opamp', 'fdopamp'):
             cpt_type = 'E'
 
         num = 1
@@ -296,7 +297,7 @@ class UIModelBase:
 
         gcpt = cpt.gcpt
 
-        if cpt.is_dependent_source and gcpt.type != 'Eopamp':
+        if cpt.is_dependent_source and gcpt.type not in ('Eopamp', 'Efdopamp'):
             try:
                 newcpt = cpt._change_control(gcpt.control)
             except Exception:
@@ -305,7 +306,7 @@ class UIModelBase:
                 return
         elif gcpt.cpt_kind == cpt._kind:
             newcpt = cpt
-        elif gcpt.type != 'Eopamp':
+        elif gcpt.type not in ('Eopamp', 'Efdopamp'):
             try:
                 newcpt = cpt._change_kind(gcpt.cpt_kind)
             except Exception:
@@ -324,6 +325,8 @@ class UIModelBase:
         if gcpt.mirror ^ ('mirror' in newcpt.opts):
             # TODO, add mirror method...
             if gcpt.type == 'Eopamp':
+                newcpt.nodes[2], newcpt.nodes[3] = newcpt.nodes[3], newcpt.nodes[2]
+            elif gcpt.type == 'Efdopamp':
                 newcpt.nodes[2], newcpt.nodes[3] = newcpt.nodes[3], newcpt.nodes[2]
             elif gcpt.type in ('J', 'M', 'Q'):
                 newcpt.nodes[2], newcpt.nodes[0] = newcpt.nodes[0], newcpt.nodes[2]
