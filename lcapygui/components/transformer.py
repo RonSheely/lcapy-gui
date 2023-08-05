@@ -13,9 +13,6 @@ class Transformer(Component):
     type = "TF"
     sketch_net = 'TF 1 2 3 4'
     default_kind = 'TF'
-    # TODO: probably need a yoffset
-    # -0.2 is the centre
-    label_offset = 1
 
     kinds = {'TF': 'Default',
              'TFcore': 'With core',
@@ -108,3 +105,20 @@ class Transformer(Component):
     def sketch_net(self):
 
         return self.kind + ' 1 2 3 4'
+
+    @property
+    def label_position(self):
+        """
+        Returns position where to place label.
+        """
+
+        # -0.2 is the centre for length == 1.
+
+        pos = self.midpoint
+        w = self.label_offset * self.length
+        if self.vertical:
+            pos.x += w
+        else:
+            pos.y += w
+
+        return pos

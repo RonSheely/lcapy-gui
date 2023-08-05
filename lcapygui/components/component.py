@@ -337,14 +337,14 @@ class Component(ABC):
     @property
     def length(self) -> float:
         """
-        Computes the length of the component.
+        Returns the length of the component.
         """
         return (self.node2.pos - self.node1.pos).norm()
 
     @property
     def midpoint(self):
         """
-        Computes the midpoint of the component.
+        Returns the midpoint of the component.
         """
 
         return (self.node1.pos + self.node2.pos) * 0.5
