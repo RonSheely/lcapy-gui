@@ -63,3 +63,9 @@ attributes unless clever
 
 33. Check if opamp has node 0 as output reference and warn if have no
     other node 0.
+
+34. Add mutual inductance (could associate with a transformer but
+    would need to output two inductors and a mutual inductance; this
+    will be hard to interpret).  Probably need to modify TF in Lcapy
+    to have arguments for the two self-inductances and the coupling
+    coefficient.
