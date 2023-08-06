@@ -1,6 +1,6 @@
 # Created by lcapy-tk V0.6.dev0
 ; nodes={1@(15, 11), 0@(0, 0), 4@(10, 10), 3@(10, 12), 5@(7, 12), 6@(10, 14), 7@(15, 14), 9@(17, 8), 8@(17, 11), 10@(10, 8), 11@(7, 8)}
-E1 1 0 opamp 4 3 E1 0 0; right=2.5, mirror
+E1 1 0 opamp 4 3 E1 0 0; right, mirror
 R1 3 5; left=1.5
 W1 3 6; up
 R2 6 7; right=2.5
