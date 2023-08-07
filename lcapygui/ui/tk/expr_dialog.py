@@ -140,7 +140,7 @@ class ExprDialog(Window):
         self.expr_label.pack(fill=BOTH, expand=True)
 
         self.minsize(550, 100)
-
+        self.focus()
         self.update()
 
     def update(self):
