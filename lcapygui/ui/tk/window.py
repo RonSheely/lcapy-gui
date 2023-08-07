@@ -7,10 +7,12 @@ class Window(Toplevel):
     def __init__(self, ui, name, title):
 
         super(Window, self).__init__()
+
         self.ui = ui
         self.name = name
         self.title(title)
-        self.debug = True
+        self.report_callback_exception = ui.report_callback_exception
+        self.debug = False
 
     def add_menu(self, menudropdowns):
 

@@ -4,6 +4,7 @@ from .exprimage import ExprImage
 from lcapy import Expr, ExprTuple, Matrix
 from PIL import Image, ImageTk
 from tkinter import Tk, Button, Label, Frame, BOTH, X
+from .window import Window
 
 
 def make_python(expr):
@@ -31,17 +32,15 @@ def make_python(expr):
     return s
 
 
-class ExprDialog(Tk):
+class ExprDialog(Window):
 
     def __init__(self, expr, ui, title=''):
 
-        super().__init__()
+        super(ExprDialog, self).__init__(ui, None, title)
 
-        self.report_callback_exception = ui.report_callback_exception
         self.expr = expr
         self.ui = ui
         self.titlestr = title
-        self.title(title)
 
         mdd = None
         if isinstance(expr, Matrix):
@@ -132,8 +131,7 @@ class ExprDialog(Tk):
                           ]),
         ]
 
-        self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self)
+        self.add_menu(menudropdowns)
 
         png_filename = ExprImage(expr).image()
         image = Image.open(png_filename)
