@@ -3,8 +3,9 @@ from tkinter import Tk, StringVar, Label, Entry, Button
 
 class NodePropertiesDialog:
 
-    def __init__(self, node, update=None, title=''):
+    def __init__(self, ui, node, update=None, title=''):
 
+        self.ui = ui
         self.node = node
         self.update = update
 
@@ -25,6 +26,17 @@ class NodePropertiesDialog:
 
         button = Button(self.window, text="OK", command=self.on_update)
         button.grid(row=row)
+
+    def focus(self):
+
+        # Put window on top
+        self.window.attributes('-topmost', True)
+        self.window.focus()
+
+    def on_close(self):
+
+        self.ui.dialogs.pop(self.cpt.name)
+        self.window.destroy()
 
     def on_update(self):
 

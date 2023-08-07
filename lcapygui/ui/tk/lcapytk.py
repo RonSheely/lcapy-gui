@@ -695,8 +695,12 @@ class LcapyTk(Tk):
 
         from .node_properties_dialog import NodePropertiesDialog
 
-        self.node_properties_dialog = NodePropertiesDialog(node,
-                                                           on_changed, title)
+        name = node.name
+        if name in self.dialogs:
+            self.dialogs[name].focus()
+        else:
+            dialog = NodePropertiesDialog(self, node, on_changed, title)
+            self.dialogs[name] = dialog
 
     def show_plot_properties_dialog(self, expr):
 
