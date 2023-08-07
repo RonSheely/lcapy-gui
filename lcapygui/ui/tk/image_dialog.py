@@ -1,15 +1,13 @@
-from tkinter import Tk, Button, Label, Frame, BOTH, X
+from tkinter import Button, Label, Frame, BOTH, X
 from PIL import Image, ImageTk
+from .window import Window
 
 
-class ImageDialog(Tk):
+class ImageDialog(Window):
 
     def __init__(self, ui, filename, title=''):
 
-        super().__init__()
-
-        self.report_callback_exception = ui.report_callback_exception
-        self.title(title)
+        super().__init__(ui, None, title)
 
         image = Image.open(filename)
 

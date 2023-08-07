@@ -1,16 +1,16 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
-class PreferencesDialog:
+class PreferencesDialog(Window):
 
     def __init__(self, ui, update):
 
+        super().__init__(ui, None, 'Preferences')
+
         self.model = ui.model
         self.update = update
-
-        self.window = Tk()
-        self.window.title('Preferences')
 
         entries = [LabelEntry('label_nodes', 'Node labels',
                               self.model.preferences.label_nodes,
@@ -58,9 +58,9 @@ class PreferencesDialog:
                               command=self.on_update),
                    ]
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="OK", command=self.on_ok)
+        button = Button(self, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
 
     def on_update(self, arg=None):
@@ -94,6 +94,6 @@ class PreferencesDialog:
 
         self.on_update()
 
-        self.window.destroy()
-
         self.model.preferences.save()
+
+        self.on_close()

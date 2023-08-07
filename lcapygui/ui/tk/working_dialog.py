@@ -1,15 +1,14 @@
-from tkinter import Tk
 from tkinter.messagebox import showinfo
+from .window import Window
 
 
-class WorkingDialog:
+class WorkingDialog(Window):
 
     def __init__(self, message, title=''):
 
         if False:
             # Need to make this non-modal
-            self.window = Tk()
-            self.window.title(title)
+            super().__init__(None, None, title)
 
             showinfo('', message)
 
@@ -18,4 +17,4 @@ class WorkingDialog:
     def destroy(self):
 
         if False:
-            self.window.destroy()
+            self.on_close()

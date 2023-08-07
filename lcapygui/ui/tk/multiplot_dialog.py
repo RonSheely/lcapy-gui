@@ -1,4 +1,5 @@
-from tkinter import Tk, StringVar, Label, Entry, Button
+from tkinter import StringVar, Label, Entry, Button
+from .window import Window
 
 # Perhaps add subplots, each of a specific domain with specified
 # min and max x and y values.
@@ -20,13 +21,11 @@ from tkinter import Tk, StringVar, Label, Entry, Button
 # Expression  row  col  xmin  xmax  ymin  ymax colour style
 
 
-class MultiplotDialog:
+class MultiplotDialog(Window):
 
     def __init__(self, ui):
 
-        self.ui = ui
-
-        self.window = Tk()
+        super().__init__(ui, None, '')
 
         circuit = ui.model.circuit
 
@@ -47,9 +46,9 @@ class MultiplotDialog:
 
         # R1  voltage  domain
 
-        button = Button(self.window, text="OK", command=self.on_update)
+        button = Button(self, text="OK", command=self.on_update)
         button.grid(row=row)
 
     def on_update(self):
 
-        self.window.destroy()
+        self.on_close()

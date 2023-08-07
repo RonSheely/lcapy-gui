@@ -3,7 +3,7 @@ from .expr_calc import ExprCalc
 from .exprimage import ExprImage
 from lcapy import Expr, ExprTuple, Matrix
 from PIL import Image, ImageTk
-from tkinter import Tk, Button, Label, Frame, BOTH, X
+from tkinter import Button, Label, Frame, BOTH, X
 from .window import Window
 
 
@@ -39,7 +39,6 @@ class ExprDialog(Window):
         super(ExprDialog, self).__init__(ui, None, title)
 
         self.expr = expr
-        self.ui = ui
         self.titlestr = title
 
         mdd = None

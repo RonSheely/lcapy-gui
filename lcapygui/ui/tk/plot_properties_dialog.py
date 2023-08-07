@@ -1,17 +1,16 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
 class PlotPropertiesDialog:
 
     def __init__(self, expr, ui):
 
-        self.expr = expr
-        self.ui = ui
+        super().__init__(ui, None, 'Plot properties')
 
-        self.window = Tk()
-        self.window.title('Plot properties')
+        self.expr = expr
 
         entries = [LabelEntry('min', 'Min', 0.0),
                    LabelEntry('max', 'Max', 1.0),
@@ -34,9 +33,9 @@ class PlotPropertiesDialog:
                 kinds.append(key)
 
         entries.append(LabelEntry('kind', 'Plot type', 'Plot', kinds))
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="Plot", command=self.on_update)
+        button = Button(self, text="Plot", command=self.on_update)
         button.grid(row=self.labelentries.row)
 
     def on_update(self):

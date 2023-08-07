@@ -1,7 +1,8 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
 from .menu import MenuBar, MenuDropdown, MenuItem
+from .window import Window
 
 # Perhaps iterate over components and annotate values;
 # value, v0, phi, omega etc.
@@ -25,13 +26,12 @@ def undefined_symbols(cct):
     return symbols
 
 
-class EditValuesDialog:
+class EditValuesDialog(Window):
 
     def __init__(self, ui, title='Component values'):
 
-        self.ui = ui
-        self.window = Tk()
-        self.window.title(title)
+        super(EditValuesDialog, self).__init__(ui, None, title)
+
         self.circuit = ui.model.circuit
         try:
             self.symbols = self.circuit.undefined_symbols
@@ -43,22 +43,19 @@ class EditValuesDialog:
                          [MenuItem('Load', self.on_load),
                           ])]
 
-        self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self.window)
+        self.add_menu(menudropdowns)
 
         entries = []
         for key in self.symbols:
             entries.append(LabelEntry(key, key, ''))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="OK",
+        button = Button(self, text="OK",
                         command=self.on_update)
         button.grid(row=self.labelentries.row)
 
     def on_update(self):
-
-        self.window.destroy()
 
         defs = {}
         for key in self.symbols:
@@ -70,10 +67,9 @@ class EditValuesDialog:
         cct = self.circuit.subs(defs)
 
         self.ui.model.on_show_new_circuit(cct)
+        self.on_close()
 
     def on_load(self, arg):
-
-        self.window.destroy()
 
         pathname = self.ui.open_file_dialog(doc='Definitions', ext='.csv')
 

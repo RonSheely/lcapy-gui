@@ -1,6 +1,7 @@
-from tkinter import Tk, Entry, Button, Text, BOTH, END
+from tkinter import Entry, Button, Text, BOTH, END
 from lcapy import expr
 from re import sub
+from .window import Window
 
 global_dict = {}
 exec('from lcapy import *', global_dict)
@@ -24,15 +25,13 @@ def exec_function(expr):
     return result
 
 
-class PythonDialog:
+class PythonDialog(Window):
 
     def __init__(self, expr, ui):
 
-        self.expr = expr
-        self.ui = ui
+        super().__init__(ui, None, 'Expression editor')
 
-        self.window = Tk()
-        self.window.title('Expression editor')
+        self.expr = expr
 
         symbols = self.expr.symbols
 
@@ -51,11 +50,11 @@ class PythonDialog:
 
         s += repr(self.expr)
 
-        self.text = Text(self.window)
+        self.text = Text(self)
         self.text.pack(fill=BOTH, expand=1)
         self.text.insert(END, s)
 
-        button = Button(self.window, text='Show', command=self.on_show)
+        button = Button(self, text='Show', command=self.on_show)
         button.pack()
 
     def on_show(self):
@@ -65,7 +64,7 @@ class PythonDialog:
         try:
             expr = exec_function(expr_str)
             self.ui.show_expr_dialog(expr)
-            self.window.destroy()
+            self.on_close()
 
         except Exception as e:
             self.ui.show_error_dialog('Cannot evaluate expression')

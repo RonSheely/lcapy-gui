@@ -1,15 +1,15 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
 class TwoportDialog:
 
     def __init__(self, ui, cpt, kind):
 
-        self.ui = ui
+        super().__init__(ui, None, 'Twoport')
+
         self.kind = kind
-        self.window = Tk()
-        self.window.title('Twoport')
 
         entries = []
 
@@ -25,12 +25,12 @@ class TwoportDialog:
         entries.append(LabelEntry('output', 'Output',
                                   names[-1], names))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="Create", command=self.on_create)
+        button = Button(self, text="Create", command=self.on_create)
         button.grid(row=self.labelentries.row)
 
-        self.window.minsize(200, 50)
+        self.minsize(200, 50)
 
     def on_create(self):
 

@@ -1,17 +1,16 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
-class LimitDialog:
+class LimitDialog(Window):
 
     def __init__(self, expr, ui, title='Limit'):
 
-        self.expr = expr
-        self.ui = ui
+        super().__init__(ui, None, title)
 
-        self.window = Tk()
-        self.window.title(title)
+        self.expr = expr
 
         symbols = list(expr.symbols)
         if len(symbols) == 0:
@@ -26,14 +25,12 @@ class LimitDialog:
         entries.append(LabelEntry('dir', 'Direction',
                                   '+', ('+', '-')))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="OK", command=self.on_ok)
+        button = Button(self, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
 
     def on_ok(self):
-
-        self.window.destroy()
 
         symbol = self.labelentries.get('symbol')
         limit = self.labelentries.get('limit')
@@ -41,3 +38,5 @@ class LimitDialog:
 
         expr = self.expr.limit(symbol, limit, dir)
         self.ui.show_expr_dialog(expr)
+
+        self.on_close()

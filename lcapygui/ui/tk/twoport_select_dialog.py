@@ -1,15 +1,15 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
-class TwoportSelectDialog:
+class TwoportSelectDialog(Window):
 
     def __init__(self, ui, TP, model):
 
-        self.ui = ui
+        super().__init__(ui, None, 'Twoport')
+
         self.TP = TP
-        self.window = Tk()
-        self.window.title('Twoport')
 
         models = ('A', 'B', 'G', 'H', 'S', 'T', 'Y', 'Z')
         elements = ('matrix', '11', '12', '21', '22')
@@ -20,9 +20,9 @@ class TwoportSelectDialog:
         entries.append(LabelEntry('element', 'Twoport element',
                                   elements[0], elements))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="Show", command=self.on_show)
+        button = Button(self, text="Show", command=self.on_show)
         button.grid(row=self.labelentries.row)
 
     def on_show(self):

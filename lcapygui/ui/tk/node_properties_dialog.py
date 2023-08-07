@@ -1,4 +1,4 @@
-from tkinter import Tk, StringVar, Label, Entry, Button
+from tkinter import StringVar, Label, Entry, Button
 from .window import Window
 
 

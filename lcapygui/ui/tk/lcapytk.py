@@ -606,7 +606,7 @@ class LcapyTk(Tk):
 
         from .edit_dialog import EditDialog
 
-        self.edit_dialog = EditDialog(expr, self)
+        self.edit_dialog = EditDialog(self, expr)
 
     def show_edit_values_dialog(self):
 
@@ -654,7 +654,7 @@ class LcapyTk(Tk):
 
         from .inspect_dialog import InspectDialog
 
-        self.inspect_dialog = InspectDialog(self.model, cpt, title)
+        self.inspect_dialog = InspectDialog(self, cpt, title)
 
     def inspect_properties_dialog(self, cpt, on_changed=None, title=''):
 

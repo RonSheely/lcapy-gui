@@ -1,16 +1,14 @@
-from tkinter import Tk
 from .menu import MenuBar, MenuDropdown, MenuItem
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
-class StateSpaceDialog(Tk):
+class StateSpaceDialog(Window):
 
     def __init__(self, ui, ss):
 
-        super().__init__()
+        super().__init__(ui, None, 'State space')
 
-        self.ui = ui
-        self.title('State space')
         self.ss = ss
         self.kindmap = {'State equations': 'state_equations',
                         'Output equations': 'output_equations',
@@ -47,8 +45,7 @@ class StateSpaceDialog(Tk):
                          [MenuItem('Discretize', self.on_discretize)
                           ])]
 
-        self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self)
+        self.add_menu(menudropdowns)
 
         self.minsize(200, 20)
 

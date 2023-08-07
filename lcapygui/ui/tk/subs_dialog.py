@@ -1,17 +1,16 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
-class SubsDialog:
+class SubsDialog(Window):
 
     def __init__(self, expr, ui, title='Substitution'):
 
-        self.expr = expr
-        self.ui = ui
+        super().__init__(ui, None, title)
 
-        self.window = Tk()
-        self.window.title(title)
+        self.expr = expr
 
         entries = []
 
@@ -22,15 +21,13 @@ class SubsDialog:
                 entries.append(LabelEntry(key, key, key))
                 self.symbols.append(key)
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="Subs",
+        button = Button(self, text="Subs",
                         command=self.on_update)
         button.grid(row=self.labelentries.row)
 
     def on_update(self):
-
-        self.window.destroy()
 
         defs = {}
         for key in self.symbols:
@@ -43,3 +40,5 @@ class SubsDialog:
 
         expr = self.expr.subs(defs)
         self.ui.show_expr_dialog(expr)
+
+        self.on_close()

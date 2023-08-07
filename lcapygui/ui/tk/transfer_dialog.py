@@ -1,14 +1,13 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
-class TransferFunctionDialog:
+class TransferFunctionDialog(Window):
 
     def __init__(self, ui):
 
-        self.ui = ui
-        self.window = Tk()
-        self.window.title('Transfer function')
+        super().__init__(ui, None, 'Transfer function')
 
         entries = []
 
@@ -20,9 +19,9 @@ class TransferFunctionDialog:
         entries.append(LabelEntry('output', 'Output',
                                   names[0], names))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(window, ui, entries)
 
-        button = Button(self.window, text="OK", command=self.on_ok)
+        button = Button(self, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
 
     def on_ok(self):
@@ -32,4 +31,4 @@ class TransferFunctionDialog:
 
         print(input_cpt, output_cpt)
 
-        self.window.destroy()
+        self.on_close()

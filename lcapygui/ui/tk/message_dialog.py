@@ -1,14 +1,14 @@
-from tkinter import Tk, Text, END
+from tkinter import Text, END
+from .window import Window
 
 
-class MessageDialog:
+class MessageDialog(Window):
 
     def __init__(self, message, title=''):
 
-        self.window = Tk()
-        self.window.title(title)
+        super().__init__(None, None, title)
 
-        text = Text(self.window)
+        text = Text(self)
         text.pack()
 
         text.insert(END, message)

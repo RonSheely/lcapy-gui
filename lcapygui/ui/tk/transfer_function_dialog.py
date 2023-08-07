@@ -1,14 +1,13 @@
-from tkinter import Tk, Button
+from tkinter import Button
 from .labelentries import LabelEntry, LabelEntries
+from .window import Window
 
 
 class TransferFunctionDialog:
 
     def __init__(self, ui, cpt):
 
-        self.ui = ui
-        self.window = Tk()
-        self.window.title('Transfer function')
+        super().__init__(ui, None, 'Transfer function')
 
         entries = []
 
@@ -29,9 +28,9 @@ class TransferFunctionDialog:
                                    'Transimpedance',
                                    'Transadmittance']))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="Show", command=self.on_show)
+        button = Button(self, text="Show", command=self.on_show)
         button.grid(row=self.labelentries.row)
 
     def on_show(self):

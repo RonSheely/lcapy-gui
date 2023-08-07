@@ -11,7 +11,9 @@ class Window(Toplevel):
         self.ui = ui
         self.name = name
         self.title(title)
-        self.report_callback_exception = ui.report_callback_exception
+
+        if ui is not None:
+            self.report_callback_exception = ui.report_callback_exception
         self.debug = False
 
     def add_menu(self, menudropdowns):
@@ -35,4 +37,5 @@ class Window(Toplevel):
             print('on close')
 
         self.destroy()
-        self.ui.dialogs.pop(self.name, None)
+        if self.ui is not None:
+            self.ui.dialogs.pop(self.name, None)

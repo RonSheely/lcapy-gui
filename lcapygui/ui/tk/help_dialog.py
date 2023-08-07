@@ -1,8 +1,8 @@
-from tkinter import Tk
 from tkhtmlview import HTMLLabel
+from .window import Window
 
 
-class HelpDialog:
+class HelpDialog(Window):
 
     message = r"""
 
@@ -46,8 +46,8 @@ and  <a href="https://lcapy.readthedocs.io"> https://lcapy.readthedocs.io </a> <
 
     def __init__(self):
 
-        window = Tk()
-        window.title('Help!')
-        html_label = HTMLLabel(window, html=self.message)
+        super(HelpDialog, self).__init__(None, None, 'Help!')
+
+        html_label = HTMLLabel(self, html=self.message)
         html_label.pack(fill="both", expand=True)
         html_label.fit_height()
