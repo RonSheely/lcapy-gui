@@ -1,19 +1,18 @@
 from tkinter import Toplevel, Button
 from .labelentries import LabelEntry, LabelEntries
-from .menu import MenuBar, MenuDropdown, MenuItem
+from .menu import MenuDropdown, MenuItem
+from .window import Window
 
 
-class CptPropertiesDialog:
+class CptPropertiesDialog(Window):
 
     def __init__(self, ui, cpt, update=None, title=''):
+
+        super(CptPropertiesDialog, self).__init__(ui, cpt.name, title)
 
         self.cpt = cpt
         self.gcpt = cpt.gcpt
         self.update = update
-        self.ui = ui
-
-        self.window = Toplevel()
-        self.window.title(title)
 
         entries = []
         if self.gcpt.kinds != {}:
@@ -59,13 +58,13 @@ class CptPropertiesDialog:
             entries.append(LabelEntry(k, v, getattr(self.gcpt, k),
                                       command=self.on_update))
 
-        self.labelentries = LabelEntries(self.window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
-        button = Button(self.window, text="OK", command=self.on_ok)
+        button = Button(self, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)
-        self.window.focus()
+        self.focus()
 
-        self.window.protocol('WM_DELETE_WINDOW', self.on_close)
+        self.protocol('WM_DELETE_WINDOW', self.on_close)
 
         # TODO, need to select the component for the callbacks
         menudropdowns = [
@@ -73,20 +72,7 @@ class CptPropertiesDialog:
                          [MenuItem('Voltage', self.on_inspect_voltage),
                           MenuItem('Current', self.on_inspect_current)
                           ])]
-        self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self.window)
-
-    def focus(self):
-
-        self.window.focus()
-
-        # Put window on top
-        self.window.attributes('-topmost', True)
-
-    def on_close(self):
-
-        self.ui.dialogs.pop(self.cpt.name)
-        self.window.destroy()
+        self.add_menu(menudropdowns)
 
     def on_update(self, arg=None):
 
@@ -164,7 +150,7 @@ class CptPropertiesDialog:
     def on_ok(self):
 
         self.on_update()
-        self.window.destroy()
+        self.on_close()
 
     def on_inspect_current(self, *args):
 
