@@ -14,6 +14,9 @@ class Window(Toplevel):
 
         if ui is not None:
             self.report_callback_exception = ui.report_callback_exception
+
+        self.protocol('WM_DELETE_WINDOW', self.on_close)
+
         self.debug = False
 
     def add_menu(self, menudropdowns):

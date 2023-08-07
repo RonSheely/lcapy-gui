@@ -64,8 +64,6 @@ class CptPropertiesDialog(Window):
         button.grid(row=self.labelentries.row)
         self.focus()
 
-        self.protocol('WM_DELETE_WINDOW', self.on_close)
-
         # TODO, need to select the component for the callbacks
         menudropdowns = [
             MenuDropdown('Inspect', 0,
