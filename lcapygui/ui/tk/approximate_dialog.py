@@ -18,7 +18,7 @@ class ApproximateDialog(Window):
         for key in expr.symbols:
             # Ignore domain variable
             if expr.var is None or key != expr.var.name:
-                entries.append(LabelEntry(key, key, 0.0))
+                entries.append(LabelEntry(key, key, key))
                 self.symbols.append(key)
 
         self.labelentries = LabelEntries(self, ui, entries)
