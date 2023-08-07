@@ -29,9 +29,10 @@ class NodePropertiesDialog:
 
     def focus(self):
 
+        self.window.focus()
+
         # Put window on top
         self.window.attributes('-topmost', True)
-        self.window.focus()
 
     def on_close(self):
 

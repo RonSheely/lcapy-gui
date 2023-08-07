@@ -419,13 +419,15 @@ class UIModelMPH(UIModelBase):
         self.ui.show_inspect_dialog(self.selected,
                                     title=self.selected.name)
 
-    def on_inspect_current(self):
+    def on_inspect_current(self, cpt=None):
 
-        if not self.selected or not self.cpt_selected:
-            return
+        if cpt is None:
+            if not self.selected or not self.cpt_selected:
+                return
+            cpt = self.selected
 
         win = self.ui.show_working_dialog('Calculating voltage')
-        self.inspect_current(self.selected)
+        self.inspect_current(cpt)
         win.destroy()
 
     def on_inspect_noise_current(self):
@@ -460,13 +462,15 @@ class UIModelMPH(UIModelBase):
 
         self.inspect_thevenin_impedance(self.selected)
 
-    def on_inspect_voltage(self):
+    def on_inspect_voltage(self, cpt=None):
 
-        if not self.selected or not self.cpt_selected:
-            return
+        if cpt is None:
+            if not self.selected or not self.cpt_selected:
+                return
+            cpt = self.selected
 
         win = self.ui.show_working_dialog('Calculating voltage')
-        self.inspect_voltage(self.selected)
+        self.inspect_voltage(cpt)
         win.destroy()
 
     def on_laplace_model(self):

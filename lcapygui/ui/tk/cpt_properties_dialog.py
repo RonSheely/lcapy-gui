@@ -1,5 +1,6 @@
 from tkinter import Toplevel, Button
 from .labelentries import LabelEntry, LabelEntries
+from .menu import MenuBar, MenuDropdown, MenuItem
 
 
 class CptPropertiesDialog:
@@ -66,11 +67,21 @@ class CptPropertiesDialog:
 
         self.window.protocol('WM_DELETE_WINDOW', self.on_close)
 
+        # TODO, need to select the component for the callbacks
+        menudropdowns = [
+            MenuDropdown('Inspect', 0,
+                         [MenuItem('Voltage', self.on_inspect_voltage),
+                          MenuItem('Current', self.on_inspect_current)
+                          ])]
+        self.menubar = MenuBar(menudropdowns)
+        self.menubar.make(self.window)
+
     def focus(self):
+
+        self.window.focus()
 
         # Put window on top
         self.window.attributes('-topmost', True)
-        self.window.focus()
 
     def on_close(self):
 
@@ -154,3 +165,11 @@ class CptPropertiesDialog:
 
         self.on_update()
         self.window.destroy()
+
+    def on_inspect_current(self, *args):
+
+        self.ui.model.on_inspect_current(self.cpt)
+
+    def on_inspect_voltage(self, *args):
+
+        self.ui.model.on_inspect_voltage(self.cpt)
