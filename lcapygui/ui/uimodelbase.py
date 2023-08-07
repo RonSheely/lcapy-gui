@@ -593,6 +593,24 @@ class UIModelBase:
         except (AttributeError, ValueError, RuntimeError) as e:
             self.exception(e)
 
+    def inspect_noise_current(self, cpt):
+
+        try:
+            self.last_expr = self.analysis_circuit[cpt.name].V.n
+            self.ui.show_expr_dialog(self.last_expr,
+                                     '%s noise current' % cpt.name)
+        except (AttributeError, ValueError, RuntimeError) as e:
+            self.exception(e)
+
+    def inspect_noise_voltage(self, cpt):
+
+        try:
+            self.last_expr = self.analysis_circuit[cpt.name].V.n
+            self.ui.show_expr_dialog(self.last_expr,
+                                     '%s noise voltage' % cpt.name)
+        except (AttributeError, ValueError, RuntimeError) as e:
+            self.exception(e)
+
     def inspect_norton_admittance(self, cpt):
 
         try:

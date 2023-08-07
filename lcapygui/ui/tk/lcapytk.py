@@ -153,7 +153,11 @@ class LcapyTk(Tk):
                              MenuItem('Thevenin impedance',
                                       self.on_inspect_thevenin_impedance),
                              MenuItem('Norton admittance',
-                                      self.on_inspect_norton_admittance)
+                                      self.on_inspect_norton_admittance),
+                             MenuItem('Noise voltage',
+                                      self.on_inspect_noise_voltage),
+                             MenuItem('Noise current',
+                                      self.on_inspect_noise_current),
                          ]),
             component_menu_dropdown,
             connection_menu_dropdown,
@@ -451,6 +455,14 @@ class LcapyTk(Tk):
     def on_inspect_current(self, *args):
 
         self.model.on_inspect_current()
+
+    def on_inspect_noise_current(self, *args):
+
+        self.model.on_inspect_noise_current()
+
+    def on_inspect_noise_voltage(self, *args):
+
+        self.model.on_inspect_noise_voltage()
 
     def on_inspect_norton_admittance(self, *args):
 

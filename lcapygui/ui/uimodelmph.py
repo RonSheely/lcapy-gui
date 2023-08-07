@@ -428,6 +428,24 @@ class UIModelMPH(UIModelBase):
         self.inspect_current(self.selected)
         win.destroy()
 
+    def on_inspect_noise_current(self):
+
+        if not self.selected or not self.cpt_selected:
+            return
+
+        win = self.ui.show_working_dialog('Calculating noise current')
+        self.inspect_noise_current(self.selected)
+        win.destroy()
+
+    def on_inspect_noise_voltage(self):
+
+        if not self.selected or not self.cpt_selected:
+            return
+
+        win = self.ui.show_working_dialog('Calculating noise voltage')
+        self.inspect_noise_voltage(self.selected)
+        win.destroy()
+
     def on_inspect_norton_admittance(self):
 
         if not self.selected or not self.cpt_selected:
