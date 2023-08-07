@@ -7,7 +7,7 @@ R2 6 7; right=2.5
 W2 7 1; down=1.5
 W4 9 0; down=0, sground
 W3 1 8; right
-P1 8 9; down=1.5
+P1 8 9; down=1.5. v=V_o
 W5 10 4; up
 W6 10 0; down=0, sground
 V1 5 11; down=2
