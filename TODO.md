@@ -69,3 +69,5 @@ attributes unless clever
     will be hard to interpret).  Probably need to modify TF in Lcapy
     to have arguments for the two self-inductances and the coupling
     coefficient.
+
+35. Add scale

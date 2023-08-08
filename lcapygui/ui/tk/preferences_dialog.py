@@ -39,6 +39,9 @@ class PreferencesDialog(Window):
                    LabelEntry('line_width', 'Line width',
                               self.model.preferences.line_width,
                               command=self.on_update),
+                   LabelEntry('scale', 'Scale',
+                              self.model.preferences.scale,
+                              command=self.on_update),
                    LabelEntry('node_size', 'Node size',
                               self.model.preferences.node_size,
                               command=self.on_update),
@@ -77,6 +80,7 @@ class PreferencesDialog(Window):
         if not line_width.endswith('pt') and not line_width.endswith('mm'):
             line_width += 'pt'
         self.model.preferences.line_width = line_width
+        self.model.preferences.scale = self.labelentries.get('scale')
         self.model.preferences.node_size = self.labelentries.get('node_size')
         self.model.preferences.show_units = self.labelentries.get('show_units')
         self.model.preferences.xsize = self.labelentries.get('xsize')

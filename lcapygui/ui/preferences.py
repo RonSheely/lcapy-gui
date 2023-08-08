@@ -3,6 +3,7 @@ import json
 from warnings import warn
 
 circuitikz_default_line_width = '0.4pt'
+circuitikz_default_scale = 1.0
 
 # Perhaps make a dict?
 
@@ -11,7 +12,7 @@ class Preferences:
 
     def __init__(self):
 
-        self.version = 2
+        self.version = 3
         self.label_nodes = 'none'
         self.draw_nodes = 'connections'
         self.label_cpts = 'name'
@@ -20,6 +21,7 @@ class Preferences:
         self.node_color = 'black'
         self.grid = 'on'
         self.line_width = circuitikz_default_line_width,
+        self.scale = circuitikz_default_scale
         self.show_units = 'false'
         self.xsize = 36
         self.ysize = 22
@@ -56,6 +58,9 @@ class Preferences:
             self.line_width = str(float(v) / self.line_width_scale) + 'pt'
             delattr(self, 'lw')
 
+        if not hasattr(self, 'scale'):
+            self.scale = circuitikz_default_scale
+
     def save(self):
 
         dirname = self._dirname
@@ -77,6 +82,8 @@ class Preferences:
 
         if self.line_width != circuitikz_default_line_width:
             s += ', line width=' + self.line_width
+        if self.scale != circuitikz_default_scale:
+            s += ', scale=%.2f' % self.scale
 
         if self.label_cpts == 'name':
             s += ', label_ids=true'
