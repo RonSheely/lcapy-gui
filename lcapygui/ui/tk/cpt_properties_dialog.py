@@ -156,6 +156,8 @@ class CptPropertiesDialog(Window):
 
     def on_ok(self):
 
+        # In case user does not hit enter
+        self.on_update()
         self.on_close()
 
     def on_inspect_current(self, *args):
