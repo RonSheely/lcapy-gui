@@ -336,6 +336,7 @@ class UIModelBase:
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string_update(self.STEP))
 
+        # gcpt.update(None, cpt.opts)
         newcpt.gcpt = gcpt
 
     def cut(self, cpt):

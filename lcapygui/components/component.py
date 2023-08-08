@@ -15,7 +15,7 @@ class Component(ABC):
 
     """
     Describes an lcapy-gui component.
-    This is an abstract class, specific components are derived from here.
+    This is an abstract class, specific components are derived from this.
     """
 
     args = ('Value', )
@@ -26,12 +26,15 @@ class Component(ABC):
     default_style = ''
     label_offset = 0.6
     angle_offset = 0
+    # Common fields used for all components
     fields = {'label': 'Label',
               'voltage_label': 'Voltage label',
               'current_label': 'Current label',
               'flow_label': 'Flow label',
               'color': 'Color',
+              'scale': 'Scale',
               'attrs': 'Attributes'}
+    # Extra fields such as `mirror`, `invert` as used by opamps and transistors
     extra_fields = {}
     has_value = True
 
@@ -50,9 +53,6 @@ class Component(ABC):
                    'mirrorinputs', 'free', 'ignore', 'nosim', 'arrow',
                    'startarrow', 'endarrow', 'bus', 'anchor', 'fixed')
 
-    all_keys = voltage_keys + current_keys + flow_keys + \
-        label_keys + annotation_keys + ignore_keys
-
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.
 
@@ -60,6 +60,10 @@ class Component(ABC):
 
         if nodes is None:
             nodes = []
+        # opts are the Lcapy drawing attributes such as `right`, `color=blue`.
+        # opts is None if the component has been created by the user
+        # otherwise it is an Opts object created when the component is
+        # loaded from a file.
         if opts is None:
             opts = Opts()
         else:
@@ -76,7 +80,9 @@ class Component(ABC):
         self.current_label = ''
         self.flow_label = ''
         self.color = ''
-        self.scale = 1
+        self.scale = '1'
+
+        print(opts)
 
         self.mirror = False
         self.invert = False
@@ -91,11 +97,15 @@ class Component(ABC):
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
 
+        # Parse the opts and set the component attributes
+
+        # Set mirror and invert attributes
         for k, v in self.extra_fields.items():
             if k in opts:
                 opts.remove(k)
                 setattr(self, k, True)
 
+        # Remove opts that we don't care about or cannot deal with
         opts = self.filter_opts(opts)
 
         parts = []
@@ -103,25 +113,31 @@ class Component(ABC):
             if k in ('color', 'colour'):
                 self.color = v
             elif k == 'scale':
-                try:
-                    self.scale = float(v)
-                except:
-                    self.scale = 1.0
-            elif k == 'mirror':
-                self.mirror = True
-            elif k == 'invert':
-                self.invert = True
+                self.scale = v
             elif k == 'kind':
                 self.kind += '-' + v
             elif k == 'style':
                 self.style = v
-            elif k in self.all_keys:
+            elif k in self.voltage_keys:
+                self.voltage_label = v
+            elif k in self.current_keys:
+                self.current_label = v
+            elif k in self.flow_keys:
+                self.flow_label = v
+            elif k in self.label_keys:
+                self.label = v
+            elif k in self.annotation_keys:
+                pass
+            elif k in self.ignore_keys:
                 pass
             else:
                 if v == '':
                     parts.append(k)
                 else:
                     parts.append(k + '=' + v)
+
+        # attrs is a catch-all for the user-defined attributes that
+        # we don't care about.
         self.attrs = ', '.join(parts)
 
     def filter_opts(self, opts):
@@ -227,23 +243,28 @@ class Component(ABC):
 
         angle = self.angle
 
-        # Width in cm
-        w = sketch.width / 72 * 2.54
-
-        p1 = array((x1, y1))
-        if r != 0:
-            dw = array((dx, dy)) / r * (r - w) / 2
-            p1p = p1 + dw
-        else:
-            # For zero length wires
-            p1p = p1
-
         kwargs = self.make_kwargs(model, **kwargs)
 
         if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
             return
 
-        sketch.draw(model, offset=p1p, angle=angle,
+        # Width in cm
+        w = sketch.width / 72 * 2.54
+
+        scale = float(self.scale)
+        if scale > r / w:
+            scale = r / w
+
+        p1 = array((x1, y1))
+        if r != 0:
+            dw = array((dx, dy)) / r * (r - w * scale) / 2
+            p1p = p1 + dw
+        else:
+            # For zero length wires
+            dw = array((0, 0))
+            p1p = p1
+
+        sketch.draw(model, offset=p1p, angle=angle, scale=scale,
                     snap=True, **kwargs)
 
         # Add stretchable wires
@@ -331,9 +352,6 @@ class Component(ABC):
 
         if kwargs.pop('dotted', False):
             kwargs['linestyle'] = ':'
-
-        if kwargs.pop('scale', False):
-            print('Ignoring scale')
 
         return kwargs
 
@@ -431,9 +449,12 @@ class Component(ABC):
         return attr
 
     def attr_string(self, x1, y1, x2, y2, step=1):
+        """Return Lcapy attribute string such as `right, color=blue`"""
 
         attr = self.attr_dir_string(x1, y1, x2, y2, step)
 
+        if self.scale != '1':
+            attr += ', scale=' + self.scale
         if self.color != '':
             attr += ', color=' + self.color
         # TODO, add cunning way of specifing modifiers, e.g., v^, i<
@@ -508,6 +529,7 @@ class Component(ABC):
         return (self.cpt_kind, )
 
     def netitem(self, node_names, x1, y1, x2, y2, step=1):
+        """Create Lcapy netlist item such as `R1 1 2; right, color=blue`"""
 
         parts = [self.name]
         parts.extend(self.netitem_nodes(node_names))
@@ -522,10 +544,18 @@ class Component(ABC):
         return netitem
 
     def update(self, opts=None, nodes=None):
+        """This is called after a component is created to update
+        the nodes and opts."""
 
+        # Defining the nodes on component creation is gnarly and
+        # requires the node positions to be passed as arguments.
         if nodes is not None:
             self.nodes = nodes
 
+        # This updates the opts such as `right` that cannot be
+        # determined until the node positions are defined.   However,
+        # the opts attribute is only used by connection.py and probably
+        # should be removed to avoid confusion.
         if opts is not None:
             self.opts = opts
 
