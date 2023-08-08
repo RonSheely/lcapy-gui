@@ -386,7 +386,11 @@ class LcapyTk(Tk):
         # Each class needs to hook into this.
         from tkinter.messagebox import showerror
 
-        showerror("Error", message=str(val))
+        if self.debug:
+            import pdb
+            pdb.set_trace()
+
+        showerror('Error', message=str(val))
 
     def on_exception(self, *args):
 
