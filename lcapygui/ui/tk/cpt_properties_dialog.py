@@ -68,9 +68,14 @@ class CptPropertiesDialog(Window):
         menudropdowns = [
             MenuDropdown('Inspect', 0,
                          [MenuItem('Voltage', self.on_inspect_voltage),
-                          MenuItem('Current', self.on_inspect_current)
+                          MenuItem('Current', self.on_inspect_current),
+                          MenuItem('Noise voltage',
+                                   self.on_inspect_noise_voltage),
+                          MenuItem('Noise current',
+                                   self.on_inspect_noise_current)
                           ])]
         self.add_menu(menudropdowns)
+        self.focus()
 
     def on_update(self, arg=None):
 
@@ -147,7 +152,6 @@ class CptPropertiesDialog(Window):
 
     def on_ok(self):
 
-        self.on_update()
         self.on_close()
 
     def on_inspect_current(self, *args):
@@ -157,3 +161,11 @@ class CptPropertiesDialog(Window):
     def on_inspect_voltage(self, *args):
 
         self.ui.model.on_inspect_voltage(self.cpt)
+
+    def on_inspect_noise_current(self, *args):
+
+        self.ui.model.on_inspect_noise_current(self.cpt)
+
+    def on_inspect_noise_voltage(self, *args):
+
+        self.ui.model.on_inspect_noise_voltage(self.cpt)
