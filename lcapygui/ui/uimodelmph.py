@@ -448,19 +448,26 @@ class UIModelMPH(UIModelBase):
         self.inspect_noise_voltage(self.selected)
         win.destroy()
 
-    def on_inspect_norton_admittance(self):
+    def on_inspect_norton_admittance(self, cpt=None):
+
+        if cpt is None:
+            if not self.selected or not self.cpt_selected:
+                return
+            cpt = self.selected
 
         if not self.selected or not self.cpt_selected:
             return
 
-        self.inspect_norton_admittance(self.selected)
+        self.inspect_norton_admittance(cpt)
 
-    def on_inspect_thevenin_impedance(self):
+    def on_inspect_thevenin_impedance(self, cpt=None):
 
-        if not self.selected or not self.cpt_selected:
-            return
+        if cpt is None:
+            if not self.selected or not self.cpt_selected:
+                return
+            cpt = self.selected
 
-        self.inspect_thevenin_impedance(self.selected)
+        self.inspect_thevenin_impedance(cpt)
 
     def on_inspect_voltage(self, cpt=None):
 

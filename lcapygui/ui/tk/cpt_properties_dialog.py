@@ -69,6 +69,10 @@ class CptPropertiesDialog(Window):
             MenuDropdown('Inspect', 0,
                          [MenuItem('Voltage', self.on_inspect_voltage),
                           MenuItem('Current', self.on_inspect_current),
+                          MenuItem('Thevenin impedance',
+                                   self.on_inspect_thevenin_impedance),
+                          MenuItem('Norton admittance',
+                                   self.on_inspect_norton_admittance),
                           MenuItem('Noise voltage',
                                    self.on_inspect_noise_voltage),
                           MenuItem('Noise current',
@@ -157,6 +161,14 @@ class CptPropertiesDialog(Window):
     def on_inspect_current(self, *args):
 
         self.ui.model.on_inspect_current(self.cpt)
+
+    def on_inspect_norton_admittance(self, *args):
+
+        self.ui.model.on_inspect_norton_admittance(self.cpt)
+
+    def on_inspect_thevenin_impedance(self, *args):
+
+        self.ui.model.on_inspect_thevenin_impedance(self.cpt)
 
     def on_inspect_voltage(self, *args):
 
