@@ -332,6 +332,9 @@ class Component(ABC):
         if kwargs.pop('dotted', False):
             kwargs['linestyle'] = ':'
 
+        if kwargs.pop('scale', False):
+            print('Ignoring scale')
+
         return kwargs
 
     @property
