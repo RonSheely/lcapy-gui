@@ -334,9 +334,9 @@ class UIModelBase:
                 print('Trying to change mirror for ' + str(newcpt))
 
         newcpt.opts.clear()
-        newcpt.opts.add(gcpt.attr_string_update(self.STEP))
+        newcpt.opts.add(gcpt.attr_string(gcpt.node1.x, gcpt.node1.y,
+                                         gcpt.node2.x, gcpt.node2.y, self.STEP))
 
-        # gcpt.update(None, cpt.opts)
         newcpt.gcpt = gcpt
 
     def cut(self, cpt):

@@ -82,8 +82,6 @@ class Component(ABC):
         self.color = ''
         self.scale = '1'
 
-        print(opts)
-
         self.mirror = False
         self.invert = False
 
@@ -484,11 +482,6 @@ class Component(ABC):
             attr += ', style=' + self.style
 
         return attr
-
-    def attr_string_update(self, step=1):
-
-        return self.attr_string(self.node1.x, self.node1.y,
-                                self.node2.x, self.node2.y, step=step)
 
     def is_within_bbox(self, x, y):
 
