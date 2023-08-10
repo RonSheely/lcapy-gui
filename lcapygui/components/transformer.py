@@ -28,7 +28,7 @@ class Transformer(Component):
 
         # TODO: handle rotation
         dy = y1 - y2
-        dx = 0.5 * dy
+        dx = dy * 1.3 / 2
         x3 = x1 + dx
         y3 = y1
         x4 = x2 + dx
@@ -38,6 +38,7 @@ class Transformer(Component):
                            (x4, y4),
                            (x1, y1),
                            (x2, y2)))
+
         return positions
 
     def attr_dir_string(self, x1, y1, x2, y2, step=1):
