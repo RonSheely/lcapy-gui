@@ -47,9 +47,18 @@ class Connection(BipoleComponent):
 
     def split_node_pos(self, x, y, step=1, flip=False):
 
+        # TODO, generate opts as needed.
+        # attr = self.attr_string(
+        # self.node1.x, self.node1.y, self.node2.x, self.node2.y, step)
+        #
+        # from lcapy.opts import Opts
+        # opts = Opts(attr)
+
+        opts = self.opts
+
         def get_value(direction):
 
-            val = self.opts[direction]
+            val = opts[direction]
             if val == '':
                 value = 1
             else:
@@ -61,21 +70,21 @@ class Connection(BipoleComponent):
 
         # TODO fix if positive node unknown, say for vdd, vcc.
 
-        if 'down' in self.opts:
+        if 'down' in opts:
             angle = -90
             y -= get_value('down') * scale
-        elif 'up' in self.opts:
+        elif 'up' in opts:
             angle = 90
             y += get_value('up') * scale
-        elif 'right' in self.opts:
+        elif 'right' in opts:
             angle = 0
             x += get_value('right') * scale
-        elif 'left' in self.opts:
+        elif 'left' in opts:
             angle = 180
             x -= get_value('left') * scale
-        elif 'angle' in self.opts:
+        elif 'angle' in opts:
             angle = get_value('angle')
-            if 'size' in self.opts:
+            if 'size' in opts:
                 size = get_value('size')
             else:
                 size = 1
