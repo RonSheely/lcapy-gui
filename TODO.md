@@ -68,6 +68,11 @@ attributes unless clever
     would need to output two inductors and a mutual inductance; this
     will be hard to interpret).  Probably need to modify TF in Lcapy
     to have arguments for the two self-inductances and the coupling
-    coefficient.
+    coefficient.  In the interim, have a coupling dialog (edit/couplings)
+    that specifies the couplings, e.g., `L1 L2 1`.
 
-35. Add scale
+35. Select connections
+
+36. Remove opts field from components
+
+37. Better labels for transformers (show turns ratio)
