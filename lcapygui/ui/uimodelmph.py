@@ -558,9 +558,9 @@ class UIModelMPH(UIModelBase):
 
         # Perhaps allow multiple cpts to be selected at once for dragging?
 
-        cpt = self.selected
-        if not cpt:
+        if not self.selected or not self.cpt_selected:
             return
+        cpt = self.selected
 
         if not self.dragged:
             self.dragged = True

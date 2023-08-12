@@ -774,9 +774,9 @@ class UIModelBase:
 
             self.select(cpt)
             self.on_redraw()
-        elif event.code == 'D':
+        elif event.code == 'A':
             self.cpt_delete(cpt)
         else:
-            raise RuntimeError('Unknown event code')
+            raise RuntimeError('Unknown event code ' + event.code)
 
         self.invalidate()
