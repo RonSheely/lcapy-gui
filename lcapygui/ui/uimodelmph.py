@@ -553,6 +553,30 @@ class UIModelMPH(UIModelBase):
         eqns = la.mesh_equations()
         self.ui.show_equations_dialog(eqns, 'Mesh equations')
 
+    def on_mouse_drag(self, x, y):
+
+        # Perhaps allow multiple cpts to be selected at once for dragging?
+
+        cpt = self.selected
+        if not cpt:
+            return
+
+        if not self.dragged:
+            self.dragged = True
+            self.history.append((cpt, 'A'))
+
+        x0, y0 = self.select_pos
+        self.select_pos = x, y
+
+        xshift = x - x0
+        yshift = y - y0
+
+        for node in cpt.nodes:
+            # TODO: handle snap
+            node.pos.x += xshift
+            node.pos.y += yshift
+        self.on_redraw()
+
     def on_move(self, xshift, yshift):
 
         self.move(xshift, yshift)
@@ -683,6 +707,8 @@ class UIModelMPH(UIModelBase):
         self.ui.screenshot(pathname)
 
     def on_select(self, x, y):
+
+        self.select_pos = x, y
 
         cpt = self.closest_cpt(x, y)
 

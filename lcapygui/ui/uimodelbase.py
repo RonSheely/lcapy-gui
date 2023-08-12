@@ -77,6 +77,8 @@ class UIModelBase:
         self.dirty = False
         self.history = []
         self.clipboard = None
+        self.select_pos = 0, 0
+        self.dragged = False
 
     @property
     def analysis_circuit(self):

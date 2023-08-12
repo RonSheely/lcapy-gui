@@ -281,6 +281,9 @@ class LcapyTk(Tk):
         canvas.kp_id = figure.canvas.mpl_connect('key_press_event',
                                                  self.on_key_press_event)
 
+        canvas.md_id = figure.canvas.mpl_connect('motion_notify_event',
+                                                 self.on_mouse_event)
+
         self.enter(canvas)
 
         return canvas
@@ -317,6 +320,13 @@ class LcapyTk(Tk):
     def on_best_fit(self, *args):
 
         self.model.on_best_fit()
+
+    def on_circuitgraph(self, *args):
+
+        # TODO, save to png file and then display file
+        self.model.circuit.cg.draw('/tmp/cg.png')
+        self.show_image_dialog(
+            '/tmp/cg.png', title='Circuit graph ' + self.model.pathname)
 
     def on_click_event(self, event):
 
@@ -373,13 +383,6 @@ class LcapyTk(Tk):
 
         self.show_message_dialog(self.model.circuit.description())
 
-    def on_circuitgraph(self, *args):
-
-        # TODO, save to png file and then display file
-        self.model.circuit.cg.draw('/tmp/cg.png')
-        self.show_image_dialog(
-            '/tmp/cg.png', title='Circuit graph ' + self.model.pathname)
-
     def report_callback_exception(self, exc, val, tb):
 
         # This catches exceptions but only for this window.
@@ -392,14 +395,6 @@ class LcapyTk(Tk):
 
         showerror('Error', message=str(val))
 
-    def on_exception(self, *args):
-
-        from tkinter import messagebox
-        import traceback
-
-        err = traceback.format_exception(*args)
-        messagebox.showerror('Exception', err)
-
     def on_enter(self, event):
 
         # TODO, determine tab from mouse x, y
@@ -408,37 +403,17 @@ class LcapyTk(Tk):
 
         self.enter(self.canvases[0])
 
+    def on_exception(self, *args):
+
+        from tkinter import messagebox
+        import traceback
+
+        err = traceback.format_exception(*args)
+        messagebox.showerror('Exception', err)
+
     def on_expression(self, *args):
 
         self.model.on_expression()
-
-    def on_key_press_event(self, event):
-
-        key = event.key
-        if self.debug:
-            print(key)
-
-        if key in self.model.key_bindings:
-            self.model.key_bindings[key]()
-        elif key in self.model.key_bindings_with_key:
-            self.model.key_bindings_with_key[key](key)
-
-    def on_key(self, event):
-
-        key = event.char
-
-        if self.debug:
-            print('Key %s %s, %s, %s' % (key, event.keycode, event.x, event.y))
-            print(event)
-
-        if key in self.model.key_bindings_with_key:
-            self.model.key_bindings_with_key[key](key)
-
-    def on_key2(self, event, func):
-
-        if self.debug:
-            print('Key2', event, func)
-        func()
 
     def on_edit_values(self, *args):
 
@@ -480,17 +455,37 @@ class LcapyTk(Tk):
 
         self.model.on_inspect_voltage()
 
+    def on_key_press_event(self, event):
+
+        key = event.key
+        if self.debug:
+            print(key)
+
+        if key in self.model.key_bindings:
+            self.model.key_bindings[key]()
+        elif key in self.model.key_bindings_with_key:
+            self.model.key_bindings_with_key[key](key)
+
+    def on_key(self, event):
+
+        key = event.char
+
+        if self.debug:
+            print('Key %s %s, %s, %s' % (key, event.keycode, event.x, event.y))
+            print(event)
+
+        if key in self.model.key_bindings_with_key:
+            self.model.key_bindings_with_key[key](key)
+
+    def on_key2(self, event, func):
+
+        if self.debug:
+            print('Key2', event, func)
+        func()
+
     def on_laplace_model(self, *args):
 
         self.model.on_laplace_model()
-
-    def on_manipulate_kill(self, *args):
-
-        self.model.on_manipulate_kill()
-
-    def on_manipulate_remove_sources(self, *args):
-
-        self.model.on_manipulate_remove_sources()
 
     def on_library(self, *args):
         from lcapygui import __libdir__
@@ -501,9 +496,27 @@ class LcapyTk(Tk):
 
         self.model.on_load()
 
+    def on_manipulate_kill(self, *args):
+
+        self.model.on_manipulate_kill()
+
+    def on_manipulate_remove_sources(self, *args):
+
+        self.model.on_manipulate_remove_sources()
+
     def on_mesh_equations(self, *args):
 
         self.model.on_mesh_equations()
+
+    def on_mouse_event(self, event):
+
+        if self.debug:
+            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+                  ('double' if event.dblclick else 'single', event.button,
+                   event.x, event.y, event.xdata, event.ydata))
+
+        if event.button == 1:
+            self.model.on_mouse_drag(event.xdata, event.ydata)
 
     def on_netlist(self, *args):
 
@@ -521,6 +534,10 @@ class LcapyTk(Tk):
 
         self.model.on_new()
 
+    def on_paste(self, *args):
+
+        self.model.on_paste()
+
     def on_plots(self, *args):
 
         self.show_multiplot_dialog()
@@ -528,10 +545,6 @@ class LcapyTk(Tk):
     def on_preferences(self, *args):
 
         self.model.on_preferences()
-
-    def on_paste(self, *args):
-
-        self.model.on_paste()
 
     def on_quit(self, *args):
 
