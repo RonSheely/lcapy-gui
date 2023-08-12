@@ -356,9 +356,9 @@ class UIModelMPH(UIModelBase):
         s += 'Netlist.........\n'
         s += self.schematic() + '\n'
         s += 'Nodes...........\n'
-        s += self.circuit.nodes.ui.debug() + '\n'
+        s += self.circuit.nodes.debug() + '\n'
         s += 'Cursors.........\n'
-        s += self.cursors.ui.debug() + '\n'
+        s += self.cursors.debug() + '\n'
         s += 'Selected.........\n'
         s += str(self.selected) + '\n'
         self.ui.show_message_dialog(s, 'Debug')
