@@ -1,4 +1,5 @@
-from tkinter import Text, END
+from tkinter import END
+from tkinter.scrolledtext import ScrolledText
 from .window import Window
 
 
@@ -8,7 +9,7 @@ class MessageDialog(Window):
 
         super().__init__(None, None, title)
 
-        text = Text(self)
+        text = ScrolledText(self)
         text.pack()
 
         text.insert(END, message)
