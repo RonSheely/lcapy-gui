@@ -31,8 +31,13 @@ class Window(Toplevel):
 
         super(Window, self).focus()
 
-        # Put window on top
+        # Put window on top, however, this makes it stay above all others
         self.attributes('-topmost', True)
+        # Don't force the window to stay on top.  The user can force
+        # the window to stay on top if they wish.
+        self.attributes('-topmost', False)
+
+        # self.lift()
 
     def on_close(self):
 
