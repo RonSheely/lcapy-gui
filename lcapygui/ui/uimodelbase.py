@@ -198,13 +198,13 @@ class UIModelBase:
             self.ui.clear()
             self.redraw()
 
-    def cpt_draw(self, cpt):
+    def cpt_draw(self, cpt, **kwargs):
 
         gcpt = cpt.gcpt
         if gcpt is None:
             return
 
-        gcpt.draw(self)
+        gcpt.draw(self, **kwargs)
 
         label_cpts = self.preferences.label_cpts
 
@@ -739,7 +739,10 @@ class UIModelBase:
     def redraw(self):
 
         for cpt in self.circuit.elements.values():
-            self.cpt_draw(cpt)
+            if cpt == self.selected:
+                self.cpt_draw(cpt, color='red')
+            else:
+                self.cpt_draw(cpt)
 
     def undo(self):
 

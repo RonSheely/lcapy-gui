@@ -696,6 +696,8 @@ class UIModelMPH(UIModelBase):
         else:
             self.select(None)
 
+        self.on_redraw()
+
     def on_show_new_circuit(self, cct):
 
         model = self.ui.new()
