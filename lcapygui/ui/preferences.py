@@ -17,8 +17,7 @@ class Preferences:
         self.draw_nodes = 'connections'
         self.label_cpts = 'name'
         self.style = 'american'
-        self.node_size = 0.1
-        self.node_color = 'black'
+        self.voltage_dir = 'RP'
         self.grid = 'on'
         self.line_width = circuitikz_default_line_width,
         self.scale = circuitikz_default_scale
@@ -26,9 +25,10 @@ class Preferences:
         self.xsize = 36
         self.ysize = 22
         self.snap_grid = 'true'
-        self.voltage_dir = 'RP'
         # This is the scaling used to set the matplotlib lw argument
         self.line_width_scale = 3.5
+        self.node_size = 0.12
+        self.node_color = 'black'
 
         self.load()
 
