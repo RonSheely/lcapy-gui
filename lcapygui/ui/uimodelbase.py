@@ -567,6 +567,8 @@ class UIModelBase:
 
         self.history.append(HistoryEvent('A', cpt))
 
+        self.select(cpt)
+
         return cpt
 
     def inspect_admittance(self, cpt):
