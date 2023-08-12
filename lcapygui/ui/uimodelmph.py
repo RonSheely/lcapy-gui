@@ -723,12 +723,13 @@ class UIModelMPH(UIModelBase):
 
         if cpt:
             self.select(cpt)
+            # TODO: only redraw selected component
+            # Redraw to highlight selected component
+            self.on_redraw()
         elif node:
             self.select(node)
         else:
             self.select(None)
-
-        self.on_redraw()
 
     def on_show_new_circuit(self, cct):
 
