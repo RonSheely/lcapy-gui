@@ -1,4 +1,5 @@
 from .uimodelbase import UIModelBase
+from .history_event import HistoryEvent
 from lcapy.mnacpts import Cpt
 from lcapy import Circuit
 from os.path import basename
@@ -355,9 +356,9 @@ class UIModelMPH(UIModelBase):
         s += 'Netlist.........\n'
         s += self.schematic() + '\n'
         s += 'Nodes...........\n'
-        s += self.circuit.nodes.debug() + '\n'
+        s += self.circuit.nodes.ui.debug() + '\n'
         s += 'Cursors.........\n'
-        s += self.cursors.debug() + '\n'
+        s += self.cursors.ui.debug() + '\n'
         s += 'Selected.........\n'
         s += str(self.selected) + '\n'
         self.ui.show_message_dialog(s, 'Debug')
@@ -563,10 +564,12 @@ class UIModelMPH(UIModelBase):
 
         if not self.dragged:
             self.dragged = True
-            self.history.append((cpt, 'A'))
+            self.last_pos = self.select_pos
+            node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
+            self.history.append(HistoryEvent('M', cpt, node_positions))
 
-        x0, y0 = self.select_pos
-        self.select_pos = x, y
+        x0, y0 = self.last_pos
+        self.last_pos = x, y
 
         xshift = x - x0
         yshift = y - y0
@@ -575,6 +578,8 @@ class UIModelMPH(UIModelBase):
             # TODO: handle snap
             node.pos.x += xshift
             node.pos.y += yshift
+
+        # TODO: only redraw cpts that have moved
         self.on_redraw()
 
     def on_move(self, xshift, yshift):
@@ -708,6 +713,7 @@ class UIModelMPH(UIModelBase):
 
     def on_select(self, x, y):
 
+        self.dragged = False
         self.select_pos = x, y
 
         cpt = self.closest_cpt(x, y)

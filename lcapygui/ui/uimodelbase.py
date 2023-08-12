@@ -3,6 +3,7 @@ from ..annotations import Annotations
 from .preferences import Preferences
 from ..components.opamp import Opamp
 from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
+from .history_event import HistoryEvent
 
 from copy import copy
 from math import atan2, degrees, sqrt
@@ -349,7 +350,7 @@ class UIModelBase:
     def delete(self, cpt):
 
         self.cpt_delete(cpt)
-        self.history.append((cpt, 'D'))
+        self.history.append(HistoryEvent('D', cpt))
 
     def draw(self, cpt, **kwargs):
 
@@ -564,7 +565,7 @@ class UIModelBase:
 
         self.cpt_draw(cpt)
 
-        self.history.append((cpt, 'A'))
+        self.history.append(HistoryEvent('A', cpt))
 
         return cpt
 
@@ -750,8 +751,9 @@ class UIModelBase:
 
         if self.history == []:
             return
-        cpt, op = self.history.pop()
-        if op == 'D':
+        event = self.history.pop()
+        cpt = event.cpt
+        if event.code == 'D':
             self.circuit.add(str(cpt))
 
             # Copy node positions
@@ -762,6 +764,17 @@ class UIModelBase:
 
             self.cpt_draw(cpt)
             self.select(cpt)
-        else:
+        elif event.code == 'M':
+
+            for node, pos in zip(cpt.nodes, event.nodes):
+                node.pos.x = pos[0]
+                node.pos.y = pos[1]
+
+            self.select(cpt)
+            self.on_redraw()
+        elif event.code == 'D':
             self.cpt_delete(cpt)
+        else:
+            raise RuntimeError('Unknown event code')
+
         self.invalidate()
