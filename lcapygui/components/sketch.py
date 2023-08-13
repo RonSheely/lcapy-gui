@@ -91,9 +91,10 @@ class Sketch:
 
     def offsets1(self, sketch_key):
 
-        if sketch_key in ('fdopamp', 'inamp'):
-            return 0, self.height / 2
-        elif sketch_key.startswith('TF') or sketch_key in ('opamp', ):
+        if sketch_key in ('fdopamp', ):
+            return self.width / 2 + 11, self.height / 2
+        elif sketch_key.startswith('TF') \
+                or sketch_key in ('opamp', 'inamp'):
             return self.width / 2, self.height / 2
 
         # TODO, use sketch_key to help find offset.

@@ -14,27 +14,27 @@ class Inamp(Component):
 
     node_pinnames = ('out', 'ref', 'in+', 'in-', 'r+', 'r-')
 
-    ppins = {'out': ('r', 0.5, 0.0),
-             'in+': ('l', -0.5, 0.3),
-             'in-': ('l', -0.5, -0.3),
-             'vdd': ('t', 0, 0.25),
-             'vdd2': ('t', -0.225, 0.365),
-             'vss2': ('b', -0.225, -0.365),
-             'vss': ('b', 0, -0.25),
-             'ref': ('b', 0.225, -0.135),
-             'r+': ('l', -0.5, 0.2),
-             'r-': ('l', -0.5, -0.2)}
+    ppins = {'out': ('rx', 1.25, 0.0),
+             'in+': ('lx', -1.25, 0.5),
+             'in-': ('lx', -1.25, -0.5),
+             'vdd': ('t', 0, 0.5),
+             'vdd2': ('t', -0.45, 0.755),
+             'vss2': ('b', -0.45, -0.755),
+             'vss': ('b', 0, -0.5),
+             'ref': ('b', 0.45, -0.245),
+             'r+': ('l', -0.85, 0.25),
+             'r-': ('l', -0.85, -0.25)}
 
-    npins = {'out': ('r', 0.5, 0.0),
-             'in-': ('l', -0.5, 0.3),
-             'in+': ('l', -0.5, -0.3),
-             'vdd': ('t', 0, 0.25),
-             'vdd2': ('t', -0.225, 0.365),
-             'vss2': ('b', -0.225, -0.365),
-             'vss': ('b', 0, -0.25),
-             'ref': ('b', 0.225, -0.135),
-             'r-': ('l', -0.5, 0.2),
-             'r+': ('l', -0.5, -0.2)}
+    npins = {'out': ('rx', 1.25, 0.0),
+             'in-': ('lx', -1.25, 0.5),
+             'in+': ('lx', -1.25, -0.5),
+             'vdd': ('t', 0, 0.5),
+             'vdd2': ('t', -0.45, 0.755),
+             'vss2': ('b', -0.45, -0.755),
+             'vss': ('b', 0, -0.5),
+             'ref': ('b', 0.45, -0.245),
+             'r-': ('l', -0.85, 0.25),
+             'r+': ('l', -0.85, -0.25)}
 
     @property
     def pins(self):
@@ -81,19 +81,11 @@ class Inamp(Component):
 
         sketch = self._sketch_lookup(model)
 
-        x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
-        x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
-
-        xc = (x1 + x2) / 2
-        yc = (y1 + y2) / 2
-
-        dy = abs(self.nodes[3].y - self.nodes[2].y)
-        size = dy * 5 / 4
-
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketch.draw_old(model, offset=(xc, yc), angle=0, scale=size / 2.5,
-                    **kwargs)
+        tf = self.find_tf('in+', 'in-')
+
+        sketch.draw(model, tf, **kwargs)
 
     def netitem_nodes(self, node_names):
 
