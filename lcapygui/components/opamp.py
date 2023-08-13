@@ -49,7 +49,7 @@ class Opamp(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        return self.assign_positions1(x1, y1, x2, y2)
+        return self.assign_positions1(x1, y1, x2, y2, 'in+', 'in-')
 
     @property
     def midpoint(self):
@@ -79,19 +79,13 @@ class Opamp(Component):
 
         sketch = self._sketch_lookup(model)
 
-        x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
-        x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
-
-        xc = (x1 + x2) / 2
-        yc = (y1 + y2) / 2
-
-        dy = abs(self.nodes[3].y - self.nodes[2].y)
-        size = dy * 5 / 4
-
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketch.draw(model, offset=(xc, yc), angle=0, scale=size / 2.5,
-                    **kwargs)
+        tf = self.find_tf('in+', 'in-')
+        c = tf.transform((0, 0))
+
+        sketch.draw(model, offset=(c[0], c[1]), angle=-tf.angle_deg,
+                    scale=tf.scale_factor / 2, **kwargs)
 
     def netitem_nodes(self, node_names):
 

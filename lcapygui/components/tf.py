@@ -1,4 +1,4 @@
-from numpy import array, dot
+from numpy import array, dot, sqrt, degrees, arctan2
 from matplotlib.transforms import Affine2D
 from numpy.linalg import pinv
 
@@ -29,7 +29,10 @@ class TF(Affine2D):
 
         H = array(((m[0], m[1], m[2]), (-m[1], m[0], m[3]), (0, 0, 1)))
 
-        return cls.from_values(m[0], -m[1], m[1], m[0], m[2], m[3])
+        obj = cls.from_values(m[0], -m[1], m[1], m[0], m[2], m[3])
+        # Hack since Affine2D hardwires class
+        obj.__class__ = cls
+        return obj
 
     def transform(self, points):
         """Transform array, list, or dict of points."""
@@ -42,6 +45,28 @@ class TF(Affine2D):
             return ret
 
         return super().transform(points)
+
+    @property
+    def scale_factor(self):
+
+        values = self.to_values()
+        H11 = values[0]
+        H12 = values[2]
+        H21 = values[1]
+        H22 = values[3]
+
+        return sqrt(abs(H11 * H22 - H12 * H21))
+
+    @property
+    def angle_deg(self):
+
+        values = self.to_values()
+        H11 = values[0]
+        H12 = values[2]
+        H21 = values[1]
+        H22 = values[3]
+
+        return degrees(arctan2(H12, H11))
 
 
 def test():

@@ -97,9 +97,6 @@ class Component(ABC):
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
 
-        # This assigned by assign_positions
-        self.tf = TF()
-
         # Parse the opts and set the component attributes
 
         # Set mirror and invert attributes
@@ -406,8 +403,8 @@ class Component(ABC):
     def assign_positions1(self, x1, y1, x2, y2, pinname1, pinname2) -> array:
 
         # Note, this transform will have to change if the component is moved
-        self.make_tf(x1, y1, x2, y2, self.pins[pinname1][1:],
-                     self.pins[pinname2][1:])
+        tf = self.make_tf(x1, y1, x2, y2, self.pins[pinname1][1:],
+                          self.pins[pinname2][1:])
 
         coords = []
         for node_pinname in self.node_pinnames:
@@ -416,7 +413,7 @@ class Component(ABC):
             else:
                 coords.append(self.pins[node_pinname][1:])
 
-        positions = self.tf.transform(coords)
+        positions = tf.transform(coords)
 
         return positions
 
@@ -588,4 +585,17 @@ class Component(ABC):
         u0, v0 = pin1
         u1, v1 = pin2
 
-        self.tf = TF.from_points_pair((u0, v0), (x1, y1), (u1, v1), (x2, y2))
+        return TF.from_points_pair((u0, v0), (x1, y1), (u1, v1), (x2, y2))
+
+    def find_tf(self, pinname1, pinname2, node1=None, node2=None):
+
+        if node1 is None:
+            node1 = self.node1
+        if node2 is None:
+            node2 = self.node2
+
+        pin1 = self.pins[pinname1][1:]
+        pin2 = self.pins[pinname2][1:]
+
+        return self.make_tf(node1.pos.x, node1.pos.y, node2.pos.x, node2.pos.y,
+                            pin1, pin2)

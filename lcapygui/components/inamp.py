@@ -50,7 +50,7 @@ class Inamp(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        return self.assign_positions1(x1, y1, x2, y2)
+        return self.assign_positions1(x1, y1, x2, y2, 'in+', 'in-')
 
     @property
     def midpoint(self):
