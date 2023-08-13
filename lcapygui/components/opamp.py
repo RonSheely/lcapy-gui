@@ -39,23 +39,26 @@ class Opamp(Component):
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
+    @property
+    def pins(self):
+        return self.npins if self.mirror else self.ppins
+
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
 
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        r = sqrt((x2 - x1)**2 + (y2 - y1)**2)
+        self.make_tf(x1, y1, x2, y2, self.pins['in+'][1:],
+                     self.pins['in-'][1:])
 
-        # TODO: handle rotation
-
-        xo = (x2 + x1) / 2 + r * 5 / 2
-        yo = (y2 + y1) / 2
+        xo, yo = self.tf.transform(self.pins['out'][1:])
 
         positions = array(((xo, yo),
                            (nan, nan),
                            (x1, y1),
                            (x1, y2)))
+        print(positions)
         return positions
 
     @property

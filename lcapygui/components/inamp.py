@@ -12,7 +12,7 @@ class Inamp(Component):
     label_offset = -1
     args = ('Ad', 'Ac', 'Rf')
 
-    node_pinnames = ('out', 'in+', 'in-', 'r+', 'r-')
+    node_pinnames = ('out', 'ref', 'in+', 'in-', 'r+', 'r-')
 
     ppins = {'out': ('r', 0.5, 0.0),
              'in+': ('l', -0.5, 0.3),

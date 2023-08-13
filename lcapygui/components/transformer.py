@@ -20,6 +20,14 @@ class Transformer(Component):
              #   'tapcore': 'Center tapped with core'
              }
 
+    node_pinnames = ('s+', 's-', 'p+', 'p-')
+
+    w = 0.8
+    pins = {'s+': ('rx', w, 1),
+            's-': ('rx', w, 0),
+            'p+': ('lx', 0, 1),
+            'p-': ('lx', 0, 0)}
+
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
 

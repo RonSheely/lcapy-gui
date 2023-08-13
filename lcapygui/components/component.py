@@ -2,6 +2,8 @@
 Defines the components that lcapy-gui can draw
 """
 
+from .tf import TF
+
 from numpy import array, dot
 from numpy.linalg import norm
 from lcapy.opts import Opts
@@ -94,6 +96,9 @@ class Component(ABC):
             style = self.default_style
         self.style = style
         self.inv_styles = {v: k for k, v in self.styles.items()}
+
+        # This assigned by assign_positions
+        self.tf = None
 
         # Parse the opts and set the component attributes
 
@@ -560,3 +565,10 @@ class Component(ABC):
             if name not in nodes:
                 return name
             num += 1
+
+    def make_tf(self, x1, y1, x2, y2, pin1, pin2):
+
+        u0, v0 = pin1
+        u1, v1 = pin2
+
+        self.tf = TF.from_points_pair((u0, v0), (x1, y1), (u1, v1), (x2, y2))
