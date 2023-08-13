@@ -264,7 +264,7 @@ class Component(ABC):
             dw = array((0, 0))
             p1p = p1
 
-        sketch.draw(model, offset=p1p, angle=angle, scale=scale,
+        sketch.draw_old(model, offset=p1p, angle=angle, scale=scale,
                     snap=True, **kwargs)
 
         # Add stretchable wires

@@ -3,6 +3,8 @@ from matplotlib.transforms import Affine2D
 from .svgparse import SVGParse
 from os.path import join
 
+from .tf import TF
+
 
 class SketchPath:
 
@@ -162,8 +164,24 @@ class Sketch:
 
         return self.__class__(paths, self.width, self.height, **self.kwargs)
 
-    def draw(self, model, offset=(0, 0), scale=1, angle=0, **kwargs):
+    def draw_old(self, model, offset=(0, 0), scale=1, angle=0, **kwargs):
 
         sketcher = model.ui.sketcher
 
-        return sketcher.sketch(self, offset, scale, angle, **kwargs)
+        tf = TF().rotate_deg(angle).scale(scale * self.SCALE)
+        tf = tf.translate(*offset)
+
+        return sketcher.sketch(self, tf, **kwargs)
+
+    def draw(self, model, tf, **kwargs):
+
+        sketcher = model.ui.sketcher
+
+        # TODO, simplify
+
+        c = tf.transform((0, 0))
+
+        tf = TF().rotate_deg(-tf.angle_deg).scale(tf.scale_factor * self.SCALE / model.STEP)
+        tf = tf.translate(*c)
+
+        return sketcher.sketch(self, tf, **kwargs)

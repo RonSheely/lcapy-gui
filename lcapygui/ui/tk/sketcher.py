@@ -1,5 +1,4 @@
 from matplotlib.patches import PathPatch, Arc, Circle, Polygon
-from matplotlib.transforms import Affine2D
 from matplotlib.path import Path
 from math import degrees
 from numpy import array
@@ -85,12 +84,7 @@ class Sketcher:
 
         self.ax.remove(patch)
 
-    def sketch(self, sketch, offset=(0, 0), scale=1, angle=0, **kwargs):
-
-        kwargs = {**sketch.kwargs, **kwargs}
-
-        gtransform = Affine2D().rotate_deg(angle).scale(scale * sketch.SCALE)
-        gtransform = gtransform.translate(*offset)
+    def sketch(self, sketch, tf, **kwargs):
 
         color = kwargs.pop('color', sketch.color)
         mirror = kwargs.pop('mirror', False)
@@ -113,7 +107,7 @@ class Sketcher:
                 vertices = path.vertices * (-1, 1)
                 path = Path(vertices, path.codes)
 
-            path = path.transformed(gtransform)
+            path = path.transformed(tf)
 
             fill = kwargs.pop('fill', fill)
 

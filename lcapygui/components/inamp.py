@@ -92,7 +92,7 @@ class Inamp(Component):
 
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketch.draw(model, offset=(xc, yc), angle=0, scale=size / 2.5,
+        sketch.draw_old(model, offset=(xc, yc), angle=0, scale=size / 2.5,
                     **kwargs)
 
     def netitem_nodes(self, node_names):

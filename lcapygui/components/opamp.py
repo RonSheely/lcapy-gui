@@ -82,10 +82,8 @@ class Opamp(Component):
         kwargs = self.make_kwargs(model, **kwargs)
 
         tf = self.find_tf('in+', 'in-')
-        c = tf.transform((0, 0))
 
-        sketch.draw(model, offset=(c[0], c[1]), angle=-tf.angle_deg,
-                    scale=tf.scale_factor / 2, **kwargs)
+        sketch.draw(model, tf, **kwargs)
 
     def netitem_nodes(self, node_names):
 

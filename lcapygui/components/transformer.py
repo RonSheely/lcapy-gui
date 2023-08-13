@@ -73,7 +73,7 @@ class Transformer(Component):
 
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketch.draw(model, offset=(xc, yc), angle=0,
+        sketch.draw_old(model, offset=(xc, yc), angle=0,
                     scale=size / model.STEP, **kwargs)
 
     @property

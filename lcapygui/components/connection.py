@@ -39,7 +39,7 @@ class Connection(BipoleComponent):
             x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
             offset = x2, y2
 
-        sketch.draw(model, offset=offset,
+        sketch.draw_old(model, offset=offset,
                     angle=angle, snap=False, **kwargs)
 
         sketcher = model.ui.sketcher
