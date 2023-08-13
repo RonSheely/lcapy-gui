@@ -50,25 +50,7 @@ class Inamp(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        dy = y2 - y1
-
-        r = sqrt((x2 - x1)**2 + (y2 - y1)**2)
-
-        # TODO: handle rotation
-
-        xo = (x2 + x1) / 2 + r * 5 / 2
-        yo = (y2 + y1) / 2
-
-        yrp = y1 - dy * 0.5
-        yrm = y2 + dy * 0.5
-
-        positions = array(((xo, yo),
-                           (nan, nan),
-                           (x1, y1),
-                           (x1, y2),
-                           (x1, yrp),
-                           (x1, yrm)))
-        return positions
+        return self.assign_positions1(x1, y1, x2, y2)
 
     @property
     def midpoint(self):

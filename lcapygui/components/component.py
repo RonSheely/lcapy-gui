@@ -4,7 +4,7 @@ Defines the components that lcapy-gui can draw
 
 from .tf import TF
 
-from numpy import array, dot
+from numpy import array, dot, nan
 from numpy.linalg import norm
 from lcapy.opts import Opts
 
@@ -402,6 +402,22 @@ class Component(ABC):
         """Assign node positions based on cursor positions."""
 
         return array(((x1, y1), (x2, y2)))
+
+    def assign_positions1(self, x1, y1, x2, y2) -> array:
+
+        self.make_tf(x1, y1, x2, y2, self.pins['in+'][1:],
+                     self.pins['in-'][1:])
+
+        coords = []
+        for node_pinname in self.node_pinnames:
+            if node_pinname == '':
+                coords.append((nan, nan))
+            else:
+                coords.append(self.pins[node_pinname][1:])
+
+        positions = self.tf.transform(coords)
+
+        return positions
 
     @property
     def node1(self):

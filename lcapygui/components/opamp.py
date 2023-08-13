@@ -1,6 +1,6 @@
 from .component import Component
 from .utils import point_in_triangle
-from numpy import array, sqrt, nan
+from numpy import array, sqrt
 from numpy.linalg import norm
 
 
@@ -49,17 +49,7 @@ class Opamp(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        self.make_tf(x1, y1, x2, y2, self.pins['in+'][1:],
-                     self.pins['in-'][1:])
-
-        xo, yo = self.tf.transform(self.pins['out'][1:])
-
-        positions = array(((xo, yo),
-                           (nan, nan),
-                           (x1, y1),
-                           (x1, y2)))
-        print(positions)
-        return positions
+        return self.assign_positions1(x1, y1, x2, y2)
 
     @property
     def midpoint(self):

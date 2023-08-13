@@ -51,36 +51,7 @@ class FDOpamp(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        r = sqrt((x2 - x1)**2 + (y2 - y1)**2)
-
-        # TODO: handle rotation
-
-        xo = (x2 + x1) / 2 + r * 2.1
-        yo = (y2 + y1) / 2
-
-        xop = xo
-        xom = xo
-        yop = y2
-        yom = y1
-
-        xi = (x2 + x1) / 2
-        yi = (y2 + y1) / 2
-
-        # Centre
-        xc = (xi + xo) / 2
-        yc = (yi + yo) / 2
-
-        # Adjust
-        xocm = (x1 + x2) / 2
-        yocm = (y1 + y2) / 2
-
-        positions = array(((xop, yop),
-                           (xom, yom),
-                           (x1, y1),
-                           (x2, y2),
-                           (xocm, yocm)))
-
-        return positions
+        return self.assign_positions1(x1, y1, x2, y2)
 
     @property
     def midpoint(self):
