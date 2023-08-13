@@ -11,6 +11,7 @@ from .inductor import Inductor
 from .jfet import JFET
 from .mosfet import MOSFET
 from .opamp import Opamp
+from .inamp import Inamp
 from .fdopamp import FDOpamp
 from .opencircuit import OpenCircuit
 from .port import Port
@@ -37,6 +38,7 @@ class CptMaker:
         'D': Diode,
         'E': VCVS,
         'opamp': Opamp,
+        'inamp': Inamp,
         'fdopamp': FDOpamp,
         'F': CCCS,
         'FB': FerriteBead,
@@ -70,6 +72,8 @@ class CptMaker:
             cls = Connection
         elif cpt_type == 'E' and kind == 'opamp':
             cls = Opamp
+        elif cpt_type == 'E' and kind == 'inamp':
+            cls = Inamp
         elif cpt_type == 'E' and kind == 'fdopamp':
             cls = FDOpamp
         elif cpt_type in self.cpts:

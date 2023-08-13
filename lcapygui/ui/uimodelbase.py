@@ -29,6 +29,7 @@ class UIModelBase:
         'f': ('f', 'Current controlled current source', 'F', ''),
         'h': ('h', 'Current controlled voltage source', 'H', ''),
         'i': ('i', 'Current source', 'I', ''),
+        'inamp': ('', 'Instrumention amplifier', 'inamp', ''),
         'd': ('d', 'Diode', 'D', ''),
         'fb': ('', 'Ferrite bead', 'FB', ''),
         'z': ('z', 'Impedance', 'Z', ''),
@@ -132,7 +133,7 @@ class UIModelBase:
 
     def choose_cpt_name(self, cpt_type):
 
-        if cpt_type in ('opamp', 'fdopamp'):
+        if cpt_type in ('opamp', 'fdopamp', 'inamp'):
             cpt_type = 'E'
 
         num = 1
@@ -300,7 +301,8 @@ class UIModelBase:
 
         gcpt = cpt.gcpt
 
-        if cpt.is_dependent_source and gcpt.type not in ('Eopamp', 'Efdopamp'):
+        if cpt.is_dependent_source and gcpt.type not in ('Eopamp',
+                                                         'Efdopamp', 'Einamp'):
             try:
                 newcpt = cpt._change_control(gcpt.control)
             except Exception:
@@ -309,7 +311,7 @@ class UIModelBase:
                 return
         elif gcpt.cpt_kind == cpt._kind:
             newcpt = cpt
-        elif gcpt.type not in ('Eopamp', 'Efdopamp'):
+        elif gcpt.type not in ('Eopamp', 'Efdopamp', 'Einamp'):
             try:
                 newcpt = cpt._change_kind(gcpt.cpt_kind)
             except Exception:
@@ -330,6 +332,8 @@ class UIModelBase:
             if gcpt.type == 'Eopamp':
                 newcpt.nodes[2], newcpt.nodes[3] = newcpt.nodes[3], newcpt.nodes[2]
             elif gcpt.type == 'Efdopamp':
+                newcpt.nodes[2], newcpt.nodes[3] = newcpt.nodes[3], newcpt.nodes[2]
+            elif gcpt.type == 'Einamp':
                 newcpt.nodes[2], newcpt.nodes[3] = newcpt.nodes[3], newcpt.nodes[2]
             elif gcpt.type in ('J', 'M', 'Q'):
                 newcpt.nodes[2], newcpt.nodes[0] = newcpt.nodes[0], newcpt.nodes[2]
@@ -709,7 +713,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @property
+    @ property
     def ground_node(self):
 
         return self.node_find('0')

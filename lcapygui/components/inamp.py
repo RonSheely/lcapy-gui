@@ -1,41 +1,40 @@
 from .component import Component
 from .utils import point_in_triangle
-from numpy import array, sqrt
+from numpy import array, sqrt, nan
 from numpy.linalg import norm
 
-# Grrr, why is this different in size to an opamp in Circutikz?
-# It has a length of 2.2 compared to 2 for an opamp.
 
+class Inamp(Component):
 
-class FDOpamp(Component):
-
-    type = "Efdopamp"
-    sketch_net = 'E 1 2 fdopamp 3 4 5'
-    sketch_key = 'fdopamp'
+    type = "Einamp"
+    sketch_net = 'E 1 2 inamp 3 4 5 6'
+    sketch_key = 'inamp'
     label_offset = -1
-    args = ('Ad', 'Ac', 'Ro')
+    args = ('Ad', 'Ac', 'Rf')
 
-    node_pinnames = ('out+', 'out-', 'in+', 'in-', 'ocm')
+    node_pinnames = ('out', 'in+', 'in-', 'r+', 'r-')
 
-    ppins = {'out+': ('r', 0.85, -0.5),
-             'out-': ('r', 0.85, 0.5),
-             'in+': ('l', -1.25, 0.5),
-             'ocm': ('l', -0.85, 0),
-             'in-': ('l', -1.25, -0.5),
-             'vdd': ('t', -0.25, 0.645),
-             'vss': ('b', -0.25, -0.645),
-             'r+': ('l', -0.85, 0.25),
-             'r-': ('l', -0.85, -0.25)}
+    ppins = {'out': ('r', 0.5, 0.0),
+             'in+': ('l', -0.5, 0.3),
+             'in-': ('l', -0.5, -0.3),
+             'vdd': ('t', 0, 0.25),
+             'vdd2': ('t', -0.225, 0.365),
+             'vss2': ('b', -0.225, -0.365),
+             'vss': ('b', 0, -0.25),
+             'ref': ('b', 0.225, -0.135),
+             'r+': ('l', -0.5, 0.2),
+             'r-': ('l', -0.5, -0.2)}
 
-    npins = {'out-': ('r', 0.85, -0.5),
-             'out+': ('r', 0.85, 0.5),
-             'in-': ('l', -1.25, 0.5),
-             'ocm': ('l', -0.85, 0),
-             'in+': ('l', -1.25, -0.5),
-             'vdd': ('t', -0.25, 0.645),
-             'vss': ('b', -0.25, -0.645),
-             'r-': ('l', -0.85, 0.25),
-             'r+': ('l', -0.85, -0.25)}
+    npins = {'out': ('r', 0.5, 0.0),
+             'in-': ('l', -0.5, 0.3),
+             'in+': ('l', -0.5, -0.3),
+             'vdd': ('t', 0, 0.25),
+             'vdd2': ('t', -0.225, 0.365),
+             'vss2': ('b', -0.225, -0.365),
+             'vss': ('b', 0, -0.25),
+             'ref': ('b', 0.225, -0.135),
+             'r-': ('l', -0.5, 0.2),
+             'r+': ('l', -0.5, -0.2)}
 
     @property
     def pins(self):
@@ -51,35 +50,24 @@ class FDOpamp(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
+        dy = y2 - y1
+
         r = sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
         # TODO: handle rotation
 
-        xo = (x2 + x1) / 2 + r * 2.1
+        xo = (x2 + x1) / 2 + r * 5 / 2
         yo = (y2 + y1) / 2
 
-        xop = xo
-        xom = xo
-        yop = y2
-        yom = y1
+        yrp = y1 - dy * 0.5
+        yrm = y2 + dy * 0.5
 
-        xi = (x2 + x1) / 2
-        yi = (y2 + y1) / 2
-
-        # Centre
-        xc = (xi + xo) / 2
-        yc = (yi + yo) / 2
-
-        # Adjust
-        xocm = (x1 + x2) / 2
-        yocm = (y1 + y2) / 2
-
-        positions = array(((xop, yop),
-                           (xom, yom),
+        positions = array(((xo, yo),
+                           (nan, nan),
                            (x1, y1),
-                           (x2, y2),
-                           (xocm, yocm)))
-
+                           (x1, y2),
+                           (x1, yrp),
+                           (x1, yrm)))
         return positions
 
     @property
@@ -130,7 +118,7 @@ class FDOpamp(Component):
         parts = []
         for node_name in node_names[0:2]:
             parts.append(node_name)
-        parts.append('fdopamp')
+        parts.append('inamp')
         for node_name in node_names[2:]:
             parts.append(node_name)
         return parts
