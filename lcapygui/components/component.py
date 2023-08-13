@@ -98,7 +98,7 @@ class Component(ABC):
         self.inv_styles = {v: k for k, v in self.styles.items()}
 
         # This assigned by assign_positions
-        self.tf = None
+        self.tf = TF()
 
         # Parse the opts and set the component attributes
 
@@ -403,10 +403,11 @@ class Component(ABC):
 
         return array(((x1, y1), (x2, y2)))
 
-    def assign_positions1(self, x1, y1, x2, y2) -> array:
+    def assign_positions1(self, x1, y1, x2, y2, pinname1, pinname2) -> array:
 
-        self.make_tf(x1, y1, x2, y2, self.pins['in+'][1:],
-                     self.pins['in-'][1:])
+        # Note, this transform will have to change if the component is moved
+        self.make_tf(x1, y1, x2, y2, self.pins[pinname1][1:],
+                     self.pins[pinname2][1:])
 
         coords = []
         for node_pinname in self.node_pinnames:
