@@ -93,8 +93,9 @@ class Sketch:
 
         if sketch_key in ('fdopamp', ):
             return self.width / 2 + 11, self.height / 2
-        elif sketch_key.startswith('TF') \
-                or sketch_key in ('opamp', 'inamp'):
+        elif sketch_key.startswith('TF'):
+            return self.width / 2, self.height / 2 + 1
+        elif sketch_key in ('opamp', 'inamp'):
             return self.width / 2, self.height / 2
 
         # TODO, use sketch_key to help find offset.
@@ -178,7 +179,7 @@ class Sketch:
 
         sketcher = model.ui.sketcher
 
-        # TODO, simplify
+        # TODO, simplify  (tf.scale() but don't want to scale the offset)
 
         c = tf.transform((0, 0))
 

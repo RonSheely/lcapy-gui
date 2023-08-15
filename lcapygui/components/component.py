@@ -7,6 +7,7 @@ from .tf import TF
 from numpy import array, dot, nan
 from numpy.linalg import norm
 from lcapy.opts import Opts
+from lcapy.schemmisc import Pos
 
 from typing import Union
 from abc import ABC, abstractmethod
@@ -265,7 +266,7 @@ class Component(ABC):
             p1p = p1
 
         sketch.draw_old(model, offset=p1p, angle=angle, scale=scale,
-                    snap=True, **kwargs)
+                        snap=True, **kwargs)
 
         # Add stretchable wires
         if self.can_stretch:
@@ -360,15 +361,20 @@ class Component(ABC):
         """
         Returns the length of the component.
         """
-        return (self.node2.pos - self.node1.pos).norm()
+        return self.tf.scale_factor
+
+    @property
+    def angle(self) -> float:
+        """
+        Returns the angle of the component in degrees.
+        """
+
+        return -self.tf.angle_deg
 
     @property
     def midpoint(self):
-        """
-        Returns the midpoint of the component.
-        """
 
-        return (self.node1.pos + self.node2.pos) * 0.5
+        return Pos(self.tf.transform((0, 0)))
 
     @property
     def vertical(self) -> bool:
@@ -398,13 +404,12 @@ class Component(ABC):
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions."""
 
-        return array(((x1, y1), (x2, y2)))
+        if len(self.nodes) == 2:
+            return array(((x1, y1), (x2, y2)))
 
-    def assign_positions1(self, x1, y1, x2, y2, pinname1, pinname2) -> array:
-
-        # Note, this transform will have to change if the component is moved
-        tf = self.make_tf(x1, y1, x2, y2, self.pins[pinname1][1:],
-                          self.pins[pinname2][1:])
+        tf = self.make_tf(x1, y1, x2, y2,
+                          self.pins[self.pinname1][1:],
+                          self.pins[self.pinname2][1:])
 
         coords = []
         for node_pinname in self.node_pinnames:
@@ -427,27 +432,24 @@ class Component(ABC):
 
         return self.nodes[1]
 
-    @property
-    def angle(self):
-
-        x1, y1 = self.node1.x, self.node1.y
-        x2, y2 = self.node2.x, self.node2.y
-        angle = degrees(atan2(y2 - y1, x2 - x1))
-        return angle
-
     def attr_dir_string(self, x1, y1, x2, y2, step=1):
 
-        r = sqrt((x1 - x2)**2 + (y1 - y2)**2) / step
+        tf = self.make_tf(x1, y1, x2, y2,
+                          self.pins[self.pinname1][1:],
+                          self.pins[self.pinname2][1:])
+        r = tf.scale_factor / 2
+        angle = -tf.angle_deg + self.angle_offset
 
         if self.type == 'X' and r >= 0.5:
             r -= 0.49
 
+        r = round(r, 2)
         if r == 1:
             size = ''
         else:
-            size = '=' + str(round(r, 2)).rstrip('0').rstrip('.')
+            size = '=' + str(r).rstrip('0').rstrip('.')
 
-        angle = degrees(atan2(y2 - y1, x2 - x1)) + self.angle_offset
+        angle = round(angle, 2)
 
         if r == 0:
             attr = 'down=0'
@@ -461,7 +463,7 @@ class Component(ABC):
         elif angle in (270, -90):
             attr = 'down' + size
         else:
-            attr = 'rotate=' + str(round(angle, 2)).rstrip('0').rstrip('.')
+            attr = 'rotate=' + str(angle).rstrip('0').rstrip('.')
 
         return attr
 
@@ -599,3 +601,12 @@ class Component(ABC):
 
         return self.make_tf(node1.pos.x, node1.pos.y, node2.pos.x, node2.pos.y,
                             pin1, pin2)
+
+    @property
+    def tf(self):
+
+        # If this was cached then need to update if the node
+        # positions are changed.
+        tf = self.find_tf(self.pinname1, self.pinname2)
+
+        return tf

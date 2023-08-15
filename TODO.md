@@ -76,3 +76,11 @@ attributes unless clever
 36. Remove opts field from components
 
 37. Better labels for transformers (show turns ratio)
+
+38. History of operations (perhaps convert to Python script)
+
+40. Fix label_pos for rotations
+
+41. Add value_pos
+
+42. Fix transistor rotation

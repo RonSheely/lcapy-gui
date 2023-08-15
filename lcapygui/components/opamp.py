@@ -15,6 +15,9 @@ class Opamp(Component):
     # The Nm node is not used (ground).
     node_pinnames = ('out', '', 'in+', 'in-')
 
+    pinname1 = 'in+'
+    pinname2 = 'in-'
+
     ppins = {'out': ('rx', 1.25, 0.0),
              'in+': ('lx', -1.25, 0.5),
              'in-': ('lx', -1.25, -0.5),
@@ -43,45 +46,13 @@ class Opamp(Component):
     def pins(self):
         return self.npins if self.mirror else self.ppins
 
-    def assign_positions(self, x1, y1, x2, y2) -> array:
-        """Assign node positions based on cursor positions.
-
-        x1, y1 defines the positive input node
-        x2, y2 defines the negative input node"""
-
-        return self.assign_positions1(x1, y1, x2, y2, 'in+', 'in-')
-
-    @property
-    def midpoint(self):
-
-        pos = (self.nodes[2].pos + self.nodes[3].pos) * 0.5
-
-        return (self.nodes[0].pos + pos) * 0.5
-
-    @property
-    def length(self) -> float:
-
-        pos = (self.nodes[2].pos + self.nodes[3].pos) * 0.5
-
-        diff = (pos - self.nodes[0].pos) * 0.5
-        return diff.norm()
-
-    def attr_dir_string(self, x1, y1, x2, y2, step=1):
-
-        # TODO: Handle rotation
-        dy = abs(y2 - y1)
-        size = dy / 2
-
-        attr = 'right=%s' % size
-        return attr
-
     def draw(self, model, **kwargs):
 
         sketch = self._sketch_lookup(model)
 
         kwargs = self.make_kwargs(model, **kwargs)
 
-        tf = self.find_tf('in+', 'in-')
+        tf = self.find_tf(self.pinname1, self.pinname2)
 
         sketch.draw(model, tf, **kwargs)
 

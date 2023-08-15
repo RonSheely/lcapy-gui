@@ -1,10 +1,10 @@
-from .component import Component
+from .opamp import Opamp
 from .utils import point_in_triangle
 from numpy import array, sqrt, nan
 from numpy.linalg import norm
 
 
-class Inamp(Component):
+class Inamp(Opamp):
 
     type = "Einamp"
     sketch_net = 'E 1 2 inamp 3 4 5 6'
@@ -43,49 +43,6 @@ class Inamp(Component):
     pinlabels = {'vdd': 'VDD', 'vss': 'VSS'}
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
-
-    def assign_positions(self, x1, y1, x2, y2) -> array:
-        """Assign node positions based on cursor positions.
-
-        x1, y1 defines the positive input node
-        x2, y2 defines the negative input node"""
-
-        return self.assign_positions1(x1, y1, x2, y2, 'in+', 'in-')
-
-    @property
-    def midpoint(self):
-
-        return (self.nodes[0].pos + self.nodes[1].pos +
-                self.nodes[2].pos + self.nodes[3].pos) * 0.25
-
-    @property
-    def length(self) -> float:
-
-        # FIXME
-
-        pos = (self.nodes[2].pos + self.nodes[3].pos) * 0.5
-
-        diff = (pos - self.nodes[0].pos) * 0.5
-        return diff.norm()
-
-    def attr_dir_string(self, x1, y1, x2, y2, step=1):
-
-        # TODO: Handle rotation
-        dy = abs(y2 - y1)
-        size = dy / 2
-
-        attr = 'right=%s' % size
-        return attr
-
-    def draw(self, model, **kwargs):
-
-        sketch = self._sketch_lookup(model)
-
-        kwargs = self.make_kwargs(model, **kwargs)
-
-        tf = self.find_tf('in+', 'in-')
-
-        sketch.draw(model, tf, **kwargs)
 
     def netitem_nodes(self, node_names):
 

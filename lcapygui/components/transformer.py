@@ -19,14 +19,16 @@ class Transformer(Component):
              #   'tap': 'Center tapped',
              #   'tapcore': 'Center tapped with core'
              }
+    pinname1 = 'p+'
+    pinname2 = 'p-'
 
     node_pinnames = ('s+', 's-', 'p+', 'p-')
 
-    w = 0.8
-    pins = {'s+': ('rx', w, 1),
-            's-': ('rx', w, 0),
-            'p+': ('lx', 0, 1),
-            'p-': ('lx', 0, 0)}
+    hw = 0.32
+    pins = {'s+': ('rx', hw, 0.5),
+            's-': ('rx', hw, -0.5),
+            'p+': ('lx', -hw, 0.5),
+            'p-': ('lx', -hw, -0.5)}
 
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
@@ -34,47 +36,17 @@ class Transformer(Component):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        # TODO: handle rotation
-        dy = y1 - y2
-        dx = dy * 1.3 / 2
-        x3 = x1 + dx
-        y3 = y1
-        x4 = x2 + dx
-        y4 = y2
-
-        positions = array(((x3, y3),
-                           (x4, y4),
-                           (x1, y1),
-                           (x2, y2)))
-
-        return positions
-
-    def attr_dir_string(self, x1, y1, x2, y2, step=1):
-
-        # TODO: Handle rotation
-        size = abs(y2 - y1)
-
-        attr = 'right=%s' % size
-        return attr
+        return self.assign_positions1(x1, y1, x2, y2, 'p+', 'p-')
 
     def draw(self, model, **kwargs):
 
         sketch = self._sketch_lookup(model)
 
-        # TODO: handle rotation
-
-        x1, y1 = self.nodes[0].pos.x, self.nodes[0].pos.y
-        x4, y4 = self.nodes[3].pos.x, self.nodes[3].pos.y
-
-        size = abs(y1 - y4)
-
-        xc = (x1 + x4) / 2
-        yc = (y1 + y4) / 2
-
         kwargs = self.make_kwargs(model, **kwargs)
 
-        sketch.draw_old(model, offset=(xc, yc), angle=0,
-                    scale=size / model.STEP, **kwargs)
+        tf = self.find_tf('p+', 'p-')
+
+        sketch.draw(model, tf, **kwargs)
 
     @property
     def node1(self):
@@ -85,17 +57,6 @@ class Transformer(Component):
     def node2(self):
 
         return self.nodes[3]
-
-    @property
-    def midpoint(self):
-        """
-        Computes the midpoint of the component.
-        """
-
-        x = array([node.x for node in self.nodes])
-        y = array([node.y for node in self.nodes])
-
-        return Pos(x.mean(), y.mean())
 
     def is_within_bbox(self, x, y):
 
