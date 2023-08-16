@@ -1,5 +1,4 @@
 from .component import Component
-from .utils import point_in_triangle
 from numpy import array, sqrt
 from numpy.linalg import norm
 
@@ -17,6 +16,10 @@ class Opamp(Component):
 
     pinname1 = 'in+'
     pinname2 = 'in-'
+
+    hw = 0.85
+    hh = 0.85
+    bbox_path = ((-hw, -hh), (-hw, hh), (1, 0))
 
     ppins = {'out': ('rx', 1.25, 0.0),
              'in+': ('lx', -1.25, 0.5),
@@ -65,16 +68,6 @@ class Opamp(Component):
         for node_name in node_names[2:]:
             parts.append(node_name)
         return parts
-
-    def is_within_bbox(self, x, y):
-
-        x0, y0 = self.nodes[0].pos.x, self.nodes[0].pos.y
-        x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
-        x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
-
-        # TODO, adjust for actual triangle
-
-        return point_in_triangle(x, y, x0, y0, x1, y1, x2, y2)
 
     @property
     def node1(self):

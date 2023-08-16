@@ -30,6 +30,9 @@ class Transformer(Component):
             'p+': ('lx', -hw, 0.5),
             'p-': ('lx', -hw, -0.5)}
 
+    hh = 0.5
+    bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
+
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions.
 

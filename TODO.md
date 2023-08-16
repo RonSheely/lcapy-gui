@@ -84,3 +84,5 @@ attributes unless clever
 41. Add value_pos
 
 42. Fix transistor rotation
+
+44. Show symbol pins for debugging

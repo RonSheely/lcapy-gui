@@ -15,6 +15,11 @@ class Connection(BipoleComponent):
              '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS',
              '-input': 'Input', '-output': 'Output', '-bidir': 'Bidirectional'}
 
+    # TODO: fixme
+    hw = 0.1
+    hh = 0.1
+    bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
+
     def draw(self, model, **kwargs):
 
         sketch = self._sketch_lookup(model)
@@ -40,7 +45,7 @@ class Connection(BipoleComponent):
             offset = x2, y2
 
         sketch.draw_old(model, offset=offset,
-                    angle=angle, snap=False, **kwargs)
+                        angle=angle, snap=False, **kwargs)
 
         sketcher = model.ui.sketcher
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)

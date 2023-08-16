@@ -3,6 +3,7 @@ Defines the components that lcapy-gui can draw
 """
 
 from .tf import TF
+from .utils import point_in_polygon
 
 from numpy import array, dot, nan
 from numpy.linalg import norm
@@ -506,27 +507,11 @@ class Component(ABC):
 
     def is_within_bbox(self, x, y):
 
-        m = array((self.midpoint.x, self.midpoint.y))
+        tf = self.tf.inverted()
 
-        dx = self.node2.x - self.node1.x
-        dy = self.node2.y - self.node1.y
-        r = sqrt(dx**2 + dy**2)
+        xb, yb = tf.transform((x, y))
 
-        if r == 0:
-            r = 0.3
-
-        R = array(((dx, -dy), (dy, dx))) / r
-
-        # Transform point into non-rotated box
-        p = array((x, y))
-        q = dot(R.T, (p - m))
-
-        l = self.length - 0.3
-        h = 0.3
-        x, y = q
-
-        # Determine if transformed point is in the box
-        return x > -l / 2 and x < l / 2 and y > -h / 2 and y < h / 2
+        return point_in_polygon(xb, yb, self.bbox_path)
 
     def netitem_nodes(self, node_names):
 

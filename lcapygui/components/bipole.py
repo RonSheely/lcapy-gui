@@ -11,6 +11,10 @@ class BipoleComponent(Component):
     pinname1 = '+'
     pinname2 = '-'
 
+    hw = 0.5
+    hh = 0.25
+    bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
+
     @property
     def sketch_net(self):
 

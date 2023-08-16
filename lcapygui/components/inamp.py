@@ -1,5 +1,4 @@
 from .opamp import Opamp
-from .utils import point_in_triangle
 from numpy import array, sqrt, nan
 from numpy.linalg import norm
 
@@ -53,16 +52,6 @@ class Inamp(Opamp):
         for node_name in node_names[2:]:
             parts.append(node_name)
         return parts
-
-    def is_within_bbox(self, x, y):
-
-        x0, y0 = self.nodes[0].pos.x, self.nodes[0].pos.y
-        x1, y1 = self.nodes[2].pos.x, self.nodes[2].pos.y
-        x2, y2 = self.nodes[3].pos.x, self.nodes[3].pos.y
-
-        # TODO, adjust for actual triangle
-
-        return point_in_triangle(x, y, x0, y0, x1, y1, x2, y2)
 
     @property
     def node1(self):
