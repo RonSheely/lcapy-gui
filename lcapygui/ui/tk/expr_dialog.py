@@ -1,7 +1,7 @@
 from .menu import MenuBar, MenuDropdown, MenuItem
 from .expr_calc import ExprCalc
 from .exprimage import ExprImage
-from lcapy import Expr, ExprTuple, Matrix
+from lcapy import Expr, ExprTuple, Matrix, expr
 from PIL import Image, ImageTk
 from tkinter import Button, Label, Frame, BOTH, X
 from .window import Window
@@ -255,7 +255,7 @@ class ExprDialog(Window):
                 self.ui.show_approximate_dialog(self.expr, title=self.titlestr)
             elif arg == 'Evaluate':
                 self.ui.show_expr_dialog(
-                    self.expr.evaluate(), title=self.titlestr)
+                    expr(self.expr.evaluate()), title=self.titlestr)
             elif arg == 'Limit':
                 self.ui.show_limit_dialog(self.expr, title=self.titlestr)
             elif arg == 'Parameterize':

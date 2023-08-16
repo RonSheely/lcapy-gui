@@ -39,6 +39,11 @@ class Window(Toplevel):
 
         # self.lift()
 
+    def topmost(self):
+        """ Put window on top, however, this makes it stay above all others."""
+
+        self.attributes('-topmost', True)
+
     def on_close(self):
 
         if self.debug:

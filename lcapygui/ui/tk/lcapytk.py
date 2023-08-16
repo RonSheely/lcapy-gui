@@ -648,6 +648,7 @@ class LcapyTk(Tk):
         from .expr_dialog import ExprDialog
 
         self.expr_dialog = ExprDialog(expr, self, title)
+        return self.expr_dialog
 
     def show_expr_attributes_dialog(self, expr, title=''):
 
