@@ -34,6 +34,17 @@ class TF(Affine2D):
         obj.__class__ = cls
         return obj
 
+    def __repr__(self):
+
+        return self.get_matrix().__repr__()
+
+    def inverted(self):
+
+        tf = super().inverted()
+        # Hack since Affine2D hardwires class
+        tf.__class__ = self.__class__
+        return tf
+
     def transform(self, points):
         """Transform array, list, or dict of points."""
 
