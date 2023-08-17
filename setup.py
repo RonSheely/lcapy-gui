@@ -43,6 +43,7 @@ setup(
     entry_points={
         'console_scripts': [
             'lcapy-tk=lcapygui.scripts.lcapytk:main',
+            'svgview=lcapygui.scripts.svgview:main',
         ],
     },
     include_package_data=True,

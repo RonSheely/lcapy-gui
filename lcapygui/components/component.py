@@ -221,21 +221,27 @@ class Component(ABC):
         sketch = ui.sketchlib.lookup(self.sketch_key, style)
         return sketch
 
+    def draw_nostretch(self, model, **kwargs):
+
+        tf = self.find_tf(self.pinname1, self.pinname2)
+        sketch = self._sketch_lookup(model)
+        sketch.draw(model, tf, **kwargs)
+
     def draw(self, model, **kwargs):
-        """
-        Handles drawing specific features of components.
-        """
+
+        kwargs = self.make_kwargs(model, **kwargs)
+        if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
+            return
+
+        if not self.can_stretch:
+            return self.draw_nostretch(model, **kwargs)
+
+        tf = self.find_tf(self.pinname1, self.pinname2)
 
         sketch = self._sketch_lookup(model)
-
         # Handle ports where nothing is drawn.
         if sketch is None:
             return
-
-        x1, y1 = self.node1.x, self.node1.y
-        x2, y2 = self.node2.x, self.node2.y
-        dx = x2 - x1
-        dy = y2 - y1
 
         r = self.length
         if r == 0:
@@ -243,12 +249,12 @@ class Component(ABC):
                 'Ignoring zero size component ' + self.name)
             return
 
+        x1, y1 = self.node1.x, self.node1.y
+        x2, y2 = self.node2.x, self.node2.y
+        dx = x2 - x1
+        dy = y2 - y1
+
         angle = self.angle
-
-        kwargs = self.make_kwargs(model, **kwargs)
-
-        if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
-            return
 
         # Width in cm
         w = sketch.width / 72 * 2.54
@@ -361,6 +367,13 @@ class Component(ABC):
     def length(self) -> float:
         """
         Returns the length of the component.
+        """
+        return self.tf.scale_factor
+
+    @property
+    def size(self) -> float:
+        """
+        Returns the size of the component.
         """
         return self.tf.scale_factor
 

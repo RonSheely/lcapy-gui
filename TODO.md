@@ -86,3 +86,5 @@ attributes unless clever
 42. Fix transistor rotation
 
 44. Show symbol pins for debugging
+
+45. Add network synthesis

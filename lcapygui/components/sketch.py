@@ -58,7 +58,14 @@ class Sketch:
                                         (svg_filename, sketch_key))
             return None
 
-        svg = SVGParse(str(svg_filename))
+        sketch = cls.load_file(str(svg_filename))
+        sketch = sketch.align(sketch_key)
+        return sketch
+
+    @classmethod
+    def load_file(cls, svg_filename):
+
+        svg = SVGParse(svg_filename)
 
         sketch_paths = []
         for svga_path in svg.paths:
@@ -67,7 +74,7 @@ class Sketch:
             sketch_path = sketch_path.transform(Affine2D(svga_path.transform))
             sketch_paths.append(sketch_path)
 
-        sketch = cls(sketch_paths, svg.width, svg.height).align(sketch_key)
+        sketch = cls(sketch_paths, svg.width, svg.height)
         return sketch
 
     @classmethod
@@ -89,6 +96,35 @@ class Sketch:
         a.draw(str(svg_filename), label_values=False, label_ids=False,
                label_nodes=False, draw_nodes=False, style=style)
 
+    def transistor_offsets(self):
+
+        xoffset = None
+        yoffset = None
+
+        # Look for pair of vertical wires
+        candidates = []
+        for path in self.paths:
+            if len(path.path) >= 4 and all(path.path.codes[0:4] == (1, 2, 1, 2)):
+                vertices = path.path.vertices
+                if vertices[0][0] == vertices[1][0]:
+                    xoffset = vertices[0][0]
+                    yoffset = vertices[0][1]
+                    candidates.append((xoffset, yoffset))
+
+        if candidates == []:
+            return None, None
+
+        # Search for vertical line with longest extent.
+        ymin = 1000
+        xoffset = 0
+        for candidate in candidates:
+            if candidate[1] < ymin:
+                ymin = candidate[1]
+                xoffset = candidate[0]
+
+        print(xoffset)
+        return xoffset, 0
+
     def offsets1(self, sketch_key):
 
         if sketch_key in ('fdopamp', ):
@@ -97,8 +133,8 @@ class Sketch:
             return self.width / 2, self.height / 2 + 1
         elif sketch_key in ('opamp', 'inamp'):
             return self.width / 2, self.height / 2
-
-        # TODO, use sketch_key to help find offset.
+        elif sketch_key.startswith('M') or sketch_key.startswith('Q') or sketch_key.startswith('J'):
+            return self.transistor_offsets()
 
         xoffset = None
         yoffset = None
@@ -113,9 +149,8 @@ class Sketch:
                     yoffset = vertices[0][1]
                     candidates.append((xoffset, yoffset))
 
-        if candidates != []:
+        if False and candidates != []:
             # Search for horizontal line with longest extent.
-            # This is needed for fet/bjt.
             xmin = 1000
             yoffset = 0
             for candidate in candidates:

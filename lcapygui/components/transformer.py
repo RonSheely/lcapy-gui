@@ -33,24 +33,6 @@ class Transformer(Component):
     hh = 0.5
     bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
 
-    def assign_positions(self, x1, y1, x2, y2) -> array:
-        """Assign node positions based on cursor positions.
-
-        x1, y1 defines the positive input node
-        x2, y2 defines the negative input node"""
-
-        return self.assign_positions1(x1, y1, x2, y2, 'p+', 'p-')
-
-    def draw(self, model, **kwargs):
-
-        sketch = self._sketch_lookup(model)
-
-        kwargs = self.make_kwargs(model, **kwargs)
-
-        tf = self.find_tf('p+', 'p-')
-
-        sketch.draw(model, tf, **kwargs)
-
     @property
     def node1(self):
 

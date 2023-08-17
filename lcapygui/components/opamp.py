@@ -49,16 +49,6 @@ class Opamp(Component):
     def pins(self):
         return self.npins if self.mirror else self.ppins
 
-    def draw(self, model, **kwargs):
-
-        sketch = self._sketch_lookup(model)
-
-        kwargs = self.make_kwargs(model, **kwargs)
-
-        tf = self.find_tf(self.pinname1, self.pinname2)
-
-        sketch.draw(model, tf, **kwargs)
-
     def netitem_nodes(self, node_names):
 
         parts = []

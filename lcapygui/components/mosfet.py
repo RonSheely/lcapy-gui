@@ -4,7 +4,6 @@ from .transistor import Transistor
 class MOSFET(Transistor):
 
     type = "M"
-    angle_offset = 90
     default_kind = 'nmos-nfet'
 
     kinds = {'nmos-nmos': 'NMOS simple',
@@ -33,3 +32,32 @@ class MOSFET(Transistor):
 
     # TODO: add base offset for nigfetd, pigfetd, nigfete, pigfete,
     # nigfetebulk, pigfetebulk
+
+    pinname1 = 's'
+    pinname2 = 'd'
+
+    node_pinnames = ('d', 'g', 's')
+    ppins = {'d': ('lx', 0.55, 0),
+             'g': ('lx', 0, 0.5),
+             's': ('lx', 0.55, 1)}
+    npins = {'d': ('lx', 0.55, 1),
+             'g': ('lx', 0, 0.5),
+             's': ('lx', 0.55, 0)}
+    ippins = {'d': ('lx', 0, 0),
+              'g': ('lx', 0.55, 0.5),
+              's': ('lx', 0, 1)}
+    inpins = {'d': ('lx', 0, 1),
+              'g': ('lx', 0.55, 0.5),
+              's': ('lx', 0, 0)}
+    ppins2 = {'d': ('lx', 0.55, 0),
+              'g': ('lx', 0, 0.645),
+              's': ('lx', 0.55, 1)}
+    npins2 = {'d': ('lx', 0.55, 1),
+              'g': ('lx', 0, 0.355),
+              's': ('lx', 0.55, 0)}
+    ippins2 = {'d': ('lx', 0, 0),
+               'g': ('lx', 0.55, 0.645),
+               's': ('lx', 0, 1)}
+    inpins2 = {'d': ('lx', 0, 1),
+               'g': ('lx', 0.55, 0.355),
+               's': ('lx', 0, 0)}
