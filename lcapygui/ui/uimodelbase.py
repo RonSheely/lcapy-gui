@@ -713,7 +713,7 @@ class UIModelBase:
         ann1.draw(color='red', fontsize=40)
         ann2.draw(color='blue', fontsize=40)
 
-    @ property
+    @property
     def ground_node(self):
 
         return self.node_find('0')
@@ -752,6 +752,8 @@ class UIModelBase:
                 self.cpt_draw(cpt, color='red')
             else:
                 self.cpt_draw(cpt)
+
+        # Should redraw nodes on top to blank out wires on top of ports
 
     def undo(self):
 
