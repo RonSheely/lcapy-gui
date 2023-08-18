@@ -11,7 +11,6 @@ from lcapy.schemmisc import Pos
 
 from typing import Union
 from abc import ABC, abstractmethod
-from math import sqrt, degrees, atan2
 
 
 class Component(ABC):

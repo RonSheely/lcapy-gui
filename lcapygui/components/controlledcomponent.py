@@ -1,9 +1,7 @@
-from .component import Component
+from .bipole import Bipole
 
 
-class ControlledComponent(Component):
-
-    can_stretch = True
+class ControlledComponent(Bipole):
 
     @property
     def sketch_net(self):
