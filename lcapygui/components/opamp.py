@@ -1,9 +1,9 @@
-from .component import Component
+from .fixed import Fixed
 from numpy import array, sqrt
 from numpy.linalg import norm
 
 
-class Opamp(Component):
+class Opamp(Fixed):
 
     type = "Eopamp"
     sketch_net = 'E 1 2 opamp 3 4'
@@ -17,8 +17,8 @@ class Opamp(Component):
     pinname1 = 'in+'
     pinname2 = 'in-'
 
-    hw = 0.85
-    hh = 0.85
+    hw = 0.848
+    hh = 0.848
     bbox_path = ((-hw, -hh), (-hw, hh), (1, 0))
 
     ppins = {'out': ('rx', 1.25, 0.0),

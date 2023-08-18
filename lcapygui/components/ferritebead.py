@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class FerriteBead(BipoleComponent):
+class FerriteBead(Bipole):
 
     type = 'FB'
     label_offset = 0.4

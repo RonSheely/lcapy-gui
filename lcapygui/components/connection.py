@@ -1,9 +1,9 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 from math import cos, sin, radians, sqrt
 from numpy import array
 
 
-class Connection(BipoleComponent):
+class Connection(Bipole):
 
     type = 'X'
     args = ()

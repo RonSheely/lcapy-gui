@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class OpenCircuit(BipoleComponent):
+class OpenCircuit(Bipole):
 
     type = 'O'
     args = ()

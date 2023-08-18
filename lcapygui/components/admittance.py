@@ -1,6 +1,6 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class Admittance(BipoleComponent):
+class Admittance(Bipole):
 
     type = 'Y'

@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class Inductor(BipoleComponent):
+class Inductor(Bipole):
 
     type = 'L'
     default_kind = '-'

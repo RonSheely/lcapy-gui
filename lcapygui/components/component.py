@@ -5,8 +5,7 @@ Defines the components that lcapy-gui can draw
 from .tf import TF
 from .utils import point_in_polygon
 
-from numpy import array, dot, nan
-from numpy.linalg import norm
+from numpy import array, nan
 from lcapy.opts import Opts
 from lcapy.schemmisc import Pos
 
@@ -229,86 +228,7 @@ class Component(ABC):
 
     def draw(self, model, **kwargs):
 
-        kwargs = self.make_kwargs(model, **kwargs)
-        if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
-            return
-
-        if not self.can_stretch:
-            return self.draw_nostretch(model, **kwargs)
-
-        tf = self.find_tf(self.pinname1, self.pinname2)
-
-        sketch = self._sketch_lookup(model)
-        # Handle ports where nothing is drawn.
-        if sketch is None:
-            return
-
-        r = self.length
-        if r == 0:
-            model.ui.show_warning_dialog(
-                'Ignoring zero size component ' + self.name)
-            return
-
-        x1, y1 = self.node1.x, self.node1.y
-        x2, y2 = self.node2.x, self.node2.y
-        dx = x2 - x1
-        dy = y2 - y1
-
-        angle = self.angle
-
-        # Width in cm
-        w = sketch.width / 72 * 2.54
-
-        scale = float(self.scale)
-        if scale > r / w:
-            scale = r / w
-
-        p1 = array((x1, y1))
-        if r != 0:
-            dw = array((dx, dy)) / r * (r - w * scale) / 2
-            p1p = p1 + dw
-        else:
-            # For zero length wires
-            dw = array((0, 0))
-            p1p = p1
-
-        sketch.draw_old(model, offset=p1p, angle=angle, scale=scale,
-                        snap=True, **kwargs)
-
-        # Add stretchable wires
-        if self.can_stretch:
-
-            p2 = array((x2, y2))
-            p2p = p2 - dw
-
-            # TODO: generalize
-            kwargs.pop('mirror', False)
-            kwargs.pop('invert', False)
-
-            sketcher = model.ui.sketcher
-            sketcher.stroke_line(*p1, *p1p, **kwargs)
-            sketcher.stroke_line(*p2p, *p2, **kwargs)
-
-            # For transistors.
-            if len(self.nodes) == 3:
-
-                x3, y3 = self.nodes[1].x, self.nodes[1].y
-
-                mx = (x1 + x2) / 2
-                my = (y1 + y2) / 2
-                dx = mx - x3
-                dy = my - y3
-                r = sqrt(dx**2 + dy**2)
-
-                p3 = array((x3, y3))
-
-                # Height in cm
-                h = sketch.height / 72 * 2.54
-                dh = array((dx, dy)) / r * (r - h)
-                p3p = p3 + dh
-                sketcher.stroke_line(*p3, *p3p, **kwargs)
-
-        # TODO, add label, voltage_label, current_label, flow_label
+        raise NotImplementedError('TODO')
 
     def _line_width_to_lw(self, model, line_width):
         """Return line width as a float for use with matplotlib."""

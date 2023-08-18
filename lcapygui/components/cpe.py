@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class CPE(BipoleComponent):
+class CPE(Bipole):
 
     type = 'CPE'
     label_offset = 0.5

@@ -1,7 +1,8 @@
 from lcapy import Circuit
-from matplotlib.transforms import Affine2D
+from .tf import TF
 from .svgparse import SVGParse
 from os.path import join
+from matplotlib.path import Path
 
 from .tf import TF
 
@@ -71,7 +72,7 @@ class Sketch:
         for svga_path in svg.paths:
             sketch_path = SketchPath(
                 svga_path.path, svga_path.style, svga_path.symbol)
-            sketch_path = sketch_path.transform(Affine2D(svga_path.transform))
+            sketch_path = sketch_path.transform(TF(svga_path.transform))
             sketch_paths.append(sketch_path)
 
         sketch = cls(sketch_paths, svg.width, svg.height)
@@ -96,12 +97,32 @@ class Sketch:
         a.draw(str(svg_filename), label_values=False, label_ids=False,
                label_nodes=False, draw_nodes=False, style=style)
 
-    def transistor_offsets(self):
+    def horizontal_wire_pair_offsets(self):
 
-        xoffset = None
-        yoffset = None
+        candidates = []
+        for path in self.paths:
+            if len(path.path) >= 4 and all(path.path.codes[0:4] == (1, 2, 1, 2)):
+                vertices = path.path.vertices
+                if vertices[0][1] == vertices[1][1]:
+                    xoffset = vertices[0][0]
+                    yoffset = vertices[0][1]
+                    candidates.append((xoffset, yoffset))
 
-        # Look for pair of vertical wires
+        if candidates == []:
+            return None, None
+
+        # Search for horizontal line with longest extent.
+        xmin = 1000
+        yoffset = 0
+        for candidate in candidates:
+            if candidate[0] < xmin:
+                xmin = candidate[0]
+                yoffset = candidate[1]
+
+        return self.width / 2, yoffset
+
+    def vertical_wire_pair_offsets(self):
+
         candidates = []
         for path in self.paths:
             if len(path.path) >= 4 and all(path.path.codes[0:4] == (1, 2, 1, 2)):
@@ -114,54 +135,21 @@ class Sketch:
         if candidates == []:
             return None, None
 
-        # Search for vertical line with longest extent.
+        # Search for horizontal line with longest extent.
         ymin = 1000
-        xoffset = 0
+        yoffset = 0
         for candidate in candidates:
             if candidate[1] < ymin:
                 ymin = candidate[1]
                 xoffset = candidate[0]
 
-        print(xoffset)
-        return xoffset, 0
+        return xoffset, self.height / 2
 
-    def offsets1(self, sketch_key):
+    def vertical_wire_offsets(self):
 
-        if sketch_key in ('fdopamp', ):
-            return self.width / 2 + 11, self.height / 2
-        elif sketch_key.startswith('TF'):
-            return self.width / 2, self.height / 2 + 1
-        elif sketch_key in ('opamp', 'inamp'):
-            return self.width / 2, self.height / 2
-        elif sketch_key.startswith('M') or sketch_key.startswith('Q') or sketch_key.startswith('J'):
-            return self.transistor_offsets()
-
-        xoffset = None
-        yoffset = None
-
-        # Look for pair of horizontal wires
-        candidates = []
-        for path in self.paths:
-            if len(path.path) >= 4 and all(path.path.codes[0:4] == (1, 2, 1, 2)):
-                vertices = path.path.vertices
-                if vertices[0][1] == vertices[1][1]:
-                    xoffset = vertices[0][0]
-                    yoffset = vertices[0][1]
-                    candidates.append((xoffset, yoffset))
-
-        if False and candidates != []:
-            # Search for horizontal line with longest extent.
-            xmin = 1000
-            yoffset = 0
-            for candidate in candidates:
-                if candidate[0] < xmin:
-                    xmin = candidate[0]
-                    yoffset = candidate[1]
-
-            return 0, yoffset
-
-        # Look for vertical wire (for ground, sground, cground, rground)
-        # Note, if look for horizontal wire first, get incorrect offset for rground
+        # Look for vertical wire (for ground, sground, cground,
+        # rground) Note, if look for horizontal wire first, get
+        # incorrect offset for rground
         for path in self.paths:
             if len(path.path) == 2 and all(path.path.codes == (1, 2)):
                 vertices = path.path.vertices
@@ -170,6 +158,10 @@ class Sketch:
                     yoffset = vertices[0][1]
                     return xoffset, yoffset
 
+        return None, None
+
+    def horizontal_wire_offsets(self):
+
         # Look for single horizontal wire (this is triggered by W components)
         for path in self.paths:
             if len(path.path) == 2 and all(path.path.codes == (1, 2)):
@@ -177,13 +169,40 @@ class Sketch:
                 if vertices[0][1] == vertices[1][1]:
                     xoffset = vertices[0][0]
                     yoffset = vertices[0][1]
-                    return 0, yoffset
+                    return self.width / 2, yoffset
 
-        return self.width / 2, self.height / 2
+        return None, None
 
     def offsets(self, sketch_key):
+        """Find the offsets required to centre the sketch.
+        Currently transistors are not centered horizontally."""
 
-        xoffset, yoffset = self.offsets1(sketch_key)
+        cpt_type = sketch_key
+        if '-' in cpt_type:
+            cpt_type = cpt_type.split('-')[0]
+
+        if cpt_type in ('fdopamp', ):
+            xoffset, yoffset = self.width / 2 + 11, self.height / 2
+        elif cpt_type in ('TF', ):
+            xoffset, yoffset = self.width / 2, self.height / 2 + 1
+        elif cpt_type in ('opamp', 'inamp'):
+            xoffset, yoffset = self.width / 2, self.height / 2
+        elif cpt_type in ('M', 'Q', 'J'):
+            # FIXME for M-pmos-pigfete
+            xoffset, yoffset1 = self.vertical_wire_pair_offsets()
+            xoffset1, yoffset = self.horizontal_wire_offsets()
+        elif cpt_type in ('C', 'CPE', 'D', 'E', 'F',
+                          'H', 'H', 'I', 'L', 'P', 'R', 'V', 'Y', 'Z'):
+            xoffset, yoffset = self.horizontal_wire_pair_offsets()
+        elif cpt_type in ('FB', 'W', 'X'):
+            xoffset, yoffset = self.horizontal_wire_offsets()
+        else:
+            raise ValueError('No case for ' + sketch_key)
+
+        if xoffset is None:
+            print('Could not find offsets for ' + sketch_key)
+            xoffset, yoffset = self.width / 2, self.height / 2
+
         return xoffset, yoffset
 
     def align(self, sketch_key):
@@ -197,7 +216,7 @@ class Sketch:
         paths = []
         for path in self.paths:
             paths.append(path.transform(
-                Affine2D().translate(-xoffset, -yoffset)))
+                TF().translate(-xoffset, -yoffset)))
 
         return self.__class__(paths, self.width, self.height, **self.kwargs)
 
@@ -222,3 +241,25 @@ class Sketch:
         tf = tf.translate(*c)
 
         return sketcher.sketch(self, tf, **kwargs)
+
+    def minmax(self):
+
+        xmin = 1000
+        ymin = 1000
+        xmax = -1000
+        ymax = -1000
+        for spath in self.paths:
+            path = spath.path
+            for v, c in zip(path.vertices, path.codes):
+                if c in (Path.MOVETO, Path.LINETO):
+                    pos = v
+                    if pos[0] > xmax:
+                        xmax = pos[0]
+                    if pos[0] < xmin:
+                        xmin = pos[0]
+                    if pos[1] > ymax:
+                        ymax = pos[1]
+                    if pos[1] < ymin:
+                        ymin = pos[1]
+
+        return xmin, xmax, ymin, ymax

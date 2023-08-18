@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class Capacitor(BipoleComponent):
+class Capacitor(Bipole):
 
     type = 'C'
     default_kind = '-'

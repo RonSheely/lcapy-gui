@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class CurrentSource(BipoleComponent):
+class CurrentSource(Bipole):
 
     type = 'I'
     kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step',

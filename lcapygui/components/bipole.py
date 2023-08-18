@@ -1,9 +1,8 @@
-from .component import Component
+from .stretchy import Stretchy
+from numpy import array
 
 
-class BipoleComponent(Component):
-
-    can_stretch = True
+class Bipole(Stretchy):
 
     node_pinnames = ('+', '-')
     pins = {'+': ('lx', -0.5, 0),
@@ -24,3 +23,8 @@ class BipoleComponent(Component):
         if self.style != '':
             s += ', style=' + self.style
         return s
+
+    def assign_positions(self, x1, y1, x2, y2) -> array:
+        """Assign node positions based on cursor positions."""
+
+        return array(((x1, y1), (x2, y2)))

@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class Resistor(BipoleComponent):
+class Resistor(Bipole):
 
     type = 'R'
     label_offset = 0.4

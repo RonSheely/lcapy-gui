@@ -1,6 +1,8 @@
-from .component import Component
+from .fixed import Fixed
 from numpy import array
 from lcapy.schemmisc import Pos
+
+# TODO: make stretchy
 
 
 # There is a lot more to do to support transformers.  Tapped
@@ -8,7 +10,7 @@ from lcapy.schemmisc import Pos
 # port, the output port, or the entire device.
 
 
-class Transformer(Component):
+class Transformer(Fixed):
 
     type = "TF"
     default_kind = ''
@@ -25,12 +27,14 @@ class Transformer(Component):
     node_pinnames = ('s+', 's-', 'p+', 'p-')
 
     hw = 0.32
-    pins = {'s+': ('rx', hw, 0.5),
-            's-': ('rx', hw, -0.5),
-            'p+': ('lx', -hw, 0.5),
-            'p-': ('lx', -hw, -0.5)}
-
+    # Actual half-height
+    # hh = 0.48245
     hh = 0.5
+    pins = {'s+': ('rx', hw, hh),
+            's-': ('rx', hw, -hh),
+            'p+': ('lx', -hw, hh),
+            'p-': ('lx', -hw, -hh)}
+
     bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
 
     @property

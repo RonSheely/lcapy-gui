@@ -1,6 +1,6 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class Impedance(BipoleComponent):
+class Impedance(Bipole):
 
     type = 'Z'

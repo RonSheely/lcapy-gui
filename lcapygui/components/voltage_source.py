@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class VoltageSource(BipoleComponent):
+class VoltageSource(Bipole):
 
     type = 'V'
     kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step',

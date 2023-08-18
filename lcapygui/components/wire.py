@@ -1,7 +1,7 @@
-from .bipole import BipoleComponent
+from .bipole import Bipole
 
 
-class Wire(BipoleComponent):
+class Wire(Bipole):
 
     type = 'W'
     args = ()
