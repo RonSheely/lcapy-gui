@@ -1,4 +1,4 @@
-from tkinter import Canvas, Tk, Menu, Frame, TOP, BOTH, BOTTOM, X, Button
+from tkinter import Canvas, Tk, Frame, TOP, BOTH, BOTTOM, X, Button
 from tkinter.ttk import Notebook
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -7,7 +7,7 @@ from os.path import basename
 from ..uimodelmph import UIModelMPH
 from .sketcher import Sketcher
 from .drawing import Drawing
-from .menu import MenuBar, MenuDropdown, MenuItem
+from .menu import MenuBar, MenuDropdown, MenuItem, MenuSeparator
 from ...sketch_library import SketchLibrary
 
 
@@ -42,22 +42,43 @@ class LcapyTk(Tk):
         self.title('Lcapy-tk ' + __version__)
         self.geometry(self.GEOMETRY)
 
+        categories = {
+            'Basic': ('y', 'c', 'z', 'i', 'l', 'p', 'r', 'v', 'w'),
+            'Opamp': ('opamp', 'fdopamp', 'inamp'),
+            'Transistor': ('q', 'j', 'm'),
+            'Controlled source': ('e', 'f', 'g', 'h'),
+            'Misc.': ('cpe', 'o', 'nr'),
+            'Connection': ('0', '0V', 'sground', 'rground', 'cground',
+                           'vdd', 'vss', 'vcc', 'vee',
+                           'input', 'output', 'bidir')
+        }
+
         items = []
-        for key, val in self.uimodel_class.component_map.items():
-            acc = key if len(key) == 1 else ''
-            items.append(MenuItem(val[1], command=self.on_add_cpt, arg=key,
-                         accelerator=acc))
+        for cat in categories:
+            if cat == 'Basic':
+                for key in categories[cat]:
+                    val = self.uimodel_class.component_map[key]
+                    acc = key if len(key) == 1 else ''
+                    items.append(MenuItem(val[1], command=self.on_add_cpt,
+                                          arg=key, accelerator=acc))
+                items.append(MenuSeparator())
+            else:
+                subitems = []
+
+                for key in categories[cat]:
+                    if cat == 'Connection':
+                        val = self.uimodel_class.connection_map[key]
+                        cmd = self.on_add_con
+                    else:
+                        val = self.uimodel_class.component_map[key]
+                        cmd = self.on_add_cpt
+                    acc = key if len(key) == 1 else ''
+                    subitems.append(MenuItem(val[1], command=cmd,
+                                             arg=key, accelerator=acc))
+                menu = MenuDropdown(cat, 0, subitems)
+                items.append(menu)
 
         component_menu_dropdown = MenuDropdown('Components', 0, items)
-
-        items = []
-
-        for key, val in self.uimodel_class.connection_map.items():
-            acc = key if len(key) == 1 else ''
-            items.append(MenuItem(val[1], command=self.on_add_con, arg=key,
-                         accelerator=acc))
-
-        connection_menu_dropdown = MenuDropdown('Connections', 0, items)
 
         menudropdowns = [
             MenuDropdown('File', 0,
@@ -120,7 +141,8 @@ class LcapyTk(Tk):
                              MenuItem('Circuit graph ', self.on_circuitgraph)
                          ]),
 
-            MenuDropdown('Create', 0,
+            component_menu_dropdown,
+            MenuDropdown('Create', 1,
                          [
                              MenuItem('State space',
                                       self.on_create_state_space),
@@ -159,8 +181,6 @@ class LcapyTk(Tk):
                              MenuItem('Noise current',
                                       self.on_inspect_noise_current),
                          ]),
-            component_menu_dropdown,
-            connection_menu_dropdown,
             MenuDropdown('Manipulate', 0,
                          [
                              MenuItem('Kill independent sources',
