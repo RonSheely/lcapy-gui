@@ -22,12 +22,14 @@ class Connection(Bipole):
 
     def draw(self, model, **kwargs):
 
+        kwargs = self.make_kwargs(model, **kwargs)
+        if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
+            return
+
         sketch = self._sketch_lookup(model)
 
         x1, y1 = self.node1.x, self.node1.y
         x2, y2 = self.node2.x, self.node2.y
-
-        kwargs = self.make_kwargs(model, **kwargs)
 
         if self.symbol_kind in ('vcc', 'vdd'):
             x1, y1, angle = self.split_node_pos(x2, y2, model.STEP, True)

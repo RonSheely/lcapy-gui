@@ -196,6 +196,8 @@ class Sketch:
             xoffset, yoffset = self.horizontal_wire_pair_offsets()
         elif cpt_type in ('FB', 'W', 'X'):
             xoffset, yoffset = self.horizontal_wire_offsets()
+            # Hack to simplify positioning
+            xoffset = 0
         else:
             raise ValueError('No case for ' + sketch_key)
 
