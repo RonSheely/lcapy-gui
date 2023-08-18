@@ -9,6 +9,7 @@ from argparse import ArgumentParser
 import sys
 from lcapygui.components.sketch import Sketch
 from lcapygui.components.tf import TF
+from lcapygui.components.cpt_maker import cpt_make_from_sketch_key
 from lcapygui.ui.tk.sketcher import Sketcher
 from matplotlib.pyplot import subplots, show
 
@@ -28,7 +29,7 @@ def schtex_exception(type, value, tb):
         pdb.pm()
 
 
-def sketchview(sketch_key):
+def sketchview(sketch_key, pins):
 
     fig, ax = subplots(1)
 
@@ -55,6 +56,15 @@ def sketchview(sketch_key):
 
     print('width=%s, height=%s' % (sketch.width, sketch.height))
 
+    if pins:
+        cpt = cpt_make_from_sketch_key(sketch_key)
+        for pinname, pin in cpt.pins.items():
+            x, y = pin[1], pin[2]
+            sketcher.stroke_filled_circle(
+                x, y, 0.02,  color='purple', alpha=1)
+            # print(pinname, pos)
+            sketcher.text(x, y, pinname)
+
 
 def main(argv=None):
 
@@ -68,6 +78,9 @@ def main(argv=None):
     parser.add_argument('--pdb', action='store_true',
                         default=False,
                         help="enter python debugger on exception")
+    parser.add_argument('--pins', action='store_true',
+                        default=False,
+                        help="show pins")
     parser.add_argument('sketch_keys', type=str, nargs='*',
                         help='schematic sketch key(s)', default=[])
 
@@ -77,7 +90,7 @@ def main(argv=None):
         sys.excepthook = schtex_exception
 
     for sketch_key in args.sketch_keys:
-        sketchview(sketch_key)
+        sketchview(sketch_key, args.pins)
 
     show()
 

@@ -114,3 +114,20 @@ def cpt_make_from_cpt(cpt):
 def cpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
 
     return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style)
+
+
+def cpt_make_from_sketch_key(sketch_key):
+
+    parts = sketch_key.split('-')
+    cpt_type = parts[0]
+    if len(parts) == 1:
+        kind = ''
+        style = ''
+    elif len(parts) == 2:
+        kind = parts[1]
+        style = ''
+    else:
+        kind = parts[1]
+        style = parts[2]
+
+    return cpt_make_from_type(cpt_type, '', kind, style)
