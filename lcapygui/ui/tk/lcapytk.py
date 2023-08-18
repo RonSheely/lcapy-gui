@@ -43,11 +43,11 @@ class LcapyTk(Tk):
         self.geometry(self.GEOMETRY)
 
         categories = {
-            'Basic': ('y', 'c', 'z', 'i', 'l', 'p', 'r', 'v', 'w'),
+            'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w'),
             'Opamp': ('opamp', 'fdopamp', 'inamp'),
             'Transistor': ('q', 'j', 'm'),
-            'Controlled source': ('e', 'f', 'g', 'h'),
-            'Misc.': ('cpe', 'o', 'nr'),
+            'Dependent source': ('e', 'f', 'g', 'h'),
+            'Misc.': ('y', 'cpe', 'z', 'o', 'nr'),
             'Connection': ('0', '0V', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir')
