@@ -14,7 +14,7 @@ class Stretchy(Component):
         sketch = self._sketch_lookup(model)
 
         # Handle ports where nothing is drawn.
-        if sketch is None:
+        if sketch is None or self.type == 'P':
             return
 
         kwargs = self.make_kwargs(model, **kwargs)
