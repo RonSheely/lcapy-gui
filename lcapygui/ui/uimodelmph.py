@@ -783,5 +783,7 @@ class UIModelMPH(UIModelBase):
 
     def unselect(self):
 
+        self.selected = None
         self.cursors.remove()
+        self.redraw()
         self.ui.refresh()

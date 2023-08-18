@@ -83,6 +83,8 @@ class Component(ABC):
         self.current_label = ''
         self.flow_label = ''
         self.color = ''
+        # This scales the size of the component but not the distance
+        # between the nodes.
         self.scale = '1'
 
         self.mirror = False
