@@ -1,6 +1,10 @@
 from tkinter import Menu
 
 
+class MenuSeparator:
+    pass
+
+
 class MenuItem:
 
     def __init__(self, label, command=None, arg=None, underline=0, accelerator=None):
@@ -62,12 +66,17 @@ class MenuBar:
                                      underline=menuitem.underline,
                                      menu=submenu)
                     for submenuitem in menuitem.menuitems:
-                        submenu.add_command(label=submenuitem.label,
-                                            command=lambda a=submenuitem: doit(
-                                                a),
-                                            underline=submenuitem.underline,
-                                            accelerator=submenuitem.accelerator)
+                        if isinstance(submenuitem, MenuSeparator):
+                            submenu.add_separator()
+                        else:
+                            submenu.add_command(label=submenuitem.label,
+                                                command=lambda a=submenuitem: doit(
+                                                    a),
+                                                underline=submenuitem.underline,
+                                                accelerator=submenuitem.accelerator)
 
+                elif isinstance(menuitem, MenuSeparator):
+                    menu.add_separator()
                 else:
                     menu.add_command(label=menuitem.label,
                                      command=lambda a=menuitem: doit(a),
