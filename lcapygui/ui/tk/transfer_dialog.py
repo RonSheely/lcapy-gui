@@ -19,7 +19,7 @@ class TransferFunctionDialog(Window):
         entries.append(LabelEntry('output', 'Output',
                                   names[0], names))
 
-        self.labelentries = LabelEntries(window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
         button = Button(self, text="OK", command=self.on_ok)
         button.grid(row=self.labelentries.row)

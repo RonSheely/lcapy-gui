@@ -15,7 +15,7 @@ class ExprAttributesDialog(Window):
                    LabelEntry('quantity', 'Quantity', expr.quantity),
                    LabelEntry('causal', 'Causal', expr.is_causal, command=self.causal)]
 
-        self.labelentries = LabelEntries(window, ui, entries)
+        self.labelentries = LabelEntries(self, ui, entries)
 
     def causal(self):
 
