@@ -178,8 +178,14 @@ class Sketch:
         Currently transistors are not centered horizontally."""
 
         cpt_type = sketch_key
+        cpt_kind = ''
+        cpt_style = ''
         if '-' in cpt_type:
-            cpt_type = cpt_type.split('-')[0]
+            parts = cpt_type.split('-')
+            cpt_type = parts[0]
+            cpt_kind = parts[1]
+            if len(parts) == 3:
+                cpt_style = parts[2]
 
         if cpt_type in ('fdopamp', ):
             xoffset, yoffset = self.width / 2 + 11, self.height / 2
@@ -195,9 +201,13 @@ class Sketch:
                           'H', 'H', 'I', 'L', 'R', 'V', 'Y', 'Z'):
             xoffset, yoffset = self.horizontal_wire_pair_offsets()
         elif cpt_type in ('FB', 'W', 'X'):
-            xoffset, yoffset = self.horizontal_wire_offsets()
-            # Hack to simplify positioning
-            xoffset = 0
+            if cpt_style in ('vdd', 'vss', 'vcc', 'vee'):
+                xoffset, yoffset = self.vertical_wire_offsets()
+                yoffset = 0
+            else:
+                xoffset, yoffset = self.horizontal_wire_offsets()
+                # Hack to simplify positioning
+                xoffset = 0
         elif cpt_type in ('P', ):
             xoffset = 0
             yoffset = 0
