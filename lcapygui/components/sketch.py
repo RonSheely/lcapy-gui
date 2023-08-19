@@ -193,12 +193,14 @@ class Sketch:
             xoffset, yoffset = self.width / 2, self.height / 2 + 1
         elif cpt_type in ('opamp', 'inamp'):
             xoffset, yoffset = self.width / 2, self.height / 2
-        elif cpt_type in ('M', 'Q', 'J'):
+        elif cpt_type in ('M', 'Q'):
             # FIXME for M-pmos-pigfete
             xoffset, yoffset1 = self.vertical_wire_pair_offsets()
             xoffset1, yoffset = self.horizontal_wire_offsets()
-        elif cpt_type in ('C', 'CPE', 'D', 'E', 'F',
-                          'H', 'H', 'I', 'L', 'R', 'V', 'Y', 'Z'):
+        elif cpt_type in ('J', ):
+            xoffset, yoffset = self.width / 2 + 0.5, self.height / 2
+        elif cpt_type in ('C', 'CPE', 'D', 'E', 'F', 'G',
+                          'H', 'I', 'L', 'R', 'V', 'Y', 'Z'):
             xoffset, yoffset = self.horizontal_wire_pair_offsets()
         elif cpt_type in ('FB', 'W', 'X'):
             if cpt_style in ('vdd', 'vss', 'vcc', 'vee'):
@@ -214,7 +216,7 @@ class Sketch:
         else:
             raise ValueError('No case for ' + sketch_key)
 
-        if xoffset is None:
+        if xoffset is None or yoffset is None:
             print('Could not find offsets for ' + sketch_key)
             xoffset, yoffset = self.width / 2, self.height / 2
 
@@ -230,8 +232,7 @@ class Sketch:
 
         paths = []
         for path in self.paths:
-            paths.append(path.transform(
-                TF().translate(-xoffset, -yoffset)))
+            paths.append(path.transform(TF().translate(-xoffset, -yoffset)))
 
         return self.__class__(paths, self.width, self.height, **self.kwargs)
 
