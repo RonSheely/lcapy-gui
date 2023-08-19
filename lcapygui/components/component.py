@@ -221,12 +221,6 @@ class Component(ABC):
         sketch = ui.sketchlib.lookup(self.sketch_key, style)
         return sketch
 
-    def draw_nostretch(self, model, **kwargs):
-
-        tf = self.find_tf(self.pinname1, self.pinname2)
-        sketch = self._sketch_lookup(model)
-        sketch.draw(model, tf, **kwargs)
-
     def draw(self, model, **kwargs):
 
         raise NotImplementedError('TODO')

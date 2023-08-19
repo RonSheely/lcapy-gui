@@ -61,7 +61,7 @@ def sketchview(sketch_key, pins):
         for pinname, pin in cpt.pins.items():
             x, y = pin[1], pin[2]
             sketcher.stroke_filled_circle(
-                x, y, 0.02,  color='purple', alpha=1)
+                x, y, 0.02, color='purple', alpha=1)
             # print(pinname, pos)
             sketcher.text(x, y, pinname)
 
