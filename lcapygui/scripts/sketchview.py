@@ -29,7 +29,7 @@ def schtex_exception(type, value, tb):
         pdb.pm()
 
 
-def sketchview(sketch_key, pins):
+def sketchview(sketch_key, pins, points):
 
     fig, ax = subplots(1)
 
@@ -41,7 +41,8 @@ def sketchview(sketch_key, pins):
     # Convert from points to cm
     # tf = tf.scale(2.54 / 72)
     # Convert from points to circuitikz units
-    tf = tf.scale(2.54 / 72 / 2)
+    if not points:
+        tf = tf.scale(2.54 / 72 / 2)
 
     # Note, y values are negated
     sketcher.sketch(sketch, tf, color='blue', lw=3)
@@ -81,6 +82,9 @@ def main(argv=None):
     parser.add_argument('--pins', action='store_true',
                         default=False,
                         help="show pins")
+    parser.add_argument('--points', action='store_true',
+                        default=False,
+                        help="show pins")
     parser.add_argument('sketch_keys', type=str, nargs='*',
                         help='schematic sketch key(s)', default=[])
 
@@ -90,7 +94,7 @@ def main(argv=None):
         sys.excepthook = schtex_exception
 
     for sketch_key in args.sketch_keys:
-        sketchview(sketch_key, args.pins)
+        sketchview(sketch_key, args.pins, args.points)
 
     show()
 
