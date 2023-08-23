@@ -193,10 +193,13 @@ class Sketch:
             xoffset, yoffset = self.width / 2, self.height / 2 + 1
         elif cpt_type in ('opamp', 'inamp'):
             xoffset, yoffset = self.width / 2, self.height / 2
-        elif cpt_type in ('M', 'Q'):
+        elif cpt_type in ('Q', ):
             # FIXME for M-pmos-pigfete
-            xoffset, yoffset1 = self.vertical_wire_pair_offsets()
-            xoffset1, yoffset = self.horizontal_wire_offsets()
+            # xoffset, yoffset1 = self.vertical_wire_pair_offsets()
+            # xoffset1, yoffset = self.horizontal_wire_offsets()
+            xoffset, yoffset = self.width / 2 + 2.8, self.height / 2
+        elif cpt_type in ('M', ):
+            xoffset, yoffset = self.width / 2 + 0.7, self.height / 2
         elif cpt_type in ('J', ):
             xoffset, yoffset = self.width / 2 + 0.5, self.height / 2
         elif cpt_type in ('C', 'CPE', 'D', 'E', 'F', 'G',
