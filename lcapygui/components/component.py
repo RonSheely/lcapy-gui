@@ -439,7 +439,9 @@ class Component(ABC):
 
         xb, yb = tf.transform((x, y))
 
-        return point_in_polygon(xb, yb, self.bbox_path)
+        path = array(self.bbox_path) * 0.9
+
+        return point_in_polygon(xb, yb, path)
 
     def netitem_nodes(self, node_names):
 
