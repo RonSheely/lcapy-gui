@@ -3,7 +3,7 @@ from .labelentries import LabelEntry, LabelEntries
 from .window import Window
 
 
-class TransferFunctionDialog:
+class TransferFunctionDialog(Window):
 
     def __init__(self, ui, cpt):
 
