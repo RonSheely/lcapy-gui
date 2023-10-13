@@ -4,7 +4,7 @@ from .labelentries import LabelEntry, LabelEntries
 from .window import Window
 
 
-class PlotPropertiesDialog:
+class PlotPropertiesDialog(Window):
 
     def __init__(self, expr, ui):
 
