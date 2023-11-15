@@ -351,10 +351,12 @@ class LcapyTk(Tk):
     def on_click_event(self, event):
 
         if event.xdata is None or event.ydata is None:
+            # Can this happen?
             return
 
         if self.debug:
-            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+
+            print('Button event %s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
                   ('double' if event.dblclick else 'single', event.button,
                    event.x, event.y, event.xdata, event.ydata))
 
@@ -530,13 +532,17 @@ class LcapyTk(Tk):
 
     def on_mouse_event(self, event):
 
+        if self.debug:
+
+            if event.xdata is None or event.ydata is None:
+                print('Mouse event: x=%d, y=%d' %
+                      (event.x, event.y))
+            else:
+                print('Mouse event: x=%d, y=%d, xdata=%f, ydata=%f' %
+                      (event.x, event.y, event.xdata, event.ydata))
+
         if event.xdata is None or event.ydata is None:
             return
-
-        if self.debug:
-            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-                  ('double' if event.dblclick else 'single', event.button,
-                   event.x, event.y, event.xdata, event.ydata))
 
         if event.button == 1:
             self.model.on_mouse_drag(event.xdata, event.ydata)
