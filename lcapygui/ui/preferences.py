@@ -19,7 +19,7 @@ class Preferences:
         self.style = 'american'
         self.voltage_dir = 'RP'
         self.grid = 'on'
-        self.line_width = circuitikz_default_line_width,
+        self.line_width = circuitikz_default_line_width
         self.scale = circuitikz_default_scale
         self.show_units = 'false'
         self.xsize = 36
