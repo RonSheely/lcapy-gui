@@ -530,6 +530,9 @@ class LcapyTk(Tk):
 
     def on_mouse_event(self, event):
 
+        if event.xdata is None or event.ydata is None:
+            return
+
         if self.debug:
             print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
                   ('double' if event.dblclick else 'single', event.button,
