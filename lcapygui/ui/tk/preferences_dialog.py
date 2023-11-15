@@ -32,6 +32,11 @@ class PreferencesDialog(Window):
                               self.model.preferences.voltage_dir,
                               ('RP', 'EF'),
                               command=self.on_update),
+                   LabelEntry('current_sign_convention',
+                              'Current sign convention',
+                              self.model.preferences.current_sign_convention,
+                              ('passive', 'active', 'hybrid'),
+                              command=self.on_update),
                    LabelEntry('grid', 'Grid',
                               self.model.preferences.grid,
                               ('on', 'off'),
@@ -86,6 +91,8 @@ class PreferencesDialog(Window):
         self.model.preferences.xsize = self.labelentries.get('xsize')
         self.model.preferences.ysize = self.labelentries.get('ysize')
         self.model.preferences.snap_grid = self.labelentries.get('snap_grid')
+        self.model.preferences.current_sign_convention = self.labelentries.get(
+            'current_sign_convention')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...

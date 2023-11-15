@@ -12,7 +12,7 @@ class Preferences:
 
     def __init__(self):
 
-        self.version = 3
+        self.version = 4
         self.label_nodes = 'none'
         self.draw_nodes = 'connections'
         self.label_cpts = 'name'
@@ -29,6 +29,7 @@ class Preferences:
         self.line_width_scale = 3.5
         self.node_size = 0.12
         self.node_color = 'black'
+        self.current_sign_convention = 'passive'
 
         self.load()
 

@@ -103,6 +103,9 @@ class UIModelBase:
             net = 'W %s 0\n' % list(self.circuit.nodes)[0]
             self.analysis_circuit.add(net)
 
+        from lcapy.state import state
+        state.current_sign_convention = self.preferences.current_sign_convention
+
         try:
             self._analysis_circuit[0]
         except (AttributeError, ValueError, RuntimeError) as e:

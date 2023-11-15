@@ -644,7 +644,12 @@ class UIModelMPH(UIModelBase):
 
     def on_preferences(self):
 
-        self.ui.show_preferences_dialog(self.on_redraw)
+        def update():
+            self.on_redraw()
+            # Handle current_sign_convention
+            self.invalidate()
+
+        self.ui.show_preferences_dialog(update)
 
     def on_quit(self):
 
