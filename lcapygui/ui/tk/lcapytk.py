@@ -433,6 +433,10 @@ class LcapyTk(Tk):
         err = traceback.format_exception(*args)
         messagebox.showerror('Exception', err)
 
+        if self.debug:
+            import pdb
+            pdb.set_trace()
+
     def on_expression(self, *args):
 
         self.model.on_expression()

@@ -14,6 +14,8 @@ class ApproximateDialog(Window):
 
         entries = []
 
+        # TODO: Add label to explain to define ballpark values
+
         self.symbols = []
         for key in expr.symbols:
             # Ignore domain variable
