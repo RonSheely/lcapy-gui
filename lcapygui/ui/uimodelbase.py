@@ -367,7 +367,7 @@ class UIModelBase:
 
     def export(self, pathname):
 
-        cct = self.circuit
+        cct = Circuit(self.schematic())
         cct.draw(pathname)
 
     def invalidate(self):
