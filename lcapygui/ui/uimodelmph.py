@@ -198,6 +198,12 @@ class UIModelMPH(UIModelBase):
                 suffix = '1'
         return base + '_' + suffix + ext
 
+    def on_ac_model(self):
+
+        # Perhaps should kill non-AC sources
+        cct = self.circuit.ac()
+        self.on_show_new_circuit(cct)
+
     def on_add_node(self, x, y):
 
         # Snap to closest known node then snap to grid.
@@ -349,6 +355,12 @@ class UIModelMPH(UIModelBase):
         self.cursors.draw()
 
         self.ui.refresh()
+
+    def on_dc_model(self):
+
+        # Perhaps should kill non-DC sources
+        cct = self.circuit.dc()
+        self.on_show_new_circuit(cct)
 
     def on_debug(self):
 
@@ -745,6 +757,12 @@ class UIModelMPH(UIModelBase):
         filename = basename(pathname)
         self.ui.set_filename(filename)
         self.ui.refresh()
+
+    def on_transient_model(self):
+
+        # Perhaps should kill non-transient sources
+        cct = self.circuit.transient()
+        self.on_show_new_circuit(cct)
 
     def on_undo(self):
 

@@ -189,6 +189,10 @@ class LcapyTk(Tk):
                                       self.on_manipulate_kill),
                              MenuItem('Remove independent sources',
                                       self.on_manipulate_remove_sources),
+                             MenuItem('AC model', self.on_ac_model),
+                             MenuItem('DC model', self.on_dc_model),
+                             MenuItem('Transient model',
+                                      self.on_transient_model),
                              MenuItem('Laplace model', self.on_laplace_model),
                              MenuItem('Noise model', self.on_noise_model),
                              MenuItem('Expand components', self.on_expand)
@@ -318,6 +322,10 @@ class LcapyTk(Tk):
         self.model = model
         return model
 
+    def on_ac_model(self, *args):
+
+        self.model.on_ac_model()
+
     def on_add_con(self, conname):
 
         if self.debug:
@@ -397,6 +405,10 @@ class LcapyTk(Tk):
     def on_cut(self, *args):
 
         self.model.on_cut()
+
+    def on_dc_model(self, *args):
+
+        self.model.on_dc_model()
 
     def on_default_fit(self, *args):
 
@@ -610,6 +622,10 @@ class LcapyTk(Tk):
         # TODO: rethink if destroy a tab/canvas
         canvas = self.canvases[index]
         self.enter(canvas)
+
+    def on_transient_model(self, *args):
+
+        self.model.on_transient_model()
 
     def on_undo(self, *args):
 
