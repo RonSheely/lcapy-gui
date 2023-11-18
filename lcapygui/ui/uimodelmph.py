@@ -519,14 +519,14 @@ class UIModelMPH(UIModelBase):
         self.ui.set_filename(pathname)
         self.ui.refresh()
 
-    def on_manipulation_kill(self):
+    def on_manipulate_kill(self):
 
         # Could have a dialog to select what to kill
 
         cct = self.circuit.kill()
         self.on_show_new_circuit(cct)
 
-    def on_manipulation_remove_sources(self):
+    def on_manipulate_remove_sources(self):
 
         # Could have a dialog to select what to remove
 
