@@ -2,27 +2,30 @@ from tkinter import Menu
 
 
 class MenuSeparator:
-    pass
+
+    level = 0
 
 
 class MenuItem:
 
-    def __init__(self, label, command=None, arg=None, underline=0, accelerator=None):
+    def __init__(self, label, command=None, arg=None, underline=0, accelerator=None, level=0):
 
         self.label = label
         self.command = command
         self.arg = arg
         self.underline = underline
         self.accelerator = accelerator
+        self.level = level
 
 
 class MenuDropdown:
 
-    def __init__(self, label, underline=0, menuitems=None):
+    def __init__(self, label, underline=0, menuitems=None, level=0):
 
         self.label = label
         self.underline = underline
         self.menuitems = menuitems
+        self.level = level
 
 
 class MenuBar:
@@ -31,7 +34,7 @@ class MenuBar:
 
         self.menudropdowns = menudropdowns
 
-    def make(self, window):
+    def make(self, window, level=10):
 
         def doit(menuitem):
 
@@ -56,6 +59,8 @@ class MenuBar:
             for menuitem in menudropdown.menuitems:
 
                 if menuitem is None:
+                    continue
+                if menuitem.level > level:
                     continue
 
                 if isinstance(menuitem, MenuDropdown):

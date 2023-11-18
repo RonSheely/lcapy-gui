@@ -19,10 +19,10 @@ class Window(Toplevel):
 
         self.debug = False
 
-    def add_menu(self, menudropdowns):
+    def add_menu(self, menudropdowns, level=10):
 
         self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self)
+        self.menubar.make(self, level)
 
     def focus(self):
 

@@ -21,7 +21,7 @@ class LcapyTk(Tk):
 
     NAME = 'lcapy-tk'
 
-    def __init__(self, pathnames=None, uimodel_class=None, debug=0):
+    def __init__(self, pathnames=None, uimodel_class=None, debug=0, level=0):
 
         from ... import __version__
 
@@ -41,6 +41,8 @@ class LcapyTk(Tk):
         # Title and size of the window
         self.title('Lcapy-tk ' + __version__)
         self.geometry(self.GEOMETRY)
+
+        self.level = level
 
         categories = {
             'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w'),
@@ -199,7 +201,7 @@ class LcapyTk(Tk):
         ]
 
         self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self)
+        self.menubar.make(self, self.level)
 
         # Notebook tabs
         self.notebook = Notebook(self)
