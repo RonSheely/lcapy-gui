@@ -1,4 +1,4 @@
-from .menu import MenuBar, MenuDropdown, MenuItem
+from .menu import MenuDropdown, MenuItem
 from .expr_calc import ExprCalc
 from .exprimage import ExprImage
 from lcapy import Expr, ExprTuple, Matrix, expr

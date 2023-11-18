@@ -1,7 +1,7 @@
 from tkinter import Button
 from numpy import linspace
 from .labelentries import LabelEntry, LabelEntries
-from .menu import MenuBar, MenuDropdown, MenuItem
+from .menu import MenuDropdown, MenuItem
 from .window import Window
 
 # Perhaps iterate over components and annotate values;

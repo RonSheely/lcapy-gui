@@ -1,4 +1,4 @@
-from .menu import MenuBar, MenuDropdown, MenuItem
+from .menu import MenuDropdown, MenuItem
 from .labelentries import LabelEntry, LabelEntries
 from .window import Window
 
