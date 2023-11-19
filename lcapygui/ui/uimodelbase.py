@@ -267,7 +267,7 @@ class UIModelBase:
 
                 if draw_nodes == 'connections' and node.count < 3:
                     continue
-                if draw_nodes == 'primary' and not node.is_primary:
+                if draw_nodes == 'primary' and not node.primary:
                     continue
                 self.node_draw(node)
 

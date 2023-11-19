@@ -613,6 +613,17 @@ class UIModelMPH(UIModelBase):
         s = self.schematic()
         self.ui.show_message_dialog(s, 'Netlist')
 
+    def on_modified_nodal_equations(self):
+
+        if self.ground_node is None:
+            self.ui.show_info_dialog('Suggest adding a ground node.')
+
+        cct = self.analysis_circuit
+        cct = cct.laplace()
+        eqns = cct.matrix_equations()
+        # Perhaps have matrix equation dialog?
+        self.ui.show_expr_dialog(eqns, 'Modified nodal equations')
+
     def on_nodal_equations(self):
 
         if self.ground_node is None:

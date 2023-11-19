@@ -133,6 +133,8 @@ class LcapyTk(Tk):
                              MenuItem('Netlist', self.on_netlist),
                              MenuItem('Nodal equations',
                                       self.on_nodal_equations),
+                             MenuItem('Modified nodal equations',
+                                      self.on_modified_nodal_equations),
                              MenuItem('Mesh equations',
                                       self.on_mesh_equations),
                              MenuItem('Best fit', self.on_best_fit),
@@ -547,6 +549,10 @@ class LcapyTk(Tk):
     def on_mesh_equations(self, *args):
 
         self.model.on_mesh_equations()
+
+    def on_modified_nodal_equations(self, *args):
+
+        self.model.on_modified_nodal_equations()
 
     def on_mouse_event(self, event):
 
