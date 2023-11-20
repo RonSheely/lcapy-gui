@@ -600,10 +600,16 @@ class LcapyTk(Tk):
 
         if event.xdata is None or event.ydata is None:
             return
+        else :
+            # Save the mouse position
+            self.model.mouse_position = (event.xdata, event.ydata)
 
         if event.button == 1:
             self.model.on_mouse_drag(event.xdata, event.ydata,
                                      event.key)
+
+        if self.model.follow_mouse:
+            self.model.on_mouse_drag(event.xdata, event.ydata)
 
     def on_mouse_zoom(self, ax):
 

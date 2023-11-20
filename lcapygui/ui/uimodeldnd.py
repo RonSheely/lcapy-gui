@@ -4,16 +4,52 @@ from lcapygui.ui.uimodelmph import UIModelMPH
 class UIModelDnD(UIModelMPH):
 
     def __init__(self, ui):
-        super().__init__(ui)
-        self.mouse_pos = (0 ,0)
+        super(UIModelDnD, self).__init__(ui)
 
     def on_add_cpt(self, cpt_key):
         """
         Adds a component to the circuit after a key is pressed
+
+        If there are cursors present, it will place a component between them
+        otherwise, the component will follow the cursor until the user left clicks
+
         :param cpt_key: key pressed
         :return: None
         """
-        super().on_add_cpt(cpt_key)
+        if self.ui.debug:
+            print(f"adding component at mouse position: {self.mouse_position}")
+        # Get mouse positions
+        mouse_x = self.mouse_position[0]
+        mouse_y = self.mouse_position[1]
+        if len(self.cursors) > 0:
+            # add a new cursor at the grid position closest to the mouse
+            self.add_cursor(round(mouse_x), round(mouse_y))
+
+            # add the component like normal
+            super().on_add_cpt(cpt_key)
+        else:
+            # create a new component at the mouse position
+            cpt = self.cpt_create(cpt_key, mouse_x-2, mouse_y, mouse_x+2, mouse_y)
+            self.ui.refresh()
+
+            # Select the newly created component
+            self.selected = cpt
+            self.follow_mouse = True
+
+
+    def on_left_click(self, x, y):
+
+        # If we are placing a component
+        if self.follow_mouse:
+            self.follow_mouse = False
+            self.selected = None
+        else:
+            super().on_left_click(x, y)
+
+    def on_right_click(self, x, y):
+        super().on_right_click(x, y)
+        if not self.selected:
+            self.unselect()
 
 
 

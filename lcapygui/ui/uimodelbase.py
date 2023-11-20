@@ -96,6 +96,8 @@ class UIModelBase:
         self.recall = History()
         self.clipboard = None
         self.select_pos = 0, 0
+        self.mouse_position = (0, 0)
+        self.follow_mouse = False
         self.dragged = False
         self.zoom_factor = 1
 

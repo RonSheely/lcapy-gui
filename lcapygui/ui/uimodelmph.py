@@ -48,16 +48,24 @@ class UIModelMPH(UIModelBase):
             self.key_bindings_with_key[thing.accelerator] = self.on_add_con, thing
 
     def add_cursor(self, x, y):
+        """
+        Adds a cursor at the specified position.
+        If two cursors already exist, the oldest cursor is removed.
 
+        :param x: x position of the cursor
+        :param y: y position of the cursor
+        :return: None
+        """
         # cursors[0] is the positive cursor
         # cursors[1] is the negative cursor
 
         cursor = Cursor(self.ui, x, y)
 
+        # If this is the first cursor, add it and make it positive
         if len(self.cursors) == 0:
             cursor.draw('red')
             self.cursors.append(cursor)
-
+        # If there is already a cursor, make the new cursor negative
         elif len(self.cursors) == 1:
             cursor.draw('blue')
             self.cursors.append(cursor)
@@ -97,7 +105,12 @@ class UIModelMPH(UIModelBase):
         ax.callbacks.connect('ylim_changed', self.on_mouse_zoom)
 
     def closest_cpt(self, x, y):
-
+        """
+        Returns the component closest to the specified position
+        :param x: x position
+        :param y: y position
+        :return: None
+        """
         for cpt in self.circuit.elements.values():
 
             gcpt = cpt.gcpt
@@ -110,7 +123,12 @@ class UIModelMPH(UIModelBase):
         return None
 
     def closest_node(self, x, y):
-
+        """
+        Returns the node closest to the specified position
+        :param x: x position
+        :param y: y position
+        :return: None
+        """
         for node in self.circuit.nodes.values():
             if node.pos is None:
                 # This happens with opamps.  Node 0 is the default
