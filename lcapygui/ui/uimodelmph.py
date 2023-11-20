@@ -554,11 +554,8 @@ class UIModelMPH(UIModelBase):
 
     def on_mesh_equations(self):
 
-        if self.ground_node is None:
-            self.ui.show_info_dialog('Suggest adding a ground node.')
-
         try:
-            la = self.analysis_circuit.loop_analysis()
+            la = self.circuit.loop_analysis()
         except Exception as e:
             self.exception(e)
             return
@@ -615,9 +612,6 @@ class UIModelMPH(UIModelBase):
 
     def on_modified_nodal_equations(self):
 
-        if self.ground_node is None:
-            self.ui.show_info_dialog('Suggest adding a ground node.')
-
         cct = self.analysis_circuit
         cct = cct.laplace()
         eqns = cct.matrix_equations()
@@ -626,11 +620,8 @@ class UIModelMPH(UIModelBase):
 
     def on_nodal_equations(self):
 
-        if self.ground_node is None:
-            self.ui.show_info_dialog('Suggest adding a ground node.')
-
         try:
-            na = self.analysis_circuit.nodal_analysis()
+            na = self.circuit.nodal_analysis(node_prefix='n')
         except Exception as e:
             self.exception(e)
             return
@@ -671,6 +662,7 @@ class UIModelMPH(UIModelBase):
             self.on_redraw()
             # Handle current_sign_convention
             self.invalidate()
+            self.preferences.apply()
 
         self.ui.show_preferences_dialog(update)
 

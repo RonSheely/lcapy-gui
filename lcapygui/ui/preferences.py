@@ -33,6 +33,13 @@ class Preferences:
 
         self.load()
 
+        self.apply()
+
+    def apply(self):
+
+        from lcapy.state import state
+        state.current_sign_convention = self.current_sign_convention
+
     @property
     def _dirname(self):
 

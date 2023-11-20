@@ -99,12 +99,14 @@ class UIModelBase:
         self._analysis_circuit = self.circuit.copy()
 
         if self.ground_node is None:
-            # Add dummy ground node to first node
-            net = 'W %s 0\n' % list(self.circuit.nodes)[0]
-            self.analysis_circuit.add(net)
 
-        from lcapy.state import state
-        state.current_sign_convention = self.preferences.current_sign_convention
+            ground_node = list(self.circuit.nodes)[0]
+            self.ui.show_info_dialog(
+                'Defining node %s as the ground node.' % ground_node)
+
+            # Add dummy ground node to first node
+            net = 'W %s 0\n' % ground_node
+            self.analysis_circuit.add(net)
 
         try:
             self._analysis_circuit[0]
