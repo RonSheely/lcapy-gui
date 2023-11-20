@@ -82,3 +82,6 @@ class UIModelDnD(UIModelMPH):
         super().on_right_click(x, y)
         if not self.selected:
             self.unselect()
+
+
+
