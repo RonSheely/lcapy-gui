@@ -57,30 +57,3 @@ class UIModelDnD(UIModelMPH):
         super().on_right_click(x, y)
         if not self.selected:
             self.unselect()
-
-
-
-    def follow(self, x, y):
-        """
-        Follows the mouse with the selected component
-
-        :param x: mouse x position
-        :param y: mouse y position
-        :return: None
-        """
-        if not self.selected or not self.cpt_selected or not self.follow_mouse:
-            return
-        cpt = self.selected
-        self.last_pos = self.select_pos
-
-        # Update position
-        x0, y0 = self.last_pos
-        self.last_pos = x, y
-
-        # Update component
-        for node in cpt.nodes:
-            # TODO: handle snap
-            node.pos.x += x - x0
-            node.pos.y += y - y0
-
-        self.on_redraw()
