@@ -33,16 +33,23 @@ class UIModelDnD(UIModelMPH):
             self.ui.refresh()
 
             # Select the newly created component
-            self.selected = cpt
+            self.on_select(mouse_x, mouse_y)
             self.follow_mouse = True
 
 
     def on_left_click(self, x, y):
 
-        # If we are placing a component
+        # drop the component in place after clicking
         if self.follow_mouse:
             self.follow_mouse = False
-            self.selected = None
+            self.on_select(x, y)
+            self.cursors.remove()
+            # Add cursors to the component
+            cpt = self.selected
+            self.add_cursor(cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y)
+            node2 = cpt.gcpt.node2
+            if node2 is not None:
+                self.add_cursor(node2.pos.x, node2.pos.y)
         else:
             super().on_left_click(x, y)
 
@@ -53,3 +60,27 @@ class UIModelDnD(UIModelMPH):
 
 
 
+    def follow(self, x, y):
+        """
+        Follows the mouse with the selected component
+
+        :param x: mouse x position
+        :param y: mouse y position
+        :return: None
+        """
+        if not self.selected or not self.cpt_selected or not self.follow_mouse:
+            return
+        cpt = self.selected
+        self.last_pos = self.select_pos
+
+        # Update position
+        x0, y0 = self.last_pos
+        self.last_pos = x, y
+
+        # Update component
+        for node in cpt.nodes:
+            # TODO: handle snap
+            node.pos.x += x - x0
+            node.pos.y += y - y0
+
+        self.on_redraw()
