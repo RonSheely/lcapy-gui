@@ -27,7 +27,7 @@ class Preferences:
         self.snap_grid = 'true'
         # This is the scaling used to set the matplotlib lw argument
         self.line_width_scale = 3.5
-        self.node_size = 0.12
+        self.node_size = 0.07
         self.node_color = 'black'
         self.current_sign_convention = 'passive'
 
