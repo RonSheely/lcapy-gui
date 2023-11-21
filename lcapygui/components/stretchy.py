@@ -1,4 +1,5 @@
 from .component import Component
+from .picture import Picture
 from numpy import array, sqrt
 
 
@@ -54,18 +55,20 @@ class Stretchy(Component):
             p1p = p1
             p2p = p2
 
-        sketch.draw_old(model, offset=(p1p + p2p) / 2, angle=angle,
-                        scale=scale, snap=True, **kwargs)
+        sketcher = model.ui.sketcher
+        self.picture = Picture()
+        self.picture.add(sketch.draw_old(model, offset=(p1p + p2p) / 2,
+                                         angle=angle, scale=scale,
+                                         snap=True, **kwargs))
 
         # TODO: generalize
         kwargs.pop('mirror', False)
         kwargs.pop('invert', False)
 
-        sketcher = model.ui.sketcher
-        sketcher.stroke_line(*p1, *p1p, **kwargs)
-        sketcher.stroke_line(*p2p, *p2, **kwargs)
+        self.picture.add(sketcher.stroke_line(*p1, *p1p, **kwargs))
+        self.picture.add(sketcher.stroke_line(*p2p, *p2, **kwargs))
 
-        # For transistors.
+        # For transistors
         if len(self.nodes) == 3:
 
             x3, y3 = self.nodes[1].x, self.nodes[1].y
@@ -82,6 +85,6 @@ class Stretchy(Component):
             h = sketch.height / 72 * 2.54
             dh = array((dx, dy)) / r * (r - h)
             p3p = p3 + dh
-            sketcher.stroke_line(*p3, *p3p, **kwargs)
+            self.picture.add(sketcher.stroke_line(*p3, *p3p, **kwargs))
 
         # TODO, add label, voltage_label, current_label, flow_label

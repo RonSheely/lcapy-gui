@@ -1,4 +1,5 @@
 from .component import Component
+from .picture import Picture
 from numpy import array, nan
 
 
@@ -35,4 +36,6 @@ class Fixed(Component):
 
         tf = self.find_tf(self.pinname1, self.pinname2)
         sketch = self._sketch_lookup(model)
-        sketch.draw(model, tf, **kwargs)
+
+        self.picture = Picture()
+        self.picture.add(sketch.draw(model, tf, **kwargs))

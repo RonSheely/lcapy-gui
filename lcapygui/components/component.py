@@ -142,6 +142,9 @@ class Component(ABC):
         # we don't care about.
         self.attrs = ', '.join(parts)
 
+        # This is set by the draw() method
+        self.picture = None
+
     def filter_opts(self, opts):
 
         connection_keys = ('input', 'output', 'bidir', 'pad')
@@ -525,3 +528,8 @@ class Component(ABC):
         tf = self.find_tf(self.pinname1, self.pinname2)
 
         return tf
+
+    def remove(self):
+
+        if self.picture is not None:
+            self.picture.remove()
