@@ -10,10 +10,12 @@ class UIModelDnD(UIModelMPH):
         """
         Adds a component to the circuit after a key is pressed
 
+        Explanation
+        ===========
         If there are cursors present, it will place a component between them
         otherwise, the component will follow the cursor until the user left clicks
 
-        :param cpt_key: key pressed
+        :param str cpt_key: key pressed
         :return: None
         """
         if self.ui.debug:
@@ -29,16 +31,28 @@ class UIModelDnD(UIModelMPH):
             super().on_add_cpt(cpt_key)
         else:
             # create a new component at the mouse position
-            cpt = self.cpt_create(cpt_key, mouse_x-2, mouse_y, mouse_x+2, mouse_y)
+            cpt = self.cpt_create(cpt_key, mouse_x - 2, mouse_y, mouse_x + 2, mouse_y)
             self.ui.refresh()
 
             # Select the newly created component
             self.on_select(mouse_x, mouse_y)
             self.follow_mouse = True
 
-
     def on_left_click(self, x, y):
+        """
+        Performs operations on left-click
 
+        Explanation
+        ===========
+        This function is called when the user left-clicks on the canvas.
+        If a component is currently being dragged, it will drop the component
+        Otherwise, it selects the component at the mouse position
+
+        Parameters
+        ==========
+        :param float x: x position of the mouse
+        :param float y: y position of the mouse
+        """
         # drop the component in place after clicking
         if self.follow_mouse:
             self.follow_mouse = False
@@ -54,6 +68,17 @@ class UIModelDnD(UIModelMPH):
             super().on_left_click(x, y)
 
     def on_right_click(self, x, y):
+        """
+        performs operations on right-click
+
+        Explanation
+        ===========
+        This function is called when the user right-clicks on the canvas.
+        If no component is selected, it will clear the cursors from the screen.
+        Otherwise, it will show the selected components properties dialogue
+        :param float x: x position of the mouse
+        :param float y: y position of the mouse
+        """
         super().on_right_click(x, y)
         if not self.selected:
             self.unselect()
