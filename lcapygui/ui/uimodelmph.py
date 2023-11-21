@@ -13,6 +13,7 @@ class UIModelMPH(UIModelBase):
     def __init__(self, ui):
         super(UIModelMPH, self).__init__(ui)
 
+        self.last_pos = None
         self.cursors = Cursors()
         self.node_cursor = None
 
