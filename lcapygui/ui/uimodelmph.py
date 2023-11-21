@@ -10,9 +10,7 @@ from numpy import sqrt
 
 
 class UIModelMPH(UIModelBase):
-
     def __init__(self, ui):
-
         super(UIModelMPH, self).__init__(ui)
 
         self.cursors = Cursors()
@@ -50,7 +48,13 @@ class UIModelMPH(UIModelBase):
     def add_cursor(self, x, y):
         """
         Adds a cursor at the specified position.
+
+        Explanation
+        ===========
+        Adds a cursor at the provided x & y position.
         If two cursors already exist, the oldest cursor is removed.
+
+        The oldest cursor is considered positive, and the newest is considered negative.
 
         :param x: x position of the cursor
         :param y: y position of the cursor
@@ -71,9 +75,8 @@ class UIModelMPH(UIModelBase):
             self.cursors.append(cursor)
 
         elif len(self.cursors) == 2:
-
-            rp = (x - self.cursors[0].x)**2 + (y - self.cursors[0].y)**2
-            rm = (x - self.cursors[1].x)**2 + (y - self.cursors[1].y)**2
+            rp = (x - self.cursors[0].x) ** 2 + (y - self.cursors[0].y) ** 2
+            rm = (x - self.cursors[1].x) ** 2 + (y - self.cursors[1].y) ** 2
 
             if rm > rp:
                 # Close to plus cursor so add new minus cursor
@@ -107,12 +110,12 @@ class UIModelMPH(UIModelBase):
     def closest_cpt(self, x, y):
         """
         Returns the component closest to the specified position
-        :param x: x position
-        :param y: y position
-        :return: None
+        :param float x: x position
+        :param float y: y position
+        :return: the closest component to (x,y)
+        :rtype: lcapy.mnacpts.Cpt or None
         """
         for cpt in self.circuit.elements.values():
-
             gcpt = cpt.gcpt
             if gcpt is None:
                 continue
@@ -136,26 +139,35 @@ class UIModelMPH(UIModelBase):
                 warn('Ignoring node %s with no position' % node.name)
                 continue
             x1, y1 = node.pos.x, node.pos.y
-            rsq = (x1 - x)**2 + (y1 - y)**2
+            rsq = (x1 - x) ** 2 + (y1 - y) ** 2
             if rsq < 0.1:
                 return node
         return None
 
     def create_state_space(self, cpt):
-
+        """
+        :param lcapy.mnacpts.Cpt cpt:
+        """
         ss = self.circuit.ss
         self.ui.show_state_space_dialog(ss)
 
     def create_transfer_function(self, cpt):
-
+        """
+        Shows the transfer function for the component 'cpt'
+        :param lcapy.mnacpts.Cpt cpt:
+        """
         self.ui.show_transfer_function_dialog(cpt)
 
     def create_twoport(self, cpt, kind):
-
+        """
+        Creates a
+        :param cpt:
+        :param kind:
+        :return:
+        """
         self.ui.show_twoport_dialog(cpt, kind)
 
     def exception(self, e):
-
         message = str(e)
         if self.pathname != '':
             message += ' in ' + self.pathname
@@ -164,7 +176,6 @@ class UIModelMPH(UIModelBase):
         self.ui.show_error_dialog(message)
 
     def new_name(self, pathname):
-
         from os.path import splitext
 
         base, ext = splitext(pathname)
@@ -180,7 +191,6 @@ class UIModelMPH(UIModelBase):
         return base + '_' + suffix + ext
 
     def on_ac_model(self):
-
         # Perhaps should kill non-AC sources
         cct = self.circuit.ac()
         self.on_show_new_circuit(cct)

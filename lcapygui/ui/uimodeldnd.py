@@ -2,7 +2,6 @@ from lcapygui.ui.uimodelmph import UIModelMPH
 
 
 class UIModelDnD(UIModelMPH):
-
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
 
@@ -16,20 +15,13 @@ class UIModelDnD(UIModelMPH):
         otherwise, the component will follow the cursor until the user left clicks
 
         :param str cpt_key: key pressed
-        :return: None
         """
         if self.ui.debug:
             print(f"adding component at mouse position: {self.mouse_position}")
         # Get mouse positions
         mouse_x = self.mouse_position[0]
         mouse_y = self.mouse_position[1]
-        if len(self.cursors) > 0:
-            # add a new cursor at the grid position closest to the mouse
-            self.add_cursor(round(mouse_x), round(mouse_y))
-
-            # add the component like normal
-            super().on_add_cpt(cpt_key)
-        else:
+        if len(self.cursors) == 0:
             # create a new component at the mouse position
             cpt = self.cpt_create(cpt_key, mouse_x - 2, mouse_y, mouse_x + 2, mouse_y)
             self.ui.refresh()
@@ -37,6 +29,13 @@ class UIModelDnD(UIModelMPH):
             # Select the newly created component
             self.on_select(mouse_x, mouse_y)
             self.follow_mouse = True
+
+        else:
+            # add a new cursor at the grid position closest to the mouse
+            self.add_cursor(round(mouse_x), round(mouse_y))
+
+            # add the component like normal
+            super().on_add_cpt(cpt_key)
 
     def on_left_click(self, x, y):
         """
