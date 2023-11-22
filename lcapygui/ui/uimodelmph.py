@@ -161,14 +161,17 @@ class UIModelMPH(UIModelBase):
 
     def create_twoport(self, cpt, kind):
         """
-        Creates a
+        TODO: add docstring
         :param cpt:
         :param kind:
-        :return:
         """
         self.ui.show_twoport_dialog(cpt, kind)
 
     def exception(self, e):
+        """
+        Shows an error dialog with exception message e
+        :param Exception e: exception type
+        """
         message = str(e)
         if self.pathname != '':
             message += ' in ' + self.pathname
@@ -177,6 +180,11 @@ class UIModelMPH(UIModelBase):
         self.ui.show_error_dialog(message)
 
     def new_name(self, pathname):
+        """
+        # TODO: what does this do?
+        :param pathname:
+        :return:
+        """
         from os.path import splitext
 
         base, ext = splitext(pathname)
@@ -192,6 +200,9 @@ class UIModelMPH(UIModelBase):
         return base + '_' + suffix + ext
 
     def on_ac_model(self):
+        """
+        Changes the circuit to an AC model
+        """
         # Perhaps should kill non-AC sources
         cct = self.circuit.ac()
         self.on_show_new_circuit(cct)

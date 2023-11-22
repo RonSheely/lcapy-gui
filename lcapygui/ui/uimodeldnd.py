@@ -80,11 +80,10 @@ class UIModelDnD(UIModelMPH):
         mouse_y = self.mouse_position[1]
         if len(self.cursors) == 0:
             # create a new component at the mouse position
-            cpt = self.cpt_create(cpt_key, mouse_x - 2, mouse_y, mouse_x + 2, mouse_y)
+            self.cpt_create(cpt_key, mouse_x - 2, mouse_y, mouse_x + 2, mouse_y)
             self.ui.refresh()
 
             # Select the newly created component
-            self.select(cpt)
             self.follow_mouse = True
 
         else:
@@ -114,7 +113,7 @@ class UIModelDnD(UIModelMPH):
 
         # TODO: instead of appearing at the cursor, the user should be able to drag it from a sidebar
         # drop the component if being dragged
-        if self.follow_mouse and self.cpt_selected:
+        if self.follow_mouse:
             if self.ui.debug:
                 print("dropped component (%s, %s)" % (x, y))
             self.follow_mouse = False
@@ -135,7 +134,7 @@ class UIModelDnD(UIModelMPH):
         else:
             if self.ui.debug:
                 print("Add node at (%s, %s)" % (x, y))
-            self.cursors.remove() # TODO: stop clearing nodes on click when node-dragging is implemented
+            self.cursors.remove()  # TODO: stop clearing nodes on click when node-dragging is implemented
             self.on_add_node(x, y)
 
     def on_right_click(self, x, y):
@@ -151,8 +150,7 @@ class UIModelDnD(UIModelMPH):
         :param float y: y position of the mouse
         """
         super().on_right_click(x, y)
-        if not self.selected:
-            self.unselect()
+        self.unselect()
 
     def on_mouse_drag(self, mouse_x, mouse_y):
         """
