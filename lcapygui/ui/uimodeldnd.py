@@ -1,5 +1,5 @@
 from lcapygui.ui.history_event import HistoryEvent
-from lcapygui.ui.uimodelmph import UIModelMPH
+from lcapygui.ui.uimodelmph import UIModelMPH, Cursor
 
 
 class Crosshair:
@@ -112,17 +112,14 @@ class UIModelDnD(UIModelMPH):
 
         self.on_select(x, y)
 
-        # drop the component in place after clicking
-        if self.follow_mouse:
+        # TODO: instead of appearing at the cursor, the user should be able to drag it from a sidebar
+        # drop the component if being dragged
+        if self.follow_mouse and self.cpt_selected:
+            if self.ui.debug:
+                print("dropped component (%s, %s)" % (x, y))
             self.follow_mouse = False
-            self.on_select(x, y)
             self.cursors.remove()
-            # Add cursors to the component
-            cpt = self.selected
-            self.add_cursor(cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y)
-            node2 = cpt.gcpt.node2
-            if node2 is not None:
-                self.add_cursor(node2.pos.x, node2.pos.y)
+            self.unselect()
 
         # draw cursors if selecting a component
         elif self.cpt_selected:
@@ -134,6 +131,12 @@ class UIModelDnD(UIModelMPH):
             node2 = cpt.gcpt.node2
             if node2 is not None:
                 self.add_cursor(node2.pos.x, node2.pos.y)
+        # if not selecting anything, add a new node
+        else:
+            if self.ui.debug:
+                print("Add node at (%s, %s)" % (x, y))
+            self.cursors.remove() # TODO: stop clearing nodes on click when node-dragging is implemented
+            self.on_add_node(x, y)
 
     def on_right_click(self, x, y):
         """
@@ -169,15 +172,15 @@ class UIModelDnD(UIModelMPH):
 
         if not self.dragged:
             self.dragged = True
-            self.last_pos = self.snap_to_grid(mouse_x, mouse_y)
+            self.last_pos = self.snap_to_grid(mouse_x + 1, mouse_y + 1)
             node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
             self.history.append(HistoryEvent("M", cpt, node_positions))
 
         # Calculate the difference of the points from the mouse location
         x0, y0 = self.last_pos
-        self.last_pos = self.snap_to_grid(mouse_x, mouse_y)
+        self.last_pos = self.snap_to_grid(mouse_x + 1, mouse_y + 1)
 
-        x1, y1 = mouse_x - x0, mouse_y - y0
+        x1, y1 = mouse_x - x0 + 1, mouse_y - y0 + 1
 
         update = False
         # Move nodes, and snap them to the grid
