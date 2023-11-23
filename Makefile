@@ -7,6 +7,11 @@ install:
 package:
 	python3 setup.py sdist bdist_wheel
 
+# Setup to create a single .exe for distribution
+.PHONY: executable
+executable:
+	pyinstaller --windowed --onefile --specpath "./build" --upx-dir "./build" --add-data "../lcapygui/data/:lcapygui/data/" --hidden-import='PIL._tkinter_finder' lcapygui.py
+
 .PHONY: upload-test
 upload-test: package
 	python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
