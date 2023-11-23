@@ -194,7 +194,6 @@ class UIModelBase:
 
         redraw = True
         try:
-            # This should also delete the annotations.
             cpt.undraw()
             redraw = False
         except AttributeError:

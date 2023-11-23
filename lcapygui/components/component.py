@@ -529,7 +529,12 @@ class Component(ABC):
 
         return tf
 
-    def remove(self):
+    def undraw(self):
 
         if self.picture is not None:
             self.picture.remove()
+        for ann in self.annotations():
+            ann.remove()
+        self.annotations = []
+
+        # TODO: erase nodes if necessary
