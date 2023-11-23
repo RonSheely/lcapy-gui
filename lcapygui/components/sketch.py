@@ -1,5 +1,4 @@
 from lcapy import Circuit
-from .tf import TF
 from .svgparse import SVGParse
 from os.path import join
 from matplotlib.path import Path

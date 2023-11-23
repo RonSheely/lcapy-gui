@@ -1,4 +1,4 @@
-from tkinter import Canvas, Tk, Frame, TOP, BOTH, BOTTOM, X, Button
+from tkinter import Canvas, Tk, Frame, TOP, BOTH, BOTTOM, X
 from tkinter.ttk import Notebook
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg

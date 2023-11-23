@@ -1,5 +1,5 @@
 from lcapygui.ui.history_event import HistoryEvent
-from lcapygui.ui.uimodelmph import UIModelMPH, Cursor
+from lcapygui.ui.uimodelmph import UIModelMPH
 
 
 class Crosshair:
