@@ -364,7 +364,7 @@ class Component(ABC):
 
         return self.nodes[1]
 
-    def attr_dir_string(self, x1, y1, x2, y2, step=1):
+    def _attr_dir_string(self, x1, y1, x2, y2, step=1):
 
         tf = self.make_tf(x1, y1, x2, y2,
                           self.pins[self.pinname1][1:],
@@ -402,7 +402,7 @@ class Component(ABC):
     def attr_string(self, x1, y1, x2, y2, step=1):
         """Return Lcapy attribute string such as `right, color=blue`"""
 
-        attr = self.attr_dir_string(x1, y1, x2, y2, step)
+        attr = self._attr_dir_string(x1, y1, x2, y2, step)
 
         if self.scale != '1':
             attr += ', scale=' + self.scale
@@ -533,8 +533,9 @@ class Component(ABC):
 
         if self.picture is not None:
             self.picture.remove()
-        for ann in self.annotations():
+        for ann in self.annotations:
             ann.remove()
         self.annotations = []
 
         # TODO: erase nodes if necessary
+        # Could combine annotations with picture
