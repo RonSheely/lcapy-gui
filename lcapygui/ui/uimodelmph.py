@@ -583,17 +583,8 @@ class UIModelMPH(UIModelBase):
         xshift = x - x0
         yshift = y - y0
 
-        for node in cpt.nodes:
-            # TODO: handle snap
-            node.pos.x += xshift
-            node.pos.y += yshift
-
-        # TODO: only redraw cpts that have moved
-        self.on_redraw()
-
-    def on_move(self, xshift, yshift):
-
-        self.move(xshift, yshift)
+        self.cpt_move(cpt, xshift, yshift)
+        self.ui.refresh()
 
     def on_simple_netlist(self):
 

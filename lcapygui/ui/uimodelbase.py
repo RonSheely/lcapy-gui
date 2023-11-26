@@ -176,7 +176,7 @@ class UIModelBase:
         s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
         if s < 0.2:
             self.exception('Nodes too close to create component')
-            return
+            return None
 
         try:
             cpt_type = self.component_map[cpt_key][2]
@@ -300,6 +300,52 @@ class UIModelBase:
             self.exception(
                 'Cannot find a component with nodes %s and %s' % (node_name1, node_name2))
         return fcpt
+
+    def cpt_move(self, cpt, xshift, yshift):
+
+        isolated = True
+        for node in cpt.nodes:
+            if node.count > 1:
+                isolated = False
+                break
+
+        if isolated:
+
+            for node in cpt.nodes:
+                # TODO: handle snap
+                node.pos.x += xshift
+                node.pos.y += yshift
+
+            # TODO: only redraw cpts that have moved
+            self.on_redraw()
+        else:
+            # Alternatively, assign new nodes for the cpt being moved
+            # if the nodes are shared.
+
+            gcpt = cpt.gcpt
+            x1 = gcpt.node1.x + xshift
+            y1 = gcpt.node1.y + yshift
+            x2 = gcpt.node2.x + xshift
+            y2 = gcpt.node2.y + yshift
+
+            self.cpt_modify_nodes(cpt, x1, y1, x2, y2)
+
+    def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
+
+        gcpt = cpt.gcpt
+        cpt_key = gcpt.type.lower()
+
+        self.cpt_delete(gcpt)
+        newcpt = self.cpt_create(cpt_key, x1, y1, x2, y2)
+
+        # TODO: tidy
+        newgcpt = newcpt.gcpt
+        newgcpt.kind = gcpt.kind
+        newcpt.args = cpt.args
+        newcpt.opts.clear()
+        newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
+                                         newgcpt.node2.x, newgcpt.node2.y,
+                                         self.STEP))
 
     def cpt_remake(self, cpt):
 
@@ -455,10 +501,6 @@ class UIModelBase:
         self.invalidate()
         self.redraw()
 
-    def move(self, xshift, yshift):
-        # TODO
-        pass
-
     def paste(self, x1, y1, x2, y2):
 
         if self.clipboard is None:
@@ -532,7 +574,7 @@ class UIModelBase:
         cpt_name = self.choose_cpt_name(cpt_type)
         gcpt = cpt_make_from_type(cpt_type, cpt_name, kind=kind)
         if gcpt is None:
-            return
+            return None
 
         all_node_names = list(self.circuit.nodes)
         node_names = []
