@@ -206,28 +206,7 @@ class UIModelMPH(UIModelBase):
 
     def on_add_node(self, x, y):
 
-        # Snap to closest known node then snap to grid.
-        node = self.closest_node(x, y)
-        if node is None:
-
-            if self.preferences.snap_grid == 'true':
-
-                if len(self.cursors) > 0:
-                    xc = self.cursors[0].x
-                    yc = self.cursors[0].y
-                    if self.is_close_to(x, xc):
-                        x = xc
-                    else:
-                        x = self.snap_to_grid_x(x)
-                    if self.is_close_to(y, yc):
-                        y = yc
-                    else:
-                        y = self.snap_to_grid_y(y)
-                else:
-                    x, y = self.snap_to_grid(x, y)
-
-        else:
-            x, y = node.x, node.y
+        x, y = self.snap(x, y)
 
         self.add_cursor(x, y)
 
@@ -573,11 +552,15 @@ class UIModelMPH(UIModelBase):
 
         if not self.dragged:
             self.dragged = True
-            self.last_pos = self.select_pos
+            x0, y0 = self.select_pos
+            x0, y0 = self.snap(x0, y0)
+            self.last_pos = x0, y0
             node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
             self.history.append(HistoryEvent('M', cpt, node_positions))
 
         x0, y0 = self.last_pos
+
+        x, y = self.snap(x, y)
         self.last_pos = x, y
 
         xshift = x - x0
