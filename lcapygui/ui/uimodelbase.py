@@ -80,7 +80,10 @@ class UIModelBase:
     }
 
     def __init__(self, ui):
-
+        """
+        Initialise the UI model
+        :param ui.tk.lcapytk.LcapyTk ui: tkinter UI interface
+        """
         self.circuit = Circuit()
         self.ui = ui
         self._analysis_circuit = None
@@ -671,7 +674,17 @@ class UIModelBase:
         return s
 
     def thing_create(self, cpt_type, x1, y1, x2, y2, kind=''):
+        """
+        Creates a new component of type cpt_type between two points identified by (x1, y1) and (x2, y2).
 
+        :param cpt_type: New connection type
+        :param float x1:
+        :param float y1:
+        :param float x2:
+        :param float y2:
+        :param kind: The kind of component to create
+        :return: The instance of the component
+        """
         from lcapy.mnacpts import Cpt
 
         cpt_name = self.choose_cpt_name(cpt_type)

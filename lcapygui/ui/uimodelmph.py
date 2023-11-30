@@ -11,6 +11,10 @@ from numpy import sqrt
 
 class UIModelMPH(UIModelBase):
     def __init__(self, ui):
+        """
+        Defines the UIModelMPH class
+        :param ui.tk.lcapytk.LcapyTk ui: tkinter UI interface
+        """
         super(UIModelMPH, self).__init__(ui)
 
         self.last_pos = None
@@ -129,8 +133,8 @@ class UIModelMPH(UIModelBase):
     def closest_node(self, x, y):
         """
         Returns the node closest to the specified position
-        :param x: x position
-        :param y: y position
+        :param float x: x position
+        :param float y: y position
         :return: None
         """
         for node in self.circuit.nodes.values():
