@@ -27,9 +27,6 @@ setup(
     ],
     install_requires=[
         "setuptools",
-        "importlib; python_version < '3.9'",
-        "importlib-metadata; python_version < '3.9'",
-        "importlib-resources; python_version < '3.9'",
         "pathlib",
         "lcapy>=1.17",
         "numpy",
