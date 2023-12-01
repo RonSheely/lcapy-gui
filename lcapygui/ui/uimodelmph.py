@@ -1,57 +1,11 @@
+from .cursor import Cursor
+from .cursors import Cursors
 from .uimodelbase import UIModelBase
 from .history_event import HistoryEvent
 from lcapy.mnacpts import Cpt
 from lcapy import Circuit
 from os.path import basename
 from warnings import warn
-
-
-class Cursor:
-
-    def __init__(self, ui, x, y):
-
-        self.sketcher = ui.sketcher
-        self.patch = None
-        self.x = x
-        self.y = y
-
-    @property
-    def position(self):
-
-        return self.x, self.y
-
-    def draw(self, color='red', radius=0.3):
-
-        self.patch = self.sketcher.stroke_filled_circle(self.x, self.y,
-                                                        radius,
-                                                        color=color,
-                                                        alpha=0.5)
-
-    def remove(self):
-
-        self.patch.remove()
-
-
-class Cursors(list):
-
-    def debug(self):
-
-        s = ''
-        for cursor in self:
-            s += '%s, %s' % (cursor.x, cursor.y) + '\n'
-        return s
-
-    def remove(self):
-
-        while self != []:
-            self.pop().remove()
-
-    def draw(self):
-
-        if len(self) > 0:
-            self[0].draw('red')
-        if len(self) > 1:
-            self[1].draw('blue')
 
 
 class UIModelMPH(UIModelBase):
