@@ -216,7 +216,7 @@ class UIModelBase:
 
         label_cpts = self.preferences.label_cpts
 
-        if gcpt.type in ('A', 'O', 'W'):
+        if gcpt.type in ('A', 'O', 'W', 'X'):
             label_cpts = 'none'
 
         name = cpt.name
