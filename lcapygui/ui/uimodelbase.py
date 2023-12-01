@@ -53,7 +53,7 @@ class UIModelBase:
     connection_map = {
         '0': ('0', '0V', 'W', ''),
         '0V': ('', '0V', 'W', '0V'),
-        'ground': ('', 'Ground', 'W', ''),
+        'ground': ('', 'Ground', 'W', 'ground'),
         'sground': ('', 'Signal ground', 'W', 'sground'),
         'rground': ('', 'Rail ground', 'W', 'rground'),
         'cground': ('', 'Chassis ground', 'W', 'cground'),

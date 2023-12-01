@@ -50,7 +50,7 @@ class LcapyTk(Tk):
             'Transistor': ('q', 'j', 'm'),
             'Dependent source': ('e', 'f', 'g', 'h'),
             'Misc.': ('y', 'cpe', 'z', 'o', 'nr'),
-            'Connection': ('0', '0V', 'sground', 'rground', 'cground',
+            'Connection': ('0', '0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir')
         }
