@@ -50,7 +50,7 @@ class LcapyTk(Tk):
             'Transistor': ('q', 'j', 'm'),
             'Dependent source': ('e', 'f', 'g', 'h'),
             'Misc.': ('y', 'cpe', 'z', 'o', 'nr'),
-            'Connection': ('0', '0V', 'ground', 'sground', 'rground', 'cground',
+            'Connection': ('0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir')
         }
@@ -58,25 +58,27 @@ class LcapyTk(Tk):
         items = []
         for cat in categories:
             if cat == 'Basic':
+                # The Basic category does not have sub-menus
                 for key in categories[cat]:
-                    val = self.uimodel_class.component_map[key]
-                    acc = key if len(key) == 1 else ''
-                    items.append(MenuItem(val[1], command=self.on_add_cpt,
-                                          arg=key, accelerator=acc))
+                    thing = self.uimodel_class.component_map[key]
+                    acc = thing.accelerator
+                    items.append(MenuItem(thing.menu_name,
+                                          command=self.on_add_cpt,
+                                          arg=thing, accelerator=acc))
                 items.append(MenuSeparator())
             else:
                 subitems = []
 
                 for key in categories[cat]:
                     if cat == 'Connection':
-                        val = self.uimodel_class.connection_map[key]
+                        thing = self.uimodel_class.connection_map[key]
                         cmd = self.on_add_con
                     else:
-                        val = self.uimodel_class.component_map[key]
+                        thing = self.uimodel_class.component_map[key]
                         cmd = self.on_add_cpt
-                    acc = key if len(key) == 1 else ''
-                    subitems.append(MenuItem(val[1], command=cmd,
-                                             arg=key, accelerator=acc))
+                    acc = thing.accelerator
+                    subitems.append(MenuItem(thing.menu_name, command=cmd,
+                                             arg=thing, accelerator=acc))
                 menu = MenuDropdown(cat, 0, subitems)
                 items.append(menu)
 
@@ -328,19 +330,19 @@ class LcapyTk(Tk):
 
         self.model.on_ac_model()
 
-    def on_add_con(self, conname):
+    def on_add_con(self, thing):
 
         if self.debug:
-            print('Adding connection ' + conname)
+            print('Adding connection ' + str(thing))
 
-        self.model.on_add_con(conname)
+        self.model.on_add_con(thing)
 
-    def on_add_cpt(self, cptname):
+    def on_add_cpt(self, thing):
 
         if self.debug:
-            print('Adding component ' + cptname)
+            print('Adding component ' + str(thing))
 
-        self.model.on_add_cpt(cptname)
+        self.model.on_add_cpt(thing)
 
     def on_annotation(self, *args):
 
@@ -506,7 +508,8 @@ class LcapyTk(Tk):
         if key in self.model.key_bindings:
             self.model.key_bindings[key]()
         elif key in self.model.key_bindings_with_key:
-            self.model.key_bindings_with_key[key](key)
+            func, thing = self.model.key_bindings_with_key[key]
+            func(thing)
 
     def on_key(self, event):
 

@@ -15,55 +15,69 @@ from lcapy.schemmisc import Pos
 from lcapy.opts import Opts
 
 
+class C:
+
+    def __init__(self, accelerator, menu_name, cpt_type, kind):
+
+        self.accelerator = accelerator
+        self.menu_name = menu_name
+        self.cpt_type = cpt_type
+        self.kind = kind
+
+    def __str__(self):
+
+        return self.cpt_type
+
+
 class UIModelBase:
 
     STEP = 2
     SNAP = 1
     SCALE = 0.25
 
-    # Short-cut key, name, type, kind
+    # Short-cut key, menu name, cpt type, kind
     component_map = {
-        'y': ('y', 'Admittance', 'Y', ''),
-        'c': ('c', 'Capacitor', 'C', ''),
-        'cpe': ('', 'Constant phase element (CPE)', 'CPE', ''),
-        'f': ('f', 'Current controlled current source', 'F', ''),
-        'h': ('h', 'Current controlled voltage source', 'H', ''),
-        'i': ('i', 'Current source', 'I', ''),
-        'inamp': ('', 'Instrumention amplifier', 'inamp', ''),
-        'd': ('d', 'Diode', 'D', ''),
-        'fb': ('', 'Ferrite bead', 'FB', ''),
-        'z': ('z', 'Impedance', 'Z', ''),
-        'l': ('l', 'Inductor', 'L', ''),
-        'opamp': ('', 'Opamp', 'opamp', ''),
-        'fdopamp': ('', 'Fully differential opamp', 'fdopamp', ''),
-        'o': ('o', 'Open circuit', 'O', ''),
-        'p': ('p', 'Port', 'P', ''),
-        'r': ('r', 'Resistor', 'R', ''),
-        'nr': ('', 'Resistor (noiseless)', 'R', ''),
-        'tf': ('tf', 'Transformer', 'TF', ''),
-        'q': ('q', 'BJT', 'Q', ''),
-        'j': ('j', 'JFET', 'J', ''),
-        'm': ('m', 'MOSFET', 'M', ''),
-        'v': ('v', 'Voltage source', 'V', ''),
-        'g': ('g', 'Voltage controlled current source', 'G', ''),
-        'e': ('e', 'Voltage controlled voltage source', 'E', ''),
-        'w': ('w', 'Wire', 'W', ''),
+        'y': C('y', 'Admittance', 'Y', ''),
+        'c': C('c', 'Capacitor', 'C', ''),
+        'cpe': C('', 'Constant phase element (CPE)', 'CPE', ''),
+        'f': C('f', 'Current controlled current source', 'F', ''),
+        'h': C('h', 'Current controlled voltage source', 'H', ''),
+        'i': C('i', 'Current source', 'I', ''),
+        'inamp': C('', 'Instrumention amplifier', 'inamp', ''),
+        'd': C('d', 'Diode', 'D', ''),
+        'fb': C('', 'Ferrite bead', 'FB', ''),
+        'z': C('z', 'Impedance', 'Z', ''),
+        'l': C('l', 'Inductor', 'L', ''),
+        'opamp': C('', 'Opamp', 'opamp', ''),
+        'fdopamp': C('', 'Fully differential opamp', 'fdopamp', ''),
+        'o': C('o', 'Open circuit', 'O', ''),
+        'p': C('p', 'Port', 'P', ''),
+        'r': C('r', 'Resistor', 'R', ''),
+        'nr': C('', 'Resistor (noiseless)', 'R', ''),
+        'tf': C('tf', 'Transformer', 'TF', ''),
+        'q': C('q', 'BJT', 'Q', ''),
+        'j': C('j', 'JFET', 'J', ''),
+        'm': C('m', 'MOSFET', 'M', ''),
+        'v': C('v', 'Voltage source', 'V', ''),
+        'g': C('g', 'Voltage controlled current source', 'G', ''),
+        'e': C('e', 'Voltage controlled voltage source', 'E', ''),
+        'w': C('w', 'Wire', 'W', ''),
     }
 
+    # Short-cut key, menu name, cpt type, kind
     connection_map = {
-        '0': ('0', '0V', 'W', ''),
-        '0V': ('', '0V', 'W', '0V'),
-        'ground': ('', 'Ground', 'W', 'ground'),
-        'sground': ('', 'Signal ground', 'W', 'sground'),
-        'rground': ('', 'Rail ground', 'W', 'rground'),
-        'cground': ('', 'Chassis ground', 'W', 'cground'),
-        'vdd': ('', 'VDD', 'W', 'vdd'),
-        'vss': ('', 'VSS', 'W', 'vss'),
-        'vcc': ('', 'VCC', 'W', 'vcc'),
-        'vee': ('', 'VEE', 'W', 'vee'),
-        'input': ('', 'Input', 'W', 'input'),
-        'output': ('', 'Output', 'W', 'output'),
-        'bidir': ('', 'Bidirectional', 'W', 'bidir')
+        '0V': C('', '0V', 'W', '0V'),
+        'ground': C('0', 'Ground', 'W', 'ground'),
+        'sground': C('', 'Signal ground', 'W', 'sground'),
+        'rground': C('', 'Rail ground', 'W', 'rground'),
+        'cground': C('', 'Chassis ground', 'W', 'cground'),
+        'vdd': C('', 'VDD', 'W', 'vdd'),
+        'vss': C('', 'VSS', 'W', 'vss'),
+        'vcc': C('', 'VCC', 'W', 'vcc'),
+        'vee': C('', 'VEE', 'W', 'vee'),
+        'input': C('', 'Input', 'W', 'input'),
+        'output': C('', 'Output', 'W', 'output'),
+        'bidir': C('', 'Bidirectional', 'W', 'bidir')
     }
 
     def __init__(self, ui):
@@ -148,18 +162,14 @@ class UIModelBase:
                 return name
             num += 1
 
-    def con_create(self, con_key, x1, y1, x2, y2):
+    def con_create(self, thing, x1, y1, x2, y2):
         """Create a new connection."""
 
-        try:
-            cpt_type = self.connection_map[con_key][2]
-        except KeyError:
-            return None
-
+        cpt_type = thing.cpt_type
         if cpt_type == '':
             return None
 
-        return self.thing_create(cpt_type, x1, y1, x2, y2, kind='-' + con_key)
+        return self.thing_create(cpt_type, x1, y1, x2, y2, kind='-' + thing.kind)
 
     def copy(self, cpt):
 
@@ -170,7 +180,7 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
-    def cpt_create(self, cpt_key, x1, y1, x2, y2):
+    def cpt_create(self, thing, x1, y1, x2, y2):
         """Create a new component."""
 
         s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
@@ -178,11 +188,7 @@ class UIModelBase:
             self.exception('Nodes too close to create component')
             return None
 
-        try:
-            cpt_type = self.component_map[cpt_key][2]
-        except KeyError:
-            return None
-
+        cpt_type = thing.cpt_type
         if cpt_type == '':
             return None
 
