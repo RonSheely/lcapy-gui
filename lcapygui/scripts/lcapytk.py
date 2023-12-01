@@ -19,6 +19,7 @@ def schtex_exception(type, value, tb):
     else:
         import traceback
         import pdb
+
         # We are in interactive mode, print the exception...
         traceback.print_exception(type, value, tb)
         print()
@@ -27,7 +28,6 @@ def schtex_exception(type, value, tb):
 
 
 def main(argv=None):
-
     if argv is None:
         argv = sys.argv
 
@@ -55,7 +55,9 @@ def main(argv=None):
     if args.pdb:
         sys.excepthook = schtex_exception
 
-    e = LcapyTk(args.filenames, debug=args.debug, level=args.level, uimodel_class=args.model)
+    e = LcapyTk(
+        args.filenames, debug=args.debug, level=args.level, uimodel_class=args.model, icon=icon_filename
+    )
 
     if args.expr is not None:
         dialog = e.show_expr_dialog(lcapify(args.expr))
@@ -66,5 +68,5 @@ def main(argv=None):
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -131,7 +131,6 @@ class UIModelBase:
         self._analysis_circuit = self.circuit.copy()
 
         if self.ground_node is None:
-
             ground_node = list(self.circuit.nodes)[0]
             self.ui.show_info_dialog(
                 'Defining node %s as the ground node.' % ground_node)
@@ -185,7 +184,6 @@ class UIModelBase:
         self.invalidate()
 
     def bounding_box(self):
-
         if len(self.circuit.nodes) == 0:
             return None
 
@@ -228,7 +226,7 @@ class UIModelBase:
     def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
         """Create a new component."""
 
-        s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        s = sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
         if s < 0.2:
             self.exception('Nodes too close to create component')
             return None
@@ -378,7 +376,6 @@ class UIModelBase:
                 gcpt.annotations.append(ann)
 
     def cpt_find(self, node_name1, node_name2):
-
         fcpt = None
         for cpt in self.circuit:
             if (cpt.nodes[0].name == node_name1 and cpt.nodes[1].name == node_name2):
@@ -444,7 +441,6 @@ class UIModelBase:
                                          self.node_spacing))
 
     def cpt_remake(self, cpt):
-
         gcpt = cpt.gcpt
 
         if cpt.is_dependent_source and gcpt.type not in ('Eopamp',

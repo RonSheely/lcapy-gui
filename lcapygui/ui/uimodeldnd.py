@@ -5,14 +5,21 @@ from lcapygui.ui.uimodelmph import UIModelMPH
 class Crosshair:
     """
     A crosshair object for moving components on the canvas
+
     """
 
     def __init__(self, ui, mouse_x, mouse_y):
         """
         Initialise the crosshair class
-        :param ui: The UI element
-        :param mouse_x: mouse x position
-        :param mouse_y: mouse y position
+
+        Parameters
+        ==========
+        ui : lcapygui.ui.tk.lcapytk.LcapyTk
+            The UI element
+        mouse_x : float
+            mouse x position
+        mouse_y : float
+            mouse y position
 
         """
         self.sketcher = ui.sketcher
@@ -23,16 +30,26 @@ class Crosshair:
     def position(self):
         """
         Gets the position of the crosshair
-        :return: x, y position of the crosshair
-        :rtype: tuple[float, float]
+
+        Returns
+        =======
+        tuple[float, float]
+            x, y position of the crosshair
+
         """
         return self.x, self.y
 
     def set_position(self, mouse_x, mouse_y):
         """
         Sets the position of the crosshair
-        :param float mouse_x: mouse x position
-        :param float mouse_y: mouse y position
+
+        Parameters
+        ==========
+        mouse_x : float
+            mouse x position
+        mouse_y : float
+            mouse y position
+
         """
         self.x = mouse_x
         self.y = mouse_y
@@ -40,7 +57,12 @@ class Crosshair:
     def draw(self, size=0.2):
         """
         Draws the crosshair on the canvas
-        :param float size: the total height of the crosshair
+
+        Parameters
+        ==========
+        size : float
+            the total height of the crosshair
+
         """
         self.patch = self.sketcher.draw_line(
             self.x,
@@ -54,6 +76,7 @@ class Crosshair:
     def remove(self):
         """
         Removes the crosshair from the canvas
+
         """
         self.patch.remove(self.patch)
 
@@ -71,8 +94,13 @@ class UIModelDnD(UIModelMPH):
         If there are cursors present, it will place a component between them
         otherwise, the component will follow the cursor until the user left clicks
 
-        :param str cpt_key: key pressed
+        Parameters
+        ==========
+        cpt_key : str
+            The key pressed
+
         """
+
         if self.ui.debug:
             print(f"adding component at mouse position: {self.mouse_position}")
         # Get mouse positions
@@ -107,6 +135,7 @@ class UIModelDnD(UIModelMPH):
         ==========
         :param float x: x position of the mouse
         :param float y: y position of the mouse
+
         """
 
         self.on_select(x, y)
@@ -146,8 +175,14 @@ class UIModelDnD(UIModelMPH):
         This function is called when the user right-clicks on the canvas.
         If no component is selected, it will clear the cursors from the screen.
         Otherwise, it will show the selected components properties dialogue
-        :param float x: x position of the mouse
-        :param float y: y position of the mouse
+
+        Parameters
+        ==========
+        x : float
+            x position of the mouse
+        y : float
+            y position of the mouse
+
         """
         super().on_right_click(x, y)
         self.unselect()
@@ -159,9 +194,13 @@ class UIModelDnD(UIModelMPH):
         Explanation
         ===========
         When an object is selected, it will follow the cursor.
-        :param mouse_x:
-        :param mouse_y:
-        :return:
+
+        Parameters
+        ==========
+        mouse_x : float
+            Mouse x position
+        mouse_y : float
+            Mouse y position
         """
 
         if not self.selected or not self.cpt_selected:

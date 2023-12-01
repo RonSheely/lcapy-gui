@@ -13,7 +13,11 @@ class UIModelMPH(UIModelBase):
     def __init__(self, ui):
         """
         Defines the UIModelMPH class
-        :param ui.tk.lcapytk.LcapyTk ui: tkinter UI interface
+        Parameters
+        ==========
+        ui : lcapygui.ui.tk.lcapytk.LcapyTk
+            tkinter UI interface
+
         """
         super(UIModelMPH, self).__init__(ui)
 
@@ -61,9 +65,13 @@ class UIModelMPH(UIModelBase):
 
         The oldest cursor is considered positive, and the newest is considered negative.
 
-        :param x: x position of the cursor
-        :param y: y position of the cursor
-        :return: None
+        Parameters
+        ==========
+        x : float
+            x position of the cursor
+        y : float
+            y position of the cursor
+
         """
         # cursors[0] is the positive cursor
         # cursors[1] is the negative cursor
@@ -115,10 +123,18 @@ class UIModelMPH(UIModelBase):
     def closest_cpt(self, x, y):
         """
         Returns the component closest to the specified position
-        :param float x: x position
-        :param float y: y position
-        :return: the closest component to (x,y)
-        :rtype: lcapy.mnacpts.Cpt or None
+
+        Parameters
+        ==========
+        x : float
+            x position
+        y : float
+            y position
+
+        Returns
+        =======
+        cpt: lcapy.mnacpts.Cpt or None
+            the closest component to (x,y) or None if no component is close
         """
         for cpt in self.circuit.elements.values():
             gcpt = cpt.gcpt
@@ -133,9 +149,14 @@ class UIModelMPH(UIModelBase):
     def closest_node(self, x, y):
         """
         Returns the node closest to the specified position
-        :param float x: x position
-        :param float y: y position
-        :return: None
+
+        Parameters
+        ==========
+        x : float
+            x position
+        y : float
+            y position
+
         """
         for node in self.circuit.nodes.values():
             if node.pos is None:
@@ -151,7 +172,13 @@ class UIModelMPH(UIModelBase):
 
     def create_state_space(self, cpt):
         """
-        :param lcapy.mnacpts.Cpt cpt:
+        TODO: Correct Docstring
+
+        Parameters
+        ==========
+        cpt : lcapy.mnacpts.Cpt
+            Component to create state space for
+
         """
         ss = self.circuit.ss
         self.ui.show_state_space_dialog(ss)
@@ -159,22 +186,37 @@ class UIModelMPH(UIModelBase):
     def create_transfer_function(self, cpt):
         """
         Shows the transfer function for the component 'cpt'
-        :param lcapy.mnacpts.Cpt cpt:
+
+        Parameters
+        ==========
+        cpt : lcapy.mnacpts.Cpt
+            Component to create transfer function for
+
         """
         self.ui.show_transfer_function_dialog(cpt)
 
     def create_twoport(self, cpt, kind):
         """
         TODO: add docstring
-        :param cpt:
-        :param kind:
+
+        Parameters
+        ==========
+        cpt : lcapy.mnacpts.Cpt
+            Component to create twoport for
+        kind : str
+            String key for the twoport type
+
         """
         self.ui.show_twoport_dialog(cpt, kind)
 
     def exception(self, e):
         """
-        Shows an error dialog with exception message e
-        :param Exception e: exception type
+        Shows an error dialog with exception message 'e'
+
+        Parameters
+        ==========
+        e : Exception
+
         """
         message = str(e)
         if self.pathname != '':
@@ -186,8 +228,16 @@ class UIModelMPH(UIModelBase):
     def new_name(self, pathname):
         """
         # TODO: what does this do?
-        :param pathname:
-        :return:
+
+        Parameters
+        ==========
+        pathname : str
+            Pathname of the file to create
+
+        Returns
+        =======
+        str
+            New pathname
         """
         from os.path import splitext
 
@@ -206,6 +256,7 @@ class UIModelMPH(UIModelBase):
     def on_ac_model(self):
         """
         Changes the circuit to an AC model
+
         """
         # Perhaps should kill non-AC sources
         cct = self.circuit.ac()
@@ -285,11 +336,17 @@ class UIModelMPH(UIModelBase):
         self.ui.refresh()
 
     def on_close(self):
+        """
+        Close the lcapy-gui window
 
+        """
         self.ui.quit()
 
     def on_copy(self):
+        """
+        Copy the selected component
 
+        """
         if self.selected is None:
             return
         if not self.cpt_selected:
@@ -366,6 +423,10 @@ class UIModelMPH(UIModelBase):
         self.ui.show_message_dialog(s, 'Debug')
 
     def on_delete(self):
+        """
+        If a component is selected, delete it, then redraw and refresh the UI
+
+        """
 
         if self.selected is None:
             return
