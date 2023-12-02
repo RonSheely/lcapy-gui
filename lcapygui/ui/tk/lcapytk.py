@@ -572,7 +572,8 @@ class LcapyTk(Tk):
             return
 
         if event.button == 1:
-            self.model.on_mouse_drag(event.xdata, event.ydata)
+            self.model.on_mouse_drag(event.xdata, event.ydata,
+                                     event.key)
 
     def on_netlist(self, *args):
 

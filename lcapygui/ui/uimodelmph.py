@@ -184,7 +184,7 @@ class UIModelMPH(UIModelBase):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        self.cpt_create(thing, x1, y1, x2, y2)
+        self.cpt_create(thing.cpt_type, x1, y1, x2, y2)
         self.ui.refresh()
 
     def on_add_con(self, thing):
@@ -497,7 +497,7 @@ class UIModelMPH(UIModelBase):
         eqns = la.mesh_equations()
         self.ui.show_equations_dialog(eqns, 'Mesh equations')
 
-    def on_mouse_drag(self, x, y):
+    def on_mouse_drag(self, x, y, key):
 
         # Perhaps allow multiple cpts to be selected at once for dragging?
 
@@ -521,7 +521,7 @@ class UIModelMPH(UIModelBase):
         xshift = x - x0
         yshift = y - y0
 
-        self.cpt_move(cpt, xshift, yshift)
+        self.cpt_move(cpt, xshift, yshift, key == 'shift')
         self.ui.refresh()
 
     def on_simple_netlist(self):

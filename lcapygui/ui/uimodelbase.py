@@ -180,16 +180,12 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
-    def cpt_create(self, thing, x1, y1, x2, y2):
+    def cpt_create(self, cpt_type, x1, y1, x2, y2):
         """Create a new component."""
 
         s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
         if s < 0.2:
             self.exception('Nodes too close to create component')
-            return None
-
-        cpt_type = thing.cpt_type
-        if cpt_type == '':
             return None
 
         return self.thing_create(cpt_type, x1, y1, x2, y2)
@@ -307,7 +303,7 @@ class UIModelBase:
                 'Cannot find a component with nodes %s and %s' % (node_name1, node_name2))
         return fcpt
 
-    def cpt_move(self, cpt, xshift, yshift):
+    def cpt_move(self, cpt, xshift, yshift, move_nodes=False):
 
         isolated = True
         for node in cpt.nodes:
@@ -315,7 +311,7 @@ class UIModelBase:
                 isolated = False
                 break
 
-        if isolated:
+        if isolated or move_nodes:
 
             for node in cpt.nodes:
                 # TODO: handle snap
@@ -339,7 +335,7 @@ class UIModelBase:
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 
         gcpt = cpt.gcpt
-        cpt_key = gcpt.type.lower()
+        cpt_key = gcpt.type
 
         self.cpt_delete(gcpt)
         newcpt = self.cpt_create(cpt_key, x1, y1, x2, y2)
