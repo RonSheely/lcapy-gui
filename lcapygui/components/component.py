@@ -2,12 +2,12 @@
 Defines the components that lcapy-gui can draw
 """
 
+from .pos import Pos
 from .tf import TF
 from .utils import point_in_polygon
 
 from numpy import array, nan
 from lcapy.opts import Opts
-from lcapy.schemmisc import Pos
 
 from typing import Union
 from abc import ABC, abstractmethod

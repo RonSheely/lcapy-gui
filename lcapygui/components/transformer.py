@@ -1,6 +1,7 @@
 from .fixed import Fixed
+
 from numpy import array
-from lcapy.schemmisc import Pos
+
 
 # TODO: make stretchy
 

@@ -2,6 +2,7 @@ from ..annotation import Annotation
 from ..annotations import Annotations
 from .preferences import Preferences
 from ..components.opamp import Opamp
+from ..components.pos import Pos
 from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
 from .history_event import HistoryEvent
 
@@ -11,7 +12,6 @@ from numpy import nan, isnan
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
 from lcapy.nodes import parse_nodes
-from lcapy.schemmisc import Pos
 from lcapy.opts import Opts
 
 

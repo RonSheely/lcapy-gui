@@ -1,5 +1,6 @@
 from .component import Component
 from .picture import Picture
+from .pos import Pos
 from numpy import array, sqrt
 
 
@@ -43,11 +44,11 @@ class Stretchy(Component):
         # Width in cm
         w = sketch.width / 72 * 2.54 * scale
 
-        p1 = array((x1, y1))
-        p2 = array((x2, y2))
+        p1 = Pos(x1, y1)
+        p2 = Pos(x2, y2)
 
         if r != 0:
-            dw = array((dx, dy)) / r * (r - w) / 2
+            dw = Pos(dx, dy) / r * (r - w) / 2
             p1p = p1 + dw
             p2p = p2 - dw
         else:
@@ -57,7 +58,7 @@ class Stretchy(Component):
 
         sketcher = model.ui.sketcher
         self.picture = Picture()
-        self.picture.add(sketch.draw_old(model, offset=(p1p + p2p) / 2,
+        self.picture.add(sketch.draw_old(model, offset=((p1p + p2p) / 2).xy,
                                          angle=angle, scale=scale,
                                          snap=True, **kwargs))
 
@@ -65,8 +66,8 @@ class Stretchy(Component):
         kwargs.pop('mirror', False)
         kwargs.pop('invert', False)
 
-        self.picture.add(sketcher.stroke_line(*p1, *p1p, **kwargs))
-        self.picture.add(sketcher.stroke_line(*p2p, *p2, **kwargs))
+        self.picture.add(sketcher.stroke_line(*p1.xy, *p1p.xy, **kwargs))
+        self.picture.add(sketcher.stroke_line(*p2p.xy, *p2.xy, **kwargs))
 
         # For transistors
         if len(self.nodes) == 3:
