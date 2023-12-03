@@ -85,7 +85,7 @@ class UIModelDnD(UIModelMPH):
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
 
-    def on_add_cpt(self, cpt_key):
+    def on_add_cpt(self, thing):
         """
         Adds a component to the circuit after a key is pressed
 
@@ -102,13 +102,15 @@ class UIModelDnD(UIModelMPH):
         """
 
         if self.ui.debug:
-            print(f"adding component at mouse position: {self.mouse_position}")
+            print(f"adding {thing.cpt_type} to mouse position: {self.mouse_position}")
+
         # Get mouse positions
         mouse_x = self.mouse_position[0]
         mouse_y = self.mouse_position[1]
+
         if len(self.cursors) == 0:
             # create a new component at the mouse position
-            self.cpt_create(cpt_key, mouse_x - 2, mouse_y, mouse_x + 2, mouse_y)
+            self.cpt_create(thing.cpt_type, mouse_x, mouse_y, mouse_x, mouse_y)
             self.ui.refresh()
 
             # Select the newly created component
@@ -119,7 +121,7 @@ class UIModelDnD(UIModelMPH):
             self.add_cursor(round(mouse_x), round(mouse_y))
 
             # add the component like normal
-            super().on_add_cpt(cpt_key)
+            super().on_add_cpt(thing)
 
     def on_left_click(self, x, y):
         """
@@ -187,50 +189,3 @@ class UIModelDnD(UIModelMPH):
         super().on_right_click(x, y)
         self.unselect()
 
-    def on_mouse_drag(self, mouse_x, mouse_y):
-        """
-        Allows for dragging of components
-
-        Explanation
-        ===========
-        When an object is selected, it will follow the cursor.
-
-        Parameters
-        ==========
-        mouse_x : float
-            Mouse x position
-        mouse_y : float
-            Mouse y position
-        """
-
-        if not self.selected or not self.cpt_selected:
-            return
-        cpt = self.selected
-
-        if not self.dragged:
-            self.dragged = True
-            self.last_pos = self.snap_to_grid(mouse_x + 1, mouse_y + 1)
-            node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
-            self.history.append(HistoryEvent("M", cpt, node_positions))
-
-        # Calculate the difference of the points from the mouse location
-        x0, y0 = self.last_pos
-        self.last_pos = self.snap_to_grid(mouse_x + 1, mouse_y + 1)
-
-        x1, y1 = mouse_x - x0 + 1, mouse_y - y0 + 1
-
-        update = False
-        # Move nodes, and snap them to the grid
-        for node in cpt.nodes:
-            new_x, new_y = self.snap_to_grid(node.pos.x + x1, node.pos.y + y1)
-            if new_x != node.pos.x or new_y != node.pos.y:
-                update = True  # only update if the component actually moved
-            node.pos.x = new_x
-            node.pos.y = new_y
-
-        # update screen when component moved.
-        if update:
-            self.on_redraw()
-
-            if self.ui.debug:
-                print("redrawing screen")
