@@ -60,9 +60,12 @@ class Stretchy(Component):
 
         sketcher = model.ui.sketcher
         self.picture = Picture()
-        self.picture.add(sketch.draw_old(model, offset=((p1p + p2p) / 2).xy,
-                                         angle=angle, scale=scale,
-                                         **kwargs))
+
+        tf = self.make_tf(p1p, p2p,
+                          Pos(self.pins[self.pinname1][1:]),
+                          Pos(self.pins[self.pinname2][1:]))
+
+        self.picture.add(sketch.draw(model, tf, **kwargs))
 
         # TODO: generalize
         kwargs.pop('mirror', False)
@@ -70,24 +73,5 @@ class Stretchy(Component):
 
         self.picture.add(sketcher.stroke_line(*p1.xy, *p1p.xy, **kwargs))
         self.picture.add(sketcher.stroke_line(*p2p.xy, *p2.xy, **kwargs))
-
-        # For transistors
-        if False and len(self.nodes) == 3:
-
-            x3, y3 = self.nodes[1].x, self.nodes[1].y
-
-            mx = (x1 + x2) / 2
-            my = (y1 + y2) / 2
-            dx = mx - x3
-            dy = my - y3
-            r = sqrt(dx**2 + dy**2)
-
-            p3 = array((x3, y3))
-
-            h = sketch.height_cm
-            dh = array((dx, dy)) / r * (r - h)
-            p3p = p3 + dh
-
-            self.picture.add(sketcher.stroke_line(*p3, *p3p, **kwargs))
 
         # TODO, add label, voltage_label, current_label, flow_label
