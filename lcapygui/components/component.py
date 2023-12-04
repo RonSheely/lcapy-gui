@@ -339,9 +339,9 @@ class Component(ABC):
         if len(self.nodes) == 2:
             return array(((x1, y1), (x2, y2)))
 
-        tf = self.make_tf(x1, y1, x2, y2,
-                          self.pins[self.pinname1][1:],
-                          self.pins[self.pinname2][1:])
+        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
+                          Pos(self.pins[self.pinname1][1:]),
+                          Pos(self.pins[self.pinname2][1:]))
 
         coords = []
         for node_pinname in self.node_pinnames:
@@ -366,9 +366,9 @@ class Component(ABC):
 
     def _attr_dir_string(self, x1, y1, x2, y2, step=1):
 
-        tf = self.make_tf(x1, y1, x2, y2,
-                          self.pins[self.pinname1][1:],
-                          self.pins[self.pinname2][1:])
+        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
+                          Pos(self.pins[self.pinname1][1:]),
+                          Pos(self.pins[self.pinname2][1:]))
         r = tf.scale_factor / 2
         angle = -tf.angle_deg + self.angle_offset
 
@@ -500,12 +500,9 @@ class Component(ABC):
                 return name
             num += 1
 
-    def make_tf(self, x1, y1, x2, y2, pin1, pin2):
+    def make_tf(self, p1, p2, q1, q2):
 
-        u0, v0 = pin1
-        u1, v1 = pin2
-
-        return TF.from_points_pair((u0, v0), (x1, y1), (u1, v1), (x2, y2))
+        return TF.from_points_pair(q1.xy, p1.xy, q2.xy, p2.xy)
 
     def find_tf(self, pinname1, pinname2, node1=None, node2=None):
 
@@ -514,11 +511,9 @@ class Component(ABC):
         if node2 is None:
             node2 = self.node2
 
-        pin1 = self.pins[pinname1][1:]
-        pin2 = self.pins[pinname2][1:]
-
-        return self.make_tf(node1.pos.x, node1.pos.y, node2.pos.x, node2.pos.y,
-                            pin1, pin2)
+        return self.make_tf(node1.pos, node2.pos,
+                            Pos(self.pins[pinname1][1:]),
+                            Pos(self.pins[pinname2][1:]))
 
     @property
     def tf(self):
