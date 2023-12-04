@@ -1,5 +1,6 @@
 from .component import Component
 from .picture import Picture
+from .pos import Pos
 from numpy import array, nan
 
 
@@ -13,9 +14,8 @@ class Fixed(Component):
         if len(self.nodes) == 2:
             return array(((x1, y1), (x2, y2)))
 
-        tf = self.make_tf(x1, y1, x2, y2,
-                          self.pins[self.pinname1][1:],
-                          self.pins[self.pinname2][1:])
+        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
+                          self.pos1, self.pos2)
 
         coords = []
         for node_pinname in self.node_pinnames:

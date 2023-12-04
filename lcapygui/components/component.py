@@ -340,8 +340,7 @@ class Component(ABC):
             return array(((x1, y1), (x2, y2)))
 
         tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
-                          Pos(self.pins[self.pinname1][1:]),
-                          Pos(self.pins[self.pinname2][1:]))
+                          self.pos1, self.pos2)
 
         coords = []
         for node_pinname in self.node_pinnames:
@@ -364,11 +363,18 @@ class Component(ABC):
 
         return self.nodes[1]
 
+    @property
+    def pos1(self):
+        return Pos(self.pins[self.pinname1][1:])
+
+    @property
+    def pos2(self):
+        return Pos(self.pins[self.pinname2][1:])
+
     def _attr_dir_string(self, x1, y1, x2, y2, step=1):
 
         tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
-                          Pos(self.pins[self.pinname1][1:]),
-                          Pos(self.pins[self.pinname2][1:]))
+                          self.pos1, self.pos2)
         r = tf.scale_factor / 2
         angle = -tf.angle_deg + self.angle_offset
 
@@ -512,8 +518,7 @@ class Component(ABC):
             node2 = self.node2
 
         return self.make_tf(node1.pos, node2.pos,
-                            Pos(self.pins[pinname1][1:]),
-                            Pos(self.pins[pinname2][1:]))
+                            self.pos1, self.pos2)
 
     @property
     def tf(self):
@@ -536,5 +541,18 @@ class Component(ABC):
         # Could combine annotations with picture
 
     @property
+    def ppins(self):
+        raise ValueError('Ppins not defined for %s' % self)
+
+    @property
     def pins(self):
-        raise ValueError('Pins not defined for %s' % self)
+
+        newpins = {}
+        for pinname, data in self.ppins.items():
+            loc, x, y = data
+            if self.mirror:
+                y = -y
+            if self.invert:
+                x = -x
+            newpins[pinname] = loc, x, y
+        return newpins

@@ -55,8 +55,8 @@ def sketchview(sketch_key, pins, points):
 
     ax.grid(which='both', axis='both')
 
-    print('width=%.2fpt (%.3funits), height=%.2fpt (%.3funits)' %
-          (sketch.width, sketch.width_units, sketch.height, sketch.height_units))
+    print('width=%.2fpt (%.3fcm), height=%.2fpt (%.3fcm)' %
+          (sketch.width, sketch.width_cm, sketch.height, sketch.height_cm))
 
     if pins:
         cpt = cpt_make_from_sketch_key(sketch_key)

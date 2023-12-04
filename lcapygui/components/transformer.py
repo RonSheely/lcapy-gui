@@ -31,10 +31,10 @@ class Transformer(Fixed):
     # Actual half-height
     # hh = 0.48245
     hh = 0.5
-    pins = {'s+': ('rx', hw, hh),
-            's-': ('rx', hw, -hh),
-            'p+': ('lx', -hw, hh),
-            'p-': ('lx', -hw, -hh)}
+    ppins = {'s+': ('rx', hw, hh),
+             's-': ('rx', hw, -hh),
+             'p+': ('lx', -hw, hh),
+             'p-': ('lx', -hw, -hh)}
 
     bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
 

@@ -24,21 +24,6 @@ class Inamp(Opamp):
              'r+': ('l', -0.85, 0.25),
              'r-': ('l', -0.85, -0.25)}
 
-    npins = {'out': ('rx', 1.25, 0.0),
-             'in-': ('lx', -1.25, 0.5),
-             'in+': ('lx', -1.25, -0.5),
-             'vdd': ('t', 0, 0.5),
-             'vdd2': ('t', -0.45, 0.755),
-             'vss2': ('b', -0.45, -0.755),
-             'vss': ('b', 0, -0.5),
-             'ref': ('b', 0.45, -0.245),
-             'r-': ('l', -0.85, 0.25),
-             'r+': ('l', -0.85, -0.25)}
-
-    @property
-    def pins(self):
-        return self.npins if self.mirror else self.ppins
-
     pinlabels = {'vdd': 'VDD', 'vss': 'VSS'}
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}

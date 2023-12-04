@@ -37,27 +37,19 @@ class MOSFET(Transistor):
     pinname2 = 'd'
 
     node_pinnames = ('d', 'g', 's')
-    ppins = {'d': ('lx', 0.55, 0),
-             'g': ('lx', 0, 0.5),
-             's': ('lx', 0.55, 1)}
-    npins = {'d': ('lx', 0.55, 1),
-             'g': ('lx', 0, 0.5),
-             's': ('lx', 0.55, 0)}
-    ippins = {'d': ('lx', 0, 0),
-              'g': ('lx', 0.55, 0.5),
-              's': ('lx', 0, 1)}
-    inpins = {'d': ('lx', 0, 1),
-              'g': ('lx', 0.55, 0.5),
-              's': ('lx', 0, 0)}
-    ppins2 = {'d': ('lx', 0.55, 0),
-              'g': ('lx', 0, 0.645),
-              's': ('lx', 0.55, 1)}
-    npins2 = {'d': ('lx', 0.55, 1),
-              'g': ('lx', 0, 0.355),
-              's': ('lx', 0.55, 0)}
-    ippins2 = {'d': ('lx', 0, 0),
-               'g': ('lx', 0.55, 0.645),
-               's': ('lx', 0, 1)}
-    inpins2 = {'d': ('lx', 0, 1),
-               'g': ('lx', 0.55, 0.355),
-               's': ('lx', 0, 0)}
+    ppins1 = {'d': ('lx', 0.2661, 0.5),
+              'g': ('lx', -0.2874, 0),
+              's': ('lx', 0.2661, -0.5)}
+    ppins2 = {'d': ('lx', 0.2661, 0.5),
+              'g': ('lx', -0.2891, -0.145),
+              's': ('lx', 0.2661, -0.5)}
+
+    @property
+    def ppins(self):
+
+        if (self.style is not None
+            and (self.style.startswith('pigfet')
+                 or self.style.startswith('nigfet'))):
+            return self.ppins2
+        else:
+            return self.ppins1

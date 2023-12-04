@@ -26,20 +26,6 @@ class FDOpamp(Opamp):
              'r+': ('l', -0.85, 0.25),
              'r-': ('l', -0.85, -0.25)}
 
-    npins = {'out-': ('r', 0.85, -0.5),
-             'out+': ('r', 0.85, 0.5),
-             'in-': ('l', -1.25, 0.5),
-             'ocm': ('l', -0.85, 0),
-             'in+': ('l', -1.25, -0.5),
-             'vdd': ('t', -0.25, 0.645),
-             'vss': ('b', -0.25, -0.645),
-             'r-': ('l', -0.85, 0.25),
-             'r+': ('l', -0.85, -0.25)}
-
-    @property
-    def pins(self):
-        return self.npins if self.mirror else self.ppins
-
     pinlabels = {'vdd': 'VDD', 'vss': 'VSS'}
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}

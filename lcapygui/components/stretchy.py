@@ -61,9 +61,7 @@ class Stretchy(Component):
         sketcher = model.ui.sketcher
         self.picture = Picture()
 
-        tf = self.make_tf(p1p, p2p,
-                          Pos(self.pins[self.pinname1][1:]),
-                          Pos(self.pins[self.pinname2][1:]))
+        tf = self.make_tf(p1p, p2p, self.pos1, self.pos2)
 
         self.picture.add(sketch.draw(model, tf, **kwargs))
 

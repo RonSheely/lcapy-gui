@@ -24,15 +24,21 @@ class BJT(Transistor):
 
     node_pinnames = ('e', 'b', 'c')
 
+    extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
+
     ppins = {'e': ('lx', 0.225, -0.5),
              'b': ('lx', -0.3224, 0),
              'c': ('lx', 0.225, 0.5)}
-    npins = {'e': ('lx', 0.225, -0.5),
-             'b': ('lx', -0.3224, 0),
-             'c': ('lx', 0.225, 0.5)}
-    ippins = {'e': ('lx', 0.225, -0.5),
-              'b': ('lx', -0.3224, -0.5),
-              'c': ('lx', 0.225, 0.5)}
-    inpins = {'e': ('lx', 0.225, 0.5),
-              'b': ('lx', -0.3224, -0.5),
-              'c': ('lx', 0.225, -0.5)}
+
+    @property
+    def pins(self):
+
+        newpins = {}
+        for pinname, data in self.ppins.items():
+            loc, x, y = data
+            if self.mirror:
+                y = -y
+            if self.invert:
+                x = -x
+            newpins[pinname] = loc, x, y
+        return newpins
