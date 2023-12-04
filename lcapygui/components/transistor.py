@@ -1,3 +1,4 @@
+from .pos import Pos
 from .stretchy import Stretchy
 from numpy import array, sqrt, dot
 
@@ -39,23 +40,43 @@ class Transistor(Stretchy):
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
 
-        dx = x1 - x2
-        dy = y1 - y2
+        dx = x2 - x1
+        dy = y2 - y1
+
         r = sqrt(dx**2 + dy**2)
-        R = array(((dx, -dy), (dy, dx))) / r
 
-        # Midpoint
-        ym = (y1 + y2) / 2
-        xm = (x1 + x2) / 2
+        # This scales the component size but not the distance between
+        # the nodes (default 1)
+        scale = float(self.scale)
+        if scale > r:
+            scale = r
 
-        # TODO: The offset might change with transistor types.
-        # Note, the transistor base/gate is down.
-        xg, yg = dot(R, (0, 2))
-        xg += xm
-        yg += ym
+        # Width in cm
+        w = 2 * scale
 
-        # D G S
+        p1 = Pos(x1, y1)
+        p2 = Pos(x2, y2)
+
+        if r != 0:
+            dw = Pos(dx, dy) / r * (r - w) / 2
+            p1p = p1 + dw
+            p2p = p2 - dw
+        else:
+            # For zero length wires
+            p1p = p1
+            p2p = p2
+
+        tf = self.make_tf(p1p, p2p,
+                          self.pos1, self.pos2)
+        if 'g' in self.pins:
+            pin = self.pins['g']
+        else:
+            pin = self.pins['b']
+
+        gatepos = tf.transform(pin[1:])
+        xg, yg = gatepos
+
         positions = array(((x1, y1),
-                           (xg, yg),
-                           (x2, y2)))
+                          (xg, yg),
+                          (x2, y2)))
         return positions

@@ -35,8 +35,6 @@ class Stretchy(Component):
                 'Ignoring zero size component ' + self.name)
             return
 
-        angle = self.angle
-
         # This scales the component size but not the distance between
         # the nodes (default 1)
         scale = float(self.scale)
