@@ -23,12 +23,13 @@ class UIModelDnD(UIModelMPH):
         Explanation
         ===========
         If there are cursors present, it will place a component between them
-        otherwise, the component will follow the cursor until the user left clicks
+        otherwise, the component will be placed
 
         Parameters
         ==========
-        cpt_key : str
+        thing : ui.uimodelbase.C
             The key pressed
+
 
         """
 
@@ -41,13 +42,12 @@ class UIModelDnD(UIModelMPH):
 
         if len(self.cursors) < 2 and self.chain_place is None:
             x1, y1 = self.snap_to_grid(mouse_x, mouse_y)
-            x2, y2 = self.snap_to_grid(mouse_x, mouse_y)
             if len(self.cursors) == 1:
                 x1 = self.cursors[0].x
                 y1 = self.cursors[0].y
                 self.cursors.remove()
 
-            self.chain_place = self.thing_create(thing.cpt_type, x1, y1, x2, y2)
+            self.chain_place = self.thing_create(thing.cpt_type, x1, y1, mouse_x, mouse_y)
             self.ui.refresh()
 
         else:
@@ -76,29 +76,18 @@ class UIModelDnD(UIModelMPH):
 
         self.on_select(mouse_x, mouse_y)
 
-        # drop the component if being dragged
+        # If placing a component without cursors
         if self.chain_place is not None:
             cpt = self.chain_place
             self.cursors.remove()
 
             x1, y1 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
             x2, y2 = mouse_x, mouse_y
-            self.add_cursor(cpt.gcpt.node1.pos.x, cpt.gcpt.node2.pos.y)
 
-            self.chain_place = self.thing_create(self.chain_place.type, x1, y1, x2, y2)
-
-
-        # draw cursors if selecting a component
-        elif self.cpt_selected:
-            cpt = self.selected
-
-            if self.ui.debug:
-                print("Selected " + cpt.name)
-
-            node2 = cpt.gcpt.node2
-            if node2 is not None:
-                self.add_cursor(node2.pos.x, node2.pos.y)
-        # if not selecting anything, add a new node
+            if cpt.type == "W":
+                self.chain_place = self.thing_create(self.chain_place.type, x1, y1, x2, y2)
+            else:
+                self.chain_place = None
         else:
             if self.ui.debug:
                 print("Add node at (%s, %s)" % (mouse_x, mouse_y))
@@ -143,3 +132,14 @@ class UIModelDnD(UIModelMPH):
             cpt.nodes[1].pos.y = new_y
             self.on_redraw()
 
+    def on_mouse_drag(self, x, y, key):
+
+        if self.selected and not self.cpt_selected:
+
+            new_x, new_y = self.snap_to_grid(x, y)
+            print(f"moving node to {new_x}, {new_y}")
+            self.selected.pos.x = new_x
+            self.selected.pos.y = new_y
+            self.on_redraw()
+        else:
+            super().on_mouse_drag(x, y, key)
