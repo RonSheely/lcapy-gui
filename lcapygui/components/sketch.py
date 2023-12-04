@@ -30,7 +30,7 @@ class SketchPath:
 class Sketch:
 
     # Convert points to cm.
-    SCALE = 2.54 / 72
+    PT_TO_CM = 2.54 / 72
 
     def __init__(self, paths, width, height, **kwargs):
 
@@ -40,46 +40,33 @@ class Sketch:
         self.kwargs = kwargs
 
     @property
+    def width_pt(self):
+
+        return self.width
+
+    @property
+    def height_pt(self):
+
+        return self.height
+
+    @property
+    def width_cm(self):
+
+        return self.width_pt * self.PT_TO_CM
+
+    @property
+    def height_cm(self):
+
+        return self.height_pt * self.PT_TO_CM
+
+    @property
     def color(self):
 
         return self.kwargs.get('color', 'black')
 
     @classmethod
-    def load(cls, sketch_key, style='american', complain=True):
-
-        from lcapygui import __datadir__
-
-        dirname = __datadir__ / 'svg' / style
-        svg_filename = dirname / (sketch_key + '.svg')
-
-        if not svg_filename.exists():
-
-            if complain:
-                raise FileNotFoundError('Could not find data file %s for %s' %
-                                        (svg_filename, sketch_key))
-            return None
-
-        sketch = cls.load_file(str(svg_filename))
-        sketch = sketch.align(sketch_key)
-        return sketch
-
-    @classmethod
-    def load_file(cls, svg_filename):
-
-        svg = SVGParse(svg_filename)
-
-        sketch_paths = []
-        for svga_path in svg.paths:
-            sketch_path = SketchPath(
-                svga_path.path, svga_path.style, svga_path.symbol)
-            sketch_path = sketch_path.transform(TF(svga_path.transform))
-            sketch_paths.append(sketch_path)
-
-        sketch = cls(sketch_paths, svg.width, svg.height)
-        return sketch
-
-    @classmethod
     def create(cls, sketch_key, sketch_net, style='american'):
+        """This creates and stores a sketch file."""
 
         dirname = join('lcapygui', 'data', 'svg', style)
         svg_filename = join(dirname, sketch_key + '.svg')
@@ -96,6 +83,47 @@ class Sketch:
 
         a.draw(str(svg_filename), label_values=False, label_ids=False,
                label_nodes=False, draw_nodes=False, style=style)
+
+    @classmethod
+    def load(cls, sketch_key, style='american', complain=True):
+        """This loads a sketch file give a sketch_key."""
+
+        from lcapygui import __datadir__
+
+        dirname = __datadir__ / 'svg' / style
+        svg_filename = dirname / (sketch_key + '.svg')
+
+        if not svg_filename.exists():
+
+            if complain:
+                raise FileNotFoundError('Could not find data file %s for %s' %
+                                        (svg_filename, sketch_key))
+            return None
+
+        sketch = cls.load_file(str(svg_filename))
+        sketch = sketch.align(sketch_key)
+
+        cpt_type, cpt_kind, cpt_style = sketch.parse_sketch_key(sketch_key)
+        if cpt_type in ('J', 'M', 'Q'):
+            sketch.width, sketch.height = sketch.height, sketch.width
+
+        return sketch
+
+    @classmethod
+    def load_file(cls, svg_filename):
+        """This loads a sketch file given a filename."""
+
+        svg = SVGParse(svg_filename)
+
+        sketch_paths = []
+        for svga_path in svg.paths:
+            sketch_path = SketchPath(
+                svga_path.path, svga_path.style, svga_path.symbol)
+            sketch_path = sketch_path.transform(TF(svga_path.transform))
+            sketch_paths.append(sketch_path)
+
+        sketch = cls(sketch_paths, svg.width, svg.height)
+        return sketch
 
     def horizontal_wire_pair_offsets(self):
 
@@ -173,9 +201,7 @@ class Sketch:
 
         return None, None
 
-    def offsets(self, sketch_key):
-        """Find the offsets required to centre the sketch.
-        Currently transistors are not centered horizontally."""
+    def parse_sketch_key(self, sketch_key):
 
         cpt_type = sketch_key
         cpt_kind = ''
@@ -186,6 +212,14 @@ class Sketch:
             cpt_kind = parts[1]
             if len(parts) == 3:
                 cpt_style = parts[2]
+
+        return cpt_type, cpt_kind, cpt_style
+
+    def offsets(self, sketch_key):
+        """Find the offsets required to centre the sketch.
+        Currently transistors are not centered horizontally."""
+
+        cpt_type, cpt_kind, cpt_style = self.parse_sketch_key(sketch_key)
 
         if cpt_type in ('fdopamp', ):
             xoffset, yoffset = self.width / 2 + 11, self.height / 2
@@ -241,9 +275,12 @@ class Sketch:
 
     def draw_old(self, model, offset=(0, 0), scale=1, angle=0, **kwargs):
 
+        print('snap', kwargs['snap'])
+        kwargs.pop('snap')
+
         sketcher = model.ui.sketcher
 
-        tf = TF().rotate_deg(angle).scale(scale * self.SCALE)
+        tf = TF().rotate_deg(angle).scale(scale * self.PT_TO_CM)
         tf = tf.translate(*offset)
 
         return sketcher.sketch(self, tf, **kwargs)
@@ -256,7 +293,7 @@ class Sketch:
 
         c = tf.transform((0, 0))
 
-        tf = TF().rotate_deg(-tf.angle_deg).scale(tf.scale_factor * self.SCALE / model.STEP)
+        tf = TF().rotate_deg(-tf.angle_deg).scale(tf.scale_factor * self.PT_TO_CM / model.STEP)
         tf = tf.translate(*c)
 
         return sketcher.sketch(self, tf, **kwargs)

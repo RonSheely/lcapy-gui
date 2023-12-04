@@ -24,17 +24,15 @@ class BJT(Transistor):
 
     node_pinnames = ('e', 'b', 'c')
 
-    hh = 0.5
-    hw = 0.55 / 2
-    ppins = {'e': ('lx', -hw, -hh),
-             'b': ('lx', -hw, -hh),
-             'c': ('lx', -hw, hh)}
-    npins = {'e': ('lx', -hw, hh),
-             'b': ('lx', -hw, -hh),
-             'c': ('lx', -hw, -hh)}
-    ippins = {'e': ('lx', -hw, -hh),
-              'b': ('lx', -hw, -hh),
-              'c': ('lx', -hw, hh)}
-    inpins = {'e': ('lx', -hw, hh),
-              'b': ('lx', -hw, -hh),
-              'c': ('lx', -hw, -hh)}
+    ppins = {'e': ('lx', 0.225, -0.5),
+             'b': ('lx', -0.3224, 0),
+             'c': ('lx', 0.225, 0.5)}
+    npins = {'e': ('lx', 0.225, -0.5),
+             'b': ('lx', -0.3224, 0),
+             'c': ('lx', 0.225, 0.5)}
+    ippins = {'e': ('lx', 0.225, -0.5),
+              'b': ('lx', -0.3224, -0.5),
+              'c': ('lx', 0.225, 0.5)}
+    inpins = {'e': ('lx', 0.225, 0.5),
+              'b': ('lx', -0.3224, -0.5),
+              'c': ('lx', 0.225, -0.5)}

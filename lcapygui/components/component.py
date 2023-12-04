@@ -539,3 +539,7 @@ class Component(ABC):
 
         # TODO: erase nodes if necessary
         # Could combine annotations with picture
+
+    @property
+    def pins(self):
+        raise ValueError('Pins not defined for %s' % self)

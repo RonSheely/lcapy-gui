@@ -24,8 +24,6 @@ from .vccs import VCCS
 from .ccvs import CCVS
 from .cccs import CCCS
 
-from .sketch import Sketch
-
 # Could use importlib.import_module to programmatically import
 # the component classes.
 

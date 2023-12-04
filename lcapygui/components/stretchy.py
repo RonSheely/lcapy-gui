@@ -37,12 +37,14 @@ class Stretchy(Component):
 
         angle = self.angle
 
+        # This scales the component size but not the distance between
+        # the nodes (default 1)
         scale = float(self.scale)
         if scale > r:
             scale = r
 
         # Width in cm
-        w = sketch.width / 72 * 2.54 * scale
+        w = sketch.width_cm * scale
 
         p1 = Pos(x1, y1)
         p2 = Pos(x2, y2)
@@ -70,7 +72,7 @@ class Stretchy(Component):
         self.picture.add(sketcher.stroke_line(*p2p.xy, *p2.xy, **kwargs))
 
         # For transistors
-        if len(self.nodes) == 3:
+        if False and len(self.nodes) == 3:
 
             x3, y3 = self.nodes[1].x, self.nodes[1].y
 
@@ -82,10 +84,10 @@ class Stretchy(Component):
 
             p3 = array((x3, y3))
 
-            # Height in cm
-            h = sketch.height / 72 * 2.54
+            h = sketch.height_cm
             dh = array((dx, dy)) / r * (r - h)
             p3p = p3 + dh
+
             self.picture.add(sketcher.stroke_line(*p3, *p3p, **kwargs))
 
         # TODO, add label, voltage_label, current_label, flow_label

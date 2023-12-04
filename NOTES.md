@@ -18,10 +18,9 @@ If the component is known to Lcapy (see `lcapy.schemcpts.py`):
 
 6. Install `lcapy-gui` (to copy new SVG file to correct location)
 
-7. Run `sketchview` to view the SVG file.  Use the `--pins` option to
-   show the pins.
+7. Run `sketchview` to view the SVG file, e.g., `sketchview Q-npn'.  Use the `--pins` option to show the pins.
 
 8. Define the pin locations in `foo.py`; zoom in to the displayed SVG
-   file to find the exact locations.
+   file to find the exact locations.  Note, the x-y position of the mouse is shown in the top right corner.
 
 9. Update the menu in `lcapygui/ui/tk/uimodelmph.py`

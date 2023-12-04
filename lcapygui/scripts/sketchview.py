@@ -49,13 +49,14 @@ def sketchview(sketch_key, pins, points):
 
     ax.axis('equal')
 
-    # ax.set_xlim(-sketch.width / 2, sketch.width / 2)
+    # ax.set_xlim(-sketch.width_units, sketch.width_units)
 
     ax.plot(0, 0, 'o')
 
     ax.grid(which='both', axis='both')
 
-    print('width=%s, height=%s' % (sketch.width, sketch.height))
+    print('width=%.2fpt (%.3funits), height=%.2fpt (%.3funits)' %
+          (sketch.width, sketch.width_units, sketch.height, sketch.height_units))
 
     if pins:
         cpt = cpt_make_from_sketch_key(sketch_key)
