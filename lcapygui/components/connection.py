@@ -47,7 +47,7 @@ class Connection(Bipole):
             offset = x2, y2
 
         sketch.draw_old(model, offset=offset,
-                        angle=angle, snap=False, **kwargs)
+                        angle=angle, **kwargs)
 
         sketcher = model.ui.sketcher
         sketcher.stroke_line(x1, y1, x2, y2, **kwargs)

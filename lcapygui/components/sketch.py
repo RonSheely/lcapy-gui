@@ -275,9 +275,6 @@ class Sketch:
 
     def draw_old(self, model, offset=(0, 0), scale=1, angle=0, **kwargs):
 
-        print('snap', kwargs['snap'])
-        kwargs.pop('snap')
-
         sketcher = model.ui.sketcher
 
         tf = TF().rotate_deg(angle).scale(scale * self.PT_TO_CM)

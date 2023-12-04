@@ -62,7 +62,7 @@ class Stretchy(Component):
         self.picture = Picture()
         self.picture.add(sketch.draw_old(model, offset=((p1p + p2p) / 2).xy,
                                          angle=angle, scale=scale,
-                                         snap=True, **kwargs))
+                                         **kwargs))
 
         # TODO: generalize
         kwargs.pop('mirror', False)
