@@ -8,7 +8,8 @@ class Transistor(Stretchy):
     can_stretch = True
     label_offset = 0.6
     has_value = False
-    # extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
+    extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
+    label_offset = 1.1
 
     # Perhaps make a circle
     hw = 0.25
@@ -39,6 +40,8 @@ class Transistor(Stretchy):
 
         x1, y1 defines the positive input node
         x2, y2 defines the negative input node"""
+
+        # Transistors are stretchy but only for the d, e, s, c wires.
 
         dx = x2 - x1
         dy = y2 - y1
