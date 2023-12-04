@@ -16,5 +16,5 @@ class JFET(Transistor):
 
     node_pinnames = ('d', 'g', 's')
     ppins = {'d': ('lx', 0.266, -0.5),
-             'g': ('lx', -0.2838, 0.145),
+             'g': ('lx', -0.2838, -0.145),
              's': ('lx', 0.266, 0.5)}
