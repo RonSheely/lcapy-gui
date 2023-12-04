@@ -2,88 +2,19 @@ from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
 
 
-class Crosshair:
-    """
-    A crosshair object for moving components on the canvas
-
-    """
-
-    def __init__(self, ui, mouse_x, mouse_y):
-        """
-        Initialise the crosshair class
-
-        Parameters
-        ==========
-        ui : lcapygui.ui.tk.lcapytk.LcapyTk
-            The UI element
-        mouse_x : float
-            mouse x position
-        mouse_y : float
-            mouse y position
-
-        """
-        self.sketcher = ui.sketcher
-        self.patch = None
-        self.x = mouse_x
-        self.y = mouse_y
-
-    def position(self):
-        """
-        Gets the position of the crosshair
-
-        Returns
-        =======
-        tuple[float, float]
-            x, y position of the crosshair
-
-        """
-        return self.x, self.y
-
-    def set_position(self, mouse_x, mouse_y):
-        """
-        Sets the position of the crosshair
-
-        Parameters
-        ==========
-        mouse_x : float
-            mouse x position
-        mouse_y : float
-            mouse y position
-
-        """
-        self.x = mouse_x
-        self.y = mouse_y
-
-    def draw(self, size=0.2):
-        """
-        Draws the crosshair on the canvas
-
-        Parameters
-        ==========
-        size : float
-            the total height of the crosshair
-
-        """
-        self.patch = self.sketcher.draw_line(
-            self.x,
-            self.y - size / 2,
-            self.x,
-            self.y + size / 2,
-            color="black",
-            alpha=0.5,
-        )
-
-    def remove(self):
-        """
-        Removes the crosshair from the canvas
-
-        """
-        self.patch.remove(self.patch)
-
-
 class UIModelDnD(UIModelMPH):
+
+    """
+    UIModelDnD
+
+    Attributes
+    ==========
+    chain_place : lcapy.mnacpts.Cpt or None
+        The component to be placed after a key is pressed
+    """
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
+        self.chain_place = None
 
     def on_add_cpt(self, thing):
         """
@@ -108,13 +39,16 @@ class UIModelDnD(UIModelMPH):
         mouse_x = self.mouse_position[0]
         mouse_y = self.mouse_position[1]
 
-        if len(self.cursors) == 0:
-            # create a new component at the mouse position
-            self.cpt_create(thing.cpt_type, mouse_x, mouse_y, mouse_x, mouse_y)
-            self.ui.refresh()
+        if len(self.cursors) < 2 and self.chain_place is None:
+            x1, y1 = self.snap_to_grid(mouse_x, mouse_y)
+            x2, y2 = self.snap_to_grid(mouse_x, mouse_y)
+            if len(self.cursors) == 1:
+                x1 = self.cursors[0].x
+                y1 = self.cursors[0].y
+                self.cursors.remove()
 
-            # Select the newly created component
-            self.follow_mouse = True
+            self.chain_place = self.thing_create(thing.cpt_type, x1, y1, x2, y2)
+            self.ui.refresh()
 
         else:
             # add a new cursor at the grid position closest to the mouse
@@ -123,7 +57,7 @@ class UIModelDnD(UIModelMPH):
             # add the component like normal
             super().on_add_cpt(thing)
 
-    def on_left_click(self, x, y):
+    def on_left_click(self, mouse_x, mouse_y):
         """
         Performs operations on left-click
 
@@ -135,38 +69,42 @@ class UIModelDnD(UIModelMPH):
 
         Parameters
         ==========
-        :param float x: x position of the mouse
-        :param float y: y position of the mouse
+        :param float mouse_x: x position of the mouse
+        :param float mouse_y: y position of the mouse
 
         """
 
-        self.on_select(x, y)
+        self.on_select(mouse_x, mouse_y)
 
-        # TODO: instead of appearing at the cursor, the user should be able to drag it from a sidebar
         # drop the component if being dragged
-        if self.follow_mouse:
-            if self.ui.debug:
-                print("dropped component (%s, %s)" % (x, y))
-            self.follow_mouse = False
+        if self.chain_place is not None:
+            cpt = self.chain_place
             self.cursors.remove()
-            self.unselect()
+
+            x1, y1 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
+            x2, y2 = mouse_x, mouse_y
+            self.add_cursor(cpt.gcpt.node1.pos.x, cpt.gcpt.node2.pos.y)
+
+            self.chain_place = self.thing_create(self.chain_place.type, x1, y1, x2, y2)
+
 
         # draw cursors if selecting a component
         elif self.cpt_selected:
             cpt = self.selected
+
             if self.ui.debug:
                 print("Selected " + cpt.name)
-            self.cursors.remove()
-            self.add_cursor(cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y)
+
             node2 = cpt.gcpt.node2
             if node2 is not None:
                 self.add_cursor(node2.pos.x, node2.pos.y)
         # if not selecting anything, add a new node
         else:
             if self.ui.debug:
-                print("Add node at (%s, %s)" % (x, y))
-            self.cursors.remove()  # TODO: stop clearing nodes on click when node-dragging is implemented
-            self.on_add_node(x, y)
+                print("Add node at (%s, %s)" % (mouse_x, mouse_y))
+            #self.cursors.remove()  # TODO: stop clearing nodes on click when node-dragging is implemented
+            #self.on_add_node(mouse_x, mouse_y)
+            super().on_left_click(mouse_x, mouse_y)
 
     def on_right_click(self, x, y):
         """
@@ -186,6 +124,22 @@ class UIModelDnD(UIModelMPH):
             y position of the mouse
 
         """
-        super().on_right_click(x, y)
+        if self.chain_place is not None:
+            print("Chain create disabled. Deleting  " + self.chain_place.name)
+            self.cpt_delete(self.chain_place)
+            self.chain_place = None
+
+        else:
+            super().on_right_click(x, y)
         self.unselect()
+
+    def on_mouse_move(self, mouse_x, mouse_y):
+        if self.chain_place != None:
+            cpt = self.chain_place
+            new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
+            if self.ui.debug:
+                print(f"moving node to {new_x}, {new_y}")
+            cpt.nodes[1].pos.x = new_x
+            cpt.nodes[1].pos.y = new_y
+            self.on_redraw()
 
