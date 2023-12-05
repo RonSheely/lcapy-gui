@@ -17,6 +17,20 @@ from lcapy.opts import Opts
 
 
 class Thing:
+    """
+    Thing Class
+
+    Explanation
+    ===========
+    Stores all relevant information for creating a new component 'thing'
+
+    Attributes
+    ==========
+    accelerator : str
+    menu_name : str
+    cpt_type : str
+    kind : str
+    """
 
     def __init__(self, accelerator, menu_name, cpt_type, kind):
 
@@ -222,8 +236,17 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
-    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
-        """Create a new component."""
+    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=none):
+        """
+        TODO: Check
+        Create a new component
+        :param cpt_type: The component to create ('r' = resistor, etc.)
+        :param x1: x position of the first node
+        :param y1: y position of the first node
+        :param x2: x position of the second node
+        :param y2: y position of the second node
+        :return: The instance of the component
+        """
 
         s = sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
         if s < 0.2:
