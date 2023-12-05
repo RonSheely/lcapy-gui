@@ -307,6 +307,10 @@ class UIModelMPH(UIModelBase):
         s += self.cursors.debug() + '\n'
         s += 'Selected.........\n'
         s += str(self.selected) + '\n'
+        s += '\nHistory.........\n'
+        s += str(self.history) + '\n'
+        s += '\nRecall.........\n'
+        s += str(self.recall)
         self.ui.show_message_dialog(s, 'Debug')
 
     def on_delete(self):

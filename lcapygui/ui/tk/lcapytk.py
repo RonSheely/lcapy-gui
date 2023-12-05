@@ -111,6 +111,8 @@ class LcapyTk(Tk):
                              MenuItem('Preferences', self.on_preferences),
                              MenuItem('Undo', self.on_undo,
                                       accelerator='Ctrl+z'),
+                             MenuItem('Redo', self.on_redo,
+                                      accelerator='Ctrl+y'),
                              MenuItem('Cut', self.on_cut,
                                       accelerator='Ctrl+x'),
                              MenuItem('Copy', self.on_copy,
@@ -614,6 +616,10 @@ class LcapyTk(Tk):
     def on_quit(self, *args):
 
         self.model.on_quit()
+
+    def on_redo(self, *args):
+
+        self.model.on_redo()
 
     def on_save(self, *args):
 

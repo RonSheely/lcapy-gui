@@ -4,6 +4,7 @@ from .preferences import Preferences
 from ..components.opamp import Opamp
 from ..components.pos import Pos
 from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
+from .history import History
 from .history_event import HistoryEvent
 
 from copy import copy
@@ -91,7 +92,8 @@ class UIModelBase:
         self.last_expr = None
         self.preferences = Preferences()
         self.dirty = False
-        self.history = []
+        self.history = History()
+        self.recall = History()
         self.clipboard = None
         self.select_pos = 0, 0
         self.dragged = False
@@ -129,6 +131,39 @@ class UIModelBase:
             return None
 
         return self._analysis_circuit
+
+    def apply(self, event, inverse):
+
+        cpt = event.cpt
+        code = event.code
+
+        if inverse:
+            code = {'A': 'D', 'D': 'A', 'M': 'M'}[code]
+
+        if code == 'A':
+            newcpt = self.circuit.add(str(cpt))
+
+            # Copy node positions
+            new_cpt = self.circuit.elements[cpt.name]
+            for m, node in enumerate(cpt.nodes):
+                new_cpt.nodes[m].pos = node.pos
+            new_cpt.gcpt = cpt.gcpt
+
+            self.cpt_draw(cpt)
+            self.select(cpt)
+
+        elif code == 'M':
+            for node, pos in zip(cpt.nodes, event.nodes):
+                node.pos.x = pos[0]
+                node.pos.y = pos[1]
+
+            self.select(cpt)
+            self.on_redraw()
+
+        elif code == 'D':
+            self.cpt_delete(cpt)
+
+        self.invalidate()
 
     def bounding_box(self):
 
@@ -213,7 +248,11 @@ class UIModelBase:
 
     def cpt_draw(self, cpt, **kwargs):
 
-        gcpt = cpt.gcpt
+        try:
+            gcpt = cpt.gcpt
+        except AttributeError:
+            breakpoint()
+
         if gcpt is None:
             return
 
@@ -820,8 +859,14 @@ class UIModelBase:
 
     def redo(self):
 
-        # TODO
-        pass
+        if self.recall == []:
+            return
+        event = self.recall.pop()
+        self.history.append(event)
+
+        if self.ui.debug:
+            print('Redo ' + event.code)
+        self.apply(event, False)
 
     def redraw(self):
 
@@ -838,35 +883,9 @@ class UIModelBase:
         if self.history == []:
             return
         event = self.history.pop()
-        cpt = event.cpt
+        self.recall.append(event)
 
         if self.ui.debug:
             print('Undo ' + event.code)
 
-        if event.code == 'D':
-            self.circuit.add(str(cpt))
-
-            # Copy node positions
-            new_cpt = self.circuit.elements[cpt.name]
-            for m, node in enumerate(cpt.nodes):
-                new_cpt.nodes[m].pos = node.pos
-            new_cpt.gcpt = cpt.gcpt
-
-            self.cpt_draw(cpt)
-            self.select(cpt)
-
-        elif event.code == 'M':
-            for node, pos in zip(cpt.nodes, event.nodes):
-                node.pos.x = pos[0]
-                node.pos.y = pos[1]
-
-            self.select(cpt)
-            self.on_redraw()
-
-        elif event.code == 'A':
-            self.cpt_delete(cpt)
-
-        else:
-            raise RuntimeError('Unknown event code ' + event.code)
-
-        self.invalidate()
+        self.apply(event, True)
