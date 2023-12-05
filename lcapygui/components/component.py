@@ -448,7 +448,7 @@ class Component(ABC):
 
         xb, yb = tf.transform((x, y))
 
-        path = array(self.bbox_path) * 0.9
+        path = array(self.bbox_path) * 0.7
 
         return point_in_polygon(xb, yb, path)
 

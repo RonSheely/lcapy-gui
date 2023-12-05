@@ -71,3 +71,9 @@ class Stretchy(Component):
         self.picture.add(sketcher.stroke_line(*p2p.xy, *p2.xy, **kwargs))
 
         # TODO, add label, voltage_label, current_label, flow_label
+
+        if model.ui.debug:
+            # Show bounding box
+            path = tf.transform(self.bbox_path)
+            self.picture.add(sketcher.stroke_path(path, color='green',
+                                                  closed=True))

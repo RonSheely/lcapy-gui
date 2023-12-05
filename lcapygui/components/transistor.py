@@ -11,9 +11,9 @@ class Transistor(Stretchy):
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
     label_offset = 1.1
 
-    # Perhaps make a circle
-    hw = 0.25
-    hh = 0.25
+    # Perhaps make a circle?
+    hw = 0.2
+    hh = 0.2
     bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
 
     @property
