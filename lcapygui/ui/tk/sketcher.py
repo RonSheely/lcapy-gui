@@ -79,10 +79,12 @@ class Sketcher:
         xend = xstart + width
         yend = ystart + height
 
-        self.stroke_line(xstart, ystart, xstart, yend, **kwargs)
-        self.stroke_line(xstart, yend, xend, yend, **kwargs)
-        self.stroke_line(xend, yend, xend, ystart, **kwargs)
-        self.stroke_line(xend, ystart, xstart, ystart, **kwargs)
+        lines = []
+        lines.append(self.stroke_line(xstart, ystart, xstart, yend, **kwargs))
+        lines.append(self.stroke_line(xstart, yend, xend, yend, **kwargs))
+        lines.append(self.stroke_line(xend, yend, xend, ystart, **kwargs))
+        lines.append(self.stroke_line(xend, ystart, xstart, ystart, **kwargs))
+        return lines
 
     def stroke_filled_circle(self, x, y, radius=0.5, color='black',
                              alpha=0.5, **kwargs):
@@ -109,14 +111,18 @@ class Sketcher:
 
     def stroke_path(self, path, color='black', closed=False, **kwargs):
 
+        lines = []
         for m in range(len(path) - 1):
             xstart, ystart = path[m]
             xend, yend = path[m + 1]
 
-            self.stroke_line(xstart, ystart, xend, yend, color=color, **kwargs)
+            lines.append(self.stroke_line(xstart, ystart,
+                         xend, yend, color=color, **kwargs))
         if closed:
             xstart, ystart = path[0]
-            self.stroke_line(xstart, ystart, xend, yend, color=color, **kwargs)
+            lines.append(self.stroke_line(xstart, ystart,
+                         xend, yend, color=color, **kwargs))
+        return lines
 
     def text(self, x, y, text, **kwargs):
 
