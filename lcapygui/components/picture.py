@@ -6,6 +6,9 @@ class Picture:
 
     def add(self, patch):
 
+        if patch is None:
+            raise ValueError('Adding invalid patch')
+
         self.elts.append(patch)
 
     def remove(self):
