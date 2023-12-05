@@ -319,7 +319,9 @@ class UIModelBase:
                 node.pos.y += yshift
 
             # TODO: only redraw cpts that have moved
-            self.on_redraw()
+            gcpt = cpt.gcpt
+            gcpt.undraw()
+            gcpt.draw(self)
         else:
             # Alternatively, assign new nodes for the cpt being moved
             # if the nodes are shared.
