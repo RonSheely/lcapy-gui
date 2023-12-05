@@ -534,6 +534,10 @@ class UIModelMPH(UIModelBase):
 
         self.dragged = False
 
+        # The following is only required to fix up the label
+        self.redraw()
+        self.ui.refresh()
+
     def on_simple_netlist(self):
 
         netlist = []
@@ -672,7 +676,6 @@ class UIModelMPH(UIModelBase):
 
     def on_select(self, x, y):
 
-        self.dragged = False
         self.select_pos = x, y
 
         cpt = self.closest_cpt(x, y)

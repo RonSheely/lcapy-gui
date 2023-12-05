@@ -107,12 +107,15 @@ class Sketcher:
         self.ax.add_patch(patch)
         return patch
 
-    def stroke_path(self, path, color='black', **kwargs):
+    def stroke_path(self, path, color='black', closed=False, **kwargs):
 
         for m in range(len(path) - 1):
             xstart, ystart = path[m]
             xend, yend = path[m + 1]
 
+            self.stroke_line(xstart, ystart, xend, yend, color=color, **kwargs)
+        if closed:
+            xstart, ystart = path[0]
             self.stroke_line(xstart, ystart, xend, yend, color=color, **kwargs)
 
     def text(self, x, y, text, **kwargs):
