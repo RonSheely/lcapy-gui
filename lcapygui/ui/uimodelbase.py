@@ -192,6 +192,9 @@ class UIModelBase:
 
     def cpt_delete(self, cpt):
 
+        if self.ui.debug:
+            print('Deleting %s' % cpt)
+
         self.select(None)
 
         redraw = True
@@ -836,6 +839,10 @@ class UIModelBase:
             return
         event = self.history.pop()
         cpt = event.cpt
+
+        if self.ui.debug:
+            print('Undo ' + event.code)
+
         if event.code == 'D':
             self.circuit.add(str(cpt))
 
@@ -847,16 +854,18 @@ class UIModelBase:
 
             self.cpt_draw(cpt)
             self.select(cpt)
-        elif event.code == 'M':
 
+        elif event.code == 'M':
             for node, pos in zip(cpt.nodes, event.nodes):
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
             self.select(cpt)
             self.on_redraw()
+
         elif event.code == 'A':
             self.cpt_delete(cpt)
+
         else:
             raise RuntimeError('Unknown event code ' + event.code)
 

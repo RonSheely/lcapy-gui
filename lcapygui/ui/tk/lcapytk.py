@@ -308,6 +308,9 @@ class LcapyTk(Tk):
         canvas.bp_id = figure.canvas.mpl_connect('button_press_event',
                                                  self.on_click_event)
 
+        canvas.br_id = figure.canvas.mpl_connect('button_release_event',
+                                                 self.on_release_event)
+
         canvas.kp_id = figure.canvas.mpl_connect('key_press_event',
                                                  self.on_key_press_event)
 
@@ -384,6 +387,11 @@ class LcapyTk(Tk):
                 self.model.on_left_click(event.xdata, event.ydata)
             elif event.button == 3:
                 self.model.on_right_click(event.xdata, event.ydata)
+
+    def on_release_event(self, event):
+
+        if event.button == 1:
+            self.model.on_mouse_release()
 
     def on_clone(self, *args):
 
@@ -562,8 +570,8 @@ class LcapyTk(Tk):
         if self.debug:
 
             if event.xdata is None or event.ydata is None:
-                print('Mouse event: x=%d, y=%d' %
-                      (event.x, event.y))
+                print('Mouse event: x=%d, y=%d, button=%d' %
+                      (event.x, event.y, event.button))
             else:
                 print('Mouse event: x=%d, y=%d, xdata=%f, ydata=%f' %
                       (event.x, event.y, event.xdata, event.ydata))

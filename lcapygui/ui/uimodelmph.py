@@ -501,6 +501,9 @@ class UIModelMPH(UIModelBase):
 
         # Perhaps allow multiple cpts to be selected at once for dragging?
 
+        if self.ui.debug:
+            print('mouse drag')
+
         if not self.selected or not self.cpt_selected:
             return
         cpt = self.selected
@@ -523,6 +526,13 @@ class UIModelMPH(UIModelBase):
 
         self.cpt_move(cpt, xshift, yshift, key == 'shift')
         self.ui.refresh()
+
+    def on_mouse_release(self):
+
+        if self.ui.debug:
+            print('mouse release')
+
+        self.dragged = False
 
     def on_simple_netlist(self):
 
