@@ -79,7 +79,8 @@ class WireSolver(AStar):
             # Get each neighbouring node
             for nx, ny in [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
             # Check the points are within the bounds of the graph, and that they are not an existing node
-            if (0 <= nx < self.width and 0 <= ny < self.height) and (self.lines[ny][nx] == 0)
+            if (0 <= nx < self.width and 0 <= ny < self.height)
+            and (self.lines[ny][nx] == 0)
         ]
         return neighbours
 
@@ -91,14 +92,14 @@ class UIModelDnD(UIModelMPH):
 
     Attributes
     ==========
-    chain_place : lcapy.mnacpts.Cpt or None
+    chain_path : lcapy.mnacpts.Cpt or None
         The component to be placed after a key is pressed
 
     """
 
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
-        self.chain_place = None
+        self.chain_path = None
 
     def on_add_cpt(self, thing):
         """
@@ -123,15 +124,14 @@ class UIModelDnD(UIModelMPH):
         mouse_x = self.mouse_position[0]
         mouse_y = self.mouse_position[1]
 
-
-        if len(self.cursors) < 2 and self.chain_place is None:
+        if len(self.cursors) < 2 and self.chain_path is None:
             x1, y1 = self.snap_to_grid(mouse_x, mouse_y)
             if len(self.cursors) == 1:
                 x1 = self.cursors[0].x
                 y1 = self.cursors[0].y
                 self.cursors.remove()
 
-            self.chain_place = self.draw_path(thing.cpt_type, x1, y1, mouse_x, mouse_y)
+            self.draw_path(thing.cpt_type, x1, y1, mouse_x, mouse_y)
 
         else:
             # add the component like normal
@@ -160,17 +160,8 @@ class UIModelDnD(UIModelMPH):
         mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
 
         # If placing a component without cursors
-        if self.chain_place is not None:
-            cpt = self.chain_place[-1]
-            self.cursors.remove()
-
-            x1, y1 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
-            x2, y2 = mouse_x, mouse_y
-
-            if cpt.type == "W":
-                self.chain_place = self.draw_path("W", x1, y1, x2, y2)
-            else:
-                self.chain_place = None
+        if self.chain_path is not None:
+            self.chain_path = None
         else:
             if self.ui.debug:
                 print("Add node at (%s, %s)" % (mouse_x, mouse_y))
@@ -199,11 +190,11 @@ class UIModelDnD(UIModelMPH):
         # Snap mouse to grid
         mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
 
-        if self.chain_place is not None:
+        if self.chain_path is not None:
             print("Chain create disabled. Deleting")
-            for cpt in self.chain_place:
+            for cpt in self.chain_path:
                 self.cpt_delete(cpt)
-            self.chain_place = None
+            self.chain_path = None
 
         else:
             super().on_right_click(mouse_x, mouse_y)
@@ -226,24 +217,14 @@ class UIModelDnD(UIModelMPH):
             y position of the mouse
 
         """
-        if self.chain_place != None:
+        if self.chain_path != None:
             # Get start node
-            cpt = self.chain_place[0]
+            cpt = self.chain_path[0]
             x1 = cpt.nodes[0].pos.x
             x2 = cpt.nodes[0].pos.y
             type = cpt.type
 
-            # remove existing wires
-            for cpt in self.chain_place:
-                print(cpt)
-                self.cpt_delete(cpt)
-
-            new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
-
-            if self.ui.debug:
-                print(f"creating new path to {new_x}, {new_y}")
-
-            self.chain_place = self.draw_path(type, x1, x2, new_x, new_y)
+            self.draw_path(type, x1, x2, mouse_x, mouse_y)
 
     def get_node_graph(self):
         """
@@ -258,10 +239,17 @@ class UIModelDnD(UIModelMPH):
         """
         graph = [[0 for x in range(0, 36)] for y in range(0, 22)]
 
+        # TODOL Make pathing more efficient
+        # Path around existing nodes
         for n in self.circuit.nodes:
             graph[int(self.circuit.nodes[n].pos.y)][
                 int(self.circuit.nodes[n].pos.x)
             ] = 1
+
+        # Ignore nodes in chain_path
+        if self.chain_path is not None:
+            for cpt in self.chain_path:
+                graph[int(cpt.gcpt.node1.pos.y)][int(cpt.gcpt.node1.pos.x)] = 0
 
         if self.ui.debug:
             print("Creating Node graph:")
@@ -297,6 +285,10 @@ class UIModelDnD(UIModelMPH):
         # perform A* search to find the path between the nodes
         path = WireSolver(self.get_node_graph()).astar(start_node, end_node)
 
+        # If no path could be found return none
+        if path is None:
+            return None
+
         path = list(path)
 
         if self.ui.debug:
@@ -321,22 +313,53 @@ class UIModelDnD(UIModelMPH):
         x1
         cpt_type
         """
-
+        # Snap nodes to grid
         x1, y1 = self.snap_to_grid(x1, y1)
         x2, y2 = self.snap_to_grid(x2, y2)
 
+        # Find path between nodes
         path = self.find_path((x1, y1), (x2, y2))
-        component_list = []
-        previous_node = path[0]
-        for node in path[1:]:
-            component_list.append(
-                self.thing_create(
-                    cpt_type, previous_node[0], previous_node[1], node[0], node[1]
+
+        if path is None:
+            return None
+
+        # Initialise the chain path
+        if self.chain_path is None:
+            if self.ui.debug:
+                print(f"Initialising Chain Path")
+            self.chain_path = []
+
+        # Shrink current chain to fit new path
+        while len(self.chain_path) >= len(path) - 1:
+            self.cpt_delete(self.chain_path.pop())
+
+        # Undraw current chain
+        for cpt in self.chain_path:
+            if self.ui.debug:
+                print(f"Undrawing {cpt}")
+            cpt.gcpt.undraw()
+
+        for i in range(1, len(path)):
+            if i >= len(self.chain_path):
+                print(f"Chain too small {i}, creating new wire")
+                self.chain_path.append(
+                    self.thing_create(
+                        cpt_type,
+                        path[i - 1][0],
+                        path[i - 1][1],
+                        path[i][0],
+                        path[i][1],
+                    )
                 )
-            )
-            previous_node = node
-        self.on_redraw()
-        return component_list
+            else:
+                print(f"updating wire {i}  {self.chain_path[i]}")
+                self.cpt_modify_nodes(self.chain_path[i], path[i][0], path[i][1], path[i - 1][0], path[i - 1][1])
+
+        # Draw new chain
+        for cpt in self.chain_path:
+            cpt.gcpt.draw(self)
+        self.ui.refresh()
+        print(self.chain_path)
 
     def on_mouse_drag(self, mouse_x, mouse_y, key):
         """
