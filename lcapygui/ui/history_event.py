@@ -10,4 +10,4 @@ class HistoryEvent:
     def __str__(self):
 
         return '%s %s %s -> %s' % (self.code, self.cpt,
-                                   self.from_nodes, self.to_node)
+                                   self.from_nodes, self.to_nodes)
