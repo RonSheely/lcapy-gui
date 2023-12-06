@@ -43,18 +43,20 @@ class UIModelDnD(UIModelMPH):
         mouse_x = self.mouse_position[0]
         mouse_y = self.mouse_position[1]
 
-        if len(self.cursors) < 102:
+        if len(self.cursors) < 2:
             x1, y1 = self.snap_to_grid(mouse_x, mouse_y)
             if len(self.cursors) == 1:
                 x1 = self.cursors[0].x
                 y1 = self.cursors[0].y
                 self.cursors.remove()
 
-            self.cpt_create("W", x1, y1, mouse_x, mouse_y)
+            cpt = self.cpt_create("DW", x1, y1, mouse_x, mouse_y)
+            cpt.gcpt.convert_to_wires(self)
             self.on_redraw()
-
         else:
             # add the component like normal
+            if thing.cpt_type == "W":
+                thing.cpt_type = "DW"
             super().on_add_cpt(thing)
 
     def on_mouse_move(self, mouse_x, mouse_y):
@@ -110,6 +112,10 @@ class UIModelDnD(UIModelMPH):
             print(f"moving node to {new_x}, {new_y}")
             self.selected.pos.x = new_x
             self.selected.pos.y = new_y
-            self.on_redraw()
+
+            for cpt in self.selected.connected:
+                cpt.gcpt.undraw()
+                cpt.gcpt.draw(self)
+                self.ui.refresh()
         else:
             super().on_mouse_drag(mouse_x, mouse_y, key)

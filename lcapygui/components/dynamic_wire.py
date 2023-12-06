@@ -1,6 +1,8 @@
 from .wire import Wire
 from .picture import Picture
 from astar import AStar
+from math import sqrt
+import numpy as np
 
 
 class WireSolver(AStar):
@@ -111,8 +113,8 @@ class DynamicWire(Wire):
 
     def update_path(self):
         # Get start and end nodes
-        start = (int(self.node1.x),int(self.node1.y))
-        end = (int(self.node2.x),int(self.node2.y))
+        start = (int(self.node1.x), int(self.node1.y))
+        end = (int(self.node2.x), int(self.node2.y))
 
         # perform A* search to find the path between the nodes
         path = self.__path_finder.astar(start, end)
@@ -123,7 +125,6 @@ class DynamicWire(Wire):
             return
 
         self.__path = list(path)
-
 
         # optionally simplify the path
         if self.__simplified:
@@ -150,21 +151,45 @@ class DynamicWire(Wire):
 
         self.__path = simplified
 
-
     def draw(self, model, **kwargs):
         sketcher = model.ui.sketcher
-
-        x1, y1 = self.node1.x, self.node1.y
-        x2, y2 = self.node2.x, self.node2.y
-
         kwargs = self.make_kwargs(model, **kwargs)
         self.picture = Picture()
 
         self.update_path()
 
-        print(self.__path)
+        for start, end in self.point_pairs:
+            self.picture.add(
+                sketcher.stroke_line(
+                    start[0], start[1], end[0], end[1], **kwargs
+                )
+            )
+
+    def convert_to_wires(self, model, **kwargs):
+        self.update_path()
 
         previous = self.__path[0]
         for node in self.__path[1:]:
-            self.picture.add(sketcher.stroke_line(previous[0], previous[1], node[0], node[1], **kwargs))
+            model.cpt_create("W", previous[0], previous[1], node[0], node[1])
             previous = node
+        model.delete(self)
+
+    @property
+    def point_pairs(self):
+        pairs = []
+        previous = self.__path[0]
+        for node in self.__path[1:]:
+            pairs.append([previous, node])
+            previous = node
+        return pairs
+
+    def is_within_bbox(self, x, y):
+        mouse = np.array([x, y])
+        # Get the list of points in the wire
+        for start, end in np.array(self.point_pairs):
+            # Get the absolute distance between the mouse and that segment of the wire
+            r = np.linalg.norm(np.cross(end - start, start - mouse)) / np.linalg.norm(end - start)
+            # Assume less than half a square is "close enough"
+            if r < 0.5:
+                return True
+        return False

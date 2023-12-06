@@ -835,10 +835,10 @@ class UIModelMPH(UIModelBase):
 
         self.select_pos = x, y
 
-        cpt = self.closest_cpt(x, y)
-
-        if cpt is None:
-            node = self.closest_node(x, y)
+        node = self.closest_node(x, y)
+        cpt = None
+        if node is None:
+            cpt = self.closest_cpt(x, y)
 
         if cpt:
             self.select(cpt)
