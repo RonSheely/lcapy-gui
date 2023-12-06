@@ -517,8 +517,8 @@ class UIModelMPH(UIModelBase):
             x0, y0 = self.select_pos
             x0, y0 = self.snap(x0, y0)
             self.last_pos = x0, y0
-            node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
-            self.history.append(HistoryEvent('M', cpt, node_positions))
+            self.node_positions = [(node.pos.x, node.pos.y)
+                                   for node in cpt.nodes]
 
         x0, y0 = self.last_pos
 
@@ -536,7 +536,18 @@ class UIModelMPH(UIModelBase):
         if self.ui.debug:
             print('mouse release')
 
+        if not self.dragged:
+            return
+
+        if not self.selected or not self.cpt_selected:
+            return
+        cpt = self.selected
+
         self.dragged = False
+        node_positions = [(node.pos.x, node.pos.y)
+                          for node in cpt.nodes]
+        self.history.append(HistoryEvent('M', cpt, self.node_positions,
+                                         node_positions))
 
         # The following is only required to fix up the label
         self.redraw()

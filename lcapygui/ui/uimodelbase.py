@@ -152,17 +152,20 @@ class UIModelBase:
             self.cpt_draw(cpt)
             self.select(cpt)
 
+        elif code == 'D':
+            self.cpt_delete(cpt)
+
         elif code == 'M':
-            for node, pos in zip(cpt.nodes, event.nodes):
+            nodes = event.from_nodes if inverse else event.to_nodes
+
+            for node, pos in zip(cpt.nodes, nodes):
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
             self.select(cpt)
             self.on_redraw()
 
-        elif code == 'D':
-            self.cpt_delete(cpt)
-
+        # The network has changed
         self.invalidate()
 
     def bounding_box(self):
@@ -204,7 +207,11 @@ class UIModelBase:
         if cpt_type == '':
             return None
 
-        return self.thing_create(cpt_type, x1, y1, x2, y2, kind='-' + thing.kind)
+        cpt = self.thing_create(cpt_type, x1, y1, x2,
+                                y2, kind='-' + thing.kind)
+        self.history.append(HistoryEvent('A', cpt))
+        self.select(cpt)
+        return cpt
 
     def copy(self, cpt):
 
@@ -223,7 +230,10 @@ class UIModelBase:
             self.exception('Nodes too close to create component')
             return None
 
-        return self.thing_create(cpt_type, x1, y1, x2, y2)
+        cpt = self.thing_create(cpt_type, x1, y1, x2, y2)
+        self.history.append(HistoryEvent('A', cpt))
+        self.select(cpt)
+        return cpt
 
     def cpt_delete(self, cpt):
 
@@ -354,6 +364,9 @@ class UIModelBase:
                 break
 
         if isolated or move_nodes:
+            # If the component is not connected to another component,
+            # or if we wish to move all the components sharing the
+            # a node with the selected component, we can just move the nodes.
 
             for node in cpt.nodes:
                 # TODO: handle snap
@@ -364,9 +377,10 @@ class UIModelBase:
             gcpt = cpt.gcpt
             gcpt.undraw()
             gcpt.draw(self)
+
         else:
-            # Alternatively, assign new nodes for the cpt being moved
-            # if the nodes are shared.
+            # Alternatively, we need to detach the component and
+            # assign new nodes if the nodes are shared.
 
             gcpt = cpt.gcpt
             x1 = gcpt.node1.x + xshift
@@ -552,7 +566,10 @@ class UIModelBase:
         if self.clipboard is None:
             return
 
-        return self.thing_create(self.clipboard.type, x1, y1, x2, y2)
+        cpt = self.thing_create(self.clipboard.type, x1, y1, x2, y2)
+        self.history.append(HistoryEvent('A', cpt))
+        self.select(cpt)
+        return cpt
 
     def possible_control_names(self):
 
@@ -660,8 +677,6 @@ class UIModelBase:
         cpt.gcpt = gcpt
 
         self.cpt_draw(cpt)
-
-        self.history.append(HistoryEvent('A', cpt))
 
         self.select(cpt)
 
