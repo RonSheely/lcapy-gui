@@ -99,7 +99,7 @@ class UIModelDnD(UIModelMPH):
 
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
-        self.chain_path = None
+        self.chain_path = []
 
     def on_add_cpt(self, thing):
         """
@@ -124,7 +124,7 @@ class UIModelDnD(UIModelMPH):
         mouse_x = self.mouse_position[0]
         mouse_y = self.mouse_position[1]
 
-        if len(self.cursors) < 2 and self.chain_path is None:
+        if len(self.cursors) < 2 and self.chain_path == []:
             x1, y1 = self.snap_to_grid(mouse_x, mouse_y)
             if len(self.cursors) == 1:
                 x1 = self.cursors[0].x
@@ -160,8 +160,8 @@ class UIModelDnD(UIModelMPH):
         mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
 
         # If placing a component without cursors
-        if self.chain_path is not None:
-            self.chain_path = None
+        if self.chain_path != []:
+            self.chain_path = []
         else:
             if self.ui.debug:
                 print("Add node at (%s, %s)" % (mouse_x, mouse_y))
@@ -190,11 +190,11 @@ class UIModelDnD(UIModelMPH):
         # Snap mouse to grid
         mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
 
-        if self.chain_path is not None:
+        if self.chain_path == []:
             print("Chain create disabled. Deleting")
             for cpt in self.chain_path:
                 self.cpt_delete(cpt)
-            self.chain_path = None
+            self.chain_path = []
 
         else:
             super().on_right_click(mouse_x, mouse_y)
@@ -217,14 +217,14 @@ class UIModelDnD(UIModelMPH):
             y position of the mouse
 
         """
-        if self.chain_path != None:
+        if self.chain_path != []:
             # Get start node
             cpt = self.chain_path[0]
             x1 = cpt.nodes[0].pos.x
             x2 = cpt.nodes[0].pos.y
             type = cpt.type
 
-            self.draw_path(type, x1, x2, mouse_x, mouse_y)
+            self.draw_path("W", x1, x2, mouse_x, mouse_y)
 
     def get_node_graph(self):
         """
@@ -239,17 +239,17 @@ class UIModelDnD(UIModelMPH):
         """
         graph = [[0 for x in range(0, 36)] for y in range(0, 22)]
 
-        # TODOL Make pathing more efficient
+        # TODO: Make pathing more efficient
         # Path around existing nodes
-        for n in self.circuit.nodes:
-            graph[int(self.circuit.nodes[n].pos.y)][
-                int(self.circuit.nodes[n].pos.x)
-            ] = 1
-
-        # Ignore nodes in chain_path
-        if self.chain_path is not None:
-            for cpt in self.chain_path:
-                graph[int(cpt.gcpt.node1.pos.y)][int(cpt.gcpt.node1.pos.x)] = 0
+        # for n in self.circuit.nodes:
+        #     graph[int(self.circuit.nodes[n].pos.y)][
+        #         int(self.circuit.nodes[n].pos.x)
+        #     ] = 1
+        #
+        # # Ignore nodes in chain_path
+        # if self.chain_path is not None:
+        #     for cpt in self.chain_path:
+        #         graph[int(cpt.gcpt.node1.pos.y)][int(cpt.gcpt.node1.pos.x)] = 0
 
         if self.ui.debug:
             print("Creating Node graph:")
@@ -323,14 +323,8 @@ class UIModelDnD(UIModelMPH):
         if path is None:
             return None
 
-        # Initialise the chain path
-        if self.chain_path is None:
-            if self.ui.debug:
-                print(f"Initialising Chain Path")
-            self.chain_path = []
-
         # Shrink current chain to fit new path
-        while len(self.chain_path) >= len(path) - 1:
+        while len(self.chain_path) >= len(path):
             self.cpt_delete(self.chain_path.pop())
 
         # Undraw current chain
@@ -339,21 +333,21 @@ class UIModelDnD(UIModelMPH):
                 print(f"Undrawing {cpt}")
             cpt.gcpt.undraw()
 
-        for i in range(1, len(path)):
+        for i in range(0, len(path)-1):
             if i >= len(self.chain_path):
                 print(f"Chain too small {i}, creating new wire")
                 self.chain_path.append(
                     self.thing_create(
                         cpt_type,
-                        path[i - 1][0],
-                        path[i - 1][1],
                         path[i][0],
                         path[i][1],
+                        path[i+1][0],
+                        path[i+1][1],
                     )
                 )
             else:
                 print(f"updating wire {i}  {self.chain_path[i]}")
-                self.cpt_modify_nodes(self.chain_path[i], path[i][0], path[i][1], path[i - 1][0], path[i - 1][1])
+                self.cpt_modify_nodes(self.chain_path[i], path[i][0], path[i][1], path[i +1][0], path[i + 1][1])
 
         # Draw new chain
         for cpt in self.chain_path:
