@@ -79,7 +79,10 @@ class PreferencesDialog(Window):
         self.labelentries = LabelEntries(self, ui, entries)
 
         button = Button(self, text="OK", command=self.on_ok)
-        button.grid(row=self.labelentries.row)
+        button.grid(row=self.labelentries.row, column=0)
+
+        button = Button(self, text="Reset", command=self.on_reset)
+        button.grid(row=self.labelentries.row, column=1)
 
     def on_update(self, arg=None):
 
@@ -119,4 +122,17 @@ class PreferencesDialog(Window):
 
         self.model.preferences.save()
 
+        self.on_close()
+
+    def on_reset(self):
+
+        self.model.preferences.reset()
+
+        self.model.preferences.save()
+
+        if self.update:
+            # Could check for changes
+            self.update()
+
+        # Might be better to update all the values rather than closing
         self.on_close()

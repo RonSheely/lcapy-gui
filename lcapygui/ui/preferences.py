@@ -34,10 +34,6 @@ class Preferences:
         self.font_size = 18
         self.cpt_size = self.circuitikz_default_cpt_size
 
-        self.load()
-
-        self.apply()
-
     def apply(self):
 
         from lcapy.state import state
@@ -83,6 +79,10 @@ class Preferences:
         # Update the preferences file if the version changed
         if version != self.version:
             self.save()
+
+    def reset(self):
+
+        self.__init__()
 
     def save(self):
 
