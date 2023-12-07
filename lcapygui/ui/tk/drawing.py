@@ -48,8 +48,8 @@ class Drawing():
         if self.debug:
             print('view', xmin, ymin, xmax, ymax)
 
-        self.ax.set_xlim(xmin, xmax)
-        self.ax.set_ylim(ymin, ymax)
+        self.ax.set_xlim(xmin, xmax, emit=False)
+        self.ax.set_ylim(ymin, ymax, emit=False)
 
     def set_default_view(self):
 
@@ -60,13 +60,16 @@ class Drawing():
         if self.debug:
             print('clear')
 
+        # These are the desired limits and may not be the actual limits
         xmin, xmax = self.ax.get_xlim()
         ymin, ymax = self.ax.get_ylim()
 
+        # This removes the callbacks!
         self.ax.clear()
 
         self.draw_grid(grid)
 
+        # Set the limits
         self.set_view(xmin, ymin, xmax, ymax)
 
     def refresh(self):

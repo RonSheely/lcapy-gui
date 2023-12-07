@@ -97,6 +97,7 @@ class UIModelBase:
         self.clipboard = None
         self.select_pos = 0, 0
         self.dragged = False
+        self.zoom_factor = 1
 
     @property
     def analysis_circuit(self):
@@ -904,3 +905,9 @@ class UIModelBase:
             print('Undo ' + event.code)
 
         self.apply(event, True)
+
+    def undraw(self):
+
+        for cpt in self.circuit.elements.values():
+            gcpt = cpt.gcpt
+            gcpt.undraw()

@@ -240,7 +240,7 @@ class Component(ABC):
             model.ui.show_warning_dialog('Assuming points for line width')
             line_width = float(line_width)
 
-        return line_width * model.preferences.line_width_scale
+        return line_width * model.preferences.line_width_scale * model.zoom_factor
 
     def make_kwargs(self, model, **kwargs):
 

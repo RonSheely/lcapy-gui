@@ -319,6 +319,9 @@ class LcapyTk(Tk):
         canvas.md_id = figure.canvas.mpl_connect('motion_notify_event',
                                                  self.on_mouse_event)
 
+        canvas.sketcher.ax.callbacks.connect('xlim_changed', self.on_zoom)
+        canvas.sketcher.ax.callbacks.connect('ylim_changed', self.on_zoom)
+
         self.enter(canvas)
 
         return canvas
@@ -662,6 +665,10 @@ class LcapyTk(Tk):
     def on_view_macros(self, *args):
 
         self.model.on_view_macros()
+
+    def on_zoom(self, ax):
+
+        self.model.on_zoom(ax)
 
     def refresh(self):
 
