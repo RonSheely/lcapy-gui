@@ -20,7 +20,6 @@ class UIModelDnD(UIModelMPH):
         self.chain_path = []
         self.crosshair = CrossHair(0, 0, self)
         self.__temp_style_counter = 0
-
     def on_add_cpt(self, thing):
         """
         Adds a component to the circuit after a key is pressed
@@ -50,7 +49,6 @@ class UIModelDnD(UIModelMPH):
                 x1 = self.cursors[0].x
                 y1 = self.cursors[0].y
                 self.cursors.remove()
-
             cpt = self.cpt_create("DW", x1, y1, mouse_x, mouse_y)
 
             cpt.gcpt.convert_to_wires(self)
@@ -117,7 +115,7 @@ class UIModelDnD(UIModelMPH):
 
     def on_left_click(self, x, y):
         self.__temp_style_counter += 1
-        styles = ["cross", "wire"]
+        styles = ["cross", "W", "R", "C", "I", "WIRES"]
         self.crosshair.update((x, y), styles[self.__temp_style_counter % len(styles)])
 
         super().on_left_click(x, y)

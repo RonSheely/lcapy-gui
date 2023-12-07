@@ -4,7 +4,6 @@ from typing import Tuple
 
 class CrossHair:
     def __init__(self, x, y, model, style="cross", label=None):
-
         self.position = x, y
         self.model = model
         self.style = style
@@ -38,19 +37,42 @@ class CrossHair:
             UI Model to draw to
 
         """
+        scale = self.model.preferences.xsize/20
         sketcher = self.model.ui.sketcher
         self.picture = Picture()
-        if self.style == "cross":
+        # Nothing is selected
+        if self.style == None:
             self.picture.add(
-                sketcher.stroke_line(self.__x, self.__y - 0.5, self.__x, self.__y + 0.5, linewidth=1)
+                sketcher.stroke_line(
+                    self.__x, self.__y - 0.5 * scale, self.__x, self.__y + 0.5*scale, linewidth=1
+                )
             )
             self.picture.add(
-                sketcher.stroke_line(self.__x - 0.5, self.__y, self.__x + 0.5, self.__y, linewidth=1)
+                sketcher.stroke_line(
+                    self.__x - 0.5*scale, self.__y, self.__x + 0.5*scale, self.__y, linewidth=1
+                )
             )
-        elif self.style == "wire":
+        # Drawing a Wire
+        elif self.style == "W":
             self.picture.add(
-                sketcher.stroke_filled_circle(self.__x, self.__y, radius=0.2, color="green", alpha=1)
+                sketcher.stroke_filled_circle(
+                    self.__x, self.__y, radius=0.2*scale, color="green", alpha=1
+                )
             )
+        # Drawing the component type to be placed
+        else:
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.__x, self.__y - 0.5*scale, self.__x, self.__y + 0.5*scale, linewidth=1
+                )
+            )
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.__x - 0.5*scale, self.__y, self.__x + 0.5*scale, self.__y, linewidth=1
+                )
+            )
+
+            self.picture.add(sketcher.text(self.__x+.1*scale, self.__y+.1*scale, self.style, fontsize=self.model.preferences.font_size * self.model.zoom_factor * self.model.preferences.line_width_scale))
 
     def undraw(self):
         """

@@ -80,7 +80,8 @@ class WireSolver(AStar):
             # Get each neighbouring node
             for nx, ny in [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
             # Check the points are within the bounds of the graph, and that they are not an existing node
-            if (0 <= nx < self.width and 0 <= ny < self.height) and (self.lines[ny][nx] == 0)
+            if (0 <= nx < self.width and 0 <= ny < self.height)
+            and (self.lines[ny][nx] == 0)
         ]
         return neighbours
 
@@ -105,6 +106,7 @@ class DynamicWire(Wire):
 
         # Initialize the path and pathfinder
         self.__path = []
+        # Default with some large graph
         self.__path_finder = WireSolver(
             [[0 for x in range(0, 36)] for y in range(0, 22)]
         )
@@ -121,7 +123,7 @@ class DynamicWire(Wire):
         # If no path could be found return none
         if path is None:
             print("ERROR: No path found")
-            self.__path = [start,end]
+            self.__path = [start, end]
             return
 
         self.__path = list(path)
@@ -151,24 +153,30 @@ class DynamicWire(Wire):
 
         self.__path = simplified
 
-    def update_graph(self, circuit=None):
+    def update_graph(self, model=None):
         """
         Updates the graph representation of the circuit
         Parameters
         ----------
-        circuit : lcapy.circuit.Circuit or None
+        model : lcapy.circuit.Circuit or None
             The circuit to update the graph from the existing circuit
             If circuit is none, it assumes a blank screen
         """
-        # generate a blank graph
-        self.__path_finder.lines = [[0 for x in range(0, 36)] for y in range(0, 22)]
-
-        if circuit is None:
+        if model is None:
             return
+        # Get the graph size
+        x_size = model.preferences.xsize
+        y_size = model.preferences.ysize
+        self.__path_finder.width = x_size
+        self.__path_finder.height = y_size
 
-        for x in range(0, 36):
-            for y in range(0, 22):
-                for cpt in circuit.elements.values():
+        # generate a blank graph
+        self.__path_finder.lines = [[0 for x in range(0, x_size)] for y in range(0, y_size)]
+
+
+        for x in range(0, x_size):
+            for y in range(0, y_size):
+                for cpt in model.circuit.elements.values():
                     if cpt.gcpt is not self and cpt.gcpt.is_within_bbox(x, y):
                         self.__path_finder.lines[y][x] = 1
 
@@ -186,7 +194,7 @@ class DynamicWire(Wire):
         kwargs = self.make_kwargs(model, **kwargs)
         self.picture = Picture()
 
-        self.update_graph(model.circuit)
+        self.update_graph(model)
         self.update_path()
 
         for start, end in self.point_pairs:
