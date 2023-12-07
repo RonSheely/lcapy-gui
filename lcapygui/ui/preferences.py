@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 from warnings import warn
 
-circuitikz_default_line_width = '0.4pt'
+circuitikz_default_line_width = 0.4
 circuitikz_default_scale = 1.0
 
 # Perhaps make a dict?
@@ -26,7 +26,8 @@ class Preferences:
         self.ysize = 22
         self.snap_grid = 'true'
         # This is the scaling used to set the matplotlib lw argument
-        self.line_width_scale = 3.5
+        # from line_width
+        self.line_width_scale = 1
         self.node_size = 0.07
         self.node_color = 'black'
         self.current_sign_convention = 'passive'
@@ -59,16 +60,31 @@ class Preferences:
 
         s = self._filename.read_text()
         d = json.loads(s)
+
+        version = d.pop('version')
+
         for k, v in d.items():
             setattr(self, k, v)
 
         if hasattr(self, 'lw'):
             warn('lw is superseded by line_width')
-            self.line_width = str(float(v) / self.line_width_scale) + 'pt'
+            self.line_width = float(v) / self.line_width_scale
             delattr(self, 'lw')
+
+        if (hasattr(self, 'line_width')
+                and not isinstance(self.line_width, float)):
+            if self.line_width.endswith('pt'):
+                self.line_width = float(self.line_width[:-2])
 
         if not hasattr(self, 'scale'):
             self.scale = circuitikz_default_scale
+
+        if version < 5:
+            self.line_width_scale = 1
+
+        # Update the preferences file if the version changed
+        if version != self.version:
+            self.save()
 
     def save(self):
 
@@ -90,7 +106,7 @@ class Preferences:
         s = ', '.join(foo)
 
         if self.line_width != circuitikz_default_line_width:
-            s += ', line width=' + self.line_width
+            s += ', line width=' + str(self.line_width)
         if self.scale != circuitikz_default_scale:
             s += ', scale=%.2f' % self.scale
 

@@ -231,13 +231,14 @@ class Component(ABC):
     def _line_width_to_lw(self, model, line_width):
         """Return line width as a float for use with matplotlib."""
 
-        # TODO, handle other units?
-        if line_width.endswith('pt'):
-            line_width = float(line_width[0:-2])
-        elif line_width.endswith('mm'):
-            line_width = float(line_width[0:-2]) * 72 / 25.4
-        else:
-            model.ui.show_warning_dialog('Assuming points for line width')
+        if not isinstance(line_width, float):
+            # TODO, handle other units?
+            if line_width.endswith('pt'):
+                line_width = float(line_width[0:-2])
+            elif line_width.endswith('mm'):
+                line_width = float(line_width[0:-2]) * 72 / 25.4
+            else:
+                model.ui.show_warning_dialog('Assuming points for line width')
             line_width = float(line_width)
 
         return line_width * model.preferences.line_width_scale * model.zoom_factor

@@ -41,7 +41,7 @@ class PreferencesDialog(Window):
                               self.model.preferences.grid,
                               ('on', 'off'),
                               command=self.on_update),
-                   LabelEntry('line_width', 'Line width',
+                   LabelEntry('line_width', 'Line width (pt)',
                               self.model.preferences.line_width,
                               command=self.on_update),
                    LabelEntry('font_size', 'Font size (pt)',
@@ -84,11 +84,7 @@ class PreferencesDialog(Window):
         self.model.preferences.voltage_dir = self.labelentries.get(
             'voltage_dir')
         self.model.preferences.grid = self.labelentries.get('grid')
-
-        line_width = self.labelentries.get('line_width')
-        if not line_width.endswith('pt') and not line_width.endswith('mm'):
-            line_width += 'pt'
-        self.model.preferences.line_width = line_width
+        self.model.preferences.line_width = self.labelentries.get('line_width')
         self.model.preferences.font_size = self.labelentries.get('font_size')
         self.model.preferences.scale = self.labelentries.get('scale')
         self.model.preferences.node_size = self.labelentries.get('node_size')
