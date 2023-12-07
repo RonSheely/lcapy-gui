@@ -444,6 +444,19 @@ class UIModelBase:
 
             self.cpt_modify_nodes(cpt, x1, y1, x2, y2)
 
+    def node_move(self, node, new_x, new_y):
+        if self.preferences.snap_grid:
+            new_x, new_y = self.snap_to_grid(new_x, new_y)
+
+        self.selected.pos.x = new_x
+        self.selected.pos.y = new_y
+
+        for cpt in self.selected.connected:
+            cpt.gcpt.undraw()
+            cpt.gcpt.draw(self)
+
+            self.ui.refresh()
+
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 
         gcpt = cpt.gcpt

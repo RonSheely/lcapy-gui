@@ -568,8 +568,6 @@ class LcapyTk(Tk):
             self.model.on_mouse_drag(event.xdata, event.ydata,
                                      event.key)
 
-        if self.uimodel_class == UIModelDnD:
-            self.model.on_mouse_move(event.xdata, event.ydata)
 
     def on_mouse_zoom(self, ax):
 

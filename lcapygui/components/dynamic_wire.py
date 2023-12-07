@@ -49,9 +49,9 @@ class WireSolver(AStar):
         (x_1, y_1) = node_A
         (x_2, y_2) = node_B
         if x_1 == x_2 or y_1 == y_2:
-            return 0
+            return 1
         else:
-            return 1000
+            return 100000
 
     def distance_between(self, node_1, node_2):
         """
@@ -121,6 +121,7 @@ class DynamicWire(Wire):
         # If no path could be found return none
         if path is None:
             print("ERROR: No path found")
+            self.__path = [start,end]
             return
 
         self.__path = list(path)

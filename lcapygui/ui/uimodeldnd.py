@@ -1,3 +1,4 @@
+from lcapygui import node
 from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
 from astar import AStar
@@ -51,6 +52,7 @@ class UIModelDnD(UIModelMPH):
                 self.cursors.remove()
 
             cpt = self.cpt_create("DW", x1, y1, mouse_x, mouse_y)
+
             cpt.gcpt.convert_to_wires(self)
             self.on_redraw()
         else:
@@ -59,31 +61,20 @@ class UIModelDnD(UIModelMPH):
                 thing.cpt_type = "DW"
             super().on_add_cpt(thing)
 
-    def on_mouse_move(self, mouse_x, mouse_y):
-        """
-        Performs operations on mouse movement
+    def on_mouse_release(self):
+        super().on_mouse_release()
 
-        Explanation
-        -----------
-        This function is called when the user moves the mouse on the canvas.
-        If a component is being placed, it will follow the mouse.
+        # IF a node was moved, update history
+        if self.selected and not self.cpt_selected:
+            self.on_redraw()
 
-        Parameters
-        ----------
-        mouse_x : float
-            x position of the mouse
-        mouse_y : float
-            y position of the mouse
-
-        """
-        if self.chain_path != []:
-            # Get start node
-            cpt = self.chain_path[0]
-            x1 = cpt.nodes[0].pos.x
-            x2 = cpt.nodes[0].pos.y
-            type = cpt.type
-
-            self.draw_path("W", x1, x2, mouse_x, mouse_y)
+    def on_left_double_click(self, x, y):
+        self.on_select(x, y)
+        if self.cpt_selected and self.selected.gcpt.type == "DW":
+            self.history.append(HistoryEvent("D", self.selected))
+            self.selected.gcpt.convert_to_wires(self)
+        else:
+            super().on_left_double_click(x, y)
 
     def on_mouse_drag(self, mouse_x, mouse_y, key):
         """
@@ -109,15 +100,14 @@ class UIModelDnD(UIModelMPH):
 
         if self.selected and not self.cpt_selected:
             new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
-            print(f"moving node to {new_x}, {new_y}")
+
             self.selected.pos.x = new_x
             self.selected.pos.y = new_y
 
             for cpt in self.selected.connected:
                 cpt.gcpt.undraw()
                 cpt.gcpt.draw(self)
+
                 self.ui.refresh()
         else:
             super().on_mouse_drag(mouse_x, mouse_y, key)
-
-        self.circuit
