@@ -1,7 +1,7 @@
 from .wire import Wire
 from .picture import Picture
 from astar import AStar
-from math import sqrt
+import math
 import numpy as np
 
 
@@ -49,13 +49,13 @@ class WireSolver(AStar):
         (x_1, y_1) = node_A
         (x_2, y_2) = node_B
         if x_1 == x_2 or y_1 == y_2:
-            return 1
+            return 0
         else:
-            return 10000
+            return 1000
 
     def distance_between(self, node_1, node_2):
         """
-        Computes the distance between two neighboring node.
+        Computes the distance between two neighbouring nodes.
         Since neighbouring nodes are always adjacent, this function always returns 1
         """
         return 1
@@ -80,8 +80,7 @@ class WireSolver(AStar):
             # Get each neighbouring node
             for nx, ny in [(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y)]
             # Check the points are within the bounds of the graph, and that they are not an existing node
-            if (0 <= nx < self.width and 0 <= ny < self.height)
-            and (self.lines[ny][nx] == 0)
+            if (0 <= nx < self.width and 0 <= ny < self.height) and (self.lines[ny][nx] == 0)
         ]
         return neighbours
 
@@ -151,18 +150,38 @@ class DynamicWire(Wire):
 
         self.__path = simplified
 
+    def update_graph(self, circuit=None):
+        """
+        Updates the graph representation of the circuit
+        Parameters
+        ----------
+        circuit : lcapy.circuit.Circuit or None
+            The circuit to update the graph from the existing circuit
+            If circuit is none, it assumes a blank screen
+        """
+        # generate a blank graph
+        self.__path_finder.lines = [[0 for x in range(0, 36)] for y in range(0, 22)]
+
+        if circuit is None:
+            return
+
+        for x in range(0, 36):
+            for y in range(0, 22):
+                for cpt in circuit.elements.values():
+                    if cpt.gcpt is not self and cpt.gcpt.is_within_bbox(x, y):
+                        self.__path_finder.lines[y][x] = 1
+
     def draw(self, model, **kwargs):
         sketcher = model.ui.sketcher
         kwargs = self.make_kwargs(model, **kwargs)
         self.picture = Picture()
 
+        self.update_graph(model.circuit)
         self.update_path()
 
         for start, end in self.point_pairs:
             self.picture.add(
-                sketcher.stroke_line(
-                    start[0], start[1], end[0], end[1], **kwargs
-                )
+                sketcher.stroke_line(start[0], start[1], end[0], end[1], **kwargs)
             )
 
     def convert_to_wires(self, model, **kwargs):
@@ -188,7 +207,9 @@ class DynamicWire(Wire):
         # Get the list of points in the wire
         for start, end in np.array(self.point_pairs):
             # Get the absolute distance between the mouse and that segment of the wire
-            r = np.linalg.norm(np.cross(end - start, start - mouse)) / np.linalg.norm(end - start)
+            r = np.linalg.norm(np.cross(end - start, start - mouse)) / np.linalg.norm(
+                end - start
+            )
             # Assume less than half a square is "close enough"
             if r < 0.5:
                 return True

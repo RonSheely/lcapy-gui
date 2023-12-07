@@ -119,3 +119,5 @@ class UIModelDnD(UIModelMPH):
                 self.ui.refresh()
         else:
             super().on_mouse_drag(mouse_x, mouse_y, key)
+
+        self.circuit
