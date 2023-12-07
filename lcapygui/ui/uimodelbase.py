@@ -311,7 +311,7 @@ class UIModelBase:
         if label != '':
             ann = Annotation(self.ui, gcpt.label_position.x,
                              gcpt.label_position.y, label)
-            ann.draw(fontsize=18)
+            ann.draw(fontsize=self.preferences.font_size * self.zoom_factor)
             gcpt.annotations.append(ann)
 
         draw_nodes = self.preferences.draw_nodes
@@ -341,7 +341,8 @@ class UIModelBase:
                 x += 0.1
                 y += 0.1
                 ann = Annotation(self.ui, x, y, node.name)
-                ann.draw(fontsize=18)
+                ann.draw(fontsize=self.preferences.font_size *
+                         self.zoom_factor)
                 gcpt.annotations.append(ann)
 
     def cpt_find(self, node_name1, node_name2):
@@ -843,8 +844,8 @@ class UIModelBase:
 
         self.voltage_annotations.add(ann1)
         self.voltage_annotations.add(ann2)
-        ann1.draw(color='red', fontsize=40)
-        ann2.draw(color='blue', fontsize=40)
+        ann1.draw(color='red', fontsize=40 * self.zoom_factor)
+        ann2.draw(color='blue', fontsize=40 * self.zoom_factor)
 
     @property
     def ground_node(self):
