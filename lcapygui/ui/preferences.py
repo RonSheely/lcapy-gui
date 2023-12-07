@@ -2,13 +2,14 @@ from pathlib import Path
 import json
 from warnings import warn
 
-circuitikz_default_line_width = 1.0
-circuitikz_default_scale = 1.0
-
 # Perhaps make a dict?
 
 
 class Preferences:
+
+    circuitikz_default_line_width = 1.0
+    circuitikz_default_scale = 1.0
+    circuitikz_default_cpt_size = 1.5
 
     def __init__(self):
 
@@ -19,8 +20,8 @@ class Preferences:
         self.style = 'american'
         self.voltage_dir = 'RP'
         self.grid = 'on'
-        self.line_width = circuitikz_default_line_width
-        self.scale = circuitikz_default_scale
+        self.line_width = self.circuitikz_default_line_width
+        self.scale = self.circuitikz_default_scale
         self.show_units = 'false'
         self.xsize = 16
         self.ysize = 10
@@ -31,6 +32,7 @@ class Preferences:
         self.node_color = 'black'
         self.current_sign_convention = 'passive'
         self.font_size = 18
+        self.cpt_size = self.circuitikz_default_cpt_size
 
         self.load()
 
@@ -76,7 +78,7 @@ class Preferences:
                 self.line_width = float(self.line_width[:-2])
 
         if not hasattr(self, 'scale'):
-            self.scale = circuitikz_default_scale
+            self.scale = self.circuitikz_default_scale
 
         # Update the preferences file if the version changed
         if version != self.version:
@@ -101,10 +103,12 @@ class Preferences:
             foo.append(opt + '=' + getattr(self, opt))
         s = ', '.join(foo)
 
-        if self.line_width != circuitikz_default_line_width:
+        if self.line_width != self.circuitikz_default_line_width:
             s += ', line width=' + str(self.line_width)
-        if self.scale != circuitikz_default_scale:
+        if self.scale != self.circuitikz_default_scale:
             s += ', scale=%.2f' % self.scale
+        if self.cpt_size != self.circuitikz_default_cpt_size:
+            s += ', cpt_size=%.2f' % self.cpt_size
 
         if self.label_cpts == 'name':
             s += ', label_ids=true'

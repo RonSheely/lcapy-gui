@@ -37,7 +37,8 @@ class Stretchy(Component):
 
         # This scales the component size but not the distance between
         # the nodes (default 1)
-        scale = float(self.scale)
+        scale = float(self.scale) * model.preferences.cpt_size \
+            / model.preferences.circuitikz_default_cpt_size
         if scale > r:
             scale = r
 

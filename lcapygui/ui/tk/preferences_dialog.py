@@ -70,6 +70,10 @@ class PreferencesDialog(Window):
                    LabelEntry('line_width_scale', 'Line width scale',
                               self.model.preferences.line_width_scale,
                               command=self.on_update),
+                   LabelEntry('cpt_size',
+                              'Component size (cm)',
+                              self.model.preferences.cpt_size,
+                              command=self.on_update),
                    ]
 
         self.labelentries = LabelEntries(self, ui, entries)
@@ -99,6 +103,8 @@ class PreferencesDialog(Window):
             'current_sign_convention')
         self.model.preferences.line_width_scale = self.labelentries.get(
             'line_width_scale')
+        self.model.preferences.cpt_size = self.labelentries.get(
+            'cpt_size')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...
