@@ -1,10 +1,6 @@
-from lcapygui import node
 from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
-from astar import AStar
-import random
-
-
+from .cross_hair import CrossHair
 class UIModelDnD(UIModelMPH):
 
     """
@@ -20,6 +16,7 @@ class UIModelDnD(UIModelMPH):
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
         self.chain_path = []
+        self.crosshair = CrossHair(0, 0, self)
 
     def on_add_cpt(self, thing):
         """
@@ -111,3 +108,7 @@ class UIModelDnD(UIModelMPH):
                 self.ui.refresh()
         else:
             super().on_mouse_drag(mouse_x, mouse_y, key)
+
+    def on_mouse_move(self, mouse_x, mouse_y):
+
+        self.crosshair.update(self.snap_to_grid(mouse_x, mouse_y))

@@ -173,6 +173,15 @@ class DynamicWire(Wire):
                         self.__path_finder.lines[y][x] = 1
 
     def draw(self, model, **kwargs):
+        """
+        Draws a dynamic wire, following a path between two nodes
+
+        Parameters
+        ==========
+        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodelmph.UIModelMPH or lcapygui.ui.uimodeldnd.UIModelDnD
+            UI Model to draw to
+
+        """
         sketcher = model.ui.sketcher
         kwargs = self.make_kwargs(model, **kwargs)
         self.picture = Picture()
