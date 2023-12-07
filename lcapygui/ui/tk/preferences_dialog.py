@@ -41,14 +41,14 @@ class PreferencesDialog(Window):
                               self.model.preferences.grid,
                               ('on', 'off'),
                               command=self.on_update),
+                   LabelEntry('scale', 'Scale',
+                              self.model.preferences.scale,
+                              command=self.on_update),
                    LabelEntry('line_width', 'Line width (pt)',
                               self.model.preferences.line_width,
                               command=self.on_update),
                    LabelEntry('font_size', 'Font size (pt)',
                               self.model.preferences.font_size,
-                              command=self.on_update),
-                   LabelEntry('scale', 'Scale',
-                              self.model.preferences.scale,
                               command=self.on_update),
                    LabelEntry('node_size', 'Node size',
                               self.model.preferences.node_size,
@@ -66,6 +66,9 @@ class PreferencesDialog(Window):
                    LabelEntry('snap_grid', 'Snap to grid',
                               self.model.preferences.snap_grid,
                               ('true', 'false'),
+                              command=self.on_update),
+                   LabelEntry('line_width_scale', 'Line width scale',
+                              self.model.preferences.line_width_scale,
                               command=self.on_update),
                    ]
 
@@ -94,6 +97,8 @@ class PreferencesDialog(Window):
         self.model.preferences.snap_grid = self.labelentries.get('snap_grid')
         self.model.preferences.current_sign_convention = self.labelentries.get(
             'current_sign_convention')
+        self.model.preferences.line_width_scale = self.labelentries.get(
+            'line_width_scale')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...

@@ -311,7 +311,8 @@ class UIModelBase:
         if label != '':
             ann = Annotation(self.ui, gcpt.label_position.x,
                              gcpt.label_position.y, label)
-            ann.draw(fontsize=self.preferences.font_size * self.zoom_factor)
+            ann.draw(fontsize=self.preferences.font_size *
+                     self.zoom_factor * self.preferences.line_width_scale)
             gcpt.annotations.append(ann)
 
         draw_nodes = self.preferences.draw_nodes
@@ -342,7 +343,7 @@ class UIModelBase:
                 y += 0.1
                 ann = Annotation(self.ui, x, y, node.name)
                 ann.draw(fontsize=self.preferences.font_size *
-                         self.zoom_factor)
+                         self.zoom_factor * self.preferences.line_width_scale)
                 gcpt.annotations.append(ann)
 
     def cpt_find(self, node_name1, node_name2):

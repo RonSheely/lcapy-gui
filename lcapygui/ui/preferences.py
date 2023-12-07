@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 from warnings import warn
 
-circuitikz_default_line_width = 0.4
+circuitikz_default_line_width = 1.0
 circuitikz_default_scale = 1.0
 
 # Perhaps make a dict?
@@ -22,12 +22,11 @@ class Preferences:
         self.line_width = circuitikz_default_line_width
         self.scale = circuitikz_default_scale
         self.show_units = 'false'
-        self.xsize = 36
-        self.ysize = 22
+        self.xsize = 16
+        self.ysize = 10
         self.snap_grid = 'true'
-        # This is the scaling used to set the matplotlib lw argument
-        # from line_width
-        self.line_width_scale = 1
+        # This is the scaling used to set the circuitikz line width
+        self.line_width_scale = 1.01
         self.node_size = 0.07
         self.node_color = 'black'
         self.current_sign_convention = 'passive'
@@ -78,9 +77,6 @@ class Preferences:
 
         if not hasattr(self, 'scale'):
             self.scale = circuitikz_default_scale
-
-        if version < 5:
-            self.line_width_scale = 1
 
         # Update the preferences file if the version changed
         if version != self.version:

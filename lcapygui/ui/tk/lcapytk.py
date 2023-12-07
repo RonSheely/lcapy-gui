@@ -18,6 +18,7 @@ class LcapyTk(Tk):
     GEOMETRY = '1200x800'
     # Note, need to reduce height from 8 to 7.2 to fit toolbar.
     FIGSIZE = (12, 7.2)
+    # FIGSIZE = (6.6, 4)
 
     NAME = 'lcapy-tk'
 
