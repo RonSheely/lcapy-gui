@@ -36,6 +36,7 @@ setup(
         "svgpathtools",
         "svgpath2mpl",
         "tkhtmlview"
+        "astar"
     ],
     entry_points={
         'console_scripts': [
