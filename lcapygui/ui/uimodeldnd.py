@@ -34,7 +34,7 @@ class UIModelDnD(UIModelMPH):
         # IF finished placing a component, stop placing
         if self.new_component is not None:
             # If the component is too small, delete it
-            if self.new_component.gcpt.node1 == self.new_component.gcpt.node2:
+            if self.new_component.gcpt.length < 0.2:
                 self.cpt_delete(self.new_component)
             else:
                 self.crosshair.style = "default"
