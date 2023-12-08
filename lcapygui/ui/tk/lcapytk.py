@@ -320,7 +320,11 @@ class LcapyTk(Tk):
         canvas.md_id = figure.canvas.mpl_connect('motion_notify_event',
                                                  self.on_mouse_event)
 
+        canvas.rs_id = figure.canvas.mpl_connect('resize_event',
+                                                 self.on_resize_event)
+
         canvas.sketcher.ax.callbacks.connect('xlim_changed', self.on_zoom)
+
         canvas.sketcher.ax.callbacks.connect('ylim_changed', self.on_zoom)
 
         self.enter(canvas)
@@ -624,6 +628,10 @@ class LcapyTk(Tk):
     def on_redo(self, *args):
 
         self.model.on_redo()
+
+    def on_resize_event(self, event):
+
+        print('resize')
 
     def on_save(self, *args):
 

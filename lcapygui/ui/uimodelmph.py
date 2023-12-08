@@ -651,6 +651,13 @@ class UIModelMPH(UIModelBase):
         self.redraw()
         self.ui.refresh()
 
+    def on_resize(self):
+
+        if self.ui.debug:
+            print('resize')
+
+        # TODO:  fix up canvas size when maximize the window
+
     def on_right_click(self, x, y):
 
         self.on_select(x, y)
