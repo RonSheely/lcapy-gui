@@ -39,6 +39,9 @@ class UIModelDnD(UIModelMPH):
             else:
                 self.crosshair.style = "default"
 
+            if self.new_component.gcpt.type == "DW":
+                self.new_component.gcpt.convert_to_wires(self)
+
             self.new_component = None
 
         self.on_redraw()

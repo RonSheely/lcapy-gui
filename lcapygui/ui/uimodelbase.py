@@ -254,7 +254,8 @@ class UIModelBase:
             self.exception('Nodes too close to create component')
             return None
 
-        cpt = self.thing_create(cpt_type, x1, y1, x2, y2, kind=kind)
+        cpt = self.thing_create(cpt_type, x1, y1, x2, y2)
+        self.history.append(HistoryEvent('A', cpt))
         self.select(cpt)
         return cpt
 

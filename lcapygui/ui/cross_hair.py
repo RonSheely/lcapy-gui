@@ -56,7 +56,7 @@ class CrossHair:
                 )
             )
         # Drawing a Wire
-        elif self.style == "W":
+        elif self.style == "W" or self.style == "DW":
             self.picture.add(
                 sketcher.stroke_filled_circle(
                     self.x, self.y, radius=0.2*scale, color="green", alpha=1
