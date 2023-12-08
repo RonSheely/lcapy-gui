@@ -35,7 +35,7 @@ setup(
         "matplotlib",
         "svgpathtools",
         "svgpath2mpl",
-        "tkhtmlview"
+        "tkhtmlview",
         "astar"
     ],
     entry_points={
