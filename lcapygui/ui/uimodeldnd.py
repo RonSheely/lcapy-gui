@@ -19,52 +19,36 @@ class UIModelDnD(UIModelMPH):
         super(UIModelDnD, self).__init__(ui)
         self.chain_path = []
         self.crosshair = CrossHair(0, 0, self)
-        self.__temp_style_counter = 0
+        self.new_component = None
+
     def on_add_cpt(self, thing):
-        """
-        Adds a component to the circuit after a key is pressed
-
-        Explanation
-        ===========
-        If there are cursors present, it will place a component between them
-        otherwise, the component will be placed
-
-        Parameters
-        ==========
-        thing : lcapygui.ui.uimodelbase.C or None
-            The key pressed
-
-        """
-
-        if self.ui.debug:
-            print(f"adding {thing.cpt_type} to mouse position: {self.mouse_position}")
-
-        # Get mouse positions
-        mouse_x = self.mouse_position[0]
-        mouse_y = self.mouse_position[1]
-
-        if len(self.cursors) < 2:
-            x1, y1 = self.snap_to_grid(mouse_x, mouse_y)
-            if len(self.cursors) == 1:
-                x1 = self.cursors[0].x
-                y1 = self.cursors[0].y
-                self.cursors.remove()
-            cpt = self.cpt_create("DW", x1, y1, mouse_x, mouse_y)
-
-            cpt.gcpt.convert_to_wires(self)
-            self.on_redraw()
-        else:
-            # add the component like normal
-            if thing.cpt_type == "W":
-                thing.cpt_type = "DW"
-            super().on_add_cpt(thing)
+        self.crosshair.style = thing.cpt_type
+        print(self.crosshair.style)
+        self.crosshair.undraw()
+        self.crosshair.draw()
+        self.ui.refresh()
 
     def on_mouse_release(self):
         super().on_mouse_release()
 
+        # IF finished placing a component, stop placing
+        if self.new_component is not None:
+            self.new_component = None
+            self.crosshair.style = "default"
+
         # IF a node was moved, update history
         if self.selected and not self.cpt_selected:
             self.on_redraw()
+
+    def on_left_click(self, x, y):
+        super().on_left_click(x, y)
+
+    def on_mouse_move(self, mouse_x, mouse_y):
+        # Snap mouse to grid
+        if self.preferences.snap_grid:
+            mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
+
+        self.crosshair.update((mouse_x, mouse_y))
 
     def on_left_double_click(self, x, y):
         self.on_select(x, y)
@@ -95,8 +79,21 @@ class UIModelDnD(UIModelMPH):
         -------
 
         """
+        if self.preferences.snap_grid:
+            mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
 
-        if self.selected and not self.cpt_selected:
+        if self.crosshair.style is not None:
+            if self.new_component is None:
+                print(self.crosshair.style)
+                self.new_component = self.thing_create(self.crosshair.style, mouse_x, mouse_y, mouse_x, mouse_y)
+            else:
+                self.new_component.gcpt.node2.pos.x = mouse_x
+                self.new_component.gcpt.node2.pos.y = mouse_y
+                self.new_component.gcpt.undraw()
+                self.new_component.gcpt.draw(self)
+                self.ui.refresh()
+
+        elif self.selected and not self.cpt_selected:
             new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
 
             self.selected.pos.x = new_x
@@ -107,15 +104,5 @@ class UIModelDnD(UIModelMPH):
                 cpt.gcpt.draw(self)
 
                 self.ui.refresh()
-        else:
-            super().on_mouse_drag(mouse_x, mouse_y, key)
-
-    def on_mouse_move(self, mouse_x, mouse_y):
-        self.crosshair.update(self.snap_to_grid(mouse_x, mouse_y))
-
-    def on_left_click(self, x, y):
-        self.__temp_style_counter += 1
-        styles = ["cross", "W", "R", "C", "I", "WIRES"]
-        self.crosshair.update((x, y), styles[self.__temp_style_counter % len(styles)])
-
-        super().on_left_click(x, y)
+        # else:
+        #     super().on_mouse_drag(mouse_x, mouse_y, key)
