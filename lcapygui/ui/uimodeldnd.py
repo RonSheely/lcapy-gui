@@ -49,6 +49,8 @@ class UIModelDnD(UIModelMPH):
     def on_left_click(self, x, y):
         if self.crosshair.style is None:
             super().on_left_click(x, y)
+            self.cursors.remove()
+            self.on_redraw()
 
     def on_left_double_click(self, x, y):
         self.on_select(x, y)
@@ -98,7 +100,7 @@ class UIModelDnD(UIModelMPH):
         if self.crosshair.style is not None:
             if self.new_component is None:
                 self.new_component = self.thing_create(
-                    self.crosshair.style, mouse_x, mouse_y, mouse_x+.1, mouse_y
+                    self.crosshair.style, mouse_x, mouse_y, mouse_x + 0.1, mouse_y
                 )
             else:
                 self.new_component.gcpt.node2.pos.x = mouse_x
