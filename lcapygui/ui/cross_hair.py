@@ -3,10 +3,10 @@ from typing import Tuple
 
 
 class CrossHair:
-    def __init__(self, x, y, model, style="default", label=None):
+    def __init__(self, x, y, model, mode="default", label=None):
         self.position = x, y
         self.model = model
-        self.style = style
+        self.mode = mode
         self.label = None
         self.picture = None
 
@@ -18,16 +18,6 @@ class CrossHair:
     def position(self, coords: Tuple[int, int]):
         self.x = coords[0]
         self.y = coords[1]
-
-    @property
-    def style(self) -> str or None:
-        if self.__style == "default":
-            return None
-        return self.__style
-
-    @style.setter
-    def style(self, style: str):
-        self.__style = style
 
     def draw(self):
         """
@@ -44,19 +34,7 @@ class CrossHair:
         sketcher = self.model.ui.sketcher
         self.picture = Picture()
         # Nothing is selected
-        if self.style == "default":
-            self.picture.add(
-                sketcher.stroke_line(
-                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5*scale, linewidth=1
-                )
-            )
-            self.picture.add(
-                sketcher.stroke_line(
-                    self.x - 0.5*scale, self.y, self.x + 0.5*scale, self.y, linewidth=1
-                )
-            )
-        # Drawing a Wire
-        elif self.style == "W" or self.style == "DW":
+        if self.mode == "W" or self.mode == "DW":
             self.picture.add(
                 sketcher.stroke_filled_circle(
                     self.x, self.y, radius=0.2*scale, color="green", alpha=1
@@ -74,8 +52,8 @@ class CrossHair:
                     self.x - 0.5*scale, self.y, self.x + 0.5*scale, self.y, linewidth=1
                 )
             )
-
-            self.picture.add(sketcher.text(self.x+.1*scale, self.y+.1*scale, self.style, fontsize=self.model.preferences.font_size * self.model.zoom_factor * self.model.preferences.line_width_scale))
+            if self.mode != "default":
+                self.picture.add(sketcher.text(self.x+.1*scale, self.y+.1*scale, self.mode, fontsize=self.model.preferences.font_size * self.model.zoom_factor * self.model.preferences.line_width_scale))
 
     def undraw(self):
         """

@@ -22,8 +22,8 @@ class UIModelDnD(UIModelMPH):
         self.new_component = None
 
     def on_add_cpt(self, thing):
-        self.crosshair.style = thing.cpt_type
-        print(self.crosshair.style)
+        self.crosshair.mode = thing.cpt_type
+        print(self.crosshair.mode)
         self.crosshair.undraw()
         self.crosshair.draw()
         self.ui.refresh()
@@ -37,17 +37,16 @@ class UIModelDnD(UIModelMPH):
             if self.new_component.gcpt.length < 0.2:
                 self.cpt_delete(self.new_component)
             else:
-                self.crosshair.style = "default"
-
-            if self.new_component.gcpt.type == "DW":
-                self.new_component.gcpt.convert_to_wires(self)
+                self.crosshair.mode = "default"
+                if self.new_component.gcpt.type == "DW":
+                    self.new_component.gcpt.convert_to_wires(self)
 
             self.new_component = None
 
         self.on_redraw()
 
     def on_left_click(self, x, y):
-        if self.crosshair.style is None:
+        if self.crosshair.mode == "default":
             super().on_left_click(x, y)
             self.cursors.remove()
             self.on_redraw()
@@ -61,7 +60,7 @@ class UIModelDnD(UIModelMPH):
             super().on_left_double_click(x, y)
 
     def on_right_click(self, x, y):
-        self.crosshair.style = "default"
+        self.crosshair.mode = "default"
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
             self.new_component = None
@@ -97,10 +96,10 @@ class UIModelDnD(UIModelMPH):
         if self.preferences.snap_grid:
             mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
 
-        if self.crosshair.style is not None:
+        if self.crosshair.mode != "default":
             if self.new_component is None:
                 self.new_component = self.thing_create(
-                    self.crosshair.style, mouse_x, mouse_y, mouse_x + 0.1, mouse_y
+                    self.crosshair.mode, mouse_x, mouse_y, mouse_x + 0.1, mouse_y
                 )
             else:
                 self.new_component.gcpt.node2.pos.x = mouse_x
@@ -120,5 +119,5 @@ class UIModelDnD(UIModelMPH):
                 cpt.gcpt.draw(self)
 
                 self.ui.refresh()
-        # else:
-        #     super().on_mouse_drag(mouse_x, mouse_y, key)
+        else:
+            super().on_mouse_drag(mouse_x, mouse_y, key)
