@@ -9,7 +9,7 @@ from .history_event import HistoryEvent
 
 from copy import copy
 from math import atan2, degrees, sqrt
-from numpy import nan, isnan, floor
+from numpy import nan, isnan, floor, array, dot, sqrt
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
 from lcapy.nodes import parse_nodes
@@ -475,7 +475,7 @@ class UIModelBase:
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
                                          newgcpt.node2.x, newgcpt.node2.y,
-                                         self.node_spacing))
+                                         self.STEP))
 
     def cpt_remake(self, cpt):
         gcpt = cpt.gcpt
@@ -896,6 +896,39 @@ class UIModelBase:
                 x, y = self.snap_to_grid(x, y)
 
         return x, y
+
+    def snap_to_cpt(self, x, y, cpt):
+        """
+        Projects the current point onto the nearest component
+
+        Parameters
+        ==========
+        x : float
+            x coordinate of the point to project
+        y : float
+            y coordinate of the point to project
+        cpt : lcapy.mnacpts.Cpt
+
+        Returns
+        =======
+        tuple[float, float]
+
+        """
+
+        v1_x, v1_y = cpt.gcpt.node1.x, cpt.gcpt.node1.y
+        v2_x, v2_y = cpt.gcpt.node2.x, cpt.gcpt.node2.y
+
+        # Convert line to a vector relative to node1
+        cpt_vect = array([v2_x - v1_x, v2_y - v1_y])
+        # Convert point x,y to a vector relative to node1
+        point_vect = array([x - v1_x, y - v1_y])
+
+
+        #  Project the point x,y onto the line
+        dot_product = (dot(point_vect, cpt_vect) / dot(cpt_vect, cpt_vect)) * cpt_vect
+
+        # Convert point vector back to point and return
+        return dot_product[0] + v1_x, dot_product[1] + v1_y
 
     def snap_to_grid_x(self, x):
 

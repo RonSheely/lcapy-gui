@@ -67,10 +67,21 @@ class UIModelDnD(UIModelMPH):
 
     def on_mouse_move(self, mouse_x, mouse_y):
         # Snap mouse to grid
-        if self.preferences.snap_grid:
-            mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
+        mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
         self.crosshair.update((mouse_x, mouse_y))
+
+    def snap(self, mouse_x, mouse_y):
+        if self.preferences.snap_grid:
+            snapped = False
+            for cpt in self.circuit.elements.values():
+                if cpt.gcpt is not self and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2:
+                    mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
+                    snapped = True
+                    break;
+            if not snapped:
+                mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
+        return mouse_x, mouse_y
 
     def on_mouse_drag(self, mouse_x, mouse_y, key):
         """
@@ -93,8 +104,7 @@ class UIModelDnD(UIModelMPH):
         -------
 
         """
-        if self.preferences.snap_grid:
-            mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
+        mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
         if self.crosshair.mode != "default":
             if self.new_component is None:

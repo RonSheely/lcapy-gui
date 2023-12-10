@@ -7,6 +7,7 @@ from .tf import TF
 from .utils import point_in_polygon
 
 from numpy import array, nan
+from math import sqrt
 from lcapy.opts import Opts
 
 from typing import Union
@@ -61,8 +62,7 @@ class Component(ABC):
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.
 
-    def __init__(self, kind='', style='', name=None, nodes=None, opts=None):
-
+    def __init__(self, kind="", style="", name=None, nodes=None, opts=None):
         if nodes is None:
             nodes = []
         # opts are the Lcapy drawing attributes such as `right`, `color=blue`.
@@ -248,41 +248,40 @@ class Component(ABC):
         return line_width * model.preferences.line_width_scale * model.zoom_factor
 
     def make_kwargs(self, model, **kwargs):
-
         opts = Opts(self.attrs)
 
         line_width = model.preferences.line_width
         lw = self._line_width_to_lw(model, line_width)
 
-        kwargs['lw'] = kwargs.pop('lw', lw)
+        kwargs["lw"] = kwargs.pop("lw", lw)
 
         for k, v in opts.items():
             if k in ('bodydiode', 'bulk'):
                 continue
-            if v == '':
+            if v == "":
                 v = True
-            if k == 'line width':
-                k = 'lw'
+            if k == "line width":
+                k = "lw"
                 v = self._line_width_to_lw(model, v)
             kwargs[k] = v
 
-        if kwargs.pop('thick', False):
-            kwargs['lw'] = kwargs['lw'] * 2
+        if kwargs.pop("thick", False):
+            kwargs["lw"] = kwargs["lw"] * 2
 
-        if self.color != '':
-            kwargs['color'] = self.color
+        if self.color != "":
+            kwargs["color"] = self.color
 
         if self.mirror:
-            kwargs['mirror'] = True
+            kwargs["mirror"] = True
 
         if self.invert:
-            kwargs['invert'] = True
+            kwargs["invert"] = True
 
-        if kwargs.pop('dashed', False):
-            kwargs['linestyle'] = '--'
+        if kwargs.pop("dashed", False):
+            kwargs["linestyle"] = "--"
 
-        if kwargs.pop('dotted', False):
-            kwargs['linestyle'] = ':'
+        if kwargs.pop("dotted", False):
+            kwargs["linestyle"] = ":"
 
         return kwargs
 
@@ -310,7 +309,6 @@ class Component(ABC):
 
     @property
     def midpoint(self):
-
         return Pos(self.tf.transform((0, 0)))
 
     @property
@@ -329,12 +327,11 @@ class Component(ABC):
         if len(self.nodes) == 2:
             return array(((x1, y1), (x2, y2)))
 
-        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
-                          self.pos1, self.pos2)
+        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2), self.pos1, self.pos2)
 
         coords = []
         for node_pinname in self.node_pinnames:
-            if node_pinname == '':
+            if node_pinname == "":
                 coords.append((nan, nan))
             else:
                 coords.append(self.pins[node_pinname][1:])
@@ -345,12 +342,10 @@ class Component(ABC):
 
     @property
     def node1(self):
-
         return self.nodes[0]
 
     @property
     def node2(self):
-
         return self.nodes[1]
 
     @property
@@ -362,36 +357,34 @@ class Component(ABC):
         return Pos(self.pins[self.pinname2][1:])
 
     def _attr_dir_string(self, x1, y1, x2, y2, step=1):
-
-        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2),
-                          self.pos1, self.pos2)
+        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2), self.pos1, self.pos2)
         r = tf.scale_factor / 2
         angle = -tf.angle_deg + self.angle_offset
 
-        if self.type == 'X' and r >= 0.5:
+        if self.type == "X" and r >= 0.5:
             r -= 0.49
 
         r = round(r, 2)
         if r == 1:
-            size = ''
+            size = ""
         else:
-            size = '=' + str(r).rstrip('0').rstrip('.')
+            size = "=" + str(r).rstrip("0").rstrip(".")
 
         angle = round(angle, 2)
 
         if r == 0:
-            attr = 'down=0'
-            print('Zero length component; this will be drawn down')
+            attr = "down=0"
+            print("Zero length component; this will be drawn down")
         elif angle == 0:
-            attr = 'right' + size
+            attr = "right" + size
         elif angle in (90, -270):
-            attr = 'up' + size
+            attr = "up" + size
         elif angle in (180, -180):
-            attr = 'left' + size
+            attr = "left" + size
         elif angle in (270, -90):
-            attr = 'down' + size
+            attr = "down" + size
         else:
-            attr = 'rotate=' + str(angle).rstrip('0').rstrip('.')
+            attr = "rotate=" + str(angle).rstrip("0").rstrip(".")
 
         if r < 1:
             attr += ', scale=' + str(r)
@@ -417,28 +410,53 @@ class Component(ABC):
         if self.label != '':
             attr += ', l=' + self.label
         if self.mirror:
-            attr += ', mirror'
+            attr += ", mirror"
         if self.invert:
-            attr += ', invert'
+            attr += ", invert"
 
         # Add user defined attributes such as thick, dashed, etc.
-        if self.attrs != '':
-            attr += ', ' + self.attrs
+        if self.attrs != "":
+            attr += ", " + self.attrs
 
         kind = self.symbol_kind
-        if kind not in (None, ''):
-            if self.type == 'X':
-                attr += ', ' + kind
+        if kind not in (None, ""):
+            if self.type == "X":
+                attr += ", " + kind
             else:
-                attr += ', kind=' + kind
+                attr += ", kind=" + kind
 
-        if self.style not in (None, ''):
-            attr += ', style=' + self.style
+        if self.style not in (None, ""):
+            attr += ", style=" + self.style
 
         return attr
 
-    def is_within_bbox(self, x, y):
+    def distance_from_cpt(self, x, y):
+        import numpy as np
 
+        # Calculate difference between nodes
+        dx = self.node2.x - self.node1.x
+        dy = self.node2.y - self.node1.y
+        dr2 = float(dx**2 + dy**2)
+
+        # Perform linear interpolation to find closest point on line
+        lerp = ((x - self.node1.x) * dx + (y - self.node1.y) * dy) / dr2
+        # If the point is outside the line segment, clamp to the nearest node
+        if lerp < 0:
+            lerp = 0
+        elif lerp > 1:
+            lerp = 1
+
+        # Convert back to cartesian coordinates
+        new_x = lerp * dx + self.node1.x
+        new_y = lerp * dy + self.node1.y
+        _dx = new_x - x
+        _dy = new_y - y
+
+        # Calculate distance
+        square_dist = _dx**2 + _dy**2
+        return sqrt(square_dist)
+
+    def is_within_bbox(self, x, y):
         tf = self.tf.inverted()
 
         xb, yb = tf.transform((x, y))
@@ -448,7 +466,6 @@ class Component(ABC):
         return point_in_polygon(xb, yb, path)
 
     def netitem_nodes(self, node_names):
-
         parts = []
         for node_name in node_names:
             parts.append(node_name)
@@ -456,24 +473,23 @@ class Component(ABC):
 
     @property
     def netitem_args(self):
-
-        if self.cpt_kind == '':
+        if self.cpt_kind == "":
             return ()
-        return (self.cpt_kind, )
+        return (self.cpt_kind,)
 
     def netitem(self, node_names, x1, y1, x2, y2, step=1):
         """Create Lcapy netlist item such as `R1 1 2; right, color=blue`"""
 
         parts = [self.name]
         parts.extend(self.netitem_nodes(node_names))
-        if self.type in ('E', 'G'):
+        if self.type in ("E", "G"):
             # Need to use known nodes to start with.
             parts.extend([node_names[0], node_names[1]])
         else:
             parts.extend(self.netitem_args)
-        netitem = ' '.join(parts)
+        netitem = " ".join(parts)
         attr_string = self.attr_string(x1, y1, x2, y2, step)
-        netitem += '; ' + attr_string + '\n'
+        netitem += "; " + attr_string + "\n"
         return netitem
 
     def update(self, opts=None, nodes=None):
@@ -496,7 +512,6 @@ class Component(ABC):
                 self.scale = float(opts['scale'])
 
     def choose_node_name(self, m, nodes):
-
         num = 1
         while True:
             name = str(num)
@@ -505,22 +520,18 @@ class Component(ABC):
             num += 1
 
     def make_tf(self, p1, p2, q1, q2):
-
         return TF.from_points_pair(q1.xy, p1.xy, q2.xy, p2.xy)
 
     def find_tf(self, pinname1, pinname2, node1=None, node2=None):
-
         if node1 is None:
             node1 = self.node1
         if node2 is None:
             node2 = self.node2
 
-        return self.make_tf(node1.pos, node2.pos,
-                            self.pos1, self.pos2)
+        return self.make_tf(node1.pos, node2.pos, self.pos1, self.pos2)
 
     @property
     def tf(self):
-
         # If this was cached then need to update if the node
         # positions are changed.
         tf = self.find_tf(self.pinname1, self.pinname2)
@@ -528,7 +539,6 @@ class Component(ABC):
         return tf
 
     def undraw(self):
-
         if self.picture is not None:
             self.picture.remove()
         for ann in self.annotations:
@@ -540,11 +550,10 @@ class Component(ABC):
 
     @property
     def ppins(self):
-        raise ValueError('Ppins not defined for %s' % self)
+        raise ValueError("Ppins not defined for %s" % self)
 
     @property
     def pins(self):
-
         newpins = {}
         for pinname, data in self.ppins.items():
             loc, x, y = data

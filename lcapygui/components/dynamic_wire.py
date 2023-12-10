@@ -225,10 +225,8 @@ class DynamicWire(Wire):
         # Get the list of points in the wire
         for start, end in np.array(self.point_pairs):
             # Get the absolute distance between the mouse and that segment of the wire
-            r = np.linalg.norm(np.cross(end - start, start - mouse)) / np.linalg.norm(
-                end - start
-            )
+            r = self.distance_from_cpt(x, y)
             # Assume less than half a square is "close enough"
-            if r < 0.5:
+            if r < 0.2:
                 return True
         return False
