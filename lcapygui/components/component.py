@@ -431,8 +431,21 @@ class Component(ABC):
         return attr
 
     def distance_from_cpt(self, x, y):
-        import numpy as np
+        """
+        Return distance from component to point (x, y).
 
+        Parameters
+        ==========
+        x : float
+            x coordinate of point
+        y : float
+            y coordinate of point
+
+        Returns
+        =======
+        float
+            Distance from component to point (x, y)
+        """
         # Calculate difference between nodes
         dx = self.node2.x - self.node1.x
         dy = self.node2.y - self.node1.y

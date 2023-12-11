@@ -48,8 +48,6 @@ class UIModelDnD(UIModelMPH):
     def on_left_click(self, x, y):
         if self.crosshair.mode == "default":
             super().on_left_click(x, y)
-            self.cursors.remove()
-            self.on_redraw()
 
     def on_left_double_click(self, x, y):
         self.on_select(x, y)
@@ -72,15 +70,36 @@ class UIModelDnD(UIModelMPH):
         self.crosshair.update((mouse_x, mouse_y))
 
     def snap(self, mouse_x, mouse_y):
+        """
+        Snaps the x and y positions to the grid or to a component
+        Parameters
+        ==========
+        mouse_x : float
+        mouse_y : float
+
+        Returns
+        =======
+        float
+            The snapped x, y position
+
+        """
+        # Only snap if the snap grid is enabled
         if self.preferences.snap_grid:
             snapped = False
-            for cpt in self.circuit.elements.values():
-                if cpt.gcpt is not self and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2:
-                    mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
-                    snapped = True
-                    break;
-            if not snapped:
-                mouse_x, mouse_y = self.snap_to_grid(mouse_x, mouse_y)
+            snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
+            # Prioritise snapping to the grid if close, or if placing a component
+            if (abs(mouse_x - snap_x) < 0.2 and abs(mouse_y - snap_y) < 0.2) or self.selected:
+                return snap_x, snap_y
+            else:
+                # if not close grid position, attempt to snap to component
+                snapped = False
+                for cpt in self.circuit.elements.values():
+                    if cpt.gcpt is not self and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2:
+                        mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
+                        snapped = True
+                # If no near components, snap to grid
+                if not snapped:
+                    return snap_x, snap_y
         return mouse_x, mouse_y
 
     def on_mouse_drag(self, mouse_x, mouse_y, key):
