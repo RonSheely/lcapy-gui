@@ -421,17 +421,9 @@ class UIModelBase:
         if isolated or move_nodes:
             # If the component is not connected to another component,
             # or if we wish to move all the components sharing the
-            # a node with the selected component, we can just move the nodes.
-
+            # a node with the selected component, we can just move the nodes
             for node in cpt.nodes:
-                # TODO: handle snap
-                node.pos.x += xshift
-                node.pos.y += yshift
-
-            # TODO: only redraw cpts that have moved
-            gcpt = cpt.gcpt
-            gcpt.undraw()
-            gcpt.draw(self)
+                self.node_move(node, node.pos.x + xshift, node.pos.y + yshift)
 
         else:
             # Alternatively, we need to detach the component and
@@ -446,17 +438,28 @@ class UIModelBase:
             self.cpt_modify_nodes(cpt, x1, y1, x2, y2)
 
     def node_move(self, node, new_x, new_y):
-        if self.preferences.snap_grid:
-            new_x, new_y = self.snap_to_grid(new_x, new_y)
+        """
+        Changes the x, y position of a given node to the new_x, new_y position
+        Then, redraws all connected components
 
-        self.selected.pos.x = new_x
-        self.selected.pos.y = new_y
-
-        for cpt in self.selected.connected:
+        Parameters
+        ==========
+        node : lcapy.nodes.Node
+            The node to move
+        new_x : float
+            The new x coordinate
+        new_y : float
+            The new y coordinate
+        """
+        # New position of nodes
+        node.pos.x = new_x
+        node.pos.y = new_y
+        # Update connected components
+        for cpt in node.connected:
             cpt.gcpt.undraw()
             cpt.gcpt.draw(self)
 
-            self.ui.refresh()
+        self.ui.refresh()
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 

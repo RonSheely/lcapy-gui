@@ -131,22 +131,11 @@ class UIModelDnD(UIModelMPH):
                     self.crosshair.mode, mouse_x, mouse_y, mouse_x + 0.1, mouse_y
                 )
             else:
-                self.new_component.gcpt.node2.pos.x = mouse_x
-                self.new_component.gcpt.node2.pos.y = mouse_y
-                self.new_component.gcpt.undraw()
-                self.new_component.gcpt.draw(self)
-                self.ui.refresh()
+                self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
 
         elif self.selected and not self.cpt_selected:
             new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
 
-            self.selected.pos.x = new_x
-            self.selected.pos.y = new_y
-
-            for cpt in self.selected.connected:
-                cpt.gcpt.undraw()
-                cpt.gcpt.draw(self)
-
-                self.ui.refresh()
+            self.node_move(self.selected, new_x, new_y)
         else:
             super().on_mouse_drag(mouse_x, mouse_y, key)
