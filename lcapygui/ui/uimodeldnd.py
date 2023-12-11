@@ -22,26 +22,50 @@ class UIModelDnD(UIModelMPH):
         self.new_component = None
 
     def on_add_cpt(self, thing):
+        """
+        Configures crosshair for component creation
+        Parameters
+        ==========
+        thing
+            The component to create
+        """
+        # Set crosshair mode to the component type
         self.crosshair.mode = thing.cpt_type
-        print(self.crosshair.mode)
+        if self.ui.debug:
+            print(f"Crosshair mode: {self.crosshair.mode}")
+        # redraw crosshair
         self.crosshair.undraw()
         self.crosshair.draw()
         self.ui.refresh()
 
     def on_mouse_release(self):
-        super().on_mouse_release()
+        """
+        Performs operations on mouse release
+        """
+        if self.ui.debug:
+            print("mouse release")
 
-        # IF finished placing a component, stop placing
+        # If finished placing a component, stop placing
         if self.new_component is not None:
             # If the component is too small, delete it
             if self.new_component.gcpt.length < 0.2:
-                self.cpt_delete(self.new_component)
+                self.cpt_delete(self.new_component) # uses cpt_delete to avoid being added to history
             else:
+                # Reset crosshair mode
                 self.crosshair.mode = "default"
+
+                # If created component is a dynamic wire, split to component parts.
                 if self.new_component.gcpt.type == "DW":
                     self.new_component.gcpt.convert_to_wires(self)
-
-            self.new_component = None
+                else:
+                    self.history.append(HistoryEvent("A", self.new_component))
+        elif self.selected is not None and self.cpt_selected:
+            # Update move history
+            node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
+            self.history.append(
+                HistoryEvent("M", self.selected, self.node_positions, node_positions)
+            )
+        self.new_component = None
 
         self.on_redraw()
 
@@ -88,13 +112,18 @@ class UIModelDnD(UIModelMPH):
             snapped = False
             snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
             # Prioritise snapping to the grid if close, or if placing a component
-            if (abs(mouse_x - snap_x) < 0.2 and abs(mouse_y - snap_y) < 0.2) or self.selected:
+            if (
+                abs(mouse_x - snap_x) < 0.2 and abs(mouse_y - snap_y) < 0.2
+            ) or self.selected:
                 return snap_x, snap_y
             else:
                 # if not close grid position, attempt to snap to component
                 snapped = False
                 for cpt in self.circuit.elements.values():
-                    if cpt.gcpt is not self and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2:
+                    if (
+                        cpt.gcpt is not self
+                        and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2
+                    ):
                         mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
                         snapped = True
                 # If no near components, snap to grid
@@ -131,11 +160,16 @@ class UIModelDnD(UIModelMPH):
                     self.crosshair.mode, mouse_x, mouse_y, mouse_x + 0.1, mouse_y
                 )
             else:
+                self.node_positions = [
+                    (node.pos.x, node.pos.y) for node in self.new_component.nodes
+                ]
                 self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
 
-        elif self.selected and not self.cpt_selected:
-            new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
+        elif self.selected:
+            if self.cpt_selected:
+                super().on_mouse_drag(mouse_x, mouse_y, key)
+            else:
+                # move selected node
+                new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
 
-            self.node_move(self.selected, new_x, new_y)
-        else:
-            super().on_mouse_drag(mouse_x, mouse_y, key)
+                self.node_move(self.selected, new_x, new_y)

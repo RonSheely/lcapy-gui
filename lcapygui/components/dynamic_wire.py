@@ -204,12 +204,13 @@ class DynamicWire(Wire):
 
     def convert_to_wires(self, model, **kwargs):
         self.update_path()
-
+        cpts = []
         previous = self.__path[0]
         for node in self.__path[1:]:
-            model.cpt_create("W", previous[0], previous[1], node[0], node[1])
+            cpts.append(model.cpt_create("W", previous[0], previous[1], node[0], node[1]))
             previous = node
-        model.delete(self)
+        model.cpt_delete(self) # uses cpt_delete to avoid being added to history
+        return cpts
 
     @property
     def point_pairs(self):
