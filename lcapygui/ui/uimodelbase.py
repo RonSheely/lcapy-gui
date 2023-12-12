@@ -189,23 +189,24 @@ class UIModelBase:
             self.cpt_delete(cpt)
 
         elif code == 'M':
-            nodes = event.from_nodes if inverse else event.to_nodes
+            if isinstance(cpt, Cpt):
+                nodes = event.from_nodes if inverse else event.to_nodes
 
-            for node, pos in zip(cpt.nodes, nodes):
+                for node, pos in zip(cpt.nodes, nodes):
+                    node.pos.x = pos[0]
+                    node.pos.y = pos[1]
+
+                self.select(cpt)
+                self.on_redraw()
+            else:
+                node = cpt
+                pos = event.from_nodes[0] if inverse else event.to_nodes[0]
+
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
-            self.select(cpt)
-            self.on_redraw()
-        elif code == 'N':
-            node = event.node
-            pos = event.from_nodes[0] if inverse else event.to_nodes[0]
-
-            node.pos.x = pos[0]
-            node.pos.y = pos[1]
-
-            self.select(node)
-            self.on_redraw()
+                self.select(node)
+                self.on_redraw()
 
         # The network has changed
         self.invalidate()

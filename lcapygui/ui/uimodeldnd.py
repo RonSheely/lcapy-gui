@@ -70,14 +70,14 @@ class UIModelDnD(UIModelMPH):
                 ]
                 self.history.append(
                     HistoryEvent(
-                        "M", self.selected, None, self.node_positions, node_positions
+                        "M", self.selected, self.node_positions, node_positions
                     )
                 )
             # Moving a node
             else:
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
-                    HistoryEvent("N", None, self.selected, self.node_positions, node_position)
+                    HistoryEvent("M", self.selected, self.node_positions, node_position)
                 )
 
         self.dragged = False
