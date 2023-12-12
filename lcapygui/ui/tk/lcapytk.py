@@ -270,10 +270,10 @@ class LcapyTk(Tk):
         tab = Frame(self.notebook)
 
         canvas = Canvas(tab)
-        canvas.pack(side=TOP, expand=1)
+        canvas.pack(side=TOP, expand=True)
 
         self.notebook.add(tab, text=name)
-        self.notebook.pack(fill=BOTH, expand=1)
+        self.notebook.pack(fill=BOTH, expand=True)
 
         # Add the figure to the graph tab
         fig = Figure(figsize=self.FIGSIZE, frameon=False)
@@ -631,7 +631,7 @@ class LcapyTk(Tk):
 
     def on_resize_event(self, event):
 
-        print('resize')
+        self.model.on_resize()
 
     def on_save(self, *args):
 
