@@ -10,15 +10,15 @@ class UIModelDnD(UIModelMPH):
 
     Attributes
     ==========
-    chain_path : lcapy.mnacpts.Cpt or None
-        The component to be placed after a key is pressed
+    crosshair : CrossHair
+        A crosshair for placing and moving components
+    new_component : lcapygui.mnacpts.cpt or None
 
     """
 
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
-        self.chain_path = []
-        self.crosshair = CrossHair(0, 0, self)
+        self.crosshair = CrossHair(self)
         self.new_component = None
 
     def on_add_cpt(self, thing):
@@ -61,19 +61,29 @@ class UIModelDnD(UIModelMPH):
                     self.new_component.gcpt.convert_to_wires(self)
                 else:
                     self.history.append(HistoryEvent("A", self.new_component))
-        elif self.selected is not None and self.cpt_selected:
-            # Update move history
-            node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
-            self.history.append(
-                HistoryEvent("M", self.selected, self.node_positions, node_positions)
-            )
-        elif self.selected is not None and not self.cpt_selected:
-            node_positions = [(self.selected.pos.x, self.selected.pos.y)]
-            for cpt in self.selected.connected:
-                if node_positions != self.node_positions:
-                    self.history.append(
-                        HistoryEvent("M", cpt, self.node_positions, node_positions)
+
+        elif self.selected is not None:
+            if self.cpt_selected:   # Moving a component
+                # Update move history
+                node_positions = [
+                    (node.pos.x, node.pos.y) for node in self.selected.nodes
+                ]
+                self.history.append(
+                    HistoryEvent(
+                        "M", self.selected, self.node_positions, node_positions
                     )
+                )
+            # Moving a node
+            elif self.selected.connected is not None:
+                # Treat as moving a single attached component
+                node_positions = [
+                    (node.pos.x, node.pos.y) for node in self.selected.connected[0].nodes
+                ]
+
+                self.history.append(
+                    HistoryEvent("M", self.selected.connected[0], self.node_positions, node_positions)
+                )
+
         self.dragged = False
         self.new_component = None
 
@@ -184,7 +194,7 @@ class UIModelDnD(UIModelMPH):
                 # move selected node
                 if not self.dragged:
                     self.dragged = True
-                    self.node_positions = [
-                        (self.selected.pos.x, self.selected.pos.y)
-                    ]
+                    # To save history, save first component position
+                    self.node_positions = [(node.pos.x, node.pos.y)
+                                   for node in self.selected.connected[0].nodes]
                 self.node_move(self.selected, mouse_x, mouse_y)

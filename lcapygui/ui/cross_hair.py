@@ -3,8 +3,8 @@ from typing import Tuple
 
 
 class CrossHair:
-    def __init__(self, x, y, model, mode="default", label=None):
-        self.position = x, y
+    def __init__(self, model, mode="default", label=None):
+        self.position = 0, 0
         self.model = model
         self.mode = mode
         self.label = None
