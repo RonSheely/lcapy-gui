@@ -7,9 +7,15 @@
 Welcome to Lcapy-gui's documentation!
 =====================================
 
-The Lcapy-gui package provides the lcapy-tk program.  Schematics can
-be created and saved in a number of formats and symbolic component
-voltages and currents can be inspected.
+The Lcapy-gui package provides the lcapy-tk program, a graphical user
+interface for symbolic circuit analysis.  Schematics can be created
+and saved in a number of formats and symbolic component voltages,
+currents, and impedances can be inspected.
+
+The user interface is under development but has many features, such as
+displaying the system of equations for loop, nodal, and modified nodal
+analysis and creating transfer functions, two-port models, and
+state-space models.
 
 Lcapy-tk utilizes Lcapy for symbolic linear circuit analysis and
 signal-processing, see https://lcapy.readthedocs.io.

@@ -49,6 +49,39 @@ Preferences
 The preferences dialog controls the drawing style.
 
 
+Schematics
+==========
+
+Schematics can be exported in a number of formats.  Circuitikz is used
+to generate text-book quality schematics.  The format is determined by
+the file extension:
+
+- pgf Portable Graphics Format (this can be input into a LaTeX document)
+
+- tex This is a standalone TeX file
+
+- svg Scalar Vector Graphics
+
+- pdf Portable Document Format
+
+- png Portable Network Graphics (unlike the other formats this is a bitmap)
+
+
+Schematics can also be generated from a screenshot although this is
+poorer quality bitmap.
+
+
+Expressions
+===========
+
+Expressions can be saved as a LaTeX representation or as a Python
+script.  The latter requires Lcapy to be imported; `from lcapy import *`.
+
+Expressions can be manipulated, transformed to another domain, and
+formatted in many ways.  The select option extracts the real part,
+imaginary part, etc.
+
+
 Additional documentation
 ========================
 
