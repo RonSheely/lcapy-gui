@@ -205,7 +205,6 @@ class UIModelDnD(UIModelMPH):
         """
         if self.selected and self.cpt_selected:
             # flip the component
-            x1, y1 = self.selected.gcpt.node2.pos.x, self.selected.gcpt.node2.pos.y
-            x2, y2 = self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y
-            self.cpt_modify_nodes(self.selected, x1, y1, x2, y2)
+            angle = 90 if scroll_direction == "up" else -90
+            self.rotate(self.selected, angle)
             self.on_redraw()

@@ -8,7 +8,7 @@ from .history import History
 from .history_event import HistoryEvent
 
 from copy import copy
-from math import atan2, degrees, sqrt
+from math import atan2, degrees, sqrt, cos, sin
 from numpy import nan, isnan, floor, array, dot, sqrt
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
@@ -694,9 +694,39 @@ class UIModelBase:
             if cpt.type == 'XX' and cpt._string.startswith('; nodes='):
                 self.circuit.remove(cpt.name)
 
-    def rotate(self, angle):
-        # TODO
-        pass
+    def rotate(self, cpt, angle=90, midpoint=None):
+        """
+        Rotates a component by a given angle
+        Parameters
+        ----------
+        cpt : lcapy.mnacpts.Cpt
+        angle : float
+        midpoint : tuple[float, float] or None
+        """
+        angle = angle * 3.141592654 / 180
+
+        p1_x, p1_y = cpt.gcpt.node1.x, cpt.gcpt.node1.y
+        p2_x, p2_y = cpt.gcpt.node2.x, cpt.gcpt.node2.y
+
+        if midpoint is None:
+            mid_x, mid_y = (p1_x + p2_x) / 2, (p1_y + p2_y) / 2
+        else:
+            mid_x, mid_y = midpoint[0], midpoint[1]
+
+        # Rotate nodes about midpoint
+        r1_x = mid_x + cos(angle) * (p1_x - mid_x) - sin(angle) * (p1_y - mid_y)
+        r1_y = mid_y + sin(angle) * (p1_x - mid_x) + cos(angle) * (p1_y - mid_y)
+
+        r2_x = mid_x + cos(angle) * (p2_x - mid_x) - sin(angle) * (p2_y - mid_y)
+        r2_y = mid_y + sin(angle) * (p2_x - mid_x) + cos(angle) * (p2_y - mid_y)
+
+        # TODO: Fix snapping to not alter length of cpt too much
+        if self.preferences.snap_grid:
+            r1_x, r1_y = self.snap_to_grid(r1_x, r1_y)
+            r2_x, r2_y = self.snap_to_grid(r2_x, r2_y)
+
+        self.cpt_modify_nodes(cpt, r1_x, r1_y, r2_x, r2_y)
+
 
     def save(self, pathname):
 
