@@ -193,3 +193,19 @@ class UIModelDnD(UIModelMPH):
                     # To save history, save first component position
                     self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
                 self.node_move(self.selected, mouse_x, mouse_y)
+
+    def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
+        """
+        Performs operations on mouse scroll
+        Parameters
+        ==========
+        scroll_direction : str
+        mouse_x : float
+        mouse_y : float
+        """
+        if self.selected and self.cpt_selected:
+            # flip the component
+            x1, y1 = self.selected.gcpt.node2.pos.x, self.selected.gcpt.node2.pos.y
+            x2, y2 = self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y
+            self.cpt_modify_nodes(self.selected, x1, y1, x2, y2)
+            self.on_redraw()

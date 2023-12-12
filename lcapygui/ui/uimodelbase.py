@@ -171,7 +171,7 @@ class UIModelBase:
         # N = move node
 
         if inverse:
-            code = {'A': 'D', 'D': 'A', 'M': 'M', 'N': 'N'}[code]
+            code = {'A': 'D', 'D': 'A', 'M': 'M'}[code]
 
         if code == 'A':
             newcpt = self.circuit.add(str(cpt))
@@ -189,6 +189,7 @@ class UIModelBase:
             self.cpt_delete(cpt)
 
         elif code == 'M':
+            # Check if moving a component or a node
             if isinstance(cpt, Cpt):
                 nodes = event.from_nodes if inverse else event.to_nodes
 

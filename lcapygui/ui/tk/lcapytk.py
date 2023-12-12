@@ -331,6 +331,8 @@ class LcapyTk(Tk):
 
         canvas.md_id = figure.canvas.mpl_connect('motion_notify_event',
                                                  self.on_mouse_event)
+        canvas.ms_id = figure.canvas.mpl_connect('scroll_event',
+                                                 self.on_mouse_scroll)
 
         canvas.rs_id = figure.canvas.mpl_connect('resize_event',
                                                  self.on_resize_event)
@@ -568,9 +570,16 @@ class LcapyTk(Tk):
             self.model.on_mouse_drag(event.xdata, event.ydata,
                                      event.key)
 
+
+
         if self.uimodel_class == UIModelDnD:
             self.model.on_mouse_move(event.xdata, event.ydata)
 
+    def on_mouse_scroll(self, event):
+        if self.debug:
+            print("Mouse scroll event:")
+            print(f"  x: {event.x}\n  y: {event.y}\n  direction: {event.button}")
+        self.model.on_mouse_scroll(event.button, event.x, event.y)
 
     def on_mouse_zoom(self, ax):
 
