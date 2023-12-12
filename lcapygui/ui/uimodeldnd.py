@@ -70,18 +70,14 @@ class UIModelDnD(UIModelMPH):
                 ]
                 self.history.append(
                     HistoryEvent(
-                        "M", self.selected, self.node_positions, node_positions
+                        "M", self.selected, None, self.node_positions, node_positions
                     )
                 )
             # Moving a node
-            elif self.selected.connected is not None:
-                # Treat as moving a single attached component
-                node_positions = [
-                    (node.pos.x, node.pos.y) for node in self.selected.connected[0].nodes
-                ]
-
+            else:
+                node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
-                    HistoryEvent("M", self.selected.connected[0], self.node_positions, node_positions)
+                    HistoryEvent("N", None, self.selected, self.node_positions, node_position)
                 )
 
         self.dragged = False
@@ -195,6 +191,5 @@ class UIModelDnD(UIModelMPH):
                 if not self.dragged:
                     self.dragged = True
                     # To save history, save first component position
-                    self.node_positions = [(node.pos.x, node.pos.y)
-                                   for node in self.selected.connected[0].nodes]
+                    self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
                 self.node_move(self.selected, mouse_x, mouse_y)

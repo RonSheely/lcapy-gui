@@ -162,12 +162,16 @@ class UIModelBase:
         return self._analysis_circuit
 
     def apply(self, event, inverse):
-
         cpt = event.cpt
         code = event.code
+        #Code:
+        # A = add
+        # D = delete
+        # M = move
+        # N = move node
 
         if inverse:
-            code = {'A': 'D', 'D': 'A', 'M': 'M'}[code]
+            code = {'A': 'D', 'D': 'A', 'M': 'M', 'N': 'N'}[code]
 
         if code == 'A':
             newcpt = self.circuit.add(str(cpt))
@@ -192,6 +196,15 @@ class UIModelBase:
                 node.pos.y = pos[1]
 
             self.select(cpt)
+            self.on_redraw()
+        elif code == 'N':
+            node = event.node
+            pos = event.from_nodes[0] if inverse else event.to_nodes[0]
+
+            node.pos.x = pos[0]
+            node.pos.y = pos[1]
+
+            self.select(node)
             self.on_redraw()
 
         # The network has changed
