@@ -204,7 +204,7 @@ class UIModelDnD(UIModelMPH):
         mouse_y : float
         """
         if self.selected and self.cpt_selected:
-            # flip the component
+            # rotate the component
             angle = 90 if scroll_direction == "up" else -90
             self.rotate(self.selected, angle)
             self.on_redraw()
