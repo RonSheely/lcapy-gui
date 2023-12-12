@@ -49,7 +49,9 @@ class UIModelDnD(UIModelMPH):
         if self.new_component is not None:
             # If the component is too small, delete it
             if self.new_component.gcpt.length < 0.2:
-                self.cpt_delete(self.new_component) # uses cpt_delete to avoid being added to history
+                self.cpt_delete(
+                    self.new_component
+                )  # uses cpt_delete to avoid being added to history
             else:
                 # Reset crosshair mode
                 self.crosshair.mode = "default"
@@ -65,6 +67,14 @@ class UIModelDnD(UIModelMPH):
             self.history.append(
                 HistoryEvent("M", self.selected, self.node_positions, node_positions)
             )
+        elif self.selected is not None and not self.cpt_selected:
+            node_positions = [(self.selected.pos.x, self.selected.pos.y)]
+            for cpt in self.selected.connected:
+                if node_positions != self.node_positions:
+                    self.history.append(
+                        HistoryEvent("M", cpt, self.node_positions, node_positions)
+                    )
+        self.dragged = False
         self.new_component = None
 
         self.on_redraw()
@@ -152,6 +162,7 @@ class UIModelDnD(UIModelMPH):
         -------
 
         """
+
         mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
         if self.crosshair.mode != "default":
@@ -168,8 +179,12 @@ class UIModelDnD(UIModelMPH):
         elif self.selected:
             if self.cpt_selected:
                 super().on_mouse_drag(mouse_x, mouse_y, key)
+
             else:
                 # move selected node
-                new_x, new_y = self.snap_to_grid(mouse_x, mouse_y)
-
-                self.node_move(self.selected, new_x, new_y)
+                if not self.dragged:
+                    self.dragged = True
+                    self.node_positions = [
+                        (self.selected.pos.x, self.selected.pos.y)
+                    ]
+                self.node_move(self.selected, mouse_x, mouse_y)
