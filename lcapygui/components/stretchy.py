@@ -58,10 +58,10 @@ class Stretchy(Component):
             p2p = p2
 
         sketcher = model.ui.sketcher
-        self.picture = Picture()
 
         tf = self.make_tf(p1p, p2p, self.pos1, self.pos2)
 
+        self.picture = Picture()
         self.picture.add(sketch.draw(model, tf, **kwargs))
 
         # TODO: generalize

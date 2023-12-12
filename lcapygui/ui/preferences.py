@@ -13,7 +13,7 @@ class Preferences:
 
     def __init__(self):
 
-        self.version = 5
+        self.version = 6
         self.label_nodes = 'none'
         self.draw_nodes = 'connections'
         self.label_cpts = 'name'
@@ -33,6 +33,9 @@ class Preferences:
         self.current_sign_convention = 'passive'
         self.font_size = 18
         self.cpt_size = self.circuitikz_default_cpt_size
+        # This is used as the reference for component attributes in
+        # a .sch file.  For example, R 1 2; right.
+        self.node_spacing = 2
 
     def apply(self):
 

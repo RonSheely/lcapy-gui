@@ -32,7 +32,6 @@ class C:
 
 class UIModelBase:
 
-    STEP = 2
     SNAP = 1
     SCALE = 0.25
 
@@ -410,7 +409,7 @@ class UIModelBase:
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
                                          newgcpt.node2.x, newgcpt.node2.y,
-                                         self.STEP))
+                                         self.preferences.node_spacing))
 
     def cpt_remake(self, cpt):
 
@@ -457,7 +456,8 @@ class UIModelBase:
 
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(gcpt.node1.x, gcpt.node1.y,
-                                         gcpt.node2.x, gcpt.node2.y, self.STEP))
+                                         gcpt.node2.x, gcpt.node2.y,
+                                         self.preferences.node_spacing))
 
         newcpt.gcpt = gcpt
 
@@ -535,7 +535,8 @@ class UIModelBase:
                 self.exception(e)
                 return
 
-            width, height = sch.width * self.STEP, sch.height * self.STEP
+            width = sch.width * self.preferences.node_spacing
+            height = sch.height * self.preferences.node_spacing
 
             # Centre the schematic.
             xsize = self.ui.canvas.drawing.xsize
@@ -660,7 +661,8 @@ class UIModelBase:
                 node_name = node.name
             node_names.append(node_name)
 
-        netitem = gcpt.netitem(node_names, x1, y1, x2, y2, self.STEP)
+        netitem = gcpt.netitem(node_names, x1, y1, x2,
+                               y2, self.preferences.node_spacing)
 
         if self.ui.debug:
             print('Adding ' + netitem)

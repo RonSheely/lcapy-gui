@@ -1,4 +1,6 @@
 from .bipole import Bipole
+from .picture import Picture
+from .tf import TF
 from math import cos, sin, radians, sqrt
 from numpy import array
 
@@ -32,27 +34,32 @@ class Connection(Bipole):
         x2, y2 = self.node2.x, self.node2.y
 
         if self.symbol_kind in ('vcc', 'vdd'):
-            x1, y1, angle = self.split_node_pos(x2, y2, model.STEP, True)
+            x1, y1, angle = self.split_node_pos(x2, y2, model, True)
             offset = x1, y1
             angle = angle + 90
         elif self.symbol_kind in ('vee', 'vss'):
-            x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
+            x2, y2, angle = self.split_node_pos(x1, y1, model)
             offset = x2, y2
             angle = angle + 90
         elif self.symbol_kind in ('input', ):
-            x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
+            x2, y2, angle = self.split_node_pos(x1, y1, model)
             offset = x2, y2
         else:
-            x2, y2, angle = self.split_node_pos(x1, y1, model.STEP)
+            x2, y2, angle = self.split_node_pos(x1, y1, model)
             offset = x2, y2
 
-        sketch.draw_old(model, offset=offset,
-                        angle=angle, **kwargs)
+        tf = TF().rotate_deg(angle).scale(sketch.PT_TO_CM)
+        tf = tf.translate(*offset)
 
         sketcher = model.ui.sketcher
-        sketcher.stroke_line(x1, y1, x2, y2, **kwargs)
 
-    def split_node_pos(self, x, y, step=1, flip=False):
+        self.picture = Picture()
+        self.picture.add(sketcher.sketch(sketch, tf, **kwargs))
+        self.picture.add(sketcher.stroke_line(x1, y1, x2, y2, **kwargs))
+
+    def split_node_pos(self, x, y, model, flip=False):
+
+        step = model.preferences.node_spacing
 
         # TODO, generate opts as needed.
         # attr = self.attr_string(

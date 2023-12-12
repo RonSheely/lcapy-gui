@@ -31,6 +31,8 @@ class Sketch:
 
     # Convert points to cm.
     PT_TO_CM = 2.54 / 72
+    # This is the node spacing used to create the sketch
+    NODE_SPACING = 2
 
     def __init__(self, paths, width, height, **kwargs):
 
@@ -273,15 +275,6 @@ class Sketch:
 
         return self.__class__(paths, self.width, self.height, **self.kwargs)
 
-    def draw_old(self, model, offset=(0, 0), scale=1, angle=0, **kwargs):
-
-        sketcher = model.ui.sketcher
-
-        tf = TF().rotate_deg(angle).scale(scale * self.PT_TO_CM)
-        tf = tf.translate(*offset)
-
-        return sketcher.sketch(self, tf, **kwargs)
-
     def draw(self, model, tf, **kwargs):
 
         sketcher = model.ui.sketcher
@@ -290,7 +283,8 @@ class Sketch:
 
         c = tf.transform((0, 0))
 
-        tf = TF().rotate_deg(-tf.angle_deg).scale(tf.scale_factor * self.PT_TO_CM / model.STEP)
+        tf = TF().rotate_deg(-tf.angle_deg).scale(tf.scale_factor *
+                                                  self.PT_TO_CM / self.NODE_SPACING)
         tf = tf.translate(*c)
 
         return sketcher.sketch(self, tf, **kwargs)
