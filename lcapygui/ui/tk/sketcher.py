@@ -93,6 +93,19 @@ class Sketcher:
         self.ax.add_patch(patch)
         return patch
 
+    def stroke_donut(self, x, y, radius=0.5, color='black',
+                     alpha=0.5, **kwargs):
+        """This is for drawing open nodes; the zorder is set so that
+        they are drawn over wires."""
+
+        patch1 = Circle((x, y), radius, fc='white', alpha=alpha, zorder=10,
+                        **kwargs)
+        patch2 = Circle((x, y), radius, fc=color, alpha=alpha, fill=False,
+                        zorder=10, **kwargs)
+        self.ax.add_patch(patch1)
+        self.ax.add_patch(patch2)
+        return [patch1, patch2]
+
     def stroke_circle(self, x, y, radius=0.5, color='black',
                       alpha=0.5, **kwargs):
 

@@ -872,7 +872,7 @@ class UIModelBase:
             return
 
         if node.port:
-            self.ui.sketcher.stroke_circle(
+            self.ui.sketcher.stroke_donut(
                 node.x, node.y, self.preferences.node_size,
                 color=self.preferences.node_color, alpha=1)
         else:
