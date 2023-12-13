@@ -48,13 +48,11 @@ class Connection(Bipole):
             x2, y2, angle = self.split_node_pos(x1, y1, model)
             offset = x2, y2
 
-        tf = TF().rotate_deg(angle).scale(sketch.PT_TO_CM)
-        tf = tf.translate(*offset)
-
+        tf = TF().rotate_deg(angle).translate(*offset)
         sketcher = model.ui.sketcher
 
         self.picture = Picture()
-        self.picture.add(sketcher.sketch(sketch, tf, **kwargs))
+        self.picture.add(sketch.draw(model, tf, **kwargs))
         self.picture.add(sketcher.stroke_line(x1, y1, x2, y2, **kwargs))
 
     def split_node_pos(self, x, y, model, flip=False):
