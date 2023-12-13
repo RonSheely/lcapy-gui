@@ -155,14 +155,18 @@ class UIModelDnD(UIModelMPH):
 
     def on_mouse_drag(self, mouse_x, mouse_y, key):
         """
-        Performs operations on mouse drag
+        Performs operations when the user drags the mouse on the canvas.
 
         Explanation
-        -----------
-        This function is called when the user drags the mouse on the canvas.
+        ===========
+        If a chosen component is not created, it will create a new one at the current position
+        If that component already exists, it will move the second node to the mouse position.
+
+        It the chosen thing is a node, it will move that node to the current mouse position
+        otherwise, it will attempt to drag a chosen component
 
         Parameters
-        ----------
+        ==========
         mouse_x: float
             x position of the mouse
         mouse_y : float
@@ -170,20 +174,21 @@ class UIModelDnD(UIModelMPH):
         key : str
             String representation of the pressed key.
 
-        Returns
-        -------
 
         """
 
         mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
+        # Check if we are currently placing a component
         if self.crosshair.thing != None:
+            # If the component has not been created, create it at the current position
             if self.new_component is None:
                 print(self.crosshair.thing.kind)
                 kind = "-" + self.crosshair.thing.kind if self.crosshair.thing.kind != "" else ""
                 self.new_component = self.thing_create(
                     self.crosshair.thing.cpt_type, mouse_x, mouse_y, mouse_x + 0.1, mouse_y, kind = kind
                 )
+            # Otherwise, move the components second node to the current position
             else:
                 self.node_positions = [
                     (node.pos.x, node.pos.y) for node in self.new_component.nodes
@@ -216,3 +221,16 @@ class UIModelDnD(UIModelMPH):
             angle = 90 if scroll_direction == "up" else -90
             self.rotate(self.selected, angle)
             self.on_redraw()
+
+    def on_cut(self):
+        if self.selected is None:
+            return
+        if not self.cpt_selected:
+            return
+        self.cut(self.selected)
+        self.ui.refresh()
+
+    def on_paste(self):
+        self.new_component = self.paste(self.crosshair.x, self.crosshair.y, self.crosshair.x+.2, self.crosshair.y+.2)
+
+        self.ui.refresh()
