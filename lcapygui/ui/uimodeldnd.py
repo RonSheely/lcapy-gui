@@ -30,13 +30,19 @@ class UIModelDnD(UIModelMPH):
             The component to create
         """
         # Set crosshair mode to the component type
-        self.crosshair.mode = thing.cpt_type
+        self.crosshair.thing = thing
         if self.ui.debug:
-            print(f"Crosshair mode: {self.crosshair.mode}")
+            print(f"Crosshair mode: {self.crosshair.thing}")
         # redraw crosshair
         self.crosshair.undraw()
         self.crosshair.draw()
         self.ui.refresh()
+
+    def on_add_con(self, thing):
+        # Set crosshair mode to the component type
+        self.on_add_cpt(thing)
+
+
 
     def on_mouse_release(self):
         """
@@ -54,7 +60,7 @@ class UIModelDnD(UIModelMPH):
                 )  # uses cpt_delete to avoid being added to history
             else:
                 # Reset crosshair mode
-                self.crosshair.mode = "default"
+                self.crosshair.thing = None
 
                 # If created component is a dynamic wire, split to component parts.
                 if self.new_component.gcpt.type == "DW":
@@ -63,7 +69,7 @@ class UIModelDnD(UIModelMPH):
                     self.history.append(HistoryEvent("A", self.new_component))
 
         elif self.selected is not None:
-            if self.cpt_selected:   # Moving a component
+            if self.cpt_selected:  # Moving a component
                 # Update move history
                 node_positions = [
                     (node.pos.x, node.pos.y) for node in self.selected.nodes
@@ -86,7 +92,7 @@ class UIModelDnD(UIModelMPH):
         self.on_redraw()
 
     def on_left_click(self, x, y):
-        if self.crosshair.mode == "default":
+        if self.crosshair.thing == None:
             super().on_left_click(x, y)
 
     def on_left_double_click(self, x, y):
@@ -98,7 +104,7 @@ class UIModelDnD(UIModelMPH):
             super().on_left_double_click(x, y)
 
     def on_right_click(self, x, y):
-        self.crosshair.mode = "default"
+        self.crosshair.thing = None
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
             self.new_component = None
@@ -171,10 +177,12 @@ class UIModelDnD(UIModelMPH):
 
         mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
-        if self.crosshair.mode != "default":
+        if self.crosshair.thing != None:
             if self.new_component is None:
+                print(self.crosshair.thing.kind)
+                kind = "-" + self.crosshair.thing.kind if self.crosshair.thing.kind != "" else ""
                 self.new_component = self.thing_create(
-                    self.crosshair.mode, mouse_x, mouse_y, mouse_x + 0.1, mouse_y
+                    self.crosshair.thing.cpt_type, mouse_x, mouse_y, mouse_x + 0.1, mouse_y, kind = kind
                 )
             else:
                 self.node_positions = [

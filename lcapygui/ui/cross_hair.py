@@ -3,10 +3,10 @@ from typing import Tuple
 
 
 class CrossHair:
-    def __init__(self, model, mode="default", label=None):
+    def __init__(self, model, thing=None, label=None):
         self.position = 0, 0
         self.model = model
-        self.mode = mode
+        self.thing = thing
         self.label = None
         self.picture = None
 
@@ -30,30 +30,43 @@ class CrossHair:
 
         """
 
-        scale = self.model.preferences.xsize/20
+        scale = self.model.preferences.xsize / 20
         sketcher = self.model.ui.sketcher
         self.picture = Picture()
-        # Nothing is selected
-        if self.mode == "W" or self.mode == "DW":
-            self.picture.add(
-                sketcher.stroke_filled_circle(
-                    self.x, self.y, radius=0.2*scale, color="green", alpha=1
+
+        # Draw text or more
+        if self.thing != None:
+            if self.thing.cpt_type == "W" or self.thing.cpt_type == "DW":
+                self.picture.add(
+                    sketcher.stroke_filled_circle(
+                        self.x, self.y, radius=0.2 * scale, color="green", alpha=1
+                    )
                 )
-            )
-        # Drawing the component type to be placed
-        else:
-            self.picture.add(
-                sketcher.stroke_line(
-                    self.x, self.y - 0.5*scale, self.x, self.y + 0.5*scale, linewidth=1
+            else:
+                self.picture.add(
+                    sketcher.text(
+                        self.x + 0.1 * scale,
+                        self.y + 0.1 * scale,
+                        self.thing.cpt_type,
+                        fontsize=self.model.preferences.font_size
+                        * self.model.zoom_factor
+                        * self.model.preferences.line_width_scale,
+                    )
                 )
+
+        # draw cursor
+        self.picture.add(
+            sketcher.stroke_line(
+                self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=1
             )
-            self.picture.add(
-                sketcher.stroke_line(
-                    self.x - 0.5*scale, self.y, self.x + 0.5*scale, self.y, linewidth=1
-                )
+        )
+        self.picture.add(
+            sketcher.stroke_line(
+                self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
             )
-            if self.mode != "default":
-                self.picture.add(sketcher.text(self.x+.1*scale, self.y+.1*scale, self.mode, fontsize=self.model.preferences.font_size * self.model.zoom_factor * self.model.preferences.line_width_scale))
+        )
+        # Change cursor appearance based on which component is being placed
+
 
     def undraw(self):
         """
