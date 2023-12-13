@@ -21,11 +21,10 @@ class Drawing():
         if self.debug:
             print('draw grid')
 
-        # Enlarge grid by factor of 2 in each direction.
+        # Enlarge grid by factor of 2 in each direction so can pan around
+        # larger schematics.
         # Only xsize by ysize is visible.
-        scale = self.ui.model.preferences.grid_spacing / \
-            self.ui.model.preferences.node_spacing
-
+        scale = self.ui.model.preferences.grid_spacing
         xticks = arange(self.xsize * 2) * scale
         yticks = arange(self.ysize * 2) * scale
 

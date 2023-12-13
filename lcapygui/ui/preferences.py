@@ -35,8 +35,8 @@ class Preferences:
         self.cpt_size = self.circuitikz_default_cpt_size
         # This is used as the reference for component attributes in
         # a .sch file.  For example, R 1 2; right.
-        self.node_spacing = 2
-        self.grid_spacing = 2
+        self.node_spacing = 2.0
+        self.grid_spacing = 0.5
 
     def apply(self):
 
