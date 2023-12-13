@@ -226,8 +226,20 @@ class LcapyTk(Tk):
         ]
 
         self.popup_menu = MouseMenu(MenuDropdown('Right click', 0, [
-                            MenuItem('Inspect Voltage', self.on_inspect_voltage),
-                            MenuItem('Inspect Current', self.on_inspect_current),
+                            MenuItem('Cut', self.on_cut, accelerator='Ctrl+x'),
+                            MenuItem('Copy', self.on_copy, accelerator='Ctrl+c'),
+                            MenuDropdown('Inspect', 0, [
+                                 MenuItem('Voltage', self.on_inspect_voltage),
+                                 MenuItem('Current', self.on_inspect_current),
+                                 MenuItem('Thevenin impedance',
+                                          self.on_inspect_thevenin_impedance),
+                                 MenuItem('Norton admittance',
+                                          self.on_inspect_norton_admittance),
+                                 MenuItem('Noise voltage',
+                                          self.on_inspect_noise_voltage),
+                                 MenuItem('Noise current',
+                                          self.on_inspect_noise_current),
+                            ]),
         ]))
         self.popup_menu.make(self, self.level)
 
@@ -413,16 +425,8 @@ class LcapyTk(Tk):
         else:
             if event.button == 1:
                 self.model.on_left_click(event.xdata, event.ydata)
-                # undo the popup menu
-                self.popup_menu.undo_popup()
             elif event.button == 3:
-                # translate mpl coords to screen coords
-                # TODO: make this more robust
                 self.model.on_right_click(event.xdata, event.ydata)
-                v_x = self.winfo_x() + event.x
-                v_y = self.winfo_y() + 750 - event.y
-                # Call the popup menu
-                self.popup_menu.do_popup(v_x, v_y)
 
     def on_release_event(self, event):
 

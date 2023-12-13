@@ -108,7 +108,7 @@ class MouseMenu:
                 continue
 
             if isinstance(menuitem, MenuDropdown):
-                submenu = Menu(self.menubar, tearoff=0, bg="lightgrey", fg="black")
+                submenu = Menu(self.menu, tearoff=0, bg="lightgrey", fg="black")
                 self.menu.add_cascade(
                     label=menuitem.label, underline=menuitem.underline, menu=submenu
                 )

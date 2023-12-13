@@ -42,8 +42,6 @@ class UIModelDnD(UIModelMPH):
         # Set crosshair mode to the component type
         self.on_add_cpt(thing)
 
-
-
     def on_mouse_release(self):
         """
         Performs operations on mouse release
@@ -92,6 +90,8 @@ class UIModelDnD(UIModelMPH):
         self.on_redraw()
 
     def on_left_click(self, x, y):
+        # Destroy popup menu
+        self.ui.popup_menu.undo_popup()
         if self.crosshair.thing == None:
             super().on_left_click(x, y)
 
@@ -104,10 +104,19 @@ class UIModelDnD(UIModelMPH):
             super().on_left_double_click(x, y)
 
     def on_right_click(self, x, y):
+
+        if self.selected:
+            v_x = self.ui.winfo_pointerx()  # + event.x
+            v_y = self.ui.winfo_pointery()  # + 750 - event.y
+
+            # Call the popup menu
+            self.ui.popup_menu.do_popup(v_x, v_y)
+
         self.crosshair.thing = None
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
             self.new_component = None
+
 
     def on_mouse_move(self, mouse_x, mouse_y):
         # Snap mouse to grid
@@ -184,9 +193,18 @@ class UIModelDnD(UIModelMPH):
             # If the component has not been created, create it at the current position
             if self.new_component is None:
                 print(self.crosshair.thing.kind)
-                kind = "-" + self.crosshair.thing.kind if self.crosshair.thing.kind != "" else ""
+                kind = (
+                    "-" + self.crosshair.thing.kind
+                    if self.crosshair.thing.kind != ""
+                    else ""
+                )
                 self.new_component = self.thing_create(
-                    self.crosshair.thing.cpt_type, mouse_x, mouse_y, mouse_x + 0.1, mouse_y, kind = kind
+                    self.crosshair.thing.cpt_type,
+                    mouse_x,
+                    mouse_y,
+                    mouse_x + 0.1,
+                    mouse_y,
+                    kind=kind,
                 )
             # Otherwise, move the components second node to the current position
             else:
@@ -231,6 +249,11 @@ class UIModelDnD(UIModelMPH):
         self.ui.refresh()
 
     def on_paste(self):
-        self.new_component = self.paste(self.crosshair.x, self.crosshair.y, self.crosshair.x+.2, self.crosshair.y+.2)
+        self.new_component = self.paste(
+            self.crosshair.x,
+            self.crosshair.y,
+            self.crosshair.x + 0.2,
+            self.crosshair.y + 0.2,
+        )
 
         self.ui.refresh()
