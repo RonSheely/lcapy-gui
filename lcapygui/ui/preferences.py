@@ -36,6 +36,7 @@ class Preferences:
         # This is used as the reference for component attributes in
         # a .sch file.  For example, R 1 2; right.
         self.node_spacing = 2
+        self.grid_spacing = 2
 
     def apply(self):
 

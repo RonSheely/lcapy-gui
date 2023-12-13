@@ -284,7 +284,8 @@ class LcapyTk(Tk):
         graph.draw()
         graph.get_tk_widget().pack(fill='both', expand=True)
 
-        drawing = Drawing(self, fig, model, self.debug)
+        self.model = model
+        drawing = Drawing(self, fig, self.debug)
         canvas.drawing = drawing
         canvas.tab = tab
         canvas.sketcher = Sketcher(canvas.drawing.ax, self.debug)

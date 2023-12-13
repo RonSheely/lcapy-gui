@@ -3,13 +3,13 @@ from numpy import arange
 
 class Drawing():
 
-    def __init__(self, ui, fig, model, debug=0):
+    def __init__(self, ui, fig, debug=0):
 
         self.ui = ui
         self.fig = fig
         self.debug = debug
-        self.xsize = model.preferences.xsize
-        self.ysize = model.preferences.ysize
+        self.xsize = ui.model.preferences.xsize
+        self.ysize = ui.model.preferences.ysize
 
         self.ax = self.fig.add_subplot(111)
 
@@ -23,8 +23,11 @@ class Drawing():
 
         # Enlarge grid by factor of 2 in each direction.
         # Only xsize by ysize is visible.
-        xticks = arange(self.xsize * 2)
-        yticks = arange(self.ysize * 2)
+        scale = self.ui.model.preferences.grid_spacing / \
+            self.ui.model.preferences.node_spacing
+
+        xticks = arange(self.xsize * 2) * scale
+        yticks = arange(self.ysize * 2) * scale
 
         self.ax.axis('equal')
         self.ax.set_xticks(xticks)

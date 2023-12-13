@@ -74,6 +74,10 @@ class PreferencesDialog(Window):
                               'Component size (cm)',
                               self.model.preferences.cpt_size,
                               command=self.on_update),
+                   LabelEntry('grid_spacing',
+                              'Grid spacing',
+                              self.model.preferences.grid_spacing,
+                              command=self.on_update),
                    ]
 
         self.labelentries = LabelEntries(self, ui, entries)
@@ -108,6 +112,8 @@ class PreferencesDialog(Window):
             'line_width_scale')
         self.model.preferences.cpt_size = self.labelentries.get(
             'cpt_size')
+        self.model.preferences.grid_spacing = self.labelentries.get(
+            'grid_spacing')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...

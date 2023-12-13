@@ -9,7 +9,7 @@ from .history_event import HistoryEvent
 
 from copy import copy
 from math import atan2, degrees, sqrt
-from numpy import nan, isnan
+from numpy import nan, isnan, floor
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
 from lcapy.nodes import parse_nodes
@@ -32,7 +32,6 @@ class C:
 
 class UIModelBase:
 
-    SNAP = 1
     SCALE = 0.25
 
     # Short-cut key, menu name, cpt type, kind
@@ -99,6 +98,16 @@ class UIModelBase:
         self.select_pos = 0, 0
         self.dragged = False
         self.zoom_factor = 1
+
+    @property
+    def node_spacing(self):
+
+        return self.preferences.node_spacing
+
+    @property
+    def grid_spacing(self):
+
+        return self.preferences.grid_spacing
 
     @property
     def analysis_circuit(self):
@@ -409,7 +418,7 @@ class UIModelBase:
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
                                          newgcpt.node2.x, newgcpt.node2.y,
-                                         self.preferences.node_spacing))
+                                         self.node_spacing))
 
     def cpt_remake(self, cpt):
 
@@ -457,7 +466,7 @@ class UIModelBase:
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(gcpt.node1.x, gcpt.node1.y,
                                          gcpt.node2.x, gcpt.node2.y,
-                                         self.preferences.node_spacing))
+                                         self.node_spacing))
 
         newcpt.gcpt = gcpt
 
@@ -535,8 +544,8 @@ class UIModelBase:
                 self.exception(e)
                 return
 
-            width = sch.width * self.preferences.node_spacing
-            height = sch.height * self.preferences.node_spacing
+            width = sch.width * self.node_spacing
+            height = sch.height * self.node_spacing
 
             # Centre the schematic.
             xsize = self.ui.canvas.drawing.xsize
@@ -661,8 +670,7 @@ class UIModelBase:
                 node_name = node.name
             node_names.append(node_name)
 
-        netitem = gcpt.netitem(node_names, x1, y1, x2,
-                               y2, self.preferences.node_spacing)
+        netitem = gcpt.netitem(node_names, x1, y1, x2, y2, self.node_spacing)
 
         if self.ui.debug:
             print('Adding ' + netitem)
@@ -820,14 +828,14 @@ class UIModelBase:
 
     def snap_to_grid_x(self, x):
 
-        snap = self.SNAP
-        x = (x + 0.5 * snap) // snap * snap
+        snap = self.grid_spacing
+        x = floor((x + 0.5 * snap) / snap) * snap
         return x
 
     def snap_to_grid_y(self, y):
 
-        snap = self.SNAP
-        y = (y + 0.5 * snap) // snap * snap
+        snap = self.grid_spacing
+        y = floor((y + 0.5 * snap) / snap) * snap
         return y
 
     def snap_to_grid(self, x, y):
