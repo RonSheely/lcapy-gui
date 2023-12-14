@@ -165,8 +165,8 @@ class DynamicWire(Wire):
         if model is None:
             return
         # Get the graph size
-        x_size = model.preferences.xsize
-        y_size = model.preferences.ysize
+        x_size = int(model.preferences.xsize / model.preferences.grid_spacing)
+        y_size = int(model.preferences.ysize / model.preferences.grid_spacing)
         self.__path_finder.width = x_size
         self.__path_finder.height = y_size
 
@@ -177,7 +177,7 @@ class DynamicWire(Wire):
         for x in range(0, x_size):
             for y in range(0, y_size):
                 for cpt in model.circuit.elements.values():
-                    if cpt.gcpt is not self and cpt.gcpt.is_within_bbox(x, y):
+                    if cpt.gcpt is not self and cpt.gcpt.is_within_bbox(x * model.preferences.grid_spacing, y * model.preferences.grid_spacing):
                         self.__path_finder.lines[y][x] = 1
 
     def draw(self, model, **kwargs):

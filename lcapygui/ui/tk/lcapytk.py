@@ -226,8 +226,6 @@ class LcapyTk(Tk):
                          ])
         ]
 
-
-
         self.menubar = MenuBar(menudropdowns)
         self.menubar.make(self, self.level)
 

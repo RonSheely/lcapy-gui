@@ -80,10 +80,7 @@ def make_popup(ui, menu_items):
     }
     display_items = []
     for menu_item in menu_items:
-        if menu_item not in MenuTable:
-            raise ValueError("Menu item not found")
-        else:
-            display_items.append(MenuTable[menu_item])
+        display_items.append(MenuTable[menu_item])
 
     ui.popup_menu = MenuPopup(
         MenuDropdown(

@@ -74,8 +74,8 @@ class UIModelBase:
         'v': Thing('v', 'Voltage source', 'V', ''),
         'g': Thing('g', 'Voltage controlled current source', 'G', ''),
         'e': Thing('e', 'Voltage controlled voltage source', 'E', ''),
-        'w': Thing('w', 'Wire', 'W', ''),
-        'dw': Thing('', 'Dynamic Wire', 'DW', ''),
+        'w': Thing('', 'Wire', 'W', ''),
+        'dw': Thing('w', 'Dynamic Wire', 'DW', ''),
     }
 
     # Short-cut key, menu name, cpt type, kind
@@ -252,7 +252,7 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
-    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=none):
+    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
         """
         TODO: Check
         Create a new component
