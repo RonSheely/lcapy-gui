@@ -393,6 +393,8 @@ class UIModelBase:
 
         gcpt = cpt.gcpt
         cpt_key = gcpt.type
+        if cpt_key == 'X':
+            cpt_key = 'W'
 
         self.cpt_delete(gcpt)
         newcpt = self.cpt_create(cpt_key, x1, y1, x2, y2, gcpt.kind)
