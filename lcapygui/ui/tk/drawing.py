@@ -11,6 +11,15 @@ class Drawing():
         self.xsize = ui.model.preferences.xsize
         self.ysize = ui.model.preferences.ysize
 
+        # Maximum limits for drawing size.  Only xsize by ysize
+        # is visible.
+        self.xmin = 0
+        self.ymin = 0
+        self.xmax = self.xsize * 2
+        self.ymax = self.ysize * 2
+
+        self.enlarge_scale = 2
+
         self.ax = self.fig.add_subplot(111)
 
         self.draw_grid('on')
@@ -21,12 +30,9 @@ class Drawing():
         if self.debug:
             print('draw grid')
 
-        # Enlarge grid by factor of 2 in each direction so can pan around
-        # larger schematics.
-        # Only xsize by ysize is visible.
         scale = self.ui.model.preferences.grid_spacing
-        xticks = arange(self.xsize * 2) * scale
-        yticks = arange(self.ysize * 2) * scale
+        xticks = arange(self.xmax) * scale
+        yticks = arange(self.ymax) * scale
 
         self.ax.axis('equal')
         self.ax.set_xticks(xticks)
@@ -49,6 +55,20 @@ class Drawing():
 
         if self.debug:
             print('view', xmin, ymin, xmax, ymax)
+
+        if False:
+            # If restrict values while panning then will get a zoom.
+            # It is also confusing to the user if they try to pan
+            # but nothing happens.  TODO: limit region that grid is visible
+            # to indicate that out of bounds.
+            if xmin < self.xmin:
+                xmin = self.xmin
+            if ymin < self.ymin:
+                ymin = self.ymin
+            if xmax > self.xmax:
+                xmax = self.xmax
+            if ymax > self.ymax:
+                ymax = self.ymax
 
         self.ax.set_xlim(xmin, xmax, emit=False)
         self.ax.set_ylim(ymin, ymax, emit=False)
