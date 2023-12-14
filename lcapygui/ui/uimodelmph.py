@@ -193,7 +193,7 @@ class UIModelMPH(UIModelBase):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        self.cpt_create(thing.cpt_type, x1, y1, x2, y2)
+        self.create(thing, x1, y1, x2, y2)
         self.ui.refresh()
 
     def on_add_con(self, thing):
@@ -217,7 +217,7 @@ class UIModelMPH(UIModelBase):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        self.con_create(thing, x1, y1, x2, y2)
+        self.create(thing.cpt_type, x1, y1, x2, y2, kind='-' + thing.kind)
         self.ui.refresh()
 
     def on_best_fit(self):

@@ -16,7 +16,7 @@ from lcapy.nodes import parse_nodes
 from lcapy.opts import Opts
 
 
-class C:
+class Thing:
 
     def __init__(self, accelerator, menu_name, cpt_type, kind):
 
@@ -36,47 +36,47 @@ class UIModelBase:
 
     # Short-cut key, menu name, cpt type, kind
     component_map = {
-        'y': C('y', 'Admittance', 'Y', ''),
-        'c': C('c', 'Capacitor', 'C', ''),
-        'cpe': C('', 'Constant phase element (CPE)', 'CPE', ''),
-        'f': C('f', 'Current controlled current source', 'F', ''),
-        'h': C('h', 'Current controlled voltage source', 'H', ''),
-        'i': C('i', 'Current source', 'I', ''),
-        'inamp': C('', 'Instrumention amplifier', 'inamp', ''),
-        'd': C('d', 'Diode', 'D', ''),
-        'fb': C('', 'Ferrite bead', 'FB', ''),
-        'z': C('z', 'Impedance', 'Z', ''),
-        'l': C('l', 'Inductor', 'L', ''),
-        'opamp': C('', 'Opamp', 'opamp', ''),
-        'fdopamp': C('', 'Fully differential opamp', 'fdopamp', ''),
-        'o': C('o', 'Open circuit', 'O', ''),
-        'p': C('p', 'Port', 'P', ''),
-        'r': C('r', 'Resistor', 'R', ''),
-        'nr': C('', 'Resistor (noiseless)', 'R', ''),
-        'tf': C('tf', 'Transformer', 'TF', ''),
-        'q': C('q', 'BJT', 'Q', ''),
-        'j': C('j', 'JFET', 'J', ''),
-        'm': C('m', 'MOSFET', 'M', ''),
-        'v': C('v', 'Voltage source', 'V', ''),
-        'g': C('g', 'Voltage controlled current source', 'G', ''),
-        'e': C('e', 'Voltage controlled voltage source', 'E', ''),
-        'w': C('w', 'Wire', 'W', ''),
+        'y': Thing('y', 'Admittance', 'Y', ''),
+        'c': Thing('c', 'Capacitor', 'C', ''),
+        'cpe': Thing('', 'Constant phase element (CPE)', 'CPE', ''),
+        'f': Thing('f', 'Current controlled current source', 'F', ''),
+        'h': Thing('h', 'Current controlled voltage source', 'H', ''),
+        'i': Thing('i', 'Current source', 'I', ''),
+        'inamp': Thing('', 'Instrumention amplifier', 'inamp', ''),
+        'd': Thing('d', 'Diode', 'D', ''),
+        'fb': Thing('', 'Ferrite bead', 'FB', ''),
+        'z': Thing('z', 'Impedance', 'Z', ''),
+        'l': Thing('l', 'Inductor', 'L', ''),
+        'opamp': Thing('', 'Opamp', 'opamp', ''),
+        'fdopamp': Thing('', 'Fully differential opamp', 'fdopamp', ''),
+        'o': Thing('o', 'Open circuit', 'O', ''),
+        'p': Thing('p', 'Port', 'P', ''),
+        'r': Thing('r', 'Resistor', 'R', ''),
+        'nr': Thing('', 'Resistor (noiseless)', 'R', ''),
+        'tf': Thing('tf', 'Transformer', 'TF', ''),
+        'q': Thing('q', 'BJT', 'Q', ''),
+        'j': Thing('j', 'JFET', 'J', ''),
+        'm': Thing('m', 'MOSFET', 'M', ''),
+        'v': Thing('v', 'Voltage source', 'V', ''),
+        'g': Thing('g', 'Voltage controlled current source', 'G', ''),
+        'e': Thing('e', 'Voltage controlled voltage source', 'E', ''),
+        'w': Thing('w', 'Wire', 'W', ''),
     }
 
     # Short-cut key, menu name, cpt type, kind
     connection_map = {
-        '0V': C('', '0V', 'W', '0V'),
-        'ground': C('0', 'Ground', 'W', 'ground'),
-        'sground': C('', 'Signal ground', 'W', 'sground'),
-        'rground': C('', 'Rail ground', 'W', 'rground'),
-        'cground': C('', 'Chassis ground', 'W', 'cground'),
-        'vdd': C('', 'VDD', 'W', 'vdd'),
-        'vss': C('', 'VSS', 'W', 'vss'),
-        'vcc': C('', 'VCC', 'W', 'vcc'),
-        'vee': C('', 'VEE', 'W', 'vee'),
-        'input': C('', 'Input', 'W', 'input'),
-        'output': C('', 'Output', 'W', 'output'),
-        'bidir': C('', 'Bidirectional', 'W', 'bidir')
+        '0V': Thing('', '0V', 'W', '0V'),
+        'ground': Thing('0', 'Ground', 'W', 'ground'),
+        'sground': Thing('', 'Signal ground', 'W', 'sground'),
+        'rground': Thing('', 'Rail ground', 'W', 'rground'),
+        'cground': Thing('', 'Chassis ground', 'W', 'cground'),
+        'vdd': Thing('', 'VDD', 'W', 'vdd'),
+        'vss': Thing('', 'VSS', 'W', 'vss'),
+        'vcc': Thing('', 'VCC', 'W', 'vcc'),
+        'vee': Thing('', 'VEE', 'W', 'vee'),
+        'input': Thing('', 'Input', 'W', 'input'),
+        'output': Thing('', 'Output', 'W', 'output'),
+        'bidir': Thing('', 'Bidirectional', 'W', 'bidir')
     }
 
     def __init__(self, ui):
@@ -211,19 +211,6 @@ class UIModelBase:
                 return name
             num += 1
 
-    def con_create(self, thing, x1, y1, x2, y2):
-        """Create a new connection."""
-
-        cpt_type = thing.cpt_type
-        if cpt_type == '':
-            return None
-
-        cpt = self.thing_create(cpt_type, x1, y1, x2,
-                                y2, kind='-' + thing.kind)
-        self.history.append(HistoryEvent('A', cpt))
-        self.select(cpt)
-        return cpt
-
     def copy(self, cpt):
 
         self.clipboard = cpt
@@ -233,7 +220,7 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
-    def cpt_create(self, cpt_type, x1, y1, x2, y2):
+    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
         """Create a new component."""
 
         s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
@@ -241,8 +228,7 @@ class UIModelBase:
             self.exception('Nodes too close to create component')
             return None
 
-        cpt = self.thing_create(cpt_type, x1, y1, x2, y2)
-        self.history.append(HistoryEvent('A', cpt))
+        cpt = self.thing_create(cpt_type, x1, y1, x2, y2, kind=kind)
         self.select(cpt)
         return cpt
 
@@ -409,7 +395,7 @@ class UIModelBase:
         cpt_key = gcpt.type
 
         self.cpt_delete(gcpt)
-        newcpt = self.cpt_create(cpt_key, x1, y1, x2, y2)
+        newcpt = self.cpt_create(cpt_key, x1, y1, x2, y2, gcpt.kind)
 
         # TODO: tidy
         newgcpt = newcpt.gcpt
@@ -469,6 +455,11 @@ class UIModelBase:
                                          self.node_spacing))
 
         newcpt.gcpt = gcpt
+
+    def create(self, thing, x1, y1, x2, y2, kind=''):
+
+        cpt = self.cpt_create(thing, x1, y1, x2, y2, kind)
+        self.history.append(HistoryEvent('A', cpt))
 
     def cut(self, cpt):
 
