@@ -93,8 +93,8 @@ class UIModelMPH(UIModelBase):
         self.ui.clear(self.preferences.grid)
 
         ax = self.ui.canvas.drawing.ax
-        ax.callbacks.connect('xlim_changed', self.on_zoom)
-        ax.callbacks.connect('ylim_changed', self.on_zoom)
+        ax.callbacks.connect('xlim_changed', self.on_mouse_zoom)
+        ax.callbacks.connect('ylim_changed', self.on_mouse_zoom)
 
     def closest_cpt(self, x, y):
 
@@ -562,6 +562,28 @@ class UIModelMPH(UIModelBase):
         self.redraw()
         self.ui.refresh()
 
+    def on_mouse_zoom(self, ax):
+        """This is called whenever xlim or ylim changes; usually
+        in response to selecting area with the mouse to zoom."""
+
+        xlim = ax.get_xlim()
+        ylim = ax.get_ylim()
+        r = sqrt((xlim[1] - xlim[0])**2 + (ylim[1] - ylim[0])**2)
+
+        xsize = self.preferences.xsize
+        ysize = self.preferences.ysize
+        R = sqrt(xsize**2 + ysize**2)
+        self.zoom_factor = R / r
+
+        if self.ui.debug:
+            print('zoom %s' % self.zoom_factor)
+
+        self.clear()
+        self.redraw()
+
+        # Don't refresh; will keep the old axes size
+        # self.ui.refresh()
+
     def on_simple_netlist(self):
 
         netlist = []
@@ -768,26 +790,6 @@ class UIModelMPH(UIModelBase):
         remove(schtex_filename)
 
         self.ui.show_message_dialog(content)
-
-    def on_zoom(self, ax):
-
-        xlim = ax.get_xlim()
-        ylim = ax.get_ylim()
-        r = sqrt((xlim[1] - xlim[0])**2 + (ylim[1] - ylim[0])**2)
-
-        xsize = self.preferences.xsize
-        ysize = self.preferences.ysize
-        R = sqrt(xsize**2 + ysize**2)
-        self.zoom_factor = R / r
-
-        if self.ui.debug:
-            print('zoom %s' % self.zoom_factor)
-
-        self.clear()
-        self.redraw()
-
-        # Don't refresh; will keep the old axes size
-        # self.ui.refresh()
 
     def exchange_cursors(self):
 

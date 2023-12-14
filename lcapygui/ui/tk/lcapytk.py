@@ -324,9 +324,11 @@ class LcapyTk(Tk):
         canvas.rs_id = figure.canvas.mpl_connect('resize_event',
                                                  self.on_resize_event)
 
-        canvas.sketcher.ax.callbacks.connect('xlim_changed', self.on_zoom)
+        canvas.sketcher.ax.callbacks.connect(
+            'xlim_changed', self.on_mouse_zoom)
 
-        canvas.sketcher.ax.callbacks.connect('ylim_changed', self.on_zoom)
+        canvas.sketcher.ax.callbacks.connect(
+            'ylim_changed', self.on_mouse_zoom)
 
         self.enter(canvas)
 
@@ -594,6 +596,10 @@ class LcapyTk(Tk):
             self.model.on_mouse_drag(event.xdata, event.ydata,
                                      event.key)
 
+    def on_mouse_zoom(self, ax):
+
+        self.model.on_mouse_zoom(ax)
+
     def on_netlist(self, *args):
 
         self.model.on_netlist()
@@ -675,10 +681,6 @@ class LcapyTk(Tk):
     def on_view_macros(self, *args):
 
         self.model.on_view_macros()
-
-    def on_zoom(self, ax):
-
-        self.model.on_zoom(ax)
 
     def refresh(self):
 
