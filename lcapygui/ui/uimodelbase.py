@@ -712,7 +712,7 @@ class UIModelBase:
 
         # calculate the midpoint
         if midpoint is None:
-            mid_x, mid_y = (p1_x + p2_x) / 2, (p1_y + p2_y) / 2
+            mid_x, mid_y = cpt.gcpt.midpoint.xy
         else:
             mid_x, mid_y = self.snap_to_grid(midpoint[0], midpoint[1])
 
