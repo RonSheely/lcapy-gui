@@ -8,7 +8,8 @@ from ..uimodelmph import UIModelMPH
 from ..uimodeldnd import UIModelDnD
 from .sketcher import Sketcher
 from .drawing import Drawing
-from .menu import MenuBar, MenuDropdown, MenuItem, MenuSeparator, MouseMenu
+from .menu import MenuBar, MenuDropdown, MenuItem, MenuSeparator
+from .menu_popup import make_popup
 from ...sketch_library import SketchLibrary
 
 
@@ -225,28 +226,12 @@ class LcapyTk(Tk):
                          ])
         ]
 
-        self.popup_menu = MouseMenu(MenuDropdown('Right click', 0, [
-                            MenuItem('Cut', self.on_cut, accelerator='Ctrl+x'),
-                            MenuItem('Copy', self.on_copy, accelerator='Ctrl+c'),
-                            MenuDropdown('Inspect', 0, [
-                                 MenuItem('Voltage', self.on_inspect_voltage),
-                                 MenuItem('Current', self.on_inspect_current),
-                                 MenuItem('Thevenin impedance',
-                                          self.on_inspect_thevenin_impedance),
-                                 MenuItem('Norton admittance',
-                                          self.on_inspect_norton_admittance),
-                                 MenuItem('Noise voltage',
-                                          self.on_inspect_noise_voltage),
-                                 MenuItem('Noise current',
-                                          self.on_inspect_noise_current),
-                            ]),
-        ]))
-        self.popup_menu.make(self, self.level)
+
 
         self.menubar = MenuBar(menudropdowns)
         self.menubar.make(self, self.level)
 
-
+        self.popup_menu = None
 
         # Notebook tabs
         self.notebook = Notebook(self)

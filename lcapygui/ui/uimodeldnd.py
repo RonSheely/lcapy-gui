@@ -1,5 +1,6 @@
 from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
+from lcapygui.ui.tk.menu_popup import make_popup, unmake_popup
 from .cross_hair import CrossHair
 
 
@@ -91,7 +92,8 @@ class UIModelDnD(UIModelMPH):
 
     def on_left_click(self, x, y):
         # Destroy popup menu
-        self.ui.popup_menu.undo_popup()
+        if self.selected:
+            unmake_popup(self.ui)
         if self.crosshair.thing == None:
             super().on_left_click(x, y)
 
@@ -104,13 +106,9 @@ class UIModelDnD(UIModelMPH):
             super().on_left_double_click(x, y)
 
     def on_right_click(self, x, y):
-
-        if self.selected:
-            v_x = self.ui.winfo_pointerx()  # + event.x
-            v_y = self.ui.winfo_pointery()  # + 750 - event.y
-
-            # Call the popup menu
-            self.ui.popup_menu.do_popup(v_x, v_y)
+        self.on_select(x, y)
+        if self.selected and self.cpt_selected:
+            make_popup(self.ui, ["Copy", "Cut", "Inspect"])
 
         self.crosshair.thing = None
         if self.new_component is not None:
