@@ -193,7 +193,7 @@ class UIModelMPH(UIModelBase):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        self.create(thing, x1, y1, x2, y2)
+        self.create(thing.cpt_type, x1, y1, x2, y2)
         self.ui.refresh()
 
     def on_add_con(self, thing):
