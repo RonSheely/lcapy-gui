@@ -24,6 +24,7 @@ class WireSolver(AStar):
         self.lines = graph
         self.width = len(self.lines[0])
         self.height = len(self.lines)
+        self.scale = 1
 
     def heuristic_cost_estimate(self, node_A, node_B):
         """
@@ -58,7 +59,7 @@ class WireSolver(AStar):
         Computes the distance between two neighbouring nodes.
         Since neighbouring nodes are always adjacent, this function always returns 1
         """
-        return 1
+        return self.scale
 
     def neighbors(self, node):
         """
@@ -113,9 +114,10 @@ class DynamicWire(Wire):
         self.__simplified = simplify_path
 
     def update_path(self):
+        scale = self.__path_finder.scale
         # Get start and end nodes
-        start = (int(self.node1.x), int(self.node1.y))
-        end = (int(self.node2.x), int(self.node2.y))
+        start = (int(self.node1.x / scale) , int(self.node1.y / scale))
+        end = (int(self.node2.x / scale), int(self.node2.y / scale))
 
         # perform A* search to find the path between the nodes
         path = self.__path_finder.astar(start, end)
@@ -164,7 +166,9 @@ class DynamicWire(Wire):
         """
         if model is None:
             return
-        # Get the graph size
+
+        # Get the graph size, equal to the number of grid points on the circuit
+        self.__path_finder.scale = model.preferences.grid_spacing
         x_size = int(model.preferences.xsize / model.preferences.grid_spacing)
         y_size = int(model.preferences.ysize / model.preferences.grid_spacing)
         self.__path_finder.width = x_size
@@ -173,7 +177,7 @@ class DynamicWire(Wire):
         # generate a blank graph
         self.__path_finder.lines = [[0 for x in range(0, x_size)] for y in range(0, y_size)]
 
-
+        # Identify where existing components are placed, and set as walls
         for x in range(0, x_size):
             for y in range(0, y_size):
                 for cpt in model.circuit.elements.values():
@@ -191,23 +195,26 @@ class DynamicWire(Wire):
 
         """
         sketcher = model.ui.sketcher
+        scale = self.__path_finder.scale
         kwargs = self.make_kwargs(model, **kwargs)
         self.picture = Picture()
+
 
         self.update_graph(model)
         self.update_path()
 
         for start, end in self.point_pairs:
             self.picture.add(
-                sketcher.stroke_line(start[0], start[1], end[0], end[1], **kwargs)
+                sketcher.stroke_line(start[0] * scale, start[1] * scale, end[0]*scale, end[1]*scale, **kwargs)
             )
 
     def convert_to_wires(self, model, **kwargs):
         self.update_path()
+        scale = self.__path_finder.scale
         cpts = []
         previous = self.__path[0]
         for node in self.__path[1:]:
-            cpts.append(model.cpt_create("W", previous[0], previous[1], node[0], node[1]))
+            cpts.append(model.cpt_create("W", previous[0] * scale, previous[1] * scale, node[0] * scale, node[1] * scale))
             previous = node
         model.cpt_delete(self) # uses cpt_delete to avoid being added to history
         return cpts
@@ -223,10 +230,11 @@ class DynamicWire(Wire):
 
     def is_within_bbox(self, x, y):
         mouse = np.array([x, y])
+        scale = self.__path_finder.scale
         # Get the list of points in the wire
         for start, end in np.array(self.point_pairs):
             # Get the absolute distance between the mouse and that segment of the wire
-            r = self.distance_from_cpt(x, y)
+            r = self.distance_from_cpt(x * scale, y * scale)
             # Assume less than half a square is "close enough"
             if r < 0.2:
                 return True
