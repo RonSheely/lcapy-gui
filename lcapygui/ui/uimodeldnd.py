@@ -94,8 +94,7 @@ class UIModelDnD(UIModelMPH):
 
     def on_left_click(self, x, y):
         # Destroy popup menu
-        if self.selected:
-            unmake_popup(self.ui)
+        unmake_popup(self.ui)
         if self.crosshair.thing == None:
             super().on_left_click(x, y)
 
@@ -112,7 +111,7 @@ class UIModelDnD(UIModelMPH):
         if self.selected and self.cpt_selected:
             make_popup(self.ui, self.selected.gcpt.menu_items)
         else:
-            make_popup(self.ui, ["dropdown_component_menu"])
+            make_popup(self.ui, ["edit_paste"])
 
         self.crosshair.thing = None
         if self.new_component is not None:
