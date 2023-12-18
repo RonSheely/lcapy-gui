@@ -22,8 +22,6 @@ class UIModelDnD(UIModelMPH):
         self.crosshair = CrossHair(self)
         self.new_component = None
 
-
-
     def on_add_cpt(self, thing):
         """
         Configures crosshair for component creation
@@ -95,8 +93,14 @@ class UIModelDnD(UIModelMPH):
     def on_left_click(self, x, y):
         # Destroy popup menu
         unmake_popup(self.ui)
+        # Select component under mouse if not placing a component
         if self.crosshair.thing == None:
-            super().on_left_click(x, y)
+            self.on_select(x, y)
+
+            if self.cpt_selected:
+                cpt = self.selected
+                if self.ui.debug:
+                    print("Selected " + cpt.name)
 
     def on_left_double_click(self, x, y):
         self.on_select(x, y)
@@ -117,7 +121,6 @@ class UIModelDnD(UIModelMPH):
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
             self.new_component = None
-
 
     def on_mouse_move(self, mouse_x, mouse_y):
         # Snap mouse to grid
@@ -249,12 +252,26 @@ class UIModelDnD(UIModelMPH):
         self.cut(self.selected)
         self.ui.refresh()
 
+    def on_delete(self):
+        """
+        If a component is selected, delete it, then redraw and refresh the UI
+        """
+        if self.selected is None:
+            return
+        if not self.cpt_selected:
+            # Handle node deletion later
+            return
+
+        self.delete(self.selected)
+        self.ui.refresh()
+
     def on_paste(self):
+        # TODO: paste in the same way as component creation
         self.new_component = self.paste(
             self.crosshair.x,
             self.crosshair.y,
-            self.crosshair.x + 0.2,
-            self.crosshair.y + 0.2,
+            self.crosshair.x + 1,
+            self.crosshair.y,
         )
 
         self.ui.refresh()

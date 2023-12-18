@@ -117,6 +117,7 @@ class LcapyTk(Tk):
         self.menu_parts["edit_cut"] = MenuItem('Cut', self.on_cut, accelerator='Ctrl+x')
         self.menu_parts["edit_copy"] = MenuItem('Copy', self.on_copy, accelerator='Ctrl+c')
         self.menu_parts["edit_paste"] = MenuItem('Paste', self.on_paste, accelerator='Ctrl+v')
+        self.menu_parts["edit_delete"] = MenuItem('Delete', self.on_delete, accelerator='Del')
         self.menu_parts["edit_values"] = MenuItem('Values', self.on_edit_values, accelerator='Ctrl+V')
         self.menu_parts["view_expression"] = MenuItem('Expression', self.on_expression, accelerator='Ctrl+e')
         self.menu_parts["view_circuitikz_image"] = MenuItem('Circuitikz image', self.on_view, accelerator='Ctrl+u')
@@ -157,6 +158,8 @@ class LcapyTk(Tk):
         self.menu_parts["manipulate_model_noise"] = MenuItem('Noise model', self.on_noise_model)
         self.menu_parts["manupulate_expand_components"] = MenuItem('Expand components', self.on_expand)
         self.menu_parts["help"] = MenuItem('Help', self.on_help, accelerator='Ctrl+h')
+        self.menu_parts["help_debug"] = MenuItem('Debug', self.on_debug, accelerator='Ctrl+d')
+
 
 
         # Define menu dropdowns
@@ -169,7 +172,8 @@ class LcapyTk(Tk):
             self.menu_parts["file_save_as"],
             self.menu_parts["file_export"],
             self.menu_parts["screenshot"],
-            self.menu_parts["program_quit"]])
+            self.menu_parts["program_quit"]
+        ])
         self.menu_parts["dropdown_edit_menu"] = MenuDropdown('Edit', 0, [
             self.menu_parts["preferences"],
             self.menu_parts["edit_undo"],
@@ -177,7 +181,8 @@ class LcapyTk(Tk):
             self.menu_parts["edit_cut"],
             self.menu_parts["edit_copy"],
             self.menu_parts["edit_paste"],
-            self.menu_parts["edit_values"]])
+            self.menu_parts["edit_values"]
+        ])
         self.menu_parts["dropdown_view_menu"] = MenuDropdown('View', 0, [
             self.menu_parts["view_expression"],
             self.menu_parts["view_circuitikz_image"],
@@ -192,7 +197,8 @@ class LcapyTk(Tk):
             self.menu_parts["view_plots"],
             self.menu_parts["view_description"],
             self.menu_parts["view_annotation"],
-            self.menu_parts["view_graph_circuit"]])
+            self.menu_parts["view_graph_circuit"]
+        ])
         self.menu_parts["dropdown_component_menu"] = component_menu_dropdown
         self.menu_parts["dropdown_twoport"] = MenuDropdown('Twoport', 0, [
             self.menu_parts["create_twoport_a"],
@@ -202,18 +208,21 @@ class LcapyTk(Tk):
             self.menu_parts["create_twoport_s"],
             self.menu_parts["create_twoport_t"],
             self.menu_parts["create_twoport_y"],
-            self.menu_parts["create_twoport_z"]])
+            self.menu_parts["create_twoport_z"]
+        ])
         self.menu_parts["dropdown_create_menu"] = MenuDropdown('Create', 1, [
             self.menu_parts["create_state_space"],
             self.menu_parts["create_transfer_function"],
-            self.menu_parts["dropdown_twoport"]])
+            self.menu_parts["dropdown_twoport"]
+        ])
         self.menu_parts["dropdown_inspect_menu"] = MenuDropdown('Inspect', 0, [
             self.menu_parts["inspect_voltage"],
             self.menu_parts["inspect_current"],
             self.menu_parts["inspect_thevenin_impedence"],
             self.menu_parts["inspect_norton_admittance"],
             self.menu_parts["inspect_noise_voltage"],
-            self.menu_parts["inspect_noise_current"]])
+            self.menu_parts["inspect_noise_current"]
+        ])
         self.menu_parts["dropdown_manipulate_menu"] = MenuDropdown('Manipulate', 0, [
             self.menu_parts["manipulate_independent_sources_kill"],
             self.menu_parts["manipulate_independent_sources_remove"],
@@ -222,9 +231,12 @@ class LcapyTk(Tk):
             self.menu_parts["manipulate_model_transient"],
             self.menu_parts["manipulate_model_laplace"],
             self.menu_parts["manipulate_model_noise"],
-            self.menu_parts["manupulate_expand_components"]])
+            self.menu_parts["manupulate_expand_components"]
+        ])
         self.menu_parts["dropdown_help_menu"] = MenuDropdown('Help', 0, [
-            self.menu_parts["help"]])
+            self.menu_parts["help"],
+            self.menu_parts["help_debug"]
+        ])
 
         menudropdowns = [self.menu_parts["dropdown_file_menu"], self.menu_parts["dropdown_edit_menu"], self.menu_parts["dropdown_view_menu"], self.menu_parts["dropdown_component_menu"], self.menu_parts["dropdown_create_menu"], self.menu_parts["dropdown_inspect_menu"], self.menu_parts["dropdown_manipulate_menu"], self.menu_parts["dropdown_help_menu"]]
 
@@ -441,9 +453,14 @@ class LcapyTk(Tk):
     def on_dc_model(self, *args):
         self.model.on_dc_model()
 
+    def on_debug(self, *args):
+        self.model.on_debug()
     def on_default_fit(self, *args):
         self.canvas.drawing.set_default_view()
         self.refresh()
+
+    def on_delete(self, *args):
+        self.model.on_delete()
 
     def on_description(self, *args):
         self.show_message_dialog(self.model.circuit.description())
