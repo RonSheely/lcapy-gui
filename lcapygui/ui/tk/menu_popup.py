@@ -60,27 +60,10 @@ class MenuPopup:
 
 
 def make_popup(ui, menu_items):
-    MenuTable = {
-        "Copy": MenuItem("Copy", ui.on_copy, accelerator="Ctrl+c"),
-        "Cut": MenuItem("Cut", ui.on_cut, accelerator="Ctrl+x"),
-        "Inspect": MenuDropdown(
-                    "Inspect",
-                    0,
-                    [
-                        MenuItem("Voltage", ui.on_inspect_voltage),
-                        MenuItem("Current", ui.on_inspect_current),
-                        MenuItem(
-                            "Thevenin impedance", ui.on_inspect_thevenin_impedance
-                        ),
-                        MenuItem("Norton admittance", ui.on_inspect_norton_admittance),
-                        MenuItem("Noise voltage", ui.on_inspect_noise_voltage),
-                        MenuItem("Noise current", ui.on_inspect_noise_current),
-                    ],
-                ),
-    }
+
     display_items = []
     for menu_item in menu_items:
-        display_items.append(MenuTable[menu_item])
+        display_items.append(ui.menu_parts[menu_item])
 
     ui.popup_menu = MenuPopup(
         MenuDropdown(

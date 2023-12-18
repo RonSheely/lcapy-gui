@@ -22,6 +22,8 @@ class UIModelDnD(UIModelMPH):
         self.crosshair = CrossHair(self)
         self.new_component = None
 
+
+
     def on_add_cpt(self, thing):
         """
         Configures crosshair for component creation
@@ -108,7 +110,9 @@ class UIModelDnD(UIModelMPH):
     def on_right_click(self, x, y):
         self.on_select(x, y)
         if self.selected and self.cpt_selected:
-            make_popup(self.ui, ["Copy", "Cut", "Inspect"])
+            make_popup(self.ui, self.selected.gcpt.menu_items)
+        else:
+            make_popup(self.ui, ["dropdown_component_menu"])
 
         self.crosshair.thing = None
         if self.new_component is not None:

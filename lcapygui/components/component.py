@@ -149,6 +149,9 @@ class Component(ABC):
         # This is set by the draw() method
         self.picture = None
 
+        # items to be shown on right click
+        self.menu_items = ["edit_cut", "edit_copy", "edit_paste", "dropdown_inspect_menu"]
+
     def filter_opts(self, opts):
 
         connection_keys = ('input', 'output', 'bidir', 'pad')
