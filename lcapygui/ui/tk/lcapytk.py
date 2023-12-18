@@ -9,7 +9,6 @@ from ..uimodeldnd import UIModelDnD
 from .sketcher import Sketcher
 from .drawing import Drawing
 from .menu import MenuBar, MenuDropdown, MenuItem, MenuSeparator
-from .menu_popup import make_popup
 from ...sketch_library import SketchLibrary
 
 
@@ -159,8 +158,6 @@ class LcapyTk(Tk):
         self.menu_parts["manupulate_expand_components"] = MenuItem('Expand components', self.on_expand)
         self.menu_parts["help"] = MenuItem('Help', self.on_help, accelerator='Ctrl+h')
         self.menu_parts["help_debug"] = MenuItem('Debug', self.on_debug, accelerator='Ctrl+d')
-
-
 
         # Define menu dropdowns
         self.menu_parts["dropdown_file_menu"] = MenuDropdown('File', 0, [
