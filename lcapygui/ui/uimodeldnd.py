@@ -1,5 +1,6 @@
 from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
+from lcapygui.ui.uimodelbase import Thing
 from lcapygui.ui.tk.menu_popup import make_popup, unmake_popup
 from .cross_hair import CrossHair
 
@@ -267,11 +268,7 @@ class UIModelDnD(UIModelMPH):
 
     def on_paste(self):
         # TODO: paste in the same way as component creation
-        self.new_component = self.paste(
-            self.crosshair.x,
-            self.crosshair.y,
-            self.crosshair.x + 1,
-            self.crosshair.y,
-        )
+        paste_thing = Thing(None, None, self.clipboard.type, "")
+        self.on_add_cpt(paste_thing)
 
         self.ui.refresh()
