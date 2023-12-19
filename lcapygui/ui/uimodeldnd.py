@@ -268,7 +268,13 @@ class UIModelDnD(UIModelMPH):
         self.ui.refresh()
 
     def on_paste(self):
-        # TODO: paste in the same way as component creation
+        if self.clipboard is None:
+            if self.ui.debug:
+                print("Nothing to paste")
+                return
+
+        if self.ui.debug:
+            print("Pasting " + self.clipboard.name)
         paste_thing = Thing(None, None, self.clipboard.type, "")
         self.on_add_cpt(paste_thing)
 
