@@ -62,6 +62,8 @@ class UIModelDnD(UIModelMPH):
                 # Reset crosshair mode
                 self.crosshair.thing = None
 
+                self.merge_nodes(self.new_component)
+
                 # If created component is a dynamic wire, split to component parts.
                 if self.new_component.gcpt.type == "DW":
                     self.new_component.gcpt.convert_to_wires(self)
@@ -70,6 +72,9 @@ class UIModelDnD(UIModelMPH):
 
         elif self.selected is not None:
             if self.cpt_selected:  # Moving a component
+
+                self.merge_nodes(self.selected)
+
                 # Update move history
                 node_positions = [
                     (node.pos.x, node.pos.y) for node in self.selected.nodes
@@ -90,6 +95,22 @@ class UIModelDnD(UIModelMPH):
         self.new_component = None
 
         self.on_redraw()
+
+    def merge_nodes(self, cpt):
+        cpt = cpt.gcpt
+        for new_node in self.circuit.nodes.values():
+            print(f"checking node {new_node.name} {new_node.pos.x, new_node.pos.y}")
+            if cpt.node1.name == new_node.name or cpt.node2.name == new_node.name:
+                print(f" -> warning same node {cpt.node2.name} {cpt.node2.pos.x, cpt.node2.pos.y}, same node")
+
+            elif abs(new_node.pos.x - cpt.node2.pos.x) < 0.1 and abs(new_node.pos.y - cpt.node2.pos.y) < 0.1:
+                print(f" -> overwriting {cpt.node2.name} {cpt.node2.pos.x, cpt.node2.pos.y}")
+                new_node.connected.extend(cpt.node2.connected)
+                self.circuit.nodes.pop(cpt.node2.name)
+                cpt.nodes[1] = new_node
+                break
+            else:
+                print(f" -> cannot merge {cpt.node2.name} {cpt.node2.pos.x, cpt.node2.pos.y}, too far apart")
 
     def on_left_click(self, x, y):
         # Destroy popup menu
@@ -114,7 +135,6 @@ class UIModelDnD(UIModelMPH):
     def on_right_click(self, x, y):
         self.on_select(x, y)
         if self.selected and self.cpt_selected:
-
             make_popup(self.ui, self.selected.gcpt.menu_items)
         else:
             make_popup(self.ui, ["edit_paste"])
@@ -275,6 +295,7 @@ class UIModelDnD(UIModelMPH):
 
         if self.ui.debug:
             print("Pasting " + self.clipboard.name)
+        # Generate new thing from clipboard
         paste_thing = Thing(None, None, self.clipboard.type, "")
         self.on_add_cpt(paste_thing)
 
