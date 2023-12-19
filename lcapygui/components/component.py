@@ -150,7 +150,7 @@ class Component(ABC):
         self.picture = None
 
         # items to be shown on right click
-        self.menu_items = ["edit_cut", "edit_copy", "edit_paste", "edit_delete", "dropdown_inspect_menu"]
+        self.menu_items = ["edit_cut", "edit_copy", "edit_paste", "edit_delete", "dropdown_inspect_menu", "inspect_properties"]
 
     def filter_opts(self, opts):
 

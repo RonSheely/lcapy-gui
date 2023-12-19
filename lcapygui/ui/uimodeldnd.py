@@ -114,6 +114,7 @@ class UIModelDnD(UIModelMPH):
     def on_right_click(self, x, y):
         self.on_select(x, y)
         if self.selected and self.cpt_selected:
+
             make_popup(self.ui, self.selected.gcpt.menu_items)
         else:
             make_popup(self.ui, ["edit_paste"])

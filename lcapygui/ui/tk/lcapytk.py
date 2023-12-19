@@ -142,6 +142,7 @@ class LcapyTk(Tk):
         self.menu_parts["create_twoport_t"] = MenuItem('T twoport', self.on_create_twoport)
         self.menu_parts["create_twoport_y"] = MenuItem('Y twoport', self.on_create_twoport)
         self.menu_parts["create_twoport_z"] = MenuItem('Z twoport', self.on_create_twoport)
+        self.menu_parts["inspect_properties"] = MenuItem('Properties', self.on_inspect_properties)
         self.menu_parts["inspect_voltage"] = MenuItem('Voltage', self.on_inspect_voltage)
         self.menu_parts["inspect_current"] = MenuItem('Current', self.on_inspect_current)
         self.menu_parts["inspect_thevenin_impedence"] = MenuItem('Thevenin impedance', self.on_inspect_thevenin_impedance)
@@ -158,6 +159,7 @@ class LcapyTk(Tk):
         self.menu_parts["manupulate_expand_components"] = MenuItem('Expand components', self.on_expand)
         self.menu_parts["help"] = MenuItem('Help', self.on_help, accelerator='Ctrl+h')
         self.menu_parts["help_debug"] = MenuItem('Debug', self.on_debug, accelerator='Ctrl+d')
+
 
         # Define menu dropdowns
         self.menu_parts["dropdown_file_menu"] = MenuDropdown('File', 0, [
@@ -504,6 +506,8 @@ class LcapyTk(Tk):
     def on_help(self, *args):
         self.model.on_help()
 
+    def on_inspect_properties(self, *args):
+        self.model.on_inspect_properties()
     def on_inspect_current(self, *args):
         self.model.on_inspect_current()
 
