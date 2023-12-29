@@ -265,10 +265,10 @@ class UIModelBase:
 
         gcpt.draw(self, **kwargs)
 
-        label_cpts = self.preferences.label_cpts
+        label_style = self.preferences.label_style
 
         if gcpt.type in ('A', 'O', 'W', 'X'):
-            label_cpts = 'none'
+            label_style = 'none'
 
         name = cpt.name
 
@@ -289,20 +289,30 @@ class UIModelBase:
             value_latex = '$' + expr(value).latex() + '$'
 
         label = ''
-        if label_cpts == 'name+value':
+        annotation = ''
+        if label_style == 'name=value':
             if name != value and gcpt.has_value:
                 label = name + '=' + value_latex
             else:
                 label = name
-        elif label_cpts == 'value':
+        elif label_style == 'stacked':
+            if name != value and gcpt.has_value:
+                label = name + '\n' + value_latex
+            else:
+                label = name
+        elif label_style == 'split':
+            label = name
+            if name != value and gcpt.has_value:
+                annotation = value_latex
+        elif label_style == 'value':
             if value != '':
                 label = value_latex
-        elif label_cpts == 'name':
+        elif label_style == 'name':
             label = name
-        elif label_cpts == 'none':
+        elif label_style == 'none':
             label = ''
         else:
-            raise RuntimeError('Unhandled label_cpts=' + label_cpts)
+            raise RuntimeError('Unhandled label_style=' + label_style)
 
         if label != '':
             ann = Annotation(self.ui, gcpt.label_position.x,

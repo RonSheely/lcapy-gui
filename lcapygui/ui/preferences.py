@@ -16,7 +16,7 @@ class Preferences:
         self.version = 6
         self.label_nodes = 'none'
         self.draw_nodes = 'connections'
-        self.label_cpts = 'name'
+        self.label_style = 'name'
         self.style = 'american'
         self.voltage_dir = 'RP'
         self.grid = 'on'
@@ -80,6 +80,13 @@ class Preferences:
         if not hasattr(self, 'scale'):
             self.scale = self.circuitikz_default_scale
 
+        if hasattr(self, 'label_cpts'):
+            warn('label_cpts is superseded by label_style')
+            self.label_style = self.label_cpts
+            if self.label_style == 'name+value':
+                self.label_style = 'name=value'
+            delattr(self, 'label_cpts')
+
         # Update the preferences file if the version changed
         if version != self.version:
             self.save()
@@ -114,14 +121,10 @@ class Preferences:
         if self.cpt_size != self.circuitikz_default_cpt_size:
             s += ', cpt_size=%.2f' % self.cpt_size
 
-        if self.label_cpts == 'name':
-            s += ', label_ids=true'
-            s += ', label_values=false'
-        elif self.label_cpts == 'value':
-            s += ', label_ids=false'
-            s += ', label_values=true'
-        elif self.label_cpts == 'value+name':
-            s += ', label_ids=true'
-            s += ', label_values=true'
+        label_style = self.label_style
+        if label_style == 'name=value':
+            label_style = 'aligned'
+
+        s += ', label_style=' + label_style
 
         return s

@@ -20,9 +20,10 @@ class PreferencesDialog(Window):
                               self.model.preferences.draw_nodes,
                               ('all', 'none', 'connections', 'primary'),
                               command=self.on_update),
-                   LabelEntry('label_cpts', 'Component labels',
-                              self.model.preferences.label_cpts,
-                              ('none', 'name',  'value', 'name+value'),
+                   LabelEntry('label_style', 'Component labels',
+                              self.model.preferences.label_style,
+                              ('none', 'name', 'value', 'name=value',
+                               'stacked', 'split'),
                               command=self.on_update),
                    LabelEntry('style', 'Style',
                               self.model.preferences.style,
@@ -93,7 +94,8 @@ class PreferencesDialog(Window):
         self.model.preferences.label_nodes = self.labelentries.get(
             'label_nodes')
         self.model.preferences.draw_nodes = self.labelentries.get('draw_nodes')
-        self.model.preferences.label_cpts = self.labelentries.get('label_cpts')
+        self.model.preferences.label_style = self.labelentries.get(
+            'label_style')
         self.model.preferences.style = self.labelentries.get('style')
         self.model.preferences.voltage_dir = self.labelentries.get(
             'voltage_dir')
