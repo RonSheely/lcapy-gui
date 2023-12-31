@@ -9,3 +9,4 @@ class Capacitor(Bipole):
              '-polar': 'Polar', '-variable': 'Variable',
              '-curved': 'Curved', '-sensor': ' Sensor',
              '-tunable': 'Tunable'}
+    label_offset = 0.45

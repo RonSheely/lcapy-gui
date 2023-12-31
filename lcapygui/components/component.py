@@ -26,7 +26,7 @@ class Component(ABC):
     can_stretch = False
     default_kind = ''
     default_style = ''
-    label_offset = 0.6
+    label_offset = 0.3
     angle_offset = 0
     # Common fields used for all components
     fields = {'label': 'Label',
@@ -318,21 +318,6 @@ class Component(ABC):
         x1, y1 = self.node1.x, self.node1.y
         x2, y2 = self.node2.x, self.node2.y
         return abs(y2 - y1) > abs(x2 - x1)
-
-    @property
-    def label_position(self):
-        """
-        Returns position where to place label.
-        """
-
-        pos = self.midpoint
-        w = self.label_offset
-        if self.vertical:
-            pos.x += w
-        else:
-            pos.y += w
-
-        return pos
 
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions."""

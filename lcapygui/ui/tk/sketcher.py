@@ -137,7 +137,7 @@ class Sketcher:
                          xend, yend, color=color, **kwargs))
         return lines
 
-    def text(self, x, y, text, **kwargs):
+    def text(self, x, y, text, ha='center', va='center', **kwargs):
 
         from lcapy.latex import latex_format_label
 
@@ -145,4 +145,4 @@ class Sketcher:
         # dollar signs inside mathrm, e.g., \mathrm{$A_2$}
         # text = r'$\mathrm{' + latex_format_label(text) + '}$'
 
-        return self.ax.annotate(text, (x, y), **kwargs)
+        return self.ax.annotate(text, (x, y), ha=ha, va=va, **kwargs)
