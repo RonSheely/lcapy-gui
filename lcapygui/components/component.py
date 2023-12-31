@@ -404,6 +404,9 @@ class Component(ABC):
         else:
             attr = 'rotate=' + str(angle).rstrip('0').rstrip('.')
 
+        if r < 1:
+            attr += ', scale=' + str(r)
+
         return attr
 
     def attr_string(self, x1, y1, x2, y2, step=1):
@@ -497,6 +500,9 @@ class Component(ABC):
         # should be removed to avoid confusion.
         if opts is not None:
             self.opts = opts
+
+            if 'scale' in opts:
+                self.scale = float(opts['scale'])
 
     def choose_node_name(self, m, nodes):
 
