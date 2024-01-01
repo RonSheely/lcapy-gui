@@ -4,8 +4,6 @@ from .svgparse import SVGParse
 from os.path import join
 from matplotlib.path import Path
 
-from .tf import TF
-
 
 class SketchPath:
 

@@ -315,15 +315,20 @@ class UIModelBase:
             raise RuntimeError('Unhandled label_style=' + label_style)
 
         if label != '':
-            ann = Annotation.make_label(self.ui, gcpt.midpoint, gcpt.angle,
-                                        gcpt.label_offset, label, False)
+            ann = Annotation.make_label(self.ui, gcpt.midpoint,
+                                        gcpt.angle, float(gcpt.scale),
+                                        gcpt.label_offset_pos,
+                                        gcpt.label_alignment, label)
             ann.draw(fontsize=self.preferences.font_size *
                      self.zoom_factor * self.preferences.line_width_scale)
             gcpt.annotations.append(ann)
 
         if annotation != '':
-            ann = Annotation.make_label(self.ui, gcpt.midpoint, gcpt.angle,
-                                        gcpt.label_offset, annotation, True)
+            ann = Annotation.make_label(self.ui, gcpt.midpoint,
+                                        gcpt.angle, float(gcpt.scale),
+                                        gcpt.annotation_offset_pos,
+                                        gcpt.annotation_alignment,
+                                        annotation)
             ann.draw(fontsize=self.preferences.font_size *
                      self.zoom_factor * self.preferences.line_width_scale)
             gcpt.annotations.append(ann)

@@ -4,10 +4,10 @@ from .transistor import Transistor
 class BJT(Transistor):
 
     type = "Q"
-    default_kind = 'npn-'
+    default_kind = 'npn'
 
-    kinds = {'npn-': 'NPN',
-             'pnp-': 'PNP',
+    kinds = {'npn': 'NPN',
+             'pnp': 'PNP',
              'npn-nigbt': 'NPN IGBT',
              'pnp-pigbt': 'PNP IGBT gate',
              'npn-bodydiode': 'NPN with body diode',
@@ -22,7 +22,7 @@ class BJT(Transistor):
     pinname1 = 'c'
     pinname2 = 'e'
 
-    node_pinnames = ('e', 'b', 'c')
+    node_pinnames = ('c', 'b', 'e')
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 

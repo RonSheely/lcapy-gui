@@ -8,7 +8,7 @@ class Inamp(Opamp):
     type = "Einamp"
     sketch_net = 'E 1 2 inamp 3 4 5 6'
     sketch_key = 'inamp'
-    label_offset = -1
+    label_offset_pos = (0, -1)
     args = ('Ad', 'Ac', 'Rf')
 
     node_pinnames = ('out', 'ref', 'in+', 'in-', 'r+', 'r-')

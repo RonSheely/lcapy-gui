@@ -26,7 +26,10 @@ class Component(ABC):
     can_stretch = False
     default_kind = ''
     default_style = ''
-    label_offset = 0.3
+    label_offset_pos = (0, -0.3)
+    annotation_offset_pos = (0, 0.3)
+    label_alignment = ('center', 'top')
+    annotation_alignment = ('center', 'bottom')
     angle_offset = 0
     # Common fields used for all components
     fields = {'label': 'Label',

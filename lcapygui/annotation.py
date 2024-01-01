@@ -1,3 +1,7 @@
+from .components.tf import TF
+from .components.pos import Pos
+
+
 class Annotation:
 
     def __init__(self, ui, x, y, text, ha='center', va='center', rotate=0):
@@ -27,40 +31,38 @@ class Annotation:
             self.patch.remove()
 
     @classmethod
-    def make_label(cls, ui, pos, angle, offset, text, flip):
+    def make_label(cls, ui, pos, angle, scale, offset, alignment, text):
+
+        alignments = [('center', 'top'), ('right', 'center'),
+                      ('center', 'bottom'), ('left', 'center')]
+
+        if alignment not in alignments:
+            raise ValueError('Unknown alignment ' + str(alignment))
+        index = alignments.index(alignment)
 
         rotate = 0
-        x = pos.x
-        y = pos.y
-        angle = round(angle, 2)
 
-        if flip:
-            offset = -offset
+        tf = TF().translate(offset[0], offset[1]
+                            ).rotate_deg(angle).scale(scale)
+
+        pos += Pos(tf.transform((0, 0)))
+
+        angle = round(angle, 2)
 
         if angle == 0:
             # Right
-            y -= offset
-            halign = 'center'
-            valign = 'bottom' if flip else 'top'
+            pass
         elif angle in (90, -270):
             # Up
-            x += offset
-            halign = 'right' if flip else 'left'
-            valign = 'center'
+            alignment = alignments[(index + 1) % 4]
         elif angle in (180, -180):
             # Left
-            y += offset
-            halign = 'center'
-            valign = 'top' if flip else 'bottom'
+            alignment = alignments[(index + 2) % 4]
         elif angle in (270, -90):
             # Down
-            x -= offset
-            halign = 'left' if flip else 'right'
-            valign = 'center'
+            alignment = alignments[(index + 3) % 4]
         else:
             # Rotated, TODO
             rotate = angle
-            halign = 'center'
-            valign = 'center'
 
-        return cls(ui, x, y, text, halign, valign, rotate)
+        return cls(ui, pos.x, pos.y, text, alignment[0], alignment[1], rotate)

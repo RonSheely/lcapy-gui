@@ -37,12 +37,12 @@ class MOSFET(Transistor):
     pinname2 = 'd'
 
     node_pinnames = ('d', 'g', 's')
-    ppins1 = {'d': ('lx', 0.2661, 0.5),
+    ppins1 = {'d': ('lx', 0.2661, -0.5),
               'g': ('lx', -0.2874, 0),
-              's': ('lx', 0.2661, -0.5)}
-    ppins2 = {'d': ('lx', 0.2661, 0.5),
+              's': ('lx', 0.2661, 0.5)}
+    ppins2 = {'d': ('lx', 0.2661, -0.5),
               'g': ('lx', -0.2891, -0.145),
-              's': ('lx', 0.2661, -0.5)}
+              's': ('lx', 0.2661, 0.5)}
 
     @property
     def ppins(self):

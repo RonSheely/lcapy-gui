@@ -11,7 +11,7 @@ class FDOpamp(Opamp):
     type = "Efdopamp"
     sketch_net = 'E 1 2 fdopamp 3 4 5'
     sketch_key = 'fdopamp'
-    label_offset = -1
+    label_offset_pos = (0, -1)
     args = ('Ad', 'Ac', 'Ro')
 
     node_pinnames = ('out+', 'out-', 'in+', 'in-', 'ocm')

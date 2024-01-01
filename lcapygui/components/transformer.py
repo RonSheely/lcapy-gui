@@ -66,20 +66,3 @@ class Transformer(Fixed):
     def sketch_net(self):
 
         return 'TF 1 2 3 4 ' + self.kind
-
-    @property
-    def label_position(self):
-        """
-        Returns position where to place label.
-        """
-
-        # -0.2 is the centre for length == 1.
-
-        pos = self.midpoint
-        w = self.label_offset * self.length
-        if self.vertical:
-            pos.x += w
-        else:
-            pos.y += w
-
-        return pos

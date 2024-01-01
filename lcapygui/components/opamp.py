@@ -8,7 +8,8 @@ class Opamp(Fixed):
     type = "Eopamp"
     sketch_net = 'E 1 2 opamp 3 4'
     sketch_key = 'opamp'
-    label_offset = 0
+    label_offset_pos = (0, 0)
+    anotation_offset_pos = None
     args = ('Ad', 'Ac', 'Ro')
 
     # The Nm node is not used (ground).

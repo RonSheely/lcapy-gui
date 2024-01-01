@@ -6,10 +6,10 @@ from numpy import array, sqrt, dot
 class Transistor(Stretchy):
 
     can_stretch = True
-    label_offset = 0.6
     has_value = False
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
-    label_offset = 1.1
+    label_offset_pos = (0.5, 0)
+    anotation_offset_pos = None
 
     # Perhaps make a circle?
     hw = 0.2

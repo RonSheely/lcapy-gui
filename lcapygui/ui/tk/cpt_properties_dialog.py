@@ -16,6 +16,7 @@ class CptPropertiesDialog(Window):
 
         entries = []
         if self.gcpt.kinds != {}:
+            breakpoint()
             kind_name = self.gcpt.kinds[self.gcpt.kind]
             entries.append(LabelEntry(
                 'kind', 'Kind', kind_name, list(self.gcpt.kinds.values()),
