@@ -18,6 +18,7 @@
 <g clip-path="url(#clip2)" clip-rule="nonzero">
 <path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 36.851781 -0.0019375 L 19.843969 10.630875 L 19.843969 -10.630844 Z M 36.851781 -0.0019375 " transform="matrix(1,0,0,-1,0.199,21.459)"/>
 </g>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 36.851781 -0.0019375 L 19.843969 -0.0019375 " transform="matrix(1,0,0,-1,0.199,21.459)"/>
 <g clip-path="url(#clip3)" clip-rule="nonzero">
 <path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 36.851781 -10.630844 L 36.851781 10.630875 " transform="matrix(1,0,0,-1,0.199,21.459)"/>
 </g>
