@@ -54,13 +54,13 @@ class Annotation:
             pass
         elif angle in (90, -270):
             # Up
-            alignment = alignments[(index + 1) % 4]
+            alignment = alignments[(index + 3) % 4]
         elif angle in (180, -180):
             # Left
             alignment = alignments[(index + 2) % 4]
         elif angle in (270, -90):
             # Down
-            alignment = alignments[(index + 3) % 4]
+            alignment = alignments[(index + 1) % 4]
         else:
             # Rotated, TODO
             rotate = angle
