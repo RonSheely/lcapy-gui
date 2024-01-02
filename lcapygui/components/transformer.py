@@ -28,8 +28,6 @@ class Transformer(Fixed):
     node_pinnames = ('s+', 's-', 'p+', 'p-')
 
     hw = 0.32
-    # Actual half-height
-    # hh = 0.48245
     hh = 0.5
     ppins = {'s+': ('rx', hw, hh),
              's-': ('rx', hw, -hh),
@@ -37,6 +35,8 @@ class Transformer(Fixed):
              'p-': ('lx', -hw, -hh)}
 
     bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
+
+    label_offset_pos = (0, 0.8)
 
     @property
     def node1(self):

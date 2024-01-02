@@ -46,7 +46,7 @@ class LcapyTk(Tk):
         self.level = level
 
         categories = {
-            'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w'),
+            'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w', 'tf'),
             'Opamp': ('opamp', 'fdopamp', 'inamp'),
             'Transistor': ('q', 'j', 'm'),
             'Dependent source': ('e', 'f', 'g', 'h'),
