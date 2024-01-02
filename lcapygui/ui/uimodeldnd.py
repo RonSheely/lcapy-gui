@@ -72,7 +72,7 @@ class UIModelDnD(UIModelMPH):
 
         elif self.selected is not None:
             if self.cpt_selected:  # Moving a component
-
+                # Merge component with existing nodes if present
                 self.merge_nodes(self.selected)
 
                 # Update move history
@@ -86,6 +86,9 @@ class UIModelDnD(UIModelMPH):
                 )
             # Moving a node
             else:
+                for cpt in self.selected.connected:
+                    self.merge_nodes(cpt, self.selected)
+
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
                     HistoryEvent("M", self.selected, self.node_positions, node_position)
@@ -96,21 +99,23 @@ class UIModelDnD(UIModelMPH):
 
         self.on_redraw()
 
-    def merge_nodes(self, cpt):
-        cpt = cpt.gcpt
-        for new_node in self.circuit.nodes.values():
-            print(f"checking node {new_node.name} {new_node.pos.x, new_node.pos.y}")
-            if cpt.node1.name == new_node.name or cpt.node2.name == new_node.name:
-                print(f" -> warning same node {cpt.node2.name} {cpt.node2.pos.x, cpt.node2.pos.y}, same node")
+    def merge_nodes(self, current_cpt, ignore_node=None):
+        cpt = current_cpt.gcpt
+        for node_count, cpt_node in enumerate(cpt.nodes):
+            # Use given node if present, otherwise loop through all nodes
+            for node in  self.circuit.nodes.values():
 
-            elif abs(new_node.pos.x - cpt.node2.pos.x) < 0.1 and abs(new_node.pos.y - cpt.node2.pos.y) < 0.1:
-                print(f" -> overwriting {cpt.node2.name} {cpt.node2.pos.x, cpt.node2.pos.y}")
-                new_node.connected.extend(cpt.node2.connected)
-                self.circuit.nodes.pop(cpt.node2.name)
-                cpt.nodes[1] = new_node
-                break
-            else:
-                print(f" -> cannot merge {cpt.node2.name} {cpt.node2.pos.x, cpt.node2.pos.y}, too far apart")
+                print(f"checking node {node.name} {node.pos.x, node.pos.y}") if self.ui.debug else None
+
+                if cpt_node.name == node.name or node == ignore_node:
+                    print(f" -> warning same node {cpt_node.name} {cpt_node.pos.x, cpt_node.pos.y}, same node") if self.ui.debug else None
+                elif abs(node.pos.x - cpt_node.pos.x) < 0.1 and abs(node.pos.y - cpt_node.pos.y) < 0.1:
+                    print(f" -> overwriting {cpt_node.name} {cpt_node.pos.x, cpt_node.pos.y}") if self.ui.debug else None
+                    node.connected.extend(cpt_node.connected)
+                    cpt.nodes[node_count] = node
+                    break
+                else:
+                    print(f" -> cannot merge {cpt_node.name} {cpt_node.pos.x, cpt_node.pos.y}, too far apart") if self.ui.debug else None
 
     def on_left_click(self, x, y):
         # Destroy popup menu
