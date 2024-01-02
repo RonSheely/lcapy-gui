@@ -8,7 +8,7 @@ class Annotation(Connection):
     default_kind = '-ground'
     angle_offset = 90
 
-    kinds = {'-': '', '-ground': 'Ground', '-sground': 'Signal ground',
+    kinds = {'': '', '-ground': 'Ground', '-sground': 'Signal ground',
              '-rground': 'Rail ground', '-cground': 'Chassis ground',
              '-vcc': 'VCC', '-vdd': 'VDD', '-vee': 'VEE', '-vss': 'VSS',
              '-input': 'Input', '-output': 'Output', '-bidir': 'Bidirectional'}
