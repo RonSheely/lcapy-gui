@@ -451,8 +451,7 @@ class LcapyTk(Tk):
         from tkinter.messagebox import showerror
 
         if self.debug:
-            import pdb
-            pdb.set_trace()
+            breakpoint()
 
         showerror('Error', message=str(val))
 
@@ -469,12 +468,11 @@ class LcapyTk(Tk):
         from tkinter import messagebox
         import traceback
 
+        if self.debug:
+            breakpoint()
+
         err = traceback.format_exception(*args)
         messagebox.showerror('Exception', err)
-
-        if self.debug:
-            import pdb
-            pdb.set_trace()
 
     def on_expression(self, *args):
 

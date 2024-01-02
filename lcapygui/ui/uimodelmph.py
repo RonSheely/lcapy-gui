@@ -141,10 +141,9 @@ class UIModelMPH(UIModelBase):
         message = str(e)
         if self.pathname != '':
             message += ' in ' + self.pathname
-        self.ui.show_error_dialog(message)
         if self.ui.debug:
-            import pdb
-            pdb.set_trace()
+            breakpoint()
+        self.ui.show_error_dialog(message)
 
     def new_name(self, pathname):
 
