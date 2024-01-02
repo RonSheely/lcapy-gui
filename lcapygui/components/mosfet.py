@@ -81,3 +81,10 @@ class MOSFET(Transistor):
             return (0.8, 0)
         else:
             return (0.6, 0)
+
+    def __init__(self, kind='', style='', name=None, nodes=None, opts=None):
+
+        if opts is not None and not 'kind' in opts:
+            kind = 'nmos' if opts['kind'].startswith('n') else 'pmos'
+
+        super(MOSFET, self).__init__(kind, style, name, nodes, opts)

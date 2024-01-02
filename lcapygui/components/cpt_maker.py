@@ -79,9 +79,6 @@ class CptMaker:
         else:
             raise ValueError('Unsupported component ' + cpt_type)
 
-        if cpt_type == 'M' and opts is not None and not 'kind' in opts:
-            kind = 'nmos'
-
         cpt = cls(kind=kind, style=style,
                   name=name, nodes=nodes, opts=opts)
         return cpt
