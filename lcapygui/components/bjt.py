@@ -19,22 +19,29 @@ class BJT(Transistor):
 
     # TODO: add base offset for Lnigbt, Lpigbt
 
-    pinname1 = 'c'
-    pinname2 = 'e'
-
     node_pinnames = ('c', 'b', 'e')
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
-    ppins = {'e': ('lx', 0.225, -0.5),
-             'b': ('lx', -0.3224, 0),
-             'c': ('lx', 0.225, 0.5)}
+    bjt_pins = {'e': ('lx', 0.225, -0.5),
+                'b': ('lx', -0.3224, 0),
+                'c': ('lx', 0.225, 0.5)}
+
+    @property
+    def pinname1(self):
+        return 'e' if self.is_ptype else 'c'
+
+    @property
+    def pinname2(self):
+        return 'c' if self.is_ptype else 'e'
 
     @property
     def pins(self):
 
+        pins = self.bjt_pins
+
         newpins = {}
-        for pinname, data in self.ppins.items():
+        for pinname, data in pins.items():
             loc, x, y = data
             if self.mirror:
                 y = -y

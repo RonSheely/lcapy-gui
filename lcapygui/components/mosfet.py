@@ -1,4 +1,5 @@
 from .transistor import Transistor
+from lcapy.cache import cached_property
 
 
 class MOSFET(Transistor):
@@ -33,23 +34,49 @@ class MOSFET(Transistor):
     # TODO: add base offset for nigfetd, pigfetd, nigfete, pigfete,
     # nigfetebulk, pigfetebulk
 
-    pinname1 = 's'
-    pinname2 = 'd'
-
     node_pinnames = ('d', 'g', 's')
-    ppins1 = {'d': ('lx', 0.2661, -0.5),
-              'g': ('lx', -0.2874, 0),
-              's': ('lx', 0.2661, 0.5)}
-    ppins2 = {'d': ('lx', 0.2661, -0.5),
-              'g': ('lx', -0.2891, -0.145),
-              's': ('lx', 0.2661, 0.5)}
+
+    mos_pins = {'d': ('lx', 0.2661, 0.5),
+                'g': ('lx', -0.2874, 0),
+                's': ('lx', 0.2661, -0.5)}
+    igfet_pins = {'d': ('lx', 0.2661, 0.5),
+                  'g': ('lx', -0.2891, -0.145),
+                  's': ('lx', 0.2661, -0.5)}
+    body_diode_pins = {'d': ('lx', 0.154, 0.5),
+                       'g': ('lx', -0.396, 0),
+                       's': ('lx', 0.154, -0.5)}
 
     @property
-    def ppins(self):
+    def is_igfet(self):
+        return 'igfet' in self.kind
 
-        if (self.style is not None
-            and (self.style.startswith('pigfet')
-                 or self.style.startswith('nigfet'))):
-            return self.ppins2
+    @property
+    def has_body_diode(self):
+        return 'bodydiode' in self.kind
+
+    @property
+    def pinname1(self):
+        return 's' if self.is_ptype else 'd'
+
+    @property
+    def pinname2(self):
+        return 'd' if self.is_ptype else 's'
+
+    @cached_property
+    def ppins(self):
+        # What about igfet with bodydiode?
+
+        if self.is_igfet:
+            return self.igfet_pins
+        elif self.has_body_diode:
+            return self.body_diode_pins
         else:
-            return self.ppins1
+            return self.mos_pins
+
+    @property
+    def label_offset_pos(self):
+
+        if self.has_body_diode:
+            return (0.8, 0)
+        else:
+            return (0.6, 0)

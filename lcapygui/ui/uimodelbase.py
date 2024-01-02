@@ -323,7 +323,7 @@ class UIModelBase:
                      self.zoom_factor * self.preferences.line_width_scale)
             gcpt.annotations.append(ann)
 
-        if annotation != '':
+        if annotation != '' and gcpt.annotation_offset_pos:
             ann = Annotation.make_label(self.ui, gcpt.midpoint,
                                         gcpt.angle, float(gcpt.scale),
                                         gcpt.annotation_offset_pos,

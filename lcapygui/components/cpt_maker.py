@@ -116,7 +116,7 @@ def cpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
 
 def cpt_make_from_sketch_key(sketch_key):
 
-    parts = sketch_key.split('-')
+    parts = sketch_key.split('-', 2)
     cpt_type = parts[0]
     if len(parts) == 1:
         kind = ''

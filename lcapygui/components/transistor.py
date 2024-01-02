@@ -10,6 +10,7 @@ class Transistor(Stretchy):
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
     label_offset_pos = (0.5, 0)
     anotation_offset_pos = None
+    label_alignment = ('left', 'center')
 
     # Perhaps make a circle?
     hw = 0.2
@@ -17,14 +18,22 @@ class Transistor(Stretchy):
     bbox_path = ((-hw, -hh), (hw, -hh), (hw, hh), (-hw, hh))
 
     @property
+    def is_ptype(self):
+        return self.kind.startswith('pnp') or self.kind.startswith('pmos') or self.kind.startswith('pjf')
+
+    @property
+    def is_ntype(self):
+        return self.kind.startswith('npn') or self.kind.startswith('nmos') or self.kind.startswith('njf')
+
+    @property
     def node1(self):
 
-        return self.nodes[0]
+        return self.nodes[0] if self.is_ntype else self.nodes[2]
 
     @property
     def node2(self):
 
-        return self.nodes[2]
+        return self.nodes[2] if self.is_ntype else self.nodes[0]
 
     @property
     def sketch_net(self):
