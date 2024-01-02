@@ -42,9 +42,12 @@ class MOSFET(Transistor):
     igfet_pins = {'d': ('lx', 0.2661, 0.5),
                   'g': ('lx', -0.2891, -0.145),
                   's': ('lx', 0.2661, -0.5)}
-    body_diode_pins = {'d': ('lx', 0.154, 0.5),
-                       'g': ('lx', -0.396, 0),
-                       's': ('lx', 0.154, -0.5)}
+    mos_body_diode_pins = {'d': ('lx', 0.154, 0.5),
+                           'g': ('lx', -0.396, 0),
+                           's': ('lx', 0.154, -0.5)}
+    igfet_body_diode_pins = {'d': ('lx', 0.154, 0.5),
+                             'g': ('lx', -0.396, -0.145),
+                             's': ('lx', 0.154, -0.5)}
 
     @property
     def is_igfet(self):
@@ -67,11 +70,9 @@ class MOSFET(Transistor):
         # What about igfet with bodydiode?
 
         if self.is_igfet:
-            return self.igfet_pins
-        elif self.has_body_diode:
-            return self.body_diode_pins
-        else:
-            return self.mos_pins
+            return self.igfet_body_diode_pins if self.has_body_diode else self.igfet_pins
+
+        return self.mos_body_diode_pins if self.has_body_diode else self.mos_pins
 
     @property
     def label_offset_pos(self):
