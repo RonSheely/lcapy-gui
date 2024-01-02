@@ -23,9 +23,13 @@ class BJT(Transistor):
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
-    bjt_pins = {'e': ('lx', 0.225, -0.5),
+    npn_pins = {'e': ('lx', 0.225, -0.5),
                 'b': ('lx', -0.3224, 0),
                 'c': ('lx', 0.225, 0.5)}
+
+    pnp_pins = {'e': ('lx', 0.225, 0.5),
+                'b': ('lx', -0.3224, 0),
+                'c': ('lx', 0.225, -0.5)}
 
     @property
     def pinname1(self):
@@ -38,7 +42,7 @@ class BJT(Transistor):
     @property
     def pins(self):
 
-        pins = self.bjt_pins
+        pins = self.npn_pins if self.is_ntype else self.pnp_pins
 
         newpins = {}
         for pinname, data in pins.items():
