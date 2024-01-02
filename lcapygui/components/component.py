@@ -256,7 +256,7 @@ class Component(ABC):
         kwargs['lw'] = kwargs.pop('lw', lw)
 
         for k, v in opts.items():
-            if k in ('bodydiode', ):
+            if k in ('bodydiode', 'bulk'):
                 continue
             if v == '':
                 v = True

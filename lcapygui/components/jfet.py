@@ -12,14 +12,22 @@ class JFET(Transistor):
     # TODO: add gate offset
 
     node_pinnames = ('d', 'g', 's')
-    ppins = {'d': ('lx', 0.266, 0.5),
-             'g': ('lx', -0.2838, -0.145),
-             's': ('lx', 0.266, -0.5)}
+    njf_pins = {'d': ('lx', 0.266, 0.5),
+                'g': ('lx', -0.2838, -0.145),
+                's': ('lx', 0.266, -0.5)}
+    pjf_pins = {'d': ('lx', 0.266, -0.5),
+                'g': ('lx', -0.2838, 0.145),
+                's': ('lx', 0.266, 0.5)}
 
     @property
     def pinname1(self):
-        return 's' if self.is_ptype else 'd'
+        return 'd' if self.is_ntype else 's'
 
     @property
     def pinname2(self):
-        return 'd' if self.is_ptype else 's'
+        return 's' if self.is_ntype else 'd'
+
+    @property
+    def pins(self):
+
+        return self.njf_pins if self.is_ntype else self.pjf_pins

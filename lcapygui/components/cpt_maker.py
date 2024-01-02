@@ -96,6 +96,8 @@ cpt_maker = CptMaker()
 
 def cpt_make_from_cpt(cpt):
 
+    # This is called when loading a schematic from a file.
+
     ctype = cpt.type
 
     # Convert wire with implicit connection to a connection component.

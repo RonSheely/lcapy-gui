@@ -1,30 +1,33 @@
-# Created by lcapy-tk V0.94.dev0
-; nodes={1@(1.5, 8), 2@(0.41, 7), 3@(1.5, 6), 4@(3.5, 8), 5@(2.41, 7), 6@(3.5, 6), 7@(5.5, 8), 8@(4.39, 7), 9@(5.5, 6), 10@(7.5, 8), 11@(6.39, 7), 12@(7.5, 6), 13@(9.5, 8), 14@(8.39, 7), 15@(9.5, 6), 16@(11.5, 8), 17@(10.39, 7), 18@(11.5, 6), 19@(0.4, 4.71), 20@(1.5, 4), 21@(2.4, 4.71), 22@(3.5, 4), 23@(8.39, 5), 24@(9.5, 4), 25@(4.39, 5), 26@(5.5, 4), 27@(6.39, 5), 28@(7.5, 4), 29@(10.39, 5), 30@(11.5, 4)}
-Q1 1 2 3 npn; right
-Q2 6 5 4 pnp; right
-M1 7 8 9 nmos; right, kind=nfet
-M2 10 11 12 pmos; right, kind=pfet
-M3 13 14 15 nmos; right, kind=nfet-bodydiode
-M4 16 17 18 pmos; right, kind=pfet-bodydiode
-W1 1 4; right
-W2 4 7; right
-W3 7 10; right
-W4 10 13; right
-W5 13 16; right
-W6 3 6; right
-W7 6 9; right
-W8 9 12; right
-W9 12 15; right
-W10 15 18; right
-J1 3 19 20 njf; right
-J2 6 21 22 pjf; right
-W11 20 22; right
-M5 9 25 26 nmos; right, kind=nigfete
-M6 12 27 28 pmos; right, kind=pigfete
-M7 15 23 24 nmos; right, kind=nigfete-bodydiode
-M8 18 29 30 pmos; right, kind=pigfete-bodydiode
-W12 22 26; right
-W13 26 28; right
-W14 28 24; right
-W15 24 30; right
-; draw_nodes=connections, label_nodes=none, style=american, voltage_dir=RP, label_style=split
+Q1 1 2 3 npn Q1; up, l=npn
+Q2 4 5 3 pnp Q2; up, l=pnp
+J1 4 6 7 njf J1; up, l=njf
+J2 8 9 7 pjf J2; up, l=pjf
+M1 8 10 11 nmos M1; up, l=nmos
+M2 12 13 11 pmos M2; up, l=pmos
+M3 12 14 15 nmos M3; up, l=nmosd
+M4 16 17 15 pmos M4; up, l=pmosd
+
+# Hack to include labels in bounding box
+O 7 18; up=0.8
+
+O 1 19; down=1.5
+
+M5 19 20 21  M5; up, kind=nfetd, l=nfetd
+M6 22 23 21  M6; up, kind=pfetd, l=pfetd
+M7 22 24 25  M7; up, kind=nfet, l=nfet
+M8 26 27 25  M8; up, kind=pfet, l=pfet
+M9 26 28 29  M9; up, kind=nigfetd, l=nigfetd
+M10 30 31 29  M10; up, kind=pigfetd, l=pigfetd
+M11 30 32 33  M11; up, kind=nigfete, l=nigfete
+M12 34 35 33  M12; up, kind=pigfete, l=pigfete
+M13 34 36 37  M13; up, kind=nigfetebulk, l=nigfetebulk
+M14 38 39 37  M14; up, kind=pigfetebulk, l=pigfetebulk
+
+O 19 40; down=1.5
+
+M15 40 41 42  M15; up=1.5, kind=nfet, l=nfet/bodydiode, bodydiode
+M16 43 44 42  M16; up=1.5, kind=pfet, l=pfet/bodydiode, bodydiode
+M17 43 45 46  M17; up=1.5, kind=nmosd, l=nmosd/bulk, bulk
+M18 47 48 46  M18; up=1.5, kind=pmosd, l=pmosd/bulk, bulk
+
+; label_nodes=none, draw_nodes=connections

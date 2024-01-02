@@ -27,8 +27,8 @@ class MOSFET(Transistor):
              'pmos-pigfete': 'PNMOS insulated gate enhancement',
              'nmos-nigfete-bodydiode': 'NMOS insulated gate enhancement with body diode',
              'pmos-pigfete-bodydiode': 'PMOS insulated gate enhancement with body diode',
-             # 'nmos-nigfetebulk': 'nigfetebulk',
-             # 'nmos-pigfetebulk': 'pigfetebulk',
+             'nmos-nigfetebulk': 'NMOS insulated gate enhancement (bulk)',
+             'pmos-pigfetebulk': 'PMOS insulated gate enhancement (bulk)',
              '-hemt': 'HEMT'}
 
     # TODO: add base offset for nigfetd, pigfetd, nigfete, pigfete,
@@ -36,25 +36,38 @@ class MOSFET(Transistor):
 
     node_pinnames = ('d', 'g', 's')
 
-    mos_pins = {'d': ('lx', 0.2661, 0.5),
-                'g': ('lx', -0.2874, 0),
-                's': ('lx', 0.2661, -0.5)}
-    igfet_pins = {'d': ('lx', 0.2661, 0.5),
-                  'g': ('lx', -0.2891, -0.145),
-                  's': ('lx', 0.2661, -0.5)}
-    mos_body_diode_pins = {'d': ('lx', 0.154, 0.5),
+    nmos_pins = {'d': ('lx', 0.2661, 0.5),
+                 'g': ('lx', -0.2874, 0),
+                 's': ('lx', 0.2661, -0.5)}
+    nigfet_pins = {'d': ('lx', 0.2661, 0.5),
+                   'g': ('lx', -0.2891, -0.145),
+                   's': ('lx', 0.2661, -0.5)}
+    nmos_bodydiode_pins = {'d': ('lx', 0.154, 0.5),
                            'g': ('lx', -0.396, 0),
                            's': ('lx', 0.154, -0.5)}
-    igfet_body_diode_pins = {'d': ('lx', 0.154, 0.5),
+    nigfet_bodydiode_pins = {'d': ('lx', 0.154, 0.5),
                              'g': ('lx', -0.396, -0.145),
                              's': ('lx', 0.154, -0.5)}
+
+    pmos_pins = {'d': ('lx', 0.2661, -0.5),
+                 'g': ('lx', -0.2874, 0),
+                 's': ('lx', 0.2661, 0.5)}
+    pigfet_pins = {'d': ('lx', 0.2661, -0.5),
+                   'g': ('lx', -0.2891, -0.145),
+                   's': ('lx', 0.2661, 0.5)}
+    pmos_bodydiode_pins = {'d': ('lx', 0.154, -0.5),
+                           'g': ('lx', -0.396, 0),
+                           's': ('lx', 0.154, 0.5)}
+    pigfet_bodydiode_pins = {'d': ('lx', 0.154, -0.5),
+                             'g': ('lx', -0.396, -0.145),
+                             's': ('lx', 0.154, 0.5)}
 
     @property
     def is_igfet(self):
         return 'igfet' in self.kind
 
     @property
-    def has_body_diode(self):
+    def has_bodydiode(self):
         return 'bodydiode' in self.kind
 
     @property
@@ -67,17 +80,21 @@ class MOSFET(Transistor):
 
     @cached_property
     def ppins(self):
-        # What about igfet with bodydiode?
-
         if self.is_igfet:
-            return self.igfet_body_diode_pins if self.has_body_diode else self.igfet_pins
-
-        return self.mos_body_diode_pins if self.has_body_diode else self.mos_pins
+            if self.has_bodydiode:
+                return self.nigfet_bodydiode_pins if self.is_ntype else self.pigfet_bodydiode_pins
+            else:
+                return self.nigfet_pins if self.is_ntype else self.pigfet_pins
+        else:
+            if self.has_bodydiode:
+                return self.nmos_bodydiode_pins if self.is_ntype else self.pmos_bodydiode_pins
+            else:
+                return self.nmos_pins if self.is_ntype else self.pmos_pins
 
     @property
     def label_offset_pos(self):
 
-        if self.has_body_diode:
+        if self.has_bodydiode:
             return (0.8, 0)
         else:
             return (0.6, 0)
@@ -88,3 +105,8 @@ class MOSFET(Transistor):
             kind = 'nmos' if opts['kind'].startswith('n') else 'pmos'
 
         super(MOSFET, self).__init__(kind, style, name, nodes, opts)
+
+        if self.kind == 'nmos':
+            self.kind = 'nmos-nmos'
+        elif self.kind == 'pmos':
+            self.kind = 'pmos-pmos'

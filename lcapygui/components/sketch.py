@@ -95,6 +95,11 @@ class Sketch:
 
         if not svg_filename.exists():
 
+            print('Could not find data file %s for %s' %
+                  (svg_filename, sketch_key))
+            import sys
+            sys.exit()
+
             if complain:
                 raise FileNotFoundError('Could not find data file %s for %s' %
                                         (svg_filename, sketch_key))
