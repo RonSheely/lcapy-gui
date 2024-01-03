@@ -81,6 +81,7 @@ class Component(ABC):
         self.attrs = ''
         self.annotations = []
         self.label = ''
+        self.alabel = ''
         self.voltage_label = ''
         self.current_label = ''
         self.flow_label = ''
@@ -132,7 +133,7 @@ class Component(ABC):
             elif k in self.label_keys:
                 self.label = v
             elif k in self.annotation_keys:
-                pass
+                self.alabel = v
             elif k in self.ignore_keys:
                 pass
             else:

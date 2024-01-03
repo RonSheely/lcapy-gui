@@ -289,7 +289,7 @@ class UIModelBase:
             value_latex = '$' + expr(value).latex() + '$'
 
         label = ''
-        annotation = ''
+        alabel = ''
         if label_style == 'name=value':
             if name != value and gcpt.has_value:
                 label = name + '=' + value_latex
@@ -303,7 +303,7 @@ class UIModelBase:
         elif label_style == 'split':
             label = name
             if name != value and gcpt.has_value:
-                annotation = value_latex
+                alabel = value_latex
         elif label_style == 'value':
             if value != '':
                 label = value_latex
@@ -314,6 +314,14 @@ class UIModelBase:
         else:
             raise RuntimeError('Unhandled label_style=' + label_style)
 
+        # Perhaps use {} to force no label?
+        if gcpt.label != '':
+            label = gcpt.label
+            alabel = None
+
+        if gcpt.alabel != '':
+            alabel = gcpt.alabel
+
         if label != '':
             ann = Annotation.make_label(self.ui, gcpt.midpoint,
                                         gcpt.angle, float(gcpt.scale),
@@ -323,12 +331,12 @@ class UIModelBase:
                      self.zoom_factor * self.preferences.line_width_scale)
             gcpt.annotations.append(ann)
 
-        if annotation != '' and gcpt.annotation_offset_pos:
+        if alabel != '' and gcpt.annotation_offset_pos:
             ann = Annotation.make_label(self.ui, gcpt.midpoint,
                                         gcpt.angle, float(gcpt.scale),
                                         gcpt.annotation_offset_pos,
                                         gcpt.annotation_alignment,
-                                        annotation)
+                                        alabel)
             ann.draw(fontsize=self.preferences.font_size *
                      self.zoom_factor * self.preferences.line_width_scale)
             gcpt.annotations.append(ann)
