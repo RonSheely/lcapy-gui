@@ -23,13 +23,13 @@ class BJT(Transistor):
 
     extra_fields = {'mirror': 'Mirror', 'invert': 'Invert'}
 
-    npn_pins = {'e': ('lx', 0.225, -0.5),
+    npn_pins = {'e': ('lx', 0.2256, -0.5),
                 'b': ('lx', -0.3224, 0),
-                'c': ('lx', 0.225, 0.5)}
+                'c': ('lx', 0.2256, 0.5)}
 
-    pnp_pins = {'e': ('lx', 0.225, 0.5),
+    pnp_pins = {'e': ('lx', 0.2256, 0.5),
                 'b': ('lx', -0.3224, 0),
-                'c': ('lx', 0.225, -0.5)}
+                'c': ('lx', 0.2256, -0.5)}
 
     @property
     def pinname1(self):
