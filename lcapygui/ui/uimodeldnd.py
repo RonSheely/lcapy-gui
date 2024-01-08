@@ -142,7 +142,11 @@ class UIModelDnD(UIModelMPH):
         if self.selected and self.cpt_selected:
             make_popup(self.ui, self.selected.gcpt.menu_items)
         else:
-            make_popup(self.ui, ["edit_paste"])
+
+            if self.clipboard is None:
+                make_popup(self.ui, ["!edit_paste"])
+            else:
+                make_popup(self.ui, ["edit_paste"])
 
         self.crosshair.thing = None
         if self.new_component is not None:
@@ -296,7 +300,7 @@ class UIModelDnD(UIModelMPH):
         if self.clipboard is None:
             if self.ui.debug:
                 print("Nothing to paste")
-                return
+            return
 
         if self.ui.debug:
             print("Pasting " + self.clipboard.name)

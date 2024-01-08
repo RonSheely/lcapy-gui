@@ -7,7 +7,7 @@ class MenuSeparator:
 
 class MenuItem:
     def __init__(
-        self, label, command=None, arg=None, underline=0, accelerator=None, level=0
+        self, label, command=None, arg=None, underline=0, accelerator=None, level=0, state="normal"
     ):
         self.label = label
         self.command = command
@@ -15,6 +15,7 @@ class MenuItem:
         self.underline = underline
         self.accelerator = accelerator
         self.level = level
+        self.state = state
 
 
 class MenuDropdown:
@@ -69,6 +70,7 @@ class MenuBar:
                                 command=lambda a=submenuitem: doit(a),
                                 underline=submenuitem.underline,
                                 accelerator=submenuitem.accelerator,
+                                state=submenuitem.state
                             )
 
                 elif isinstance(menuitem, MenuSeparator):
@@ -79,6 +81,7 @@ class MenuBar:
                         command=lambda a=menuitem: doit(a),
                         underline=menuitem.underline,
                         accelerator=menuitem.accelerator,
+                        state = menuitem.state
                     )
 
             self.menus.append(menu)

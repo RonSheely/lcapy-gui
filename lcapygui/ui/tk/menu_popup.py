@@ -37,6 +37,7 @@ class MenuPopup:
                             command=lambda a=submenuitem: doit(a),
                             underline=submenuitem.underline,
                             accelerator=submenuitem.accelerator,
+                            state = menuitem.state
                         )
 
             elif isinstance(menuitem, MenuSeparator):
@@ -47,6 +48,7 @@ class MenuPopup:
                     command=lambda a=menuitem: doit(a),
                     underline=menuitem.underline,
                     accelerator=menuitem.accelerator,
+                    state=menuitem.state
                 )
 
     def do_popup(self, x, y):
@@ -63,7 +65,13 @@ def make_popup(ui, menu_items):
 
     display_items = []
     for menu_item in menu_items:
-        display_items.append(ui.menu_parts[menu_item])
+        if menu_item[0] == '!':
+            new_item = ui.menu_parts[menu_item[1:]]
+            new_item.state = 'disabled'
+        else:
+            new_item = ui.menu_parts[menu_item]
+            new_item.state = 'normal'
+        display_items.append(new_item)
 
     ui.popup_menu = MenuPopup(
         MenuDropdown(
