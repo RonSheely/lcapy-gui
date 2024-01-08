@@ -100,7 +100,17 @@ class UIModelDnD(UIModelMPH):
         self.on_redraw()
 
     def merge_nodes(self, current_cpt, ignore_node=None):
+        """
+        Merges the current selected node with the nearest node of the current component
+        Paramaters
+        ==========
+        current_cpt
+            to merge node into
+        ignore_node
+            Node to ignore, if it is present in the current component.
+        """
         cpt = current_cpt.gcpt
+
         for node_count, cpt_node in enumerate(cpt.nodes):
             # Use given node if present, otherwise loop through all nodes
             for node in  self.circuit.nodes.values():
@@ -139,15 +149,18 @@ class UIModelDnD(UIModelMPH):
 
     def on_right_click(self, x, y):
         self.on_select(x, y)
-        if self.selected and self.cpt_selected:
-            make_popup(self.ui, self.selected.gcpt.menu_items)
-        else:
 
+        # If a component is selected
+        if self.selected and self.cpt_selected:
+            # show the conponent popup
+            make_popup(self.ui, self.selected.gcpt.menu_items)
+        else: # if all else fails, show the paste popup
             if self.clipboard is None:
                 make_popup(self.ui, ["!edit_paste"])
             else:
                 make_popup(self.ui, ["edit_paste"])
 
+        # clear current placed component on right click
         self.crosshair.thing = None
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
