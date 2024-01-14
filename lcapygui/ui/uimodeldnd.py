@@ -250,8 +250,8 @@ class UIModelDnD(UIModelMPH):
                     self.crosshair.thing.cpt_type,
                     mouse_x,
                     mouse_y,
-                    mouse_x + 0.1,
-                    mouse_y,
+                    mouse_x + self.preferences.scale,       # Have to be set to something larger because components now
+                    mouse_y,                                #   scale to the initial size of the component.
                     kind=kind,
                 )
             # Otherwise, move the components second node to the current position
