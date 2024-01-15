@@ -53,11 +53,10 @@ class UIModelDnD(UIModelMPH):
 
         # If finished placing a component, stop placing
         if self.new_component is not None:
-            # If the component is too small, delete it
-            if self.new_component.gcpt.length < 0.2:
-                self.cpt_delete(
-                    self.new_component
-                )  # uses cpt_delete to avoid being added to history
+            # If the crosshair has not moved, then instantly place the component at the current position
+            if self.crosshair.x == self.new_component.gcpt.node1.pos.x and self.crosshair.y == self.new_component.gcpt.node1.pos.y:
+                self.node_move(self.new_component.gcpt.node1, self.crosshair.x - 1, self.crosshair.y)
+                self.node_move(self.new_component.gcpt.node2, self.crosshair.x + 1, self.crosshair.y)
             else:
                 # Reset crosshair mode
                 self.crosshair.thing = None
@@ -138,6 +137,25 @@ class UIModelDnD(UIModelMPH):
                 cpt = self.selected
                 if self.ui.debug:
                     print("Selected " + cpt.name)
+
+        mouse_x, mouse_y = self.snap(x, y)
+
+        if self.crosshair.thing != None and self.new_component is None: # If the component has not been created, create it at the current position
+            print(self.crosshair.thing.kind)
+            kind = (
+                "-" + self.crosshair.thing.kind
+                if self.crosshair.thing.kind != ""
+                else ""
+            )
+            self.new_component = self.thing_create(
+                self.crosshair.thing.cpt_type,
+                mouse_x,
+                mouse_y,
+                mouse_x + self.preferences.scale,       # Have to be set to something larger because components now
+                mouse_y,                                #   scale to the initial size of the component.
+                kind=kind,
+            )
+
 
     def on_left_double_click(self, x, y):
         self.on_select(x, y)
@@ -239,23 +257,7 @@ class UIModelDnD(UIModelMPH):
         # Check if we are currently placing a component
         if self.crosshair.thing != None:
             # If the component has not been created, create it at the current position
-            if self.new_component is None:
-                print(self.crosshair.thing.kind)
-                kind = (
-                    "-" + self.crosshair.thing.kind
-                    if self.crosshair.thing.kind != ""
-                    else ""
-                )
-                self.new_component = self.thing_create(
-                    self.crosshair.thing.cpt_type,
-                    mouse_x,
-                    mouse_y,
-                    mouse_x + self.preferences.scale+3,       # Have to be set to something larger because components now
-                    mouse_y,                                #   scale to the initial size of the component.
-                    kind=kind,
-                )
-            # Otherwise, move the components second node to the current position
-            else:
+            if self.new_component is not None:
                 self.node_positions = [
                     (node.pos.x, node.pos.y) for node in self.new_component.nodes
                 ]
