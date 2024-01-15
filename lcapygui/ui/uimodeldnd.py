@@ -57,6 +57,7 @@ class UIModelDnD(UIModelMPH):
             if self.crosshair.x == self.new_component.gcpt.node1.pos.x and self.crosshair.y == self.new_component.gcpt.node1.pos.y:
                 self.node_move(self.new_component.gcpt.node1, self.crosshair.x - 1, self.crosshair.y)
                 self.node_move(self.new_component.gcpt.node2, self.crosshair.x + 1, self.crosshair.y)
+                self.history.append(HistoryEvent("A", self.new_component))
             else:
                 # Reset crosshair mode
                 self.crosshair.thing = None
