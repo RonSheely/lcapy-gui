@@ -34,6 +34,7 @@ class LcapyTk(Tk):
         self.sketchlib = SketchLibrary()
         self.dialogs = {}
 
+
         if icon is not None:
             icon = PhotoImage(file=icon)
             self.wm_iconphoto(False, icon)

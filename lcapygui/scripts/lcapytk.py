@@ -52,7 +52,9 @@ def main(argv=None):
 
     args = parser.parse_args()
 
-    icon_filename = "./lcapygui/data/icon/lcapy-gui.png"
+    from lcapygui import __datadir__
+    icon_filename = __datadir__ / "icon" / "lcapy-gui.png"
+    icon_filename = None
 
     if args.pdb:
         sys.excepthook = schtex_exception

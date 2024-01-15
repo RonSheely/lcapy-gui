@@ -10,7 +10,7 @@ package:
 # Setup to create a single .exe for distribution
 .PHONY: executable
 executable:
-	pyinstaller --clean --specpath "./build" --upx-dir "./build"  --icon "./lcapygui/data/icon/lcapy-gui.png" --add-data "../lcapygui/data/:lcapygui/data/" --hidden-import='PIL._tkinter_finder' lcapygui.py
+	pyinstaller --clean --windowed --specpath "./build" --upx-dir "./build"  --icon "../lcapygui/data/icon/lcapy-gui.png" --add-data "../lcapygui/data/:lcapygui/data/" --hidden-import='PIL._tkinter_finder' lcapygui.py
 
 .PHONY: upload-test
 upload-test: package
