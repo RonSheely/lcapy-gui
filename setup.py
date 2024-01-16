@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 
+
 # Open readme
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -27,7 +28,6 @@ setup(
     ],
     install_requires=[
         "setuptools",
-        "pathlib",
         "lcapy>=1.17",
         "numpy",
         "tk",

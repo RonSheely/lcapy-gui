@@ -9,6 +9,7 @@ from argparse import ArgumentParser
 import sys
 from lcapygui import LcapyTk
 from lcapy import expr as lcapify
+from platform import system
 
 
 def schtex_exception(type, value, tb):
@@ -52,9 +53,12 @@ def main(argv=None):
 
     args = parser.parse_args()
 
+    # Add Icon path for program
     from lcapygui import __datadir__
     icon_filename = __datadir__ / "icon" / "lcapy-gui.png"
-    icon_filename = None
+    # If on MacOS, don't use icon
+    if system() == 'Darwin':
+        icon_filename = None
 
     if args.pdb:
         sys.excepthook = schtex_exception
