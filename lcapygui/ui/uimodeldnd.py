@@ -169,40 +169,46 @@ class UIModelDnD(UIModelMPH):
     def on_right_click(self, x, y):
         self.on_select(x, y)
 
-        # If a component is selected
-        if self.selected and self.cpt_selected:
-            # show the conponent popup
-            make_popup(self.ui, self.selected.gcpt.menu_items)
-        else: # if all else fails, show the paste popup
-            if self.clipboard is None:
-                make_popup(self.ui, ["!edit_paste"])
-            else:
-                make_popup(self.ui, ["edit_paste"])
-
-        # clear current placed component on right click
-        self.crosshair.thing = None
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
             self.new_component = None
+        # Show right click menu if not placing a component
+        if self.crosshair.thing is None:
+            # If a component is selected
+            if self.selected and self.cpt_selected:
+                # show the conponent popup
+                make_popup(self.ui, self.selected.gcpt.menu_items)
+            else: # if all else fails, show the paste popup
+                if self.clipboard is None:
+                    make_popup(self.ui, ["!edit_paste"])
+                else:
+                    make_popup(self.ui, ["edit_paste"])
+
+        # clear current placed component on right click
+        self.crosshair.thing = None
+
 
     def on_mouse_move(self, mouse_x, mouse_y):
         # Snap mouse to grid
-        mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
+        mouse_x, mouse_y = self.snap(mouse_x, mouse_y, True if self.new_component is None else False)
 
         self.crosshair.update((mouse_x, mouse_y))
 
-    def snap(self, mouse_x, mouse_y):
+    def snap(self, mouse_x, mouse_y, snap_to_component = False):
         """
         Snaps the x and y positions to the grid or to a component
         Parameters
         ==========
         mouse_x : float
         mouse_y : float
+        snap_to_component : bool
+            Determines if coords will snap to the selected component
 
         Returns
         =======
         float
             The snapped x, y position
+
 
         """
         # Only snap if the snap grid is enabled
@@ -210,7 +216,7 @@ class UIModelDnD(UIModelMPH):
             snapped = False
             snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
             # Prioritise snapping to the grid if close, or if placing a component
-            if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected:
+            if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected or not snap_to_component:
                 return snap_x, snap_y
             else:
                 # if not close grid position, attempt to snap to component
