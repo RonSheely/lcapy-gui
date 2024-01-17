@@ -210,9 +210,7 @@ class UIModelDnD(UIModelMPH):
             snapped = False
             snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
             # Prioritise snapping to the grid if close, or if placing a component
-            if (
-                abs(mouse_x - snap_x) < 0.2 and abs(mouse_y - snap_y) < 0.2
-            ) or self.selected:
+            if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected:
                 return snap_x, snap_y
             else:
                 # if not close grid position, attempt to snap to component
@@ -227,6 +225,9 @@ class UIModelDnD(UIModelMPH):
                 # If no near components, snap to grid
                 if not snapped:
                     return snap_x, snap_y
+        for node in self.circuit.nodes.values(): # TODO: Fix snapping to components with more than 2 nodes.
+            if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
+                return node.x, node.y
         return mouse_x, mouse_y
 
     def on_mouse_drag(self, mouse_x, mouse_y, key):
