@@ -15,6 +15,7 @@ class UIModelDnD(UIModelMPH):
     crosshair : CrossHair
         A crosshair for placing and moving components
     new_component : lcapygui.mnacpts.cpt or None
+        The component currently being placed by the CrossHair
 
     """
 
@@ -135,7 +136,9 @@ class UIModelDnD(UIModelMPH):
             self.on_select(x, y)
 
             if self.cpt_selected:
-                cpt = self.selected
+
+                cpt = self.selected.gcpt
+
                 if self.ui.debug:
                     print("Selected " + cpt.name)
 
@@ -332,3 +335,13 @@ class UIModelDnD(UIModelMPH):
         self.on_add_cpt(paste_thing)
 
         self.ui.refresh()
+
+    def draw_polarity(self):
+        """
+        Draws the polarity of the component
+        """
+        if self.selected is None:
+            return
+        if not self.cpt_selected:
+            return
+        self.selected.gcpt.draw_polarity(self.ui)

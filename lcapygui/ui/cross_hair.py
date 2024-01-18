@@ -8,7 +8,7 @@ class CrossHair:
         self.model = model
         self.thing = thing
         self.label = None
-        self.picture = None
+        self.picture = Picture()
 
     @property
     def position(self) -> Tuple[int, int]:
@@ -32,7 +32,6 @@ class CrossHair:
 
         scale = self.model.preferences.xsize / 20
         sketcher = self.model.ui.sketcher
-        self.picture = Picture()
 
         # Draw text or more
         if self.thing != None:
