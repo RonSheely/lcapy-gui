@@ -24,7 +24,6 @@ class UIModelDnD(UIModelMPH):
         super(UIModelDnD, self).__init__(ui)
         self.crosshair = CrossHair(self)
         self.new_component = None
-        self.picture = Picture()
 
     def on_add_cpt(self, thing):
         """
@@ -139,7 +138,7 @@ class UIModelDnD(UIModelMPH):
 
             if self.cpt_selected:
                 cpt = self.selected.gcpt
-                self.draw_polarity(cpt)
+                cpt.draw_polarity(self)
                 if self.ui.debug:
                     print("Selected " + cpt.name)
 
@@ -337,31 +336,5 @@ class UIModelDnD(UIModelMPH):
 
         self.ui.refresh()
 
-    def draw_polarity(self, cpt):
-        """
-        Draws the polarity of the component
-        """
 
-        sketcher = self.ui.sketcher
-
-        self.picture.add(
-            sketcher.text(
-                cpt.node1.x + cpt.annotation_offset_pos[0],
-                cpt.node1.y + cpt.annotation_offset_pos[1],
-                "+",
-                fontsize=self.preferences.font_size
-            )
-        )
-
-        self.picture.add(
-            sketcher.text(
-                cpt.node2.x + cpt.annotation_offset_pos[0],
-                cpt.node2.y + cpt.annotation_offset_pos[1],
-                "-",
-                fontsize=self.preferences.font_size
-            )
-        )
-
-
-        self.ui.refresh()
 

@@ -235,6 +235,35 @@ class Component(ABC):
 
         raise NotImplementedError('TODO')
 
+    def draw_polarity(self, model, **kwargs):
+        """
+        Draws the polarity of the component
+
+        """
+
+        sketcher = model.ui.sketcher
+
+        self.picture.add(
+            sketcher.text(
+                self.node1.x + self.annotation_offset_pos[0],
+                self.node1.y + self.annotation_offset_pos[1],
+                "+",
+                fontsize=model.preferences.font_size
+            )
+        )
+
+        self.picture.add(
+            sketcher.text(
+                self.node2.x + self.annotation_offset_pos[0],
+                self.node2.y + self.annotation_offset_pos[1],
+                "-",
+                fontsize=model.preferences.font_size
+            )
+        )
+
+        model.ui.refresh()
+
+
     def _line_width_to_lw(self, model, line_width):
         """Return line width as a float for use with matplotlib."""
 
