@@ -414,6 +414,8 @@ class Component(ABC):
             attr += ', i=' + self.current_label
         if self.flow_label != '':
             attr += ', f=' + self.flow_label
+        if self.label != '':
+            attr += ', l=' + self.label
         if self.mirror:
             attr += ', mirror'
         if self.invert:
