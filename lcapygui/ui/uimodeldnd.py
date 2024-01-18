@@ -17,6 +17,8 @@ class UIModelDnD(UIModelMPH):
         A crosshair for placing and moving components
     new_component : lcapygui.mnacpts.cpt or None
         The component currently being placed by the CrossHair
+    node_positions : list of tuples or None
+        Used for history, stores the node positions of the component or node before being moved
 
     """
 
@@ -24,6 +26,7 @@ class UIModelDnD(UIModelMPH):
         super(UIModelDnD, self).__init__(ui)
         self.crosshair = CrossHair(self)
         self.new_component = None
+        self.node_positions = None
 
     def on_add_cpt(self, thing):
         """
@@ -46,12 +49,12 @@ class UIModelDnD(UIModelMPH):
         # Set crosshair mode to the component type
         self.on_add_cpt(thing)
 
-    def on_mouse_release(self):
+    def on_mouse_release(self, key=None):
         """
         Performs operations on mouse release
         """
         if self.ui.debug:
-            print("mouse release")
+            print(f"left mouse release. key: {key}")
 
         # If finished placing a component, stop placing
         if self.new_component is not None:
@@ -60,10 +63,7 @@ class UIModelDnD(UIModelMPH):
                 self.node_move(self.new_component.gcpt.node1, self.crosshair.x - 1, self.crosshair.y)
                 self.node_move(self.new_component.gcpt.node2, self.crosshair.x + 1, self.crosshair.y)
                 self.history.append(HistoryEvent("A", self.new_component))
-            else:
-                # Reset crosshair mode
-                self.crosshair.thing = None
-
+            else: # Otherwise, confirm the component placement in its current position, and save to history
                 self.merge_nodes(self.new_component)
 
                 # If created component is a dynamic wire, split to component parts.
@@ -71,9 +71,13 @@ class UIModelDnD(UIModelMPH):
                     self.new_component.gcpt.convert_to_wires(self)
                 else:
                     self.history.append(HistoryEvent("A", self.new_component))
+            # Allow continual placing of components if the shift key is pressed
+            if key != 'shift':
+                # Reset crosshair mode
+                self.crosshair.thing = None
 
         elif self.selected is not None:
-            if self.cpt_selected:  # Moving a component
+            if self.cpt_selected and self.node_positions is not None:  # Moving a component
                 # Merge component with existing nodes if present
                 self.merge_nodes(self.selected)
 
@@ -197,7 +201,7 @@ class UIModelDnD(UIModelMPH):
 
         self.crosshair.update((mouse_x, mouse_y))
 
-    def snap(self, mouse_x, mouse_y, snap_to_component = False):
+    def snap(self, mouse_x, mouse_y, snap_to_component=False):
         """
         Snaps the x and y positions to the grid or to a component
         Parameters
@@ -239,7 +243,7 @@ class UIModelDnD(UIModelMPH):
                 return node.x, node.y
         return mouse_x, mouse_y
 
-    def on_mouse_drag(self, mouse_x, mouse_y, key):
+    def on_mouse_drag(self, mouse_x, mouse_y, key=None):
         """
         Performs operations when the user drags the mouse on the canvas.
 
@@ -262,12 +266,11 @@ class UIModelDnD(UIModelMPH):
 
 
         """
-
         mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
         # Check if we are currently placing a component
         if self.crosshair.thing != None:
-            # If the component has not been created, create it at the current position
+            # If placing a component, move the second node
             if self.new_component is not None:
                 self.node_positions = [
                     (node.pos.x, node.pos.y) for node in self.new_component.nodes
@@ -275,6 +278,7 @@ class UIModelDnD(UIModelMPH):
                 self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
 
         elif self.selected:
+            # If a component is selected, move it with the mouse
             if self.cpt_selected:
                 super().on_mouse_drag(mouse_x, mouse_y, key)
 

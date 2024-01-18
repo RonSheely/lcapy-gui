@@ -655,7 +655,7 @@ class UIModelMPH(UIModelBase):
         self.cpt_move(cpt, xshift, yshift, key == 'shift')
         self.ui.refresh()
 
-    def on_mouse_release(self):
+    def on_mouse_release(self, key=None):
 
         if self.ui.debug:
             print('mouse release')

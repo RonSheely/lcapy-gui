@@ -429,7 +429,7 @@ class LcapyTk(Tk):
     def on_release_event(self, event):
 
         if event.button == 1:
-            self.model.on_mouse_release()
+            self.model.on_mouse_release(event.key)
 
     def on_clone(self, *args):
         self.model.on_clone()
