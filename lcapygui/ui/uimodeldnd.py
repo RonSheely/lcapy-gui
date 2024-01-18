@@ -138,9 +138,8 @@ class UIModelDnD(UIModelMPH):
             self.on_select(x, y)
 
             if self.cpt_selected:
-
-                self.draw_polarity()
                 cpt = self.selected.gcpt
+                self.draw_polarity(cpt)
                 if self.ui.debug:
                     print("Selected " + cpt.name)
 
@@ -338,21 +337,17 @@ class UIModelDnD(UIModelMPH):
 
         self.ui.refresh()
 
-    def draw_polarity(self):
+    def draw_polarity(self, cpt):
         """
         Draws the polarity of the component
         """
-        if self.selected is None:
-            return
-        if not self.cpt_selected:
-            return
 
         sketcher = self.ui.sketcher
 
         self.picture.add(
             sketcher.text(
-                self.selected.gcpt.node1.x,
-                self.selected.gcpt.node1.y,
+                cpt.node1.x + cpt.annotation_offset_pos[0],
+                cpt.node1.y + cpt.annotation_offset_pos[1],
                 "+",
                 fontsize=self.preferences.font_size
             )
@@ -360,8 +355,8 @@ class UIModelDnD(UIModelMPH):
 
         self.picture.add(
             sketcher.text(
-                self.selected.gcpt.node2.x,
-                self.selected.gcpt.node2.y,
+                cpt.node2.x + cpt.annotation_offset_pos[0],
+                cpt.node2.y + cpt.annotation_offset_pos[1],
                 "-",
                 fontsize=self.preferences.font_size
             )
