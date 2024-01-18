@@ -2,6 +2,7 @@ from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
 from lcapygui.ui.uimodelbase import Thing
 from lcapygui.ui.tk.menu_popup import make_popup, unmake_popup
+from lcapygui.components.picture import Picture
 from .cross_hair import CrossHair
 
 
@@ -23,6 +24,7 @@ class UIModelDnD(UIModelMPH):
         super(UIModelDnD, self).__init__(ui)
         self.crosshair = CrossHair(self)
         self.new_component = None
+        self.picture = Picture()
 
     def on_add_cpt(self, thing):
         """
@@ -137,8 +139,8 @@ class UIModelDnD(UIModelMPH):
 
             if self.cpt_selected:
 
+                self.draw_polarity()
                 cpt = self.selected.gcpt
-
                 if self.ui.debug:
                     print("Selected " + cpt.name)
 
@@ -344,4 +346,27 @@ class UIModelDnD(UIModelMPH):
             return
         if not self.cpt_selected:
             return
-        self.selected.gcpt.draw_polarity(self.ui)
+
+        sketcher = self.ui.sketcher
+
+        self.picture.add(
+            sketcher.text(
+                self.selected.gcpt.node1.x,
+                self.selected.gcpt.node1.y,
+                "+",
+                fontsize=self.preferences.font_size
+            )
+        )
+
+        self.picture.add(
+            sketcher.text(
+                self.selected.gcpt.node2.x,
+                self.selected.gcpt.node2.y,
+                "-",
+                fontsize=self.preferences.font_size
+            )
+        )
+
+
+        self.ui.refresh()
+
