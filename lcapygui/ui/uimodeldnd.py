@@ -145,6 +145,7 @@ class UIModelDnD(UIModelMPH):
                     HistoryEvent("M", self.selected, self.node_positions, node_position)
                 )
 
+
         # Redraw screen for accurate display of labels
         self.on_redraw()
         # Used to determine if a component or node is being moved in the on_mouse_drag method
@@ -240,10 +241,15 @@ class UIModelDnD(UIModelMPH):
         # Select component under mouse if not placing a component
         if self.crosshair.thing == None:
             self.on_select(mouse_x, mouse_y)
-            if self.cpt_selected:
-                cpt = self.selected.gcpt
-                if self.ui.debug:
-                    print("Selected " + cpt.name)
+            if self.selected is not None:
+                if self.cpt_selected:
+                    cpt = self.selected.gcpt
+                    if self.ui.debug:
+                        print("Selected component " + cpt.name)
+                else:
+                    if self.ui.debug:
+                        print("Selected node " + self.selected.name)
+
 
         elif self.new_component is None:  # If the component has not been created, create it at the current position
             if self.ui.debug:
@@ -365,14 +371,22 @@ class UIModelDnD(UIModelMPH):
             Determines if coords will snap to a selected component
 
         Returns
-        =======
+        -------
         tuple[float, float]
             The snapped x, y position
+
+        Notes
+        -----
+        Will only attempt to snap if allowed in settings
+
+        Will snap to the grid if the mouse is close to the grid position
+        Otherwise, it will attempt to snap to the component itself to allow component selection.
+        If no component is close enough, it will simply revert to snapping to the grid.
 
         """
         # Only snap if the snap grid is enabled
         if self.preferences.snap_grid:
-            snapped = False
+
             snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
             # Prioritise snapping to the grid if close, or if placing a component
             if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(
@@ -391,10 +405,10 @@ class UIModelDnD(UIModelMPH):
                 # If no near components, snap to grid
                 if not snapped:
                     return snap_x, snap_y
-        for node in self.circuit.nodes.values():  # TODO: Fix snapping to components with more than 2 nodes.
-            if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(
-                    mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
-                return node.x, node.y
+            for node in self.circuit.nodes.values():
+                if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(
+                        mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
+                    return node.x, node.y
         return mouse_x, mouse_y
 
     def on_mouse_drag(self, mouse_x, mouse_y, key=None):
@@ -402,7 +416,7 @@ class UIModelDnD(UIModelMPH):
         Performs operations when the user drags the mouse on the canvas.
 
         Explanation
-        ===========
+        ------------
         If a chosen component is not created, it will create a new one at the current position
         If that component already exists, it will move the second node to the mouse position.
 
@@ -410,7 +424,7 @@ class UIModelDnD(UIModelMPH):
         otherwise, it will attempt to drag a chosen component
 
         Parameters
-        ==========
+        ----------
         mouse_x: float
             x position of the mouse
         mouse_y : float
@@ -418,14 +432,17 @@ class UIModelDnD(UIModelMPH):
         key : str
             String representation of the pressed key.
 
+        Notes
+        -----
+        If placing a component, and have placed the first node already, the second node will be moved to the current snap position
+        If a preexisting component is selected, it will be moved with the mouse.
+        Otherwise, if a node is selected, the node will be moved to the new position instead.
 
         """
         mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
-        # Check if we are currently placing a component
-        if self.crosshair.thing != None:
-            # If placing a component, move the second node
-            if self.new_component is not None:
+        # Check if we are currently placing a component, and have already placed the first node
+        if self.crosshair.thing != None and self.new_component is not None:
                 self.node_positions = [
                     (node.pos.x, node.pos.y) for node in self.new_component.nodes
                 ]
@@ -437,6 +454,7 @@ class UIModelDnD(UIModelMPH):
                 super().on_mouse_drag(mouse_x, mouse_y, key)
 
             else:
+
                 # move selected node
                 if not self.dragged:
                     self.dragged = True
@@ -449,17 +467,26 @@ class UIModelDnD(UIModelMPH):
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
         Performs operations on mouse scroll
+
         Parameters
-        ==========
+        ----------
         scroll_direction : str
-        mouse_x : float
+            String representation of the scroll direction
+        mouse_x: float
+            x position of the mouse
         mouse_y : float
+            y position of the mouse
+
+        Notes
+        -----
+        Rotates the selected component based on scroll direction. Currently only supports on 90 degree increments.
         """
         if self.selected and self.cpt_selected:
             # rotate the component
-            angle = 90 if scroll_direction == "up" else -90
+            angle = 90 if scroll_direction == "up" else -10
             self.rotate(self.selected, angle)
-            self.on_redraw()
+            self.selected.gcpt.undraw()
+            self.selected.gcpt.draw(self)
 
     def on_cut(self):
         if self.selected is None:
