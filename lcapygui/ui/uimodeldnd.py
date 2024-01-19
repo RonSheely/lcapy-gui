@@ -11,7 +11,7 @@ class UIModelDnD(UIModelMPH):
     UIModelDnD
 
     Attributes
-    ==========
+    ----------
     crosshair : CrossHair
         A crosshair for placing and moving components
     new_component : lcapygui.mnacpts.cpt or None
