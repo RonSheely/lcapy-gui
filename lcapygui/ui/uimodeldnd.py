@@ -483,14 +483,16 @@ class UIModelDnD(UIModelMPH):
         """
         if self.selected and self.cpt_selected:
             # rotate the component
-            angle = 90 if scroll_direction == "up" else -10
+            angle = 90 if scroll_direction == "up" else -90
             self.rotate(self.selected, angle)
             self.selected.gcpt.undraw()
             self.selected.gcpt.draw(self)
 
     def on_cut(self):
-        if self.selected is None:
-            return
+        """
+        If a component is selected, add it to the clipboard and remove it from the circuit
+
+        """
         if not self.cpt_selected:
             return
         self.cut(self.selected)
@@ -499,9 +501,8 @@ class UIModelDnD(UIModelMPH):
     def on_delete(self):
         """
         If a component is selected, delete it, then redraw and refresh the UI
+
         """
-        if self.selected is None:
-            return
         if not self.cpt_selected:
             # Handle node deletion later
             return
@@ -510,6 +511,10 @@ class UIModelDnD(UIModelMPH):
         self.ui.refresh()
 
     def on_paste(self):
+        """
+        If the clipboard is not empty, create a new component from the clipboard and add it to the circuit
+
+        """
         if self.clipboard is None:
             if self.ui.debug:
                 print("Nothing to paste")
