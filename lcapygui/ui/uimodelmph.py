@@ -550,7 +550,7 @@ class UIModelMPH(UIModelBase):
             if not self.selected or not self.cpt_selected:
                 return
             cpt = self.selected
-
+        cpt.gcpt.draw_polarity(self)
         win = self.ui.show_working_dialog('Calculating voltage')
         self.inspect_voltage(cpt)
         win.destroy()

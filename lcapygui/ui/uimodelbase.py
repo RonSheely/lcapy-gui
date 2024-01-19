@@ -168,7 +168,6 @@ class UIModelBase:
         # A = add
         # D = delete
         # M = move
-        # N = move node
 
         if inverse:
             code = {'A': 'D', 'D': 'A', 'M': 'M'}[code]
