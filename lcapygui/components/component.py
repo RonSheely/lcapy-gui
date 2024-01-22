@@ -404,7 +404,7 @@ class Component(ABC):
         attr = self._attr_dir_string(x1, y1, x2, y2, step)
 
         if self.scale != '1':
-            attr += ', scale=' + self.scale
+            attr += ', scale=' + str(self.scale)
         if self.color != '':
             attr += ', color=' + self.color
         # TODO, add cunning way of specifing modifiers, e.g., v^, i<
