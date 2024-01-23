@@ -2,6 +2,7 @@ from .cursor import Cursor
 from .cursors import Cursors
 from .uimodelbase import UIModelBase
 from .history_event import HistoryEvent
+from lcapy.nodes import Node
 from lcapy.mnacpts import Cpt
 from lcapy import Circuit
 from os.path import basename
@@ -146,23 +147,34 @@ class UIModelMPH(UIModelBase):
 
         return None
 
-    def closest_node(self, x, y):
+    def closest_node(self, x, y, ignored=None):
         """
         Returns the node closest to the specified position
 
         Parameters
-        ==========
+        ----------
         x : float
             x position
         y : float
             y position
+        ignored : lcapy.nodes.Node or list[lcapy.nodes.Node, ...], optional
+            Node(s) to ignore
 
         """
+
+        if type(ignored) == Node:
+            ignored = [ignored]
+
+
         for node in self.circuit.nodes.values():
             if node.pos is None:
                 # This happens with opamps.  Node 0 is the default
                 # reference pin.
                 warn('Ignoring node %s with no position' % node.name)
+                continue
+            elif ignored is not None and node in ignored:
+                if self.ui.debug:
+                    print('Ignoring node %s' % node.name)
                 continue
             x1, y1 = node.pos.x, node.pos.y
             rsq = (x1 - x) ** 2 + (y1 - y) ** 2

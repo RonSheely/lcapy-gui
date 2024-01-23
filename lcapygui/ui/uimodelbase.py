@@ -12,6 +12,7 @@ from math import atan2, degrees, sqrt, cos, sin
 from numpy import nan, isnan, floor, array, dot, sqrt
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
+from lcapy.node import Node
 from lcapy.nodes import parse_nodes
 from lcapy.opts import Opts
 
@@ -474,6 +475,84 @@ class UIModelBase:
             cpt.gcpt.draw(self)
 
         self.ui.refresh()
+
+    def node_join(self, node1, node2):
+        """
+        Joins all components in node2, with those in node 1, then
+        removes node2 from the circuit.
+
+        Parameters
+        ----------
+        node1 : lcapy.nodes.Node
+            The node to merge onto
+        node2 : lcapy.nodes.Node
+            The node to merge from
+
+        Returns
+        -------
+        TODO
+
+        """
+        # if the two nodes are the same, disallow. This should not happen.
+        if node1.name == node2.name:
+            print(
+                f"WARN: Tried to merge node {node1.name} with itself.\n\
+                this should not happen, and has likely caused an error.")
+            return
+
+        connected_cpts = []
+        # update every component in node2 to be in node1
+        for cpt in node2.connected:
+            connected_cpts.append(cpt)
+            node2.remove(cpt)
+            cpt.nodes.remove(node2)
+            node1.append(cpt)
+            cpt.nodes.append(node1)
+
+        # Add the join event to history
+        self.history.append(HistoryEvent('J', node2.name, connected_cpts))
+        print('Histoy event: ' + str(self.history[-1]))
+
+        return node2.name, connected_cpts
+
+    def node_split(self, node1, node2_name, components=None):
+        """
+        moves the given components from node1 to node 2
+
+        Parameters
+        ----------
+        node1
+        node2_name
+        components
+
+        Returns
+        -------
+
+        """
+        if components is None:
+            if self.ui.debug:
+                print('No components moved')
+            return
+
+        node2 = Node(self.circuit, node2_name)
+        node2.pos = node1.pos
+
+        # update every component in node2 to be in node1
+        for cpt in components:
+            node1.remove(cpt)
+            cpt.nodes.remove(node1)
+            node2.append(cpt)
+            cpt.nodes.append(node2)
+
+        return node2
+
+
+
+
+
+
+
+
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 
