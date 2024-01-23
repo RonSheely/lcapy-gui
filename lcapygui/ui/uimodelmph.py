@@ -147,7 +147,7 @@ class UIModelMPH(UIModelBase):
 
         return None
 
-    def closest_node(self, x, y, ignored=None):
+    def closest_node(self, x, y, ignore=None):
         """
         Returns the node closest to the specified position
 
@@ -157,13 +157,13 @@ class UIModelMPH(UIModelBase):
             x position
         y : float
             y position
-        ignored : lcapy.nodes.Node or list[lcapy.nodes.Node, ...], optional
+        ignore : lcapy.nodes.Node or list[lcapy.nodes.Node, ...], optional
             Node(s) to ignore
 
         """
 
-        if type(ignored) == Node:
-            ignored = [ignored]
+        if type(ignore) == Node:
+            ignore = [ignore]
 
 
         for node in self.circuit.nodes.values():
@@ -172,7 +172,7 @@ class UIModelMPH(UIModelBase):
                 # reference pin.
                 warn('Ignoring node %s with no position' % node.name)
                 continue
-            elif ignored is not None and node in ignored:
+            elif ignore is not None and node in ignore:
                 if self.ui.debug:
                     print('Ignoring node %s' % node.name)
                 continue

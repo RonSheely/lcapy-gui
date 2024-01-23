@@ -150,6 +150,7 @@ class UIModelDnD(UIModelMPH):
         # Used to determine if a component or node is being moved in the on_mouse_drag method
         self.dragged = False
 
+
     def node_merge(self, node1, node2=None):
         """
         Merges a given node, with any that might exist on the circuit
@@ -166,7 +167,7 @@ class UIModelDnD(UIModelMPH):
         """
         if node2 is None:
             print(f"No node provided, searching for existing node at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
-            node2 = self.closest_node(node1.pos.x, node1.pos.y, node1)
+            node2 = self.closest_node(node1.pos.x, node1.pos.y, ignore=node1)
         if node2 is None:
             print(f"No existing node found at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
             return
@@ -488,6 +489,7 @@ class UIModelDnD(UIModelMPH):
         elif self.selected:
             # If a component is selected, move it with the mouse
             if self.cpt_selected:
+                print(self.selected.nodes)
                 super().on_mouse_drag(mouse_x, mouse_y, key)
 
             else:

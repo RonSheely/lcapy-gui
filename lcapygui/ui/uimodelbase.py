@@ -502,13 +502,16 @@ class UIModelBase:
             return
 
         connected_cpts = []
+
         # update every component in node2 to be in node1
         for cpt in node2.connected:
             connected_cpts.append(cpt)
-            node2.remove(cpt)
             cpt.nodes.remove(node2)
-            node1.append(cpt)
             cpt.nodes.append(node1)
+
+        # move the entire connected list from node2 to node1
+        node1.connected.extend(node2.connected)
+        node2.connected.clear()
 
         return connected_cpts
 
@@ -567,8 +570,7 @@ class UIModelBase:
         newcpt.args = cpt.args
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
-                                         newgcpt.node2.x, newgcpt.node2.y,
-                                         self.STEP))
+                                         newgcpt.node2.x, newgcpt.node2.y))
 
     def cpt_remake(self, cpt):
         gcpt = cpt.gcpt
