@@ -165,10 +165,17 @@ class UIModelDnD(UIModelMPH):
 
         """
         if node2 is None:
+            print(f"No node provided, searching for existing node at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
             node2 = self.closest_node(node1.pos.x, node1.pos.y, node1)
         if node2 is None:
+            print(f"No existing node found at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
             return
-        self.node_join(node1, node2)
+        print(f"Joining {node1.name} and {node2.name}") if self.ui.debug else None
+        connected_cpts = self.node_join(node1, node2)
+
+        # Add the join event to history
+        self.history.append(HistoryEvent('J', node2.name, connected_cpts))
+        print('History event: ' + str(self.history[-1]))
 
 
 

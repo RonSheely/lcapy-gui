@@ -490,14 +490,15 @@ class UIModelBase:
 
         Returns
         -------
-        TODO
+        connected_cpts : list[lcapy.mnacpts.Cpt]
+            The list of components that were moved from node2 to node1
 
         """
         # if the two nodes are the same, disallow. This should not happen.
         if node1.name == node2.name:
             print(
                 f"WARN: Tried to merge node {node1.name} with itself.\n\
-                this should not happen, and has likely caused an error.")
+                this should not happen, and is likely due to an error.")
             return
 
         connected_cpts = []
@@ -509,11 +510,7 @@ class UIModelBase:
             node1.append(cpt)
             cpt.nodes.append(node1)
 
-        # Add the join event to history
-        self.history.append(HistoryEvent('J', node2.name, connected_cpts))
-        print('Histoy event: ' + str(self.history[-1]))
-
-        return node2.name, connected_cpts
+        return connected_cpts
 
     def node_split(self, node1, node2_name, components=None):
         """
