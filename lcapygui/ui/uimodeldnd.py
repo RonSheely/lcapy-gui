@@ -275,7 +275,7 @@ class UIModelDnD(UIModelMPH):
         # Destroy popup menu
         unmake_popup(self.ui)
 
-        mouse_x, mouse_y = self.snap(mouse_x, mouse_y, True)
+        mouse_x, mouse_y = self.crosshair.position
 
         # Select component under mouse if not placing a component
         if self.crosshair.thing == None:
@@ -394,6 +394,12 @@ class UIModelDnD(UIModelMPH):
         if self.preferences.snap_grid:
             mouse_x, mouse_y = self.snap(mouse_x, mouse_y, True if self.new_component is None else False)
 
+        if self.crosshair.thing is not None and self.new_component is None:
+            if self.closest_node(self.crosshair.x, self.crosshair.y) is not None:
+                self.crosshair.style = 'node'
+            else:
+                self.crosshair.style = None
+
         self.crosshair.update((mouse_x, mouse_y))
 
     def snap(self, mouse_x, mouse_y, snap_to_component=False):
@@ -478,7 +484,7 @@ class UIModelDnD(UIModelMPH):
         Otherwise, if a node is selected, the node will be moved to the new position instead.
 
         """
-        mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
+        mouse_x, mouse_y = self.crosshair.position
 
         # Check if we are currently placing a component, and have already placed the first node
         if self.new_component is not None:
@@ -486,9 +492,9 @@ class UIModelDnD(UIModelMPH):
                     (node.pos.x, node.pos.y) for node in self.new_component.nodes
                 ]
                 if self.closest_node(self.crosshair.x, self.crosshair.y, self.new_component.gcpt.node2) is not None:
-                    self.crosshair.thing = 'node'
+                    self.crosshair.style = 'node'
                 else:
-                    self.crosshair.thing = Thing(None, None, self.new_component.type, "")
+                    self.crosshair.style = None
                 self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
 
         elif self.selected:
@@ -510,9 +516,9 @@ class UIModelDnD(UIModelMPH):
                 if self.crosshair.thing is None:
                     # Show cursor as node if close to a node
                     if self.closest_node(self.crosshair.x, self.crosshair.y, ignore=self.selected) is not None:
-                        self.crosshair.thing = 'node'
+                        self.crosshair.style = 'node'
                     else:
-                        self.crosshair.thing = None
+                        self.crosshair.style = None
 
                 self.node_move(self.selected, mouse_x, mouse_y)
 

@@ -7,6 +7,7 @@ class CrossHair:
         self.position = 0, 0
         self.model = model
         self._thing = thing
+        self.style = None
         self.label = None
         self.picture = Picture()
 
@@ -21,12 +22,11 @@ class CrossHair:
 
     @property
     def thing(self):
-        if self._thing in [None, "node"]:
-            return None
         return self._thing
 
     @thing.setter
     def thing(self, thing):
+        self.style = None
         self._thing = thing
 
     def draw(self):
@@ -43,28 +43,53 @@ class CrossHair:
         scale = self.model.preferences.xsize / 20
         sketcher = self.model.ui.sketcher
 
+        # Draw crosshair in default mode, if no style is specified
+        if self.style is None:
         # If drawing a component, draw the component type
-        if self.thing is not None:
-            if self.thing.cpt_type == "W" or self.thing.cpt_type == "DW":
-                self.picture.add(
-                    sketcher.stroke_filled_circle(
-                        self.x, self.y, radius=0.2 * scale, color="green", alpha=1
+            if self.thing is not None:
+                if self.thing.cpt_type == "W" or self.thing.cpt_type == "DW":
+                    self.picture.add(
+                        sketcher.stroke_filled_circle(
+                            self.x, self.y, radius=0.2 * scale, color="green", alpha=1
+                        )
                     )
-                )
+                else:
+                    self.picture.add(
+                        sketcher.text(
+                            self.x + 0.2 * scale,
+                            self.y + 0.2 * scale,
+                            self.thing.cpt_type,
+                            fontsize=self.model.preferences.font_size
+                            * self.model.zoom_factor
+                            * self.model.preferences.line_width_scale,
+                        )
+                    )
 
-            else:
+            # draw cursor
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=1
+                )
+            )
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
+                )
+            )
+
+        elif self.style == "node": # If node style
+            if self.thing is not None and (self.thing.cpt_type != "W" and self.thing.cpt_type != "DW"):
                 self.picture.add(
                     sketcher.text(
                         self.x + 0.2 * scale,
                         self.y + 0.2 * scale,
                         self.thing.cpt_type,
                         fontsize=self.model.preferences.font_size
-                        * self.model.zoom_factor
-                        * self.model.preferences.line_width_scale,
+                                 * self.model.zoom_factor
+                                 * self.model.preferences.line_width_scale,
                     )
                 )
 
-        if self._thing == "node":
             self.picture.add(
                 sketcher.stroke_circle(
                     self.x, self.y, radius=0.2 * scale, color="black", alpha=1
@@ -76,7 +101,6 @@ class CrossHair:
                     self.x, self.y, radius=0.1 * scale, color="black", alpha=1
                 )
             )
-
 
             # draw cursor
             self.picture.add(
@@ -97,18 +121,6 @@ class CrossHair:
             self.picture.add(
                 sketcher.stroke_line(
                     self.x - 0.5 * scale, self.y, self.x - 0.2 * scale, self.y, linewidth=1
-                )
-            )
-        else:
-            # draw cursor
-            self.picture.add(
-                sketcher.stroke_line(
-                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=1
-                )
-            )
-            self.picture.add(
-                sketcher.stroke_line(
-                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
                 )
             )
 
