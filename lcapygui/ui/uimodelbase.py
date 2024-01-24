@@ -478,8 +478,7 @@ class UIModelBase:
 
     def node_join(self, node1, node2):
         """
-        Joins all components in node2, with those in node 1, then
-        removes node2 from the circuit.
+        Joins all components in node2, with those in node 1, then removes node2 from the circuit.
 
         Parameters
         ----------
@@ -490,8 +489,8 @@ class UIModelBase:
 
         Returns
         -------
-        connected_cpts : list[lcapy.mnacpts.Cpt]
-            The list of components that were moved from node2 to node1
+        connected_cpts : list[lcapy.mnacpts.Cpt, ...]
+            A copy of the list of components that were moved from node2 to node1
 
         """
         # if the two nodes are the same, disallow. This should not happen.

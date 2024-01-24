@@ -6,7 +6,7 @@ class CrossHair:
     def __init__(self, model, thing=None, label=None):
         self.position = 0, 0
         self.model = model
-        self.thing = thing
+        self._thing = thing
         self.label = None
         self.picture = Picture()
 
@@ -18,6 +18,16 @@ class CrossHair:
     def position(self, coords: Tuple[int, int]):
         self.x = coords[0]
         self.y = coords[1]
+
+    @property
+    def thing(self):
+        if self._thing in [None, "node"]:
+            return None
+        return self._thing
+
+    @thing.setter
+    def thing(self, thing):
+        self._thing = thing
 
     def draw(self):
         """
@@ -33,19 +43,20 @@ class CrossHair:
         scale = self.model.preferences.xsize / 20
         sketcher = self.model.ui.sketcher
 
-        # Draw text or more
-        if self.thing != None:
+        # If drawing a component, draw the component type
+        if self.thing is not None:
             if self.thing.cpt_type == "W" or self.thing.cpt_type == "DW":
                 self.picture.add(
                     sketcher.stroke_filled_circle(
                         self.x, self.y, radius=0.2 * scale, color="green", alpha=1
                     )
                 )
+
             else:
                 self.picture.add(
                     sketcher.text(
-                        self.x + 0.1 * scale,
-                        self.y + 0.1 * scale,
+                        self.x + 0.2 * scale,
+                        self.y + 0.2 * scale,
                         self.thing.cpt_type,
                         fontsize=self.model.preferences.font_size
                         * self.model.zoom_factor
@@ -53,18 +64,47 @@ class CrossHair:
                     )
                 )
 
-        # draw cursor
-        self.picture.add(
-            sketcher.stroke_line(
-                self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=1
+        if self._thing == "node":
+
+            self.picture.add(
+                sketcher.stroke_circle(
+                    self.x, self.y, radius=0.2 * scale, color="black", alpha=1
+                )
             )
-        )
-        self.picture.add(
-            sketcher.stroke_line(
-                self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
+            # draw cursor
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale, linewidth=1
+                )
             )
-        )
-        # Change cursor appearance based on which component is being placed
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x, self.y - 0.5 * scale, self.x, self.y - 0.2 * scale, linewidth=1
+                )
+            )
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x + 0.2 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
+                )
+            )
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x - 0.5 * scale, self.y, self.x - 0.2 * scale, self.y, linewidth=1
+                )
+            )
+        else:
+            # draw cursor
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=1
+                )
+            )
+            self.picture.add(
+                sketcher.stroke_line(
+                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
+                )
+            )
+
 
 
     def undraw(self):
@@ -74,6 +114,13 @@ class CrossHair:
         """
         if self.picture is not None:
             self.picture.remove()
+
+    def redraw(self):
+        """
+        Redraws the crosshair
+        """
+        self.undraw()
+        self.draw()
 
     def update(self, mouse_position, style=None, model=None):
         """

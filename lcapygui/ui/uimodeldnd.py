@@ -51,6 +51,7 @@ class UIModelDnD(UIModelMPH):
         # redraw crosshair
         self.crosshair.undraw()
         self.crosshair.draw()
+
         self.ui.refresh()
 
     def on_add_con(self, thing):
@@ -501,6 +502,15 @@ class UIModelDnD(UIModelMPH):
                     self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
                 if key == "shift":
                     self.split_nodes()
+
+                # Show cursor as node if close to a node
+                if self.closest_node(self.crosshair.x, self.crosshair.y, ignore=self.selected) is not None:
+                    self.crosshair.thing = 'node'
+                else:
+                    self.crosshair.thing = None
+                self.crosshair.redraw()
+                self.ui.refresh()
+
                 self.node_move(self.selected, mouse_x, mouse_y)
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
