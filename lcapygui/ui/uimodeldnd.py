@@ -139,7 +139,7 @@ class UIModelDnD(UIModelMPH):
             # Moving a node
             else:
                 self.node_merge(self.selected)
-
+                self.crosshair.thing = None
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
                     HistoryEvent("M", self.selected, self.node_positions, node_position)
@@ -481,10 +481,14 @@ class UIModelDnD(UIModelMPH):
         mouse_x, mouse_y = self.snap(mouse_x, mouse_y)
 
         # Check if we are currently placing a component, and have already placed the first node
-        if self.crosshair.thing != None and self.new_component is not None:
+        if self.new_component is not None:
                 self.node_positions = [
                     (node.pos.x, node.pos.y) for node in self.new_component.nodes
                 ]
+                if self.closest_node(self.crosshair.x, self.crosshair.y, self.new_component.gcpt.node2) is not None:
+                    self.crosshair.thing = 'node'
+                else:
+                    self.crosshair.thing = Thing(None, None, self.new_component.type, "")
                 self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
 
         elif self.selected:
@@ -503,13 +507,12 @@ class UIModelDnD(UIModelMPH):
                 if key == "shift":
                     self.split_nodes()
 
-                # Show cursor as node if close to a node
-                if self.closest_node(self.crosshair.x, self.crosshair.y, ignore=self.selected) is not None:
-                    self.crosshair.thing = 'node'
-                else:
-                    self.crosshair.thing = None
-                self.crosshair.redraw()
-                self.ui.refresh()
+                if self.crosshair.thing is None:
+                    # Show cursor as node if close to a node
+                    if self.closest_node(self.crosshair.x, self.crosshair.y, ignore=self.selected) is not None:
+                        self.crosshair.thing = 'node'
+                    else:
+                        self.crosshair.thing = None
 
                 self.node_move(self.selected, mouse_x, mouse_y)
 

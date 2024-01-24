@@ -65,12 +65,19 @@ class CrossHair:
                 )
 
         if self._thing == "node":
-
             self.picture.add(
                 sketcher.stroke_circle(
                     self.x, self.y, radius=0.2 * scale, color="black", alpha=1
                 )
             )
+
+            self.picture.add(
+                sketcher.stroke_filled_circle(
+                    self.x, self.y, radius=0.1 * scale, color="black", alpha=1
+                )
+            )
+
+
             # draw cursor
             self.picture.add(
                 sketcher.stroke_line(
@@ -139,13 +146,9 @@ class CrossHair:
         # Update parameters
         self.position = mouse_position
 
-        if style is not None:
-            self.style = style
-
         if model is not None:
             self.model = model
 
         # Redraw the component
-        self.undraw()
-        self.draw()
+        self.redraw()
         self.model.ui.refresh()
