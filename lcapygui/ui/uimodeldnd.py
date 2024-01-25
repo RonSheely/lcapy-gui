@@ -173,7 +173,9 @@ class UIModelDnD(UIModelMPH):
             print(f"No existing node found at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
             return
         print(f"Joining {node1.name} and {node2.name}") if self.ui.debug else None
-        connected_cpts = self.node_join(node1, node2)
+        connected_cpts = self.node_join(node2, node1)
+
+
 
         # Add the join event to history
         self.history.append(HistoryEvent('J', node2.name, connected_cpts))
@@ -566,6 +568,7 @@ class UIModelDnD(UIModelMPH):
             return
 
         self.delete(self.selected)
+        self.on_redraw()
         self.ui.refresh()
 
     def on_paste(self):

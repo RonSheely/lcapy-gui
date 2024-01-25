@@ -466,6 +466,7 @@ class UIModelBase:
         new_y : float
             The new y coordinate
         """
+
         # New position of nodes
         node.pos.x = new_x
         node.pos.y = new_y
@@ -502,18 +503,18 @@ class UIModelBase:
 
         connected_cpts = []
 
-
-        # move the entire connected list from node2 to node1
-        node1.connected.extend(node2.connected)
-
         # update every component in node2 to be in node1
         for cpt in node2.connected:
+            # store the moved component for return
             connected_cpts.append(cpt)
+            # Remove node2 from the component
             cpt.nodes.remove(node2)
+            # Remove the component from node2
             node2.remove(cpt)
+            # Add the component to node1
+            node1.append(cpt)
+            # Add node1 to the component
             cpt.nodes.append(node1)
-
-        node2.connected.clear()
 
         return connected_cpts
 
@@ -547,14 +548,6 @@ class UIModelBase:
             cpt.nodes.append(node2)
 
         return node2
-
-
-
-
-
-
-
-
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 
