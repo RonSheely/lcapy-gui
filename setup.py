@@ -14,7 +14,7 @@ setup(
     version="0.94dev",
     description="A GUI for lcapy",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_mattype="text/markdown",
     author="Michael Hayes, Jordan Hay",
     license="MIT",
     url="https://github.com/mph-/lcapy-gui",
