@@ -55,7 +55,7 @@ def main(argv=None):
 
     # Add Icon path for program
     from lcapygui import __datadir__
-    icon_filename = __datadir__ / "icon" / "lcapy-gui.png"
+    icon_filename = __datadir__ / "icon" / "lcapy-gui-small.png"
     # If on MacOS, don't use icon
     if system() == 'Darwin':
         icon_filename = None

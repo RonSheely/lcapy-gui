@@ -502,14 +502,17 @@ class UIModelBase:
 
         connected_cpts = []
 
+
+        # move the entire connected list from node2 to node1
+        node1.connected.extend(node2.connected)
+
         # update every component in node2 to be in node1
         for cpt in node2.connected:
             connected_cpts.append(cpt)
             cpt.nodes.remove(node2)
+            node2.remove(cpt)
             cpt.nodes.append(node1)
 
-        # move the entire connected list from node2 to node1
-        node1.connected.extend(node2.connected)
         node2.connected.clear()
 
         return connected_cpts
