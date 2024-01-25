@@ -169,9 +169,11 @@ class UIModelBase:
         # A = add
         # D = delete
         # M = move
+        # J = join (nodes)
+        # S = split (nodes)
 
         if inverse:
-            code = {'A': 'D', 'D': 'A', 'M': 'M'}[code]
+            code = {'A': 'D', 'D': 'A', 'M': 'M', 'J': 'S', 'S': 'J'}[code]
 
         if code == 'A':
             newcpt = self.circuit.add(str(cpt))
@@ -208,6 +210,18 @@ class UIModelBase:
 
                 self.select(node)
                 self.on_redraw()
+        elif code == 'J':
+            self.node_join(event.from_nodes)
+        elif code == 'S':
+            new_node_name = cpt
+            existing_node = event.from_nodes
+            connected_cpts = event.to_nodes
+            # split the nodes
+            print('Splitting nodes')
+            self.node_split(existing_node, new_node_name, connected_cpts)
+
+            # if self.history[-1].code == 'M':
+            #     self.undo()
 
         # The network has changed
         self.invalidate()
@@ -477,7 +491,7 @@ class UIModelBase:
 
         self.ui.refresh()
 
-    def node_join(self, node1, node2):
+    def node_join(self, node1, node2=None):
         """
         Joins all components in node2, with those in node 1, then removes node2 from the circuit.
 
@@ -485,7 +499,7 @@ class UIModelBase:
         ----------
         node1 : lcapy.nodes.Node
             The node to merge onto
-        node2 : lcapy.nodes.Node
+        node2 : lcapy.nodes.Node, optional
             The node to merge from
 
         Returns
@@ -494,6 +508,16 @@ class UIModelBase:
             A copy of the list of components that were moved from node2 to node1
 
         """
+
+        if node2 is None:
+            print(f"No node provided, searching for existing node at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
+            node2 = self.closest_node(node1.pos.x, node1.pos.y, ignore=node1)
+        if node2 is None:
+            print(f"No existing node found at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
+            return None
+        print(f"Joining {node1.name} and {node2.name}") if self.ui.debug else None
+
+
         # if the two nodes are the same, disallow. This should not happen.
         if node1.name == node2.name:
             print(
@@ -516,38 +540,49 @@ class UIModelBase:
             # Add node1 to the component
             cpt.nodes.append(node1)
 
-        return connected_cpts
+        # return the history event
+        return connected_cpts, node2.name
 
-    def node_split(self, node1, node2_name, components=None):
+    def node_split(self, existing_node, new_node_name, components=None):
         """
-        moves the given components from node1 to node 2
+        moves the given components from node1 to new node2
 
         Parameters
         ----------
-        node1
-        node2_name
+        existing_node
+        new_node_name
         components
 
         Returns
         -------
 
         """
+        # Must pass in components to move
         if components is None:
             if self.ui.debug:
                 print('No components moved')
             return
 
-        node2 = Node(self.circuit, node2_name)
-        node2.pos = node1.pos
+        # Create a new node with the existing node name
+        new_node = Node(self.circuit, new_node_name)
+        # Add the new node to the circuit
+        self.circuit.nodes[new_node_name] = new_node
+        # Copy the original nodes position
+        new_node.pos = copy(existing_node.pos)
 
-        # update every component in node2 to be in node1
+        # update every component in components to be in new_node
         for cpt in components:
-            node1.remove(cpt)
-            cpt.nodes.remove(node1)
-            node2.append(cpt)
-            cpt.nodes.append(node2)
+            # Remove the component from existing_node
+            existing_node.remove(cpt)
+            # Remove existing_node from the component
+            cpt.nodes.remove(existing_node)
+            # Add the component to new_node
+            new_node.append(cpt)
+            # Add new_node to the component
+            cpt.nodes.append(new_node)
 
-        return node2
+        # return the new node
+        return new_node
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 

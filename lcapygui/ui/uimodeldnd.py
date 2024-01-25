@@ -107,13 +107,16 @@ class UIModelDnD(UIModelMPH):
                 self.node_move(self.new_component.gcpt.node2, self.crosshair.x + 1, self.crosshair.y)
                 self.history.append(HistoryEvent("A", self.new_component))
             else:  # Otherwise, confirm the component placement in its current position, and save to history
-                self.node_merge(self.new_component.gcpt.node2)
-
                 # If created component is a dynamic wire, split to component parts.
                 if self.new_component.gcpt.type == "DW":
                     self.new_component.gcpt.convert_to_wires(self)
                 else:
                     self.history.append(HistoryEvent("A", self.new_component))
+
+                join_args = self.node_join(self.new_component.gcpt.node2)
+                if join_args is not None:
+                    # Add the join event to history
+                    self.history.append(HistoryEvent('J', from_nodes=self.selected, to_nodes=join_args[0], cpt=join_args[1]))
 
             # Allow continual placing of components if the shift key is pressed
             if key != 'shift':
@@ -138,51 +141,23 @@ class UIModelDnD(UIModelMPH):
                 )
             # Moving a node
             else:
-                self.node_merge(self.selected)
                 self.crosshair.thing = None
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
                     HistoryEvent("M", self.selected, self.node_positions, node_position)
                 )
 
+                join_args = self.node_join(self.selected)
+                if join_args is not None:
+                    # Add the join event to history
+                    self.history.append(
+                        HistoryEvent('J', from_nodes=self.selected, to_nodes=join_args[0], cpt=join_args[1]))
+
 
         # Redraw screen for accurate display of labels
         self.on_redraw()
         # Used to determine if a component or node is being moved in the on_mouse_drag method
         self.dragged = False
-
-
-    def node_merge(self, node1, node2=None):
-        """
-        Merges a given node, with any that might exist on the circuit
-
-        Parameters
-        ----------
-        node1 : lcapy.nodes.Node
-        node2 : lcapy.nodes.Node, optional
-
-        Notes
-        -----
-        Merges the two nodes together, and updates all components connected to the nodes to use the new node.
-
-        """
-        if node2 is None:
-            print(f"No node provided, searching for existing node at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
-            node2 = self.closest_node(node1.pos.x, node1.pos.y, ignore=node1)
-        if node2 is None:
-            print(f"No existing node found at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
-            return
-        print(f"Joining {node1.name} and {node2.name}") if self.ui.debug else None
-        connected_cpts = self.node_join(node2, node1)
-
-
-
-        # Add the join event to history
-        self.history.append(HistoryEvent('J', node2.name, connected_cpts))
-        print('History event: ' + str(self.history[-1]))
-
-
-
 
     # def merge_nodes(self, current_cpt, ignore_node=None):
     #     """
@@ -502,7 +477,7 @@ class UIModelDnD(UIModelMPH):
         elif self.selected:
             # If a component is selected, move it with the mouse
             if self.cpt_selected:
-                print(self.selected.nodes)
+                #print(self.selected.nodes)
                 super().on_mouse_drag(mouse_x, mouse_y, key)
 
             else:
@@ -513,7 +488,7 @@ class UIModelDnD(UIModelMPH):
                     # To save history, save first component position
                     self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
                 if key == "shift":
-                    self.split_nodes()
+                    print("Splitting nodes with shift not implemented yet, please use undo")
 
                 if self.crosshair.thing is None:
                     # Show cursor as node if close to a node
