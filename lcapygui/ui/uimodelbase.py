@@ -213,14 +213,14 @@ class UIModelBase:
         elif code == 'J':
             self.node_join(event.from_nodes)
         elif code == 'S':
-            new_node_name = cpt
-            existing_node = event.from_nodes
-            connected_cpts = event.to_nodes
+            connected_from = cpt
+            new_node = event.from_nodes
+            existing_node = event.to_nodes
             # split the nodes
-            print('Splitting nodes')
-            self.node_split(existing_node, new_node_name, connected_cpts)
+            self.node_split(existing_node, new_node, connected_from)
 
             # if self.history[-1].code == 'M':
+            #     print("undo movement")
             #     self.undo()
 
         # The network has changed
@@ -491,16 +491,16 @@ class UIModelBase:
 
         self.ui.refresh()
 
-    def node_join(self, node1, node2=None):
+    def node_join(self, from_node, to_node=None):
         """
-        Joins all components in node2, with those in node 1, then removes node2 from the circuit.
+        Joins all components in node1, to those in node2, then removes node1 from the circuit.
 
         Parameters
         ----------
-        node1 : lcapy.nodes.Node
-            The node to merge onto
-        node2 : lcapy.nodes.Node, optional
+        from_node : lcapy.nodes.Node
             The node to merge from
+        to_node : lcapy.nodes.Node, optional
+            The node to merge onto
 
         Returns
         -------
@@ -509,41 +509,41 @@ class UIModelBase:
 
         """
 
-        if node2 is None:
-            print(f"No node provided, searching for existing node at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
-            node2 = self.closest_node(node1.pos.x, node1.pos.y, ignore=node1)
-        if node2 is None:
-            print(f"No existing node found at ({node1.pos.x}, {node1.pos.y})") if self.ui.debug else None
+        if to_node is None:
+            print(f"No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
+            to_node = self.closest_node(from_node.pos.x, from_node.pos.y, ignore=from_node)
+        if to_node is None:
+            print(f"No existing node found at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
             return None
-        print(f"Joining {node1.name} and {node2.name}") if self.ui.debug else None
+        print(f"Joining {from_node.name} and {to_node.name}") if self.ui.debug else None
 
 
         # if the two nodes are the same, disallow. This should not happen.
-        if node1.name == node2.name:
+        if from_node.name == to_node.name:
             print(
-                f"WARN: Tried to merge node {node1.name} with itself.\n\
+                f"WARN: Tried to merge node {from_node.name} with itself.\n\
                 this should not happen, and is likely due to an error.")
             return
 
-        connected_cpts = []
+        connected_from = []
 
-        # update every component in node2 to be in node1
-        for cpt in node2.connected:
+        # update every component in node1 to be in node2
+        for cpt in from_node.connected:
             # store the moved component for return
-            connected_cpts.append(cpt)
-            # Remove node2 from the component
-            cpt.nodes.remove(node2)
-            # Remove the component from node2
-            node2.remove(cpt)
-            # Add the component to node1
-            node1.append(cpt)
-            # Add node1 to the component
-            cpt.nodes.append(node1)
+            connected_from.append(cpt)
+            # Remove node1 from the component
+            cpt.nodes.remove(from_node)
+            # Remove the component from node1
+            from_node.remove(cpt)
+            # Add the component to node2
+            to_node.append(cpt)
+            # Add node2 to the component
+            cpt.nodes.append(to_node)
 
-        # return the history event
-        return connected_cpts, node2.name
+        # return information required for history
+        return from_node, to_node, connected_from
 
-    def node_split(self, existing_node, new_node_name, components=None):
+    def node_split(self, existing_node, new_node=None, components=None):
         """
         moves the given components from node1 to new node2
 
@@ -562,11 +562,17 @@ class UIModelBase:
             if self.ui.debug:
                 print('No components moved')
             return
+        if new_node is None:
+            return
+            # TODO: Implement creating a new node if none is passed in
+            # new_node = Node(self.circuit, new_node_name)
+            # # Add the new node to the circuit
+            # self.circuit.nodes[new_node_name] = new_node
+            # # Copy the original nodes position
+            # new_node.pos = copy(existing_node.pos)
 
-        # Create a new node with the existing node name
-        new_node = Node(self.circuit, new_node_name)
-        # Add the new node to the circuit
-        self.circuit.nodes[new_node_name] = new_node
+        # Ensure the new node is on the circuit
+        self.circuit.nodes[new_node.name] = new_node
         # Copy the original nodes position
         new_node.pos = copy(existing_node.pos)
 
