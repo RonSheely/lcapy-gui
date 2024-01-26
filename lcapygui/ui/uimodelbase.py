@@ -200,7 +200,6 @@ class UIModelBase:
                     node.pos.y = pos[1]
 
                 self.select(cpt)
-                self.on_redraw()
             else:
                 node = cpt
                 pos = event.from_nodes[0] if inverse else event.to_nodes[0]
@@ -208,8 +207,12 @@ class UIModelBase:
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
+                # if a subsequent join occurred, redo that too
+                if self.recall[-1].code == 'J':
+                    self.redo()
+
                 self.select(node)
-                self.on_redraw()
+            self.on_redraw()
         elif code == 'J':
             self.node_join(event.from_nodes)
         elif code == 'S':
@@ -219,9 +222,9 @@ class UIModelBase:
             # split the nodes
             self.node_split(existing_node, new_node, connected_from)
 
-            # if self.history[-1].code == 'M':
-            #     print("undo movement")
-            #     self.undo()
+            # if a preceding movement occurred, undo that too
+            if self.history[-1].code == 'M':
+                self.undo()
 
         # The network has changed
         self.invalidate()
