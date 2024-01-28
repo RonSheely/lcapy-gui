@@ -35,4 +35,6 @@ Contents:
    :maxdepth: 3
 
    install.rst
-   usage.rst
+   introduction.rst
+   getting_started.rst
+   keybindings.rst
