@@ -34,6 +34,14 @@ Before installing, please ensure you have python version 3.8 or greater installe
 
     To use python in the venv, you must use the new python binaries located in the venv directory.
 
+    **Linux/macOS**
+
+    .. code-block:: console
+
+        $ INSTALL_PATH/bin/pip install lcapygui
+
+    **Windows**
+
     .. code-block:: console
 
         $ INSTALL_PATH/scripts/pip install lcapygui
@@ -47,6 +55,14 @@ Before installing, please ensure you have python version 3.8 or greater installe
 
     Lcapy-gui can be run using the following command:
 
+    **Linux/macOS***
+
+    .. code-block:: console
+
+        $ INSTALL_PATH/bin/lcapy-tk
+
+    **Windows**
+
     .. code-block:: console
 
         $ INSTALL_PATH/scripts/lcapy-tk
@@ -56,7 +72,20 @@ Before installing, please ensure you have python version 3.8 or greater installe
     Sometimes it can be nice to have a desktop shortcut to launch lcapy-gui. To do this, we use the ``pyshortcuts`` package.
     The specific command to execute varies between devices.
 
-    **Linux**
+    **Linux/macOS***
+
+    .. code-block:: console
+
+        $ INSTALL_PATH/bin/lcapy-tk --create-shortcut
+
+    **Windows**
+
+    .. code-block:: console
+
+        $ INSTALL_PATH/scripts/lcapy-tk --create-shortcut
+
+    If the icon does not appear right away, you may need to log out and log back in. If the icon still does not appear,
+    check the shortcut directory output from the command above.
 
 
 
