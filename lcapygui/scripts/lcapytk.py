@@ -36,20 +36,25 @@ def create_shortcut():
     integrate = True  # Whether to integrate the shortcut with the Start Menu/application launcher (not compatible on MacOS)
     icon_path = None  # Path to the icon file, depends on OS
     print(f"\nplatform: {platform}")
+
+    from lcapygui import __datadir__
+    icon_path = __datadir__ / "icon" / "lcapy-gui-small.png"
     if platform == 'win':
-        icon_path = os.path.normpath(
-            os.path.join(sys.prefix, "Lib", "site-packages", "lcapygui", "data", "icon", "lcapy-gui.ico"))
-    elif platform == 'Linux':
-        icon_path = "./venv/lib/python3.9/site-packages/lcapygui/data/icon/lcapy-gui.svg"
+        icon_path = __datadir__ / "icon" / "lcapy-gui.ico"
+    elif platform == 'linux':
+        icon_path = __datadir__ / "icon" / "lcapy-gui.svg"
     elif platform == 'Darwin':
         integrate = False
 
 
     bindir = 'Scripts' if platform.startswith('win') else 'bin'
+
     executable_path = os.path.normpath(os.path.join(sys.prefix, bindir, "lcapy-tk"))
+    python_path = os.path.normpath(os.path.join(sys.prefix, bindir, "python"))
     print(f"\nexecutable path: {executable_path}")
+
     print(f"icon path: {icon_path}\n")
-    launch_lcapygui = make_shortcut(f"{executable_path:s}", name=package_name, icon=icon_path, startmenu=integrate, terminal=False, folder=package_name)
+    launch_lcapygui = make_shortcut(f"{executable_path:s}", name=package_name, icon=icon_path, startmenu=integrate, terminal=False, folder=package_name, executable=python_path)
     print(launch_lcapygui)
 
 def main(argv=None):
@@ -72,7 +77,7 @@ def main(argv=None):
     parser.add_argument('--model', type=str,
                         dest='model', default="UIModelDnD",
                         help="select the UI model: UIModelMPH, UIModelDnD")
-    parser.add_argument('--create_shortcut', action='store_true',
+    parser.add_argument('--create-shortcut', action='store_true',
                         help='Create a system shortcut', default=False)
     parser.add_argument('filenames', type=str, nargs='*',
                         help='schematic filename(s)', default=[]),
