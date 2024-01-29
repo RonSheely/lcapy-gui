@@ -72,7 +72,7 @@ Before installing, please ensure you have python version 3.8 or greater installe
     Sometimes it can be nice to have a desktop shortcut to launch lcapy-gui. To do this, we use the ``pyshortcuts`` package.
     The specific command to execute varies between devices.
 
-    **Linux/macOS***
+    **Linux/macOS**
 
     .. code-block:: console
 
