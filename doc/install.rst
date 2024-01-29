@@ -25,7 +25,9 @@ Before installing, please ensure you have python version 3.8 or greater installe
         $ python -m venv INSTALL_PATH
 
     be sure to replace ``INSTALL_PATH`` with the path to the new virtual environment.
-    Make sure this path is somewhere you wont erase it by mistake
+    Make sure this path is somewhere you wont erase it by mistake.
+
+    Because lcapy-gui uses ``~/.lcapy`` to store its settings, file, a good place for your venv  could be ``~/.lcapy/venv``
 
 
 2. Install lcapy-gui
@@ -48,6 +50,14 @@ Before installing, please ensure you have python version 3.8 or greater installe
     .. code-block:: console
 
         $ INSTALL_PATH/scripts/lcapy-tk
+
+4. Get a start menu shortcut
+
+    Sometimes it can be nice to have a desktop shortcut to launch lcapy-gui. To do this, we use the ``pyshortcuts`` package.
+    The specific command to execute varies between devices.
+
+    **Linux**
+
 
 
 

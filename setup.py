@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-
 # Open readme
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -36,7 +35,8 @@ setup(
         "svgpathtools",
         "svgpath2mpl",
         "tkhtmlview",
-        "astar"
+        "astar",
+        "pyshortcuts"
     ],
     entry_points={
         'console_scripts': [

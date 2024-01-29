@@ -27,6 +27,30 @@ def schtex_exception(type, value, tb):
         # ...then start the debugger in post-mortem mode.
         pdb.pm()
 
+def create_shortcut():
+    import os
+    import sys
+    from pyshortcuts import make_shortcut, platform
+
+    package_name = 'lcapy-gui'  # Name to use for the shortcut
+    integrate = True  # Whether to integrate the shortcut with the Start Menu/application launcher (not compatible on MacOS)
+    icon_path = None  # Path to the icon file, depends on OS
+    print(f"\nplatform: {platform}")
+    if platform == 'win':
+        icon_path = os.path.normpath(
+            os.path.join(sys.prefix, "Lib", "site-packages", "lcapygui", "data", "icon", "lcapy-gui.ico"))
+    elif platform == 'Linux':
+        icon_path = "./venv/lib/python3.9/site-packages/lcapygui/data/icon/lcapy-gui.svg"
+    elif platform == 'Darwin':
+        integrate = False
+
+
+    bindir = 'Scripts' if platform.startswith('win') else 'bin'
+    executable_path = os.path.normpath(os.path.join(sys.prefix, bindir, "lcapy-tk"))
+    print(f"\nexecutable path: {executable_path}")
+    print(f"icon path: {icon_path}\n")
+    launch_lcapygui = make_shortcut(f"{executable_path:s}", name=package_name, icon=icon_path, startmenu=integrate, terminal=False, folder=package_name)
+    print(launch_lcapygui)
 
 def main(argv=None):
     if argv is None:
@@ -46,16 +70,24 @@ def main(argv=None):
     parser.add_argument('--expr', type=str, default=None,
                         help="Lcapy expression")
     parser.add_argument('--model', type=str,
-                        dest='model', default="UIModelMPH",
+                        dest='model', default="UIModelDnD",
                         help="select the UI model: UIModelMPH, UIModelDnD")
+    parser.add_argument('--create_shortcut', action='store_true',
+                        help='Create a system shortcut', default=False)
     parser.add_argument('filenames', type=str, nargs='*',
-                        help='schematic filename(s)', default=[])
+                        help='schematic filename(s)', default=[]),
 
     args = parser.parse_args()
+
+    # Create shortcut if requested, instead of launching lcapy-gui
+    if args.create_shortcut:
+        create_shortcut()
+        return 0
 
     # Add Icon path for program
     from lcapygui import __datadir__
     icon_filename = __datadir__ / "icon" / "lcapy-gui-small.png"
+
     # If on MacOS, don't use icon
     if system() == 'Darwin':
         icon_filename = None

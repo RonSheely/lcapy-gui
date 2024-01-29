@@ -42,12 +42,14 @@ class LcapyTk(Tk):
         # Select the UI model based on the command line argument
         # Defaults to UIModelMPH if the model is unknown
 
-        if uimodel_class.lower() in ['uimodeldnd', 'dnd']:
+        if uimodel_class.lower() in ['uimodelmph', 'mph']:
+            uimodel_class = UIModelMPH
+        elif uimodel_class.lower() in ['uimodeldnd', 'dnd']:
             uimodel_class = UIModelDnD
         else:
             if self.debug:
-                print('unknown model:', uimodel_class)
-            uimodel_class = UIModelMPH
+                print(f'unknown model: {uimodel_class}. Defaulting to UIModelDnD')
+            uimodel_class = UIModelDnD
 
         self.uimodel_class = uimodel_class
 
