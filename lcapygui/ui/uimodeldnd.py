@@ -116,7 +116,7 @@ class UIModelDnD(UIModelMPH):
                 join_args = self.node_join(self.new_component.gcpt.node2)
                 if join_args is not None:
                     # Add the join event to history
-                    self.history.append(HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[2], cpt=join_args[1]))
+                    self.history.append(HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
 
             # Allow continual placing of components if the shift key is pressed
             if key != 'shift':
