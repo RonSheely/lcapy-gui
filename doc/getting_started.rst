@@ -46,3 +46,10 @@ it and choose one of the 'inspect' options as shown above!
         :doc:`install` for information on how to do this. If you don't wish to install :math:`\LaTeX`, you can
         still analyse the circuit, but the equations will not be displayed automatically. To view it, dismiss any
         error messages that appear, then select [edit]->[expression] from the popup menu to view it in plaintext.
+
+Labelling components
+====================
+..  image:: ./_static/label_component.gif
+
+Components can be labelled by right clicking them, and opening the properties dialogue. Here, many options are available
+not just labelling.
