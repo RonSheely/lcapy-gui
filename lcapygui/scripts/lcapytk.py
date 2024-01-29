@@ -32,13 +32,13 @@ def create_shortcut():
     import sys
     from pyshortcuts import make_shortcut, platform
 
+
     package_name = 'lcapy-gui'  # Name to use for the shortcut
     integrate = True  # Whether to integrate the shortcut with the Start Menu/application launcher (not compatible on MacOS)
-    icon_path = None  # Path to the icon file, depends on OS
-    print(f"\nplatform: {platform}")
 
+    # Pick the best icon for the platform
+    icon_path = None
     from lcapygui import __datadir__
-    icon_path = __datadir__ / "icon" / "lcapy-gui-small.png"
     if platform == 'win':
         icon_path = __datadir__ / "icon" / "lcapy-gui.ico"
     elif platform == 'linux':
@@ -46,16 +46,17 @@ def create_shortcut():
     elif platform == 'Darwin':
         integrate = False
 
-
+    # Pick the best executable for the platform
     bindir = 'Scripts' if platform.startswith('win') else 'bin'
-
     executable_path = os.path.normpath(os.path.join(sys.prefix, bindir, "lcapy-tk"))
-    python_path = os.path.normpath(os.path.join(sys.prefix, bindir, "python"))
-    print(f"\nexecutable path: {executable_path}")
 
-    print(f"icon path: {icon_path}\n")
+    # Pick the best python for the installation
+    python_path = os.path.normpath(os.path.join(sys.prefix, bindir, "python"))
+
+    # Create the shortcut
     launch_lcapygui = make_shortcut(f"{executable_path:s}", name=package_name, icon=icon_path, startmenu=integrate, terminal=False, folder=package_name, executable=python_path)
-    print(launch_lcapygui)
+
+    print(f"Shortcut created in: {launch_lcapygui.startmenu_dir}")
 
 def main(argv=None):
     if argv is None:
