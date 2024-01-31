@@ -3,9 +3,16 @@
 ============
 Installation
 ============
+There are two methods of installing lcapy-gui.
 
-Recommended Install Method
-==========================
+1.  :ref:`Installation via pip <recommended_install>` . This is method is easiest to update, and is recommended for stability.
+2. :ref:`Using the prebuilt installer <prebuilt_install>`.
+
+.. _recommended_install:
+
+Recommended Installation
+========================
+
 It is recommended to install lcapy-gui inside a python venv.  This will
 ensure that the lcapy-gui installation does not interfere with other python packages.
 
@@ -88,10 +95,8 @@ Before installing, please ensure you have python version 3.8 or greater installe
     check the shortcut directory output from the command above.
 
 
-
-
 Installation of latest version
-==============================
+------------------------------
 
 If you wish to install the latest version from the git repository use:
 
@@ -100,3 +105,47 @@ If you wish to install the latest version from the git repository use:
    $ pip install git+https://github.com/mph-/lcapy-gui.git#egg=lcapy-gui
 
 However, it is better to fork or clone the git repository if you wish to make fixes.
+
+
+.. _prebuilt_install:
+
+Installation with the Prebuilt Installer
+========================================
+Download the installer for your platform from, https://github.com/mph-/lcapy-gui/releases/latest.
+These packages are generated using pyinstaller, if you have issues with running them, please submit an issue
+on github if none exist already. For best performance, it is recommended to use the pip installation method.
+
+Windows
+-------
+
+macOS
+-----
+1. Download the ``lcapygui_macos.zip`` file from the releases page.
+2. Extract the zip file.
+
+    .. image:: _static/installation/macos/lcapy_extract.png
+
+3. Open the unzipped folder, and right click on the ``lcapygui.app`` file. Select ``Open``.
+
+    .. image:: _static/installation/macos/open_app.png
+
+4. A warning will appear, click ``Open``.
+
+    .. image:: _static/installation/macos/cannot_verify_developer_accept.png
+
+    Occasionally, you get the following warning instead:
+
+    .. image:: _static/installation/macos/cannot_verify_developer_denied.png
+
+    In this case, hit ``cancel``, and repeat step 3.
+
+5. The application should now open!
+6. To integrate lcapygui with launcher, drag the lcapygui.app to the applications folder
+
+    .. image:: _static/installation/macos/integrate_with_system.png
+
+7. lcapy-gui should now be visible inside launcher
+
+    .. image:: _static/installation/macos/in_launcher.png
+
+
