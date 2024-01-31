@@ -147,5 +147,3 @@ macOS
 7. lcapy-gui should now be visible inside launcher
 
     .. image:: _static/installation/macos/in_launcher.png
-
-
