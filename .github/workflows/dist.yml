@@ -49,3 +49,4 @@ jobs:
         artifacts: ${{matrix.OUT_FILE_NAME}}
         tag: ${{github.ref_name}}
         allowUpdates: true
+
