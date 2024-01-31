@@ -26,7 +26,7 @@ jobs:
             CMD_BUILD: >
               pyinstaller --clean --onedir --windowed --specpath "./build" --upx-dir "./build" --icon "../lcapygui/data/icon/lcapy-gui.png" --add-data "../lcapygui/data/:lcapygui/data/" --hidden-import='PIL._tkinter_finder' lcapygui.py &&
               cd dist/ &&
-              zip -r lcapygui_macos.zip lcapygui/* lcapygui.app/
+              zip -r lcapygui_macos.zip lcapygui.app/
             OUT_FILE_NAME: dist/lcapygui_macos.zip
             ASSET_MIME: application/zip
 
