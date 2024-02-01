@@ -57,7 +57,10 @@ class PlotPropertiesDialog(Window):
 
         kind = self.labelentries.get('kind')
         if kind == 'Plot':
-            im = expr.plot(points)
+            if expr.is_laplace_domain:
+                im = expr.pole_zero_plot()
+            else:
+                im = expr.plot(points)
         elif kind == 'Bode':
             im = expr.bode_plot(points)
         elif kind == 'Pole-zero':
