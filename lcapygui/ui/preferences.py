@@ -11,6 +11,44 @@ class Preferences:
     circuitikz_default_scale = 1.0
     circuitikz_default_cpt_size = 1.5
 
+    # For compatible colours, see https://matplotlib.org/stable/gallery/color/named_colors.html
+    # mpl stylesheets available here, https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html
+    color_schemes = {
+        'default': {
+            'line': "black",
+            'positive': 'red',
+            'negative': 'blue',
+            'select': 'red',
+            'grid': 'lightblue',
+            'background': 'white'
+        },
+        'pastel': {
+            'line': 'black',
+            'positive': 'lightcoral',
+            'negative': 'cornflowerblue',
+            'select': 'mediumpurple',
+            'grid': 'lightblue',
+            'background': "white"
+        },
+        'greyscale': {
+            'line': 'black',
+            'positive': 'silver',
+            'negative': 'silver',
+            'select': 'dimgrey',
+            'grid': 'gainsboro',
+            'background': "white"
+        },
+        'pitch': {
+            'line': 'white',
+            'positive': 'silver',
+            'negative': 'silver',
+            'select': 'darkgray',
+            'grid': 'dimgray',
+            'background': "black"
+        },
+
+    }
+
     def __init__(self):
 
         self.version = 6
@@ -38,6 +76,10 @@ class Preferences:
         self.node_spacing = 2.0
         self.grid_spacing = 0.5
 
+        self.color_scheme = "default"
+
+
+
     def apply(self):
 
         from lcapy.state import state
@@ -52,6 +94,12 @@ class Preferences:
     def _filename(self):
 
         return self._dirname / 'preferences.json'
+
+
+    def color(self, element):
+        if element in self.color_schemes[self.color_scheme].keys():
+            return self.color_schemes[self.color_scheme][element]
+        return self.color_schemes["default"][element]
 
     def load(self):
 

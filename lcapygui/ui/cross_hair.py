@@ -43,6 +43,10 @@ class CrossHair:
         scale = self.model.preferences.xsize / 20
         sketcher = self.model.ui.sketcher
 
+        select_color = self.model.preferences.color('select')
+        line_color = self.model.preferences.color('line')
+        line_width = self.model.preferences.line_width * 1.5
+
         # Draw crosshair in default mode, if no style is specified
         if self.style is None:
         # If drawing a component, draw the component type
@@ -50,7 +54,7 @@ class CrossHair:
                 if self.thing.cpt_type == "W" or self.thing.cpt_type == "DW":
                     self.picture.add(
                         sketcher.stroke_filled_circle(
-                            self.x, self.y, radius=0.2 * scale, color="green", alpha=1
+                            self.x, self.y, radius=0.2 * scale, color=select_color, alpha=.5
                         )
                     )
                 else:
@@ -62,18 +66,19 @@ class CrossHair:
                             fontsize=self.model.preferences.font_size
                             * self.model.zoom_factor
                             * self.model.preferences.line_width_scale,
+                            color=line_color
                         )
                     )
 
             # draw cursor
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=1
+                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=line_width,color=line_color
                 )
             )
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
+                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=line_width,color=line_color
                 )
             )
 
@@ -87,40 +92,41 @@ class CrossHair:
                         fontsize=self.model.preferences.font_size
                                  * self.model.zoom_factor
                                  * self.model.preferences.line_width_scale,
+                        color=line_color
                     )
                 )
 
             self.picture.add(
                 sketcher.stroke_circle(
-                    self.x, self.y, radius=0.2 * scale, color="black", alpha=1
+                    self.x, self.y, radius=0.2 * scale, color=line_color, alpha=1
                 )
             )
 
             self.picture.add(
                 sketcher.stroke_filled_circle(
-                    self.x, self.y, radius=0.1 * scale, color="black", alpha=1
+                    self.x, self.y, radius=0.1 * scale, color=select_color, alpha=.5
                 )
             )
 
             # draw cursor
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale, linewidth=1
+                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale,  linewidth=line_width,color=line_color
                 )
             )
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y - 0.5 * scale, self.x, self.y - 0.2 * scale, linewidth=1
+                    self.x, self.y - 0.5 * scale, self.x, self.y - 0.2 * scale,  linewidth=line_width,color=line_color
                 )
             )
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x + 0.2 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=1
+                    self.x + 0.2 * scale, self.y, self.x + 0.5 * scale, self.y,  linewidth=line_width,color=line_color
                 )
             )
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x - 0.5 * scale, self.y, self.x - 0.2 * scale, self.y, linewidth=1
+                    self.x - 0.5 * scale, self.y, self.x - 0.2 * scale, self.y,  linewidth=line_width,color=line_color
                 )
             )
 

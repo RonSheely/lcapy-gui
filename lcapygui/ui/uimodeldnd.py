@@ -563,3 +563,4 @@ class UIModelDnD(UIModelMPH):
         self.on_add_cpt(paste_thing)
 
         self.ui.refresh()
+

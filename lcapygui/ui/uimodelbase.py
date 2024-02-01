@@ -95,6 +95,7 @@ class UIModelBase:
         'bidir': Thing('', 'Bidirectional', 'W', 'bidir')
     }
 
+
     def __init__(self, ui):
         """
         Initialise the UI model
@@ -322,6 +323,9 @@ class UIModelBase:
         if gcpt is None:
             return
 
+        if "color" not in kwargs:
+            kwargs["color"] = self.preferences.color('line')
+
         gcpt.draw(self, **kwargs)
 
         label_style = self.preferences.label_style
@@ -430,6 +434,56 @@ class UIModelBase:
                 ann.draw(fontsize=self.preferences.font_size *
                          self.zoom_factor * self.preferences.line_width_scale)
                 gcpt.annotations.append(ann)
+
+
+
+    def cpt_draw_polarity(self, cpt, **kwargs):
+        """
+        Draws the polarity of the component
+
+        """
+        cpt = cpt.gcpt
+        sketcher = self.ui.sketcher
+
+        pos_x, pos_y = cpt.node1.x + cpt.annotation_offset_pos[0], cpt.node1.y + cpt.annotation_offset_pos[0]
+        neg_x, neg_y = cpt.node2.x + cpt.annotation_offset_pos[0], cpt.node2.y + cpt.annotation_offset_pos[0]
+
+        # Draw positive node
+
+        sketcher.stroke_filled_circle(
+                pos_x, pos_y,
+                radius=0.12*self.preferences.scale,
+                color=self.preferences.color("positive"),
+                alpha=1
+        )
+
+        sketcher.stroke_line(
+            pos_x - 0.1*self.preferences.scale, pos_y,
+            pos_x + 0.1*self.preferences.scale, pos_y,
+            linewidth=2
+        )
+        sketcher.stroke_line(
+            pos_x, pos_y - 0.1 * self.preferences.scale,
+            pos_x, pos_y + 0.1 * self.preferences.scale,
+            linewidth=2
+        )
+
+        # Draw negative node
+
+        sketcher.stroke_filled_circle(
+                neg_x, neg_y,
+                radius=0.12*self.preferences.scale,
+                color=self.preferences.color("negative"),
+                alpha=1
+            )
+
+        sketcher.stroke_line(
+            neg_x - 0.1 * self.preferences.scale, neg_y,
+            neg_x + 0.1 * self.preferences.scale, neg_y,
+            linewidth=2
+        )
+
+        self.ui.refresh()
 
     def cpt_find(self, node_name1, node_name2):
         fcpt = None
@@ -1180,7 +1234,8 @@ class UIModelBase:
 
         for cpt in self.circuit.elements.values():
             if cpt == self.selected:
-                self.cpt_draw(cpt, color='red')
+                self.cpt_draw(cpt, color=self.preferences.color("select"))
+                self.cpt_draw_polarity(cpt)
             else:
                 self.cpt_draw(cpt)
 
