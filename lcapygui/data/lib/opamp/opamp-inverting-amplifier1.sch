@@ -1,6 +1,6 @@
-# Created by lcapy-tk V0.6.dev0
-; nodes={1@(15, 11), 0@(0, 0), 4@(10, 10), 3@(10, 12), 5@(7, 12), 6@(10, 14), 7@(15, 14), 9@(17, 8), 8@(17, 11), 10@(10, 8), 11@(7, 8)}
-E1 1 0 opamp 4 3 E1 0 0; right, mirror
+# Created by lcapy-tk V0.94.dev0
+; nodes={1@(11, 5), 0@(3, 2), 4@(6, 4), 3@(6, 6), 5@(3, 6), 6@(6, 8), 7@(11, 8), 9@(13, 2), 8@(13, 5), 10@(6, 2), 11@(3, 2)}
+E1 1 0 opamp 4 3 A 0 0; right, mirror
 R1 3 5; left=1.5
 W1 3 6; up
 R2 6 7; right=2.5
@@ -12,4 +12,4 @@ W5 10 4; up
 W6 10 0; down=0, sground
 V1 5 11; down=2
 W7 11 0; down=0, sground
-; draw_nodes=connections, label_nodes=all, style=american, voltage_dir=RP, label_ids=false, label_values=true
+; draw_nodes=connections, label_nodes=all, style=american, voltage_dir=RP, label_style=value
