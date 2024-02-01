@@ -15,6 +15,7 @@ class Preferences:
     # mpl stylesheets available here, https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html
     color_schemes = {
         'default': {
+            'tk_theme' : None,
             'line': "black",
             'positive': 'red',
             'negative': 'blue',
@@ -23,6 +24,7 @@ class Preferences:
             'background': 'white'
         },
         'pastel': {
+            'tk_theme' : None,
             'line': 'black',
             'positive': 'lightcoral',
             'negative': 'cornflowerblue',
@@ -31,6 +33,7 @@ class Preferences:
             'background': "white"
         },
         'greyscale': {
+            'tk_theme' : None,
             'line': 'black',
             'positive': 'silver',
             'negative': 'silver',
@@ -39,6 +42,7 @@ class Preferences:
             'background': "white"
         },
         'pitch': {
+            'tk_theme' : None,
             'line': 'white',
             'positive': 'silver',
             'negative': 'silver',
@@ -134,6 +138,7 @@ class Preferences:
             if self.label_style == 'name+value':
                 self.label_style = 'name=value'
             delattr(self, 'label_cpts')
+
 
         # Update the preferences file if the version changed
         if version != self.version:

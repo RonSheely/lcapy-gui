@@ -19,6 +19,8 @@ class Drawing():
         self.xmax = self.xsize * 2
         self.ymax = self.ysize * 2
 
+        import matplotlib.pyplot as mpl
+        
         self.enlarge_scale = 2
 
         self.ax = self.fig.add_subplot(111)

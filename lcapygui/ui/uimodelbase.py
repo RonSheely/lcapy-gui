@@ -120,6 +120,11 @@ class UIModelBase:
         self.dragged = False
         self.zoom_factor = 1
 
+
+        self.ui.style.theme_use(self.preferences.color("tk_theme"))
+
+        print(self.ui.style.theme_names())
+
     @property
     def node_spacing(self):
 

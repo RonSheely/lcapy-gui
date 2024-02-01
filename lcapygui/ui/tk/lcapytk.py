@@ -1,5 +1,5 @@
 from tkinter import Canvas, Tk, Frame, TOP, BOTH, BOTTOM, X, PhotoImage
-from tkinter.ttk import Notebook
+from tkinter.ttk import Notebook, Style
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
@@ -34,6 +34,7 @@ class LcapyTk(Tk):
         self.sketchlib = SketchLibrary()
         self.dialogs = {}
 
+        # Icons and Theming
 
         if icon is not None:
             icon = PhotoImage(file=icon)
@@ -55,6 +56,7 @@ class LcapyTk(Tk):
 
         if self.debug:
             print('model: ', self.uimodel_class)
+
 
         # Title and size of the window
         self.title(title + " " + __version__ + " : " + self.uimodel_class.__name__)
@@ -254,6 +256,9 @@ class LcapyTk(Tk):
         self.canvases = []
 
         self.canvas = None
+
+        # For controllimg colours
+        self.style = Style()
 
         if pathnames is None:
             pathnames = []
