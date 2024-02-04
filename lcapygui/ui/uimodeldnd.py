@@ -1,3 +1,4 @@
+from lcapygui.ui.cursor import Cursor
 from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
 from lcapygui.ui.uimodelbase import Thing
@@ -101,6 +102,9 @@ class UIModelDnD(UIModelMPH):
 
         # If finished placing a component, stop placing
         if self.new_component is not None:
+            self.node_positions = [
+                (node.pos.x, node.pos.y) for node in self.new_component.nodes
+            ]
             # If the crosshair has not moved, then instantly place the component at the current position
             if self.crosshair.x == self.new_component.gcpt.node1.pos.x and self.crosshair.y == self.new_component.gcpt.node1.pos.y:
                 self.node_move(self.new_component.gcpt.node1, self.crosshair.x - 1, self.crosshair.y)
@@ -139,13 +143,15 @@ class UIModelDnD(UIModelMPH):
                         "M", self.selected, self.node_positions, node_positions
                     )
                 )
+                self.node_positions = None
             # Moving a node
-            else:
+            elif self.node_positions is not None:
                 self.crosshair.thing = None
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
                     HistoryEvent("M", self.selected, self.node_positions, node_position)
                 )
+                self.node_positions = None
                 # Join selected node if close
                 join_args = self.node_join(self.selected)
                 if join_args is not None:
@@ -159,52 +165,6 @@ class UIModelDnD(UIModelMPH):
         # Used to determine if a component or node is being moved in the on_mouse_drag method
         self.dragged = False
 
-    # def merge_nodes(self, current_cpt, ignore_node=None):
-    #     """
-    #     Merges the current selected component with any existing nearby nodes
-    #
-    #     Paramaters
-    #     ----------
-    #     current_cpt
-    #         to merge node into
-    #     ignore_node
-    #         Node to ignore, if it is present in the current component.
-    #
-    #     Notes
-    #     -----
-    #     For each node the current component is attached to, search for a nearby node.
-    #         If such a node exists, and it is not the same node, delete the existing node from the component and add the
-    #         new-found node. Then, ensure the node is aware of the new component is connected to.
-    #
-    #     """
-    #     cpt = current_cpt.gcpt
-    #
-    #     for node_count, cpt_node in enumerate(cpt.nodes):
-    #         # Use given node if present, otherwise loop through all nodes
-    #         for node in self.circuit.nodes.values():
-    #
-    #             print(f"checking node {node.name} {node.pos.x, node.pos.y}") if self.ui.debug else None
-    #
-    #             if cpt_node.name == node.name or node == ignore_node:
-    #                 print(
-    #                     f" -> warning same node {cpt_node.name} {cpt_node.pos.x, cpt_node.pos.y}, same node") if self.ui.debug else None
-    #             elif abs(node.pos.x - cpt_node.pos.x) < 0.1 and abs(node.pos.y - cpt_node.pos.y) < 0.1:
-    #                 print(
-    #                     f" -> overwriting {cpt_node.name} {cpt_node.pos.x, cpt_node.pos.y}") if self.ui.debug else None
-    #
-    #                 connected = cpt_node.connected
-    #                 print(connected)
-    #                 node_name, connected = self.node_join(node, cpt_node)
-    #                 print(connected)
-    #                 print(f"node1: {node.connected} node2: {cpt_node.connected}")
-    #                 cpt_node = self.node_split(node, node_name, connected)
-    #                 print(f"node1: {node.connected} node2: {cpt_node.connected}")
-    #
-    #
-    #                 break
-    #             else:
-    #                 print(
-    #                     f" -> cannot merge {cpt_node.name} {cpt_node.pos.x, cpt_node.pos.y}, too far apart") if self.ui.debug else None
 
     def split_nodes(self, current_cpt, current_node):
         """
@@ -249,42 +209,113 @@ class UIModelDnD(UIModelMPH):
 
 
         """
-        # Destroy popup menu
+
+        # Destroy all Popups
         unmake_popup(self.ui)
 
-        mouse_x, mouse_y = self.crosshair.position
 
-        # Select component under mouse if not placing a component
-        if self.crosshair.thing == None:
-            self.on_select(mouse_x, mouse_y)
-            if self.selected is not None:
-                if self.cpt_selected:
-                    cpt = self.selected.gcpt
-                    if self.ui.debug:
-                        print("Selected component " + cpt.name)
-                else:
-                    if self.ui.debug:
-                        print("Selected node " + self.selected.name)
+        # Select component/node under mouse
+        self.on_select(mouse_x, mouse_y)
 
-
-        elif self.new_component is None:  # If the component has not been created, create it at the current position
+        # If a component is selected, do nothing
+        if self.cpt_selected:
             if self.ui.debug:
-                print("creating new: " + self.crosshair.thing.kind)
-            kind = (
-                "-" + self.crosshair.thing.kind
-                if self.crosshair.thing.kind != ""
-                else ""
-            )
-            self.new_component = self.thing_create(
-                self.crosshair.thing.cpt_type,
-                mouse_x,
-                mouse_y,
-                mouse_x + self.preferences.scale,
-                # Have to be set to something larger because components now scale
-                # to the initial size of the component.
-                mouse_y,
-                kind=kind,
-            )
+                print("Selected component " + self.selected.gcpt.name)
+            return
+
+        # If a node is selected, update mouse_x, mouse_y to that nodes position
+        if self.selected:
+            if self.ui.debug:
+                print("Selected node " + self.selected.name)
+            mouse_x, mouse_y = self.selected.pos.x, self.selected.pos.y
+        else: # Otherwise default to the crosshair position
+            mouse_x, mouse_y = self.crosshair.position
+
+        # Attempt to add a new cursor
+
+
+        # Just placed a cursor, add a new component
+        if self.on_add_cursor(mouse_x, mouse_y) and len(self.cursors) == 2:
+            x1 = self.cursors[0].x
+            y1 = self.cursors[0].y
+            x2 = self.cursors[1].x
+            y2 = self.cursors[1].y
+
+            self.create(self.crosshair.thing, x1, y1, x2, y2)
+            self.ui.refresh()
+
+
+    def on_add_cursor(self, mouse_x, mouse_y):
+
+        # Create a new temporary cursor
+        cursor = Cursor(self.ui, mouse_x, mouse_y)
+
+        if len(self.cursors) == 0: # If no cursors, add positive one
+            cursor.draw('red')
+            self.cursors.append(cursor)
+            if self.ui.debug:
+                print("Adding positive cursor")
+        elif len(self.cursors) == 1: # if one cursor, add negative one
+            cursor.draw('blue')
+            self.cursors.append(cursor)
+            if self.ui.debug:
+                print("Adding negative cursor")
+        elif len(self.cursors) >= 2:  # if too many cursors, clear all
+            self.cursors.remove()
+            if self.ui.debug:
+                print("Too many cursors, clearing all")
+            self.ui.refresh()
+            return False
+
+        # Refresh UI
+        self.ui.refresh()
+        return True
+
+
+
+
+
+
+
+
+
+
+
+        # # Destroy popup menu
+        # unmake_popup(self.ui)
+        # print(self.crosshair.thing)
+        # # Select component under mouse if not placing a component
+        # if self.crosshair.thing == None:
+        #     self.on_select(mouse_x, mouse_y)
+        #     if self.cpt_selected:
+        #         cpt = self.selected.gcpt
+        #         if self.ui.debug:
+        #             print("Selected component " + cpt.name)
+        #     else:
+        #         if self.ui.debug:
+        #             print("Selected node " + self.selected.name)
+        #         self.on_add_node(mouse_x, mouse_y)
+        #
+        # elif self.new_component is None:  # If the component has not been created, create it at the current position
+        #     if self.ui.debug:
+        #         print("creating new: " + self.crosshair.thing.kind)
+        #     kind = (
+        #         "-" + self.crosshair.thing.kind
+        #         if self.crosshair.thing.kind != ""
+        #         else ""
+        #     )
+        #
+        #     mouse_x, mouse_y = self.crosshair.position
+        #     self.new_component = self.thing_create(
+        #         self.crosshair.thing.cpt_type,
+        #         mouse_x,
+        #         mouse_y,
+        #         mouse_x + self.preferences.scale,
+        #         # Have to be set to something larger because components now scale
+        #         # to the initial size of the component.
+        #         mouse_y,
+        #         kind=kind,
+        #     )
 
     def on_left_double_click(self, mouse_x, mouse_y):
         """
@@ -367,6 +398,7 @@ class UIModelDnD(UIModelMPH):
         Will attempt to snap to the grid or to a component if the snap grid is enabled.
 
         """
+
         # Snap mouse to grid if enabled
         if self.preferences.snap_grid:
             mouse_x, mouse_y = self.snap(mouse_x, mouse_y, True if self.new_component is None else False)
@@ -461,13 +493,12 @@ class UIModelDnD(UIModelMPH):
         Otherwise, if a node is selected, the node will be moved to the new position instead.
 
         """
+
         mouse_x, mouse_y = self.crosshair.position
 
         # Check if we are currently placing a component, and have already placed the first node
         if self.new_component is not None:
-                self.node_positions = [
-                    (node.pos.x, node.pos.y) for node in self.new_component.nodes
-                ]
+
                 if self.closest_node(self.crosshair.x, self.crosshair.y, self.new_component.gcpt.node2) is not None:
                     self.crosshair.style = 'node'
                 else:
