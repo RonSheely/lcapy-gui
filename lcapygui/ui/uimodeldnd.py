@@ -317,7 +317,8 @@ class UIModelDnD(UIModelMPH):
             if self.ui.debug:
                 print("Adding negative cursor")
         elif len(self.cursors) >= 2:  # if too many cursors, clear all
-            self.cursors.remove()
+            self.cursors.pop(0)
+            self.cursors.append(cursor)
             if self.ui.debug:
                 print("Too many cursors, clearing all")
             self.ui.refresh()
@@ -326,13 +327,6 @@ class UIModelDnD(UIModelMPH):
         # Refresh UI
         self.ui.refresh()
         return True
-
-
-
-
-
-
-
 
 
 
@@ -586,6 +580,8 @@ class UIModelDnD(UIModelMPH):
             return
 
         if self.selected:
+            # remove all cursors when dragging, as they will be in the wrong positions anyway
+            self.cursors.remove()
             if self.cpt_selected: # If a component is selected
                 # Call super to allow mouse drag
                 super().on_mouse_drag(mouse_x, mouse_y, key)
