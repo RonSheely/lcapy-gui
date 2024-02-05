@@ -45,15 +45,23 @@ class UIModelDnD(UIModelMPH):
         The crosshair is then redrawn to reflect the new component type.
 
         """
-        # Set crosshair mode to the component type
-        self.crosshair.thing = thing
-        if self.ui.debug:
-            print(f"Crosshair mode: {self.crosshair.thing}")
-        # redraw crosshair
-        self.crosshair.undraw()
-        self.crosshair.draw()
+        if len(self.cursors) >= 2:
+            self.create_component_between_cursors(thing)
+            self.cursors.remove()
+        else:
+            if self.ui.debug:
+                print(f"Crosshair mode: {self.crosshair.thing}")
+            self.crosshair.update(thing=thing)
 
-        self.ui.refresh()
+        # # Set crosshair mode to the component type
+        # self.crosshair.thing = thing
+        # if self.ui.debug:
+        #     print(f"Crosshair mode: {self.crosshair.thing}")
+        # # redraw crosshair
+        # self.crosshair.undraw()
+        # self.crosshair.draw()
+        #
+        # self.ui.refresh()
 
     def on_add_con(self, thing):
         """
@@ -161,7 +169,7 @@ class UIModelDnD(UIModelMPH):
 
 
         # Redraw screen for accurate display of labels
-        self.on_redraw()
+        #self.on_redraw()
         # Used to determine if a component or node is being moved in the on_mouse_drag method
         self.dragged = False
 
@@ -234,16 +242,55 @@ class UIModelDnD(UIModelMPH):
         # Attempt to add a new cursor
 
 
-        # Just placed a cursor, add a new component
-        if self.on_add_cursor(mouse_x, mouse_y) and len(self.cursors) == 2:
-            x1 = self.cursors[0].x
-            y1 = self.cursors[0].y
-            x2 = self.cursors[1].x
-            y2 = self.cursors[1].y
+        # Just placed a cursor, add a new component if we want
+        if self.on_add_cursor(mouse_x, mouse_y) and len(self.cursors) == 2 and self.crosshair.thing is not None:
+            self.create_component_between_cursors()
 
-            self.create(self.crosshair.thing, x1, y1, x2, y2)
-            self.ui.refresh()
+    def create_component_between_cursors(self, thing=None):
+        """
+        Creates a component between the two cursors, if present
 
+        Parameters
+        ----------
+        thing : Thing, optional
+            Used to decide an arbitrary component type if provided,
+                otherwise will default to the self.crosshair.thing if available
+
+        Returns
+        -------
+        bool
+            Returns True if a component could have been created
+            - There are 2 cursors to create a component between
+            - A thing was provided, or available from self.crosshair.thing
+
+        Notes
+        -----
+        This method will still return True, even if the component creation was unsuccessful. It only checks if it is
+            provided enough information to create a component to pass into the :func:`self.create` method.
+
+        """
+        if len(self.cursors) < 2:
+            if self.ui.debug:
+                print("Not enough cursors to create component")
+            return False
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+        if thing is None and self.crosshair.thing is not None:
+            thing = self.crosshair.thing
+        else:
+            if self.ui.debug:
+                print("No-thing provided to decide component type")
+            return False
+
+
+        self.create(thing.cpt_type, x1, y1, x2, y2)
+
+        self.ui.refresh()
+        return True
 
     def on_add_cursor(self, mouse_x, mouse_y):
 
@@ -361,6 +408,7 @@ class UIModelDnD(UIModelMPH):
         - Paste popup menu if no component is selected
 
         """
+        self.cursors.remove()
         self.on_select(mouse_x, mouse_y)
 
         if self.new_component is not None:
@@ -522,7 +570,7 @@ class UIModelDnD(UIModelMPH):
                     print("Splitting nodes with shift not implemented yet, please use undo")
 
                 if self.crosshair.thing is None:
-                    # Show cursor as node if close to a node
+                    # Show crosshair as node if close to a node
                     if self.closest_node(self.crosshair.x, self.crosshair.y, ignore=self.selected) is not None:
                         self.crosshair.style = 'node'
                     else:

@@ -147,7 +147,7 @@ class CrossHair:
         self.undraw()
         self.draw()
 
-    def update(self, mouse_position, style=None, model=None):
+    def update(self, mouse_position=None, thing=None, model=None):
         """
         Allows updating all parameters, and redrawing the crosshair in one function
         Parameters
@@ -162,10 +162,14 @@ class CrossHair:
         """
 
         # Update parameters
-        self.position = mouse_position
+        if mouse_position is not None:
+            self.position = mouse_position
 
         if model is not None:
             self.model = model
+
+        if thing is not None:
+            self.thing = thing
 
         # Redraw the component
         self.redraw()
