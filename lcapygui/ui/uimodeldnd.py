@@ -172,7 +172,13 @@ class UIModelDnD(UIModelMPH):
         #self.on_redraw()
         # Used to determine if a component or node is being moved in the on_mouse_drag method
         self.dragged = False
+        self.on_redraw()
 
+    def on_redraw(self):
+        self.clear()
+        self.redraw()
+        self.cursors.draw()
+        self.ui.refresh()
 
     def split_nodes(self, current_cpt, current_node):
         """
@@ -279,12 +285,15 @@ class UIModelDnD(UIModelMPH):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        if thing is None and self.crosshair.thing is not None:
+        print(f"thing: {thing}, crosshair: {self.crosshair.thing}")
+
+        if thing is None:
+            if self.crosshair.thing is None:
+                if self.ui.debug:
+                    print("No-thing provided to decide component type")
+                return False
             thing = self.crosshair.thing
-        else:
-            if self.ui.debug:
-                print("No-thing provided to decide component type")
-            return False
+
 
 
         self.create(thing.cpt_type, x1, y1, x2, y2)
@@ -454,7 +463,7 @@ class UIModelDnD(UIModelMPH):
                                              snap_to_component=True if self.crosshair.thing is None else False)
             # Update position and reset style
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
-            print(self.crosshair.style)
+
         else:
             self.crosshair.style = 'node'
 
@@ -462,16 +471,6 @@ class UIModelDnD(UIModelMPH):
             self.crosshair.update(position=(closest_node.pos.x, closest_node.pos.y), style='node')
 
 
-
-
-        #
-        # if self.crosshair.thing is not None and self.new_component is None:
-        #     if self.closest_node(self.crosshair.x, self.crosshair.y) is not None:
-        #         self.crosshair.style = 'node'
-        #     else:
-        #         self.crosshair.style = None
-        #
-        # self.crosshair.update((mouse_x, mouse_y))
 
     def snap(self, mouse_x, mouse_y, snap_to_component=False):
         """
@@ -555,27 +554,42 @@ class UIModelDnD(UIModelMPH):
         Otherwise, if a node is selected, the node will be moved to the new position instead.
 
         """
-
+        # Get crosshair position
         mouse_x, mouse_y = self.crosshair.position
 
         # Check if we are currently placing a component, and have already placed the first node
         if self.new_component is not None:
+            self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
+            return
+        elif self.crosshair.thing is not None: # Check if we need to place the first node
+            if self.ui.debug:
+                print("creating new: " + self.crosshair.thing.kind)
 
-                if self.closest_node(self.crosshair.x, self.crosshair.y, self.new_component.gcpt.node2) is not None:
-                    self.crosshair.style = 'node'
-                else:
-                    self.crosshair.style = None
-                self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
+            kind = (
+                "-" + self.crosshair.thing.kind
+                if self.crosshair.thing.kind != ""
+                else ""
+            )
+            # Create a new component
+            self.new_component = self.thing_create(
+                self.crosshair.thing.cpt_type,
+                mouse_x,
+                mouse_y,
+                mouse_x + self.preferences.scale,
+                # Have to be set to something larger because components now scale
+                # to the initial size of the component.
+                mouse_y,
+                kind=kind,
+            )
+            # Clear cursors, as we dont need them when placing a cpt
+            self.cursors.remove()
+            return
 
-        elif self.selected:
-            # If a component is selected, move it with the mouse
-            if self.cpt_selected:
-                #print(self.selected.nodes)
+        if self.selected:
+            if self.cpt_selected: # If a component is selected
+                # Call super to allow mouse drag
                 super().on_mouse_drag(mouse_x, mouse_y, key)
-
-            else:
-
-                # move selected node
+            else: # if a node is selected
                 if not self.dragged:
                     self.dragged = True
                     # To save history, save first component position
@@ -583,14 +597,10 @@ class UIModelDnD(UIModelMPH):
                 if key == "shift":
                     print("Splitting nodes with shift not implemented yet, please use undo")
 
-                if self.crosshair.thing is None:
-                    # Show crosshair as node if close to a node
-                    if self.closest_node(self.crosshair.x, self.crosshair.y, ignore=self.selected) is not None:
-                        self.crosshair.style = 'node'
-                    else:
-                        self.crosshair.style = None
-
                 self.node_move(self.selected, mouse_x, mouse_y)
+        self.ui.refresh()
+
+
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
