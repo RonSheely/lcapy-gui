@@ -446,18 +446,32 @@ class UIModelDnD(UIModelMPH):
         Will attempt to snap to the grid or to a component if the snap grid is enabled.
 
         """
+        closest_node = self.closest_node(mouse_x, mouse_y)
+        # If the crosshair is not over a node, snap to the grid (if enabled)
+        if closest_node is None:
+            if self.preferences.snap_grid:
+                mouse_x, mouse_y = self.snap(mouse_x, mouse_y,
+                                             snap_to_component=True if self.crosshair.thing is None else False)
+            # Update position and reset style
+            self.crosshair.update(position=(mouse_x, mouse_y), style=None)
+            print(self.crosshair.style)
+        else:
+            self.crosshair.style = 'node'
 
-        # Snap mouse to grid if enabled
-        if self.preferences.snap_grid:
-            mouse_x, mouse_y = self.snap(mouse_x, mouse_y, True if self.new_component is None else False)
+            # Update the crosshair position and set style to show it is over a node
+            self.crosshair.update(position=(closest_node.pos.x, closest_node.pos.y), style='node')
 
-        if self.crosshair.thing is not None and self.new_component is None:
-            if self.closest_node(self.crosshair.x, self.crosshair.y) is not None:
-                self.crosshair.style = 'node'
-            else:
-                self.crosshair.style = None
 
-        self.crosshair.update((mouse_x, mouse_y))
+
+
+        #
+        # if self.crosshair.thing is not None and self.new_component is None:
+        #     if self.closest_node(self.crosshair.x, self.crosshair.y) is not None:
+        #         self.crosshair.style = 'node'
+        #     else:
+        #         self.crosshair.style = None
+        #
+        # self.crosshair.update((mouse_x, mouse_y))
 
     def snap(self, mouse_x, mouse_y, snap_to_component=False):
         """

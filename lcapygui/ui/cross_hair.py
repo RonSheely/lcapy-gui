@@ -147,29 +147,31 @@ class CrossHair:
         self.undraw()
         self.draw()
 
-    def update(self, mouse_position=None, thing=None, model=None):
+    def update(self, position=None, style=None, thing=None, model=None):
         """
         Allows updating all parameters, and redrawing the crosshair in one function
         Parameters
         ==========
-        mouse_position : Tuple[int, int]
+        position : Tuple[int, int] or None
             Position of the mouse
-        style : str
+        style : str or None
             Style of the crosshair
-        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodelmph.UIModelMPH or lcapygui.ui.uimodeldnd.UIModelDnD
+        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodelmph.UIModelMPH or lcapygui.ui.uimodeldnd.UIModelDnD or None
             UI Model to draw to
 
         """
 
         # Update parameters
-        if mouse_position is not None:
-            self.position = mouse_position
+        if position is not None:
+            self.position = position
 
-        if model is not None:
-            self.model = model
+        self.style = style
 
         if thing is not None:
             self.thing = thing
+
+        if model is not None:
+            self.model = model
 
         # Redraw the component
         self.redraw()
