@@ -59,32 +59,3 @@ class MenuPopup:
 
     def undo_popup(self):
         self.menu.unpost()
-
-
-def make_popup(ui, menu_items):
-
-    display_items = []
-    for menu_item in menu_items:
-        if menu_item[0] == '!':
-            new_item = ui.menu_parts[menu_item[1:]]
-            new_item.state = 'disabled'
-        else:
-            new_item = ui.menu_parts[menu_item]
-            new_item.state = 'normal'
-        display_items.append(new_item)
-
-    ui.popup_menu = MenuPopup(
-        MenuDropdown(
-            "Right click",
-            0,
-            display_items,
-        )
-    )
-    ui.popup_menu.make(ui, ui.level)
-    ui.popup_menu.do_popup(ui.canvas.winfo_pointerx(), ui.canvas.winfo_pointery())
-
-
-def unmake_popup(ui):
-    if ui.popup_menu is not None:
-        ui.popup_menu.undo_popup()
-        ui.popup_menu = None

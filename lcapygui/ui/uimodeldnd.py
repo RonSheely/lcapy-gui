@@ -2,8 +2,7 @@ from lcapygui.ui.cursor import Cursor
 from lcapygui.ui.history_event import HistoryEvent
 from lcapygui.ui.uimodelmph import UIModelMPH
 from lcapygui.ui.uimodelbase import Thing
-from lcapygui.ui.tk.menu_popup import make_popup, unmake_popup
-from lcapygui.components.picture import Picture
+from lcapygui.ui.tk.menu_popup import MenuPopup, MenuDropdown
 from .cross_hair import CrossHair
 
 
@@ -49,19 +48,10 @@ class UIModelDnD(UIModelMPH):
             self.create_component_between_cursors(thing)
             self.cursors.remove()
         else:
+            self.cursors.remove()
             if self.ui.debug:
                 print(f"Crosshair mode: {self.crosshair.thing}")
             self.crosshair.update(thing=thing)
-
-        # # Set crosshair mode to the component type
-        # self.crosshair.thing = thing
-        # if self.ui.debug:
-        #     print(f"Crosshair mode: {self.crosshair.thing}")
-        # # redraw crosshair
-        # self.crosshair.undraw()
-        # self.crosshair.draw()
-        #
-        # self.ui.refresh()
 
     def on_add_con(self, thing):
         """
@@ -110,39 +100,28 @@ class UIModelDnD(UIModelMPH):
 
         # If finished placing a component, stop placing
         if self.new_component is not None:
-            self.node_positions = [
-                (node.pos.x, node.pos.y) for node in self.new_component.nodes
-            ]
-            # If the crosshair has not moved, then instantly place the component at the current position
-            if self.crosshair.x == self.new_component.gcpt.node1.pos.x and self.crosshair.y == self.new_component.gcpt.node1.pos.y:
-                self.node_move(self.new_component.gcpt.node1, self.crosshair.x - 1, self.crosshair.y)
-                self.node_move(self.new_component.gcpt.node2, self.crosshair.x + 1, self.crosshair.y)
-                self.history.append(HistoryEvent("A", self.new_component))
-            else:  # Otherwise, confirm the component placement in its current position, and save to history
-                # If created component is a dynamic wire, split to component parts.
-                if self.new_component.gcpt.type == "DW":
-                    self.new_component.gcpt.convert_to_wires(self)
-                else:
-                    self.history.append(HistoryEvent("A", self.new_component))
-
+            # Save node positions
+            # self.node_positions = [
+            # (node.pos.x, node.pos.y) for node in self.new_component.nodes
+            # ]
+            # Add the brand new component to history
+            self.history.append(HistoryEvent("A", self.new_component))
+            if key != "shift":
                 join_args = self.node_join(self.new_component.gcpt.node2)
                 if join_args is not None:
                     # Add the join event to history
-                    self.history.append(HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+                    self.history.append(
+                        HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
 
-            # Allow continual placing of components if the shift key is pressed
-            if key != 'shift':
-                # Reset crosshair mode
-                self.crosshair.thing = None
+            # Reset crosshair mode
+            self.crosshair.thing = None
             # Clear up new_component to avoid confusion
             self.new_component = None
 
-        elif self.selected is not None:
-            if self.cpt_selected and self.node_positions is not None:  # Moving a component
-                # Merge component with existing nodes if present
-                #self.node_merge(self.selected)
-
-                # Update move history
+        # If something is selected, and it has been moved
+        elif self.selected is not None and self.node_positions is not None:
+            if self.cpt_selected:  # Moving a component
+                # Add moved component to history
                 node_positions = [
                     (node.pos.x, node.pos.y) for node in self.selected.nodes
                 ]
@@ -152,27 +131,32 @@ class UIModelDnD(UIModelMPH):
                     )
                 )
                 self.node_positions = None
-            # Moving a node
-            elif self.node_positions is not None:
-                self.crosshair.thing = None
+
+                # TODO: Implement component joining
+
+            else:  # Moving a node
+                # Add moved node to history
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
                     HistoryEvent("M", self.selected, self.node_positions, node_position)
                 )
                 self.node_positions = None
-                # Join selected node if close
-                join_args = self.node_join(self.selected)
-                if join_args is not None:
-                    # Add the join event to history
-                    self.history.append(
-                        HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
 
+                # If not denied, try to join
+                if key != "shift":
+                    # Join selected node if close
+                    join_args = self.node_join(self.selected)
+                    if join_args is not None:
+                        # Add the join event to history
+                        self.history.append(
+                            HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
 
         # Redraw screen for accurate display of labels
-        #self.on_redraw()
+        self.on_redraw()
         # Used to determine if a component or node is being moved in the on_mouse_drag method
         self.dragged = False
-        self.on_redraw()
+        # Ensure node_positions is cleared to avoid duplicate history events
+        self.node_positions = None
 
     def on_redraw(self):
         self.clear()
@@ -224,10 +208,6 @@ class UIModelDnD(UIModelMPH):
 
         """
 
-        # Destroy all Popups
-        unmake_popup(self.ui)
-
-
         # Select component/node under mouse
         self.on_select(mouse_x, mouse_y)
 
@@ -242,15 +222,20 @@ class UIModelDnD(UIModelMPH):
             if self.ui.debug:
                 print("Selected node " + self.selected.name)
             mouse_x, mouse_y = self.selected.pos.x, self.selected.pos.y
-        else: # Otherwise default to the crosshair position
+        else:  # Otherwise default to the crosshair position
             mouse_x, mouse_y = self.crosshair.position
 
         # Attempt to add a new cursor
 
-
         # Just placed a cursor, add a new component if we want
-        if self.on_add_cursor(mouse_x, mouse_y) and len(self.cursors) == 2 and self.crosshair.thing is not None:
+        if ((not self.is_popup()) and self.on_add_cursor(mouse_x, mouse_y) and
+                (len(self.cursors) == 2) and (self.crosshair.thing is not None)):
             self.create_component_between_cursors()
+            self.crosshair.thing = None
+            self.cursors.remove()
+
+        # Destroy all Popups
+        self.unmake_popup()
 
     def create_component_between_cursors(self, thing=None):
         """
@@ -294,9 +279,7 @@ class UIModelDnD(UIModelMPH):
                 return False
             thing = self.crosshair.thing
 
-
-
-        self.create(thing.cpt_type, x1, y1, x2, y2)
+        self.cpt_create(thing.cpt_type, x1, y1, x2, y2)
 
         self.ui.refresh()
         return True
@@ -306,12 +289,12 @@ class UIModelDnD(UIModelMPH):
         # Create a new temporary cursor
         cursor = Cursor(self.ui, mouse_x, mouse_y)
 
-        if len(self.cursors) == 0: # If no cursors, add positive one
+        if len(self.cursors) == 0:  # If no cursors, add positive one
             cursor.draw('red')
             self.cursors.append(cursor)
             if self.ui.debug:
                 print("Adding positive cursor")
-        elif len(self.cursors) == 1: # if one cursor, add negative one
+        elif len(self.cursors) == 1:  # if one cursor, add negative one
             cursor.draw('blue')
             self.cursors.append(cursor)
             if self.ui.debug:
@@ -327,9 +310,6 @@ class UIModelDnD(UIModelMPH):
         # Refresh UI
         self.ui.refresh()
         return True
-
-
-
 
         # # Destroy popup menu
         # unmake_popup(self.ui)
@@ -411,26 +391,69 @@ class UIModelDnD(UIModelMPH):
         - Paste popup menu if no component is selected
 
         """
-        self.cursors.remove()
-        self.on_select(mouse_x, mouse_y)
-
+        # Destroy any created component
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
             self.new_component = None
-        # Show right click menu if not placing a component
-        if self.crosshair.thing is None:
+
+        # Show right a click menu if not placing a component and there are no cursors
+        if self.crosshair.thing is None and len(self.cursors) <= 0:
+            self.on_select(mouse_x, mouse_y)
             # If a component is selected
             if self.selected and self.cpt_selected:
                 # show the comonent popup
-                make_popup(self.ui, self.selected.gcpt.menu_items)
+                self.make_popup(self.selected.gcpt.menu_items)
             else:  # if all else fails, show the paste popup
                 if self.clipboard is None:
-                    make_popup(self.ui, ["!edit_paste"])
+                    self.make_popup(["!edit_paste"])
                 else:
-                    make_popup(self.ui, ["edit_paste"])
+                    self.make_popup(["edit_paste"])
 
-        # clear current placed component on right click
+        # clear current placed component
         self.crosshair.thing = None
+        # Clear cursors
+        self.cursors.remove()
+
+    def make_popup(self, menu_items):
+        """
+        Creates a popup menu
+
+        Parameters
+        ----------
+        menu_items : list
+            List of menu items to display in the popup
+
+        """
+        display_items = []
+        for menu_item in menu_items:
+            if menu_item[0] == '!':
+                new_item = self.ui.menu_parts[menu_item[1:]]
+                new_item.state = 'disabled'
+            else:
+                new_item = self.ui.menu_parts[menu_item]
+                new_item.state = 'normal'
+            display_items.append(new_item)
+
+        self.ui.popup_menu = MenuPopup(
+            MenuDropdown(
+                "Right click",
+                0,
+                display_items,
+            )
+        )
+        self.ui.popup_menu.make(self.ui, self.ui.level)
+        self.ui.popup_menu.do_popup(self.ui.canvas.winfo_pointerx(), self.ui.canvas.winfo_pointery())
+
+    def unmake_popup(self):
+        """
+        Destroys the popup menu
+        """
+        if self.ui.popup_menu is not None:
+            self.ui.popup_menu.undo_popup()
+            self.ui.popup_menu = None
+
+    def is_popup(self):
+        return self.ui.popup_menu is not None
 
     def on_mouse_move(self, mouse_x, mouse_y):
         """
@@ -463,8 +486,6 @@ class UIModelDnD(UIModelMPH):
 
             # Update the crosshair position and set style to show it is over a node
             self.crosshair.update(position=(closest_node.pos.x, closest_node.pos.y), style='node')
-
-
 
     def snap(self, mouse_x, mouse_y, snap_to_component=False):
         """
@@ -555,7 +576,7 @@ class UIModelDnD(UIModelMPH):
         if self.new_component is not None:
             self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
             return
-        elif self.crosshair.thing is not None: # Check if we need to place the first node
+        elif self.crosshair.thing is not None:  # Check if we need to place the first node
             if self.ui.debug:
                 print("creating new: " + self.crosshair.thing.kind)
 
@@ -580,12 +601,11 @@ class UIModelDnD(UIModelMPH):
             return
 
         if self.selected:
-            # remove all cursors when dragging, as they will be in the wrong positions anyway
             self.cursors.remove()
-            if self.cpt_selected: # If a component is selected
+            if self.cpt_selected:  # If a component is selected
                 # Call super to allow mouse drag
                 super().on_mouse_drag(mouse_x, mouse_y, key)
-            else: # if a node is selected
+            else:  # if a node is selected
                 if not self.dragged:
                     self.dragged = True
                     # To save history, save first component position
@@ -595,8 +615,6 @@ class UIModelDnD(UIModelMPH):
 
                 self.node_move(self.selected, mouse_x, mouse_y)
         self.ui.refresh()
-
-
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
@@ -662,4 +680,3 @@ class UIModelDnD(UIModelMPH):
         self.on_add_cpt(paste_thing)
 
         self.ui.refresh()
-
