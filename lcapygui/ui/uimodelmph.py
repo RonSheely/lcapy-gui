@@ -917,6 +917,7 @@ class UIModelMPH(UIModelBase):
         self.cursors[0].remove()
         self.cursors[1].remove()
         self.cursors[0].draw('red')
+        self.cursors[0].draw('red')
         self.cursors[1].draw('blue')
         self.ui.refresh()
 

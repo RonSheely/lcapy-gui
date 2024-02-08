@@ -15,6 +15,6 @@ class Cursors(list):
     def draw(self):
 
         if len(self) > 0:
-            self[0].draw('red')
+            self[0].draw(polarity='positive')
         if len(self) > 1:
-            self[1].draw('blue')
+            self[1].draw(polarity='negative')

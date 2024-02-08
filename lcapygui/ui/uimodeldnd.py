@@ -226,7 +226,6 @@ class UIModelDnD(UIModelMPH):
             mouse_x, mouse_y = self.crosshair.position
 
         # Attempt to add a new cursor
-
         # Just placed a cursor, add a new component if we want
         if ((not self.is_popup()) and self.on_add_cursor(mouse_x, mouse_y) and
                 (len(self.cursors) == 2) and (self.crosshair.thing is not None)):
@@ -236,6 +235,21 @@ class UIModelDnD(UIModelMPH):
 
         # Destroy all Popups
         self.unmake_popup()
+
+    def redraw(self):
+
+        for cpt in self.circuit.elements.values():
+            if cpt == self.selected:
+                self.cpt_draw(cpt, color=self.preferences.color("select"))
+                self.cursors.remove()
+                self.add_cursor(self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y)
+                node2 = self.selected.gcpt.node2
+                if node2 is not None:
+                    self.add_cursor(node2.pos.x, node2.pos.y)
+            else:
+                self.cpt_draw(cpt)
+
+            # Should redraw nodes on top to blank out wires on top of ports
 
     def create_component_between_cursors(self, thing=None):
         """
@@ -310,67 +324,6 @@ class UIModelDnD(UIModelMPH):
         # Refresh UI
         self.ui.refresh()
         return True
-
-        # # Destroy popup menu
-        # unmake_popup(self.ui)
-        # print(self.crosshair.thing)
-        # # Select component under mouse if not placing a component
-        # if self.crosshair.thing == None:
-        #     self.on_select(mouse_x, mouse_y)
-        #     if self.cpt_selected:
-        #         cpt = self.selected.gcpt
-        #         if self.ui.debug:
-        #             print("Selected component " + cpt.name)
-        #     else:
-        #         if self.ui.debug:
-        #             print("Selected node " + self.selected.name)
-        #         self.on_add_node(mouse_x, mouse_y)
-        #
-        # elif self.new_component is None:  # If the component has not been created, create it at the current position
-        #     if self.ui.debug:
-        #         print("creating new: " + self.crosshair.thing.kind)
-        #     kind = (
-        #         "-" + self.crosshair.thing.kind
-        #         if self.crosshair.thing.kind != ""
-        #         else ""
-        #     )
-        #
-        #     mouse_x, mouse_y = self.crosshair.position
-        #     self.new_component = self.thing_create(
-        #         self.crosshair.thing.cpt_type,
-        #         mouse_x,
-        #         mouse_y,
-        #         mouse_x + self.preferences.scale,
-        #         # Have to be set to something larger because components now scale
-        #         # to the initial size of the component.
-        #         mouse_y,
-        #         kind=kind,
-        #     )
-
-    def on_left_double_click(self, mouse_x, mouse_y):
-        """
-        Performs operations on left double click
-
-        Parameters
-        ----------
-        mouse_x : float
-            x position of the mouse on screen
-        mouse_y : float
-            y position of the mouse on screen
-
-        Notes
-        -----
-        Attempts to select a component under the mouse.
-        If the component is a dynamic wire, it will be converted to a regular wire
-        Otherwise, it will default to UIModelMPH on_left_double_click behaviour.
-
-        """
-        self.on_select(mouse_x, mouse_y)
-        if self.cpt_selected and self.selected.gcpt.type == "DW":
-            self.history.append(HistoryEvent("D", self.selected))
-            self.selected.gcpt.convert_to_wires(self)
-        else:
-            super().on_left_double_click(mouse_x, mouse_y)
 
     def on_right_click(self, mouse_x, mouse_y):
         """

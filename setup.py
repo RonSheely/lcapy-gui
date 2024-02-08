@@ -35,9 +35,12 @@ setup(
         "svgpathtools",
         "svgpath2mpl",
         "tkhtmlview",
-        "astar",
         "pyshortcuts"
     ],
+    extras_require={
+          'doc': ['sphinx', 'ipython', 'sphinx-rtd-theme'],
+          'release': ['pyinstaller'],
+      },
     entry_points={
         'console_scripts': [
             'lcapy-tk=lcapygui.scripts.lcapytk:main',
