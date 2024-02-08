@@ -534,7 +534,7 @@ class UIModelDnD(UIModelMPH):
                 self.crosshair.thing.cpt_type,
                 mouse_x,
                 mouse_y,
-                mouse_x + self.preferences.scale,
+                mouse_x + 2,
                 # Have to be set to something larger because components now scale
                 # to the initial size of the component.
                 mouse_y,

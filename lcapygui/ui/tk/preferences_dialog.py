@@ -80,7 +80,7 @@ class PreferencesDialog(Window):
                               self.model.preferences.grid_spacing,
                               command=self.on_update),
                    LabelEntry('color_scheme',
-                              'Colour Scheme',
+                              'Colour scheme',
                               self.model.preferences.color_scheme,
                               ('default', 'pastel', 'greyscale', 'pitch'),
                               command=self.on_update),
