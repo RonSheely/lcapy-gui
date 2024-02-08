@@ -92,7 +92,8 @@ class CrossHair:
                         fontsize=self.model.preferences.font_size
                                  * self.model.zoom_factor
                                  * self.model.preferences.line_width_scale,
-                        color=line_color
+                        color=line_color,
+                        alpha=0
                     )
                 )
 

@@ -44,9 +44,9 @@ class UIModelDnD(UIModelMPH):
         The crosshair is then redrawn to reflect the new component type.
 
         """
-        if len(self.cursors) >= 2 and self.selected is None:
+
+        if len(self.cursors) >= 2 and self.component_between_cursors() is None:
             self.create_component_between_cursors(thing)
-            self.cursors.remove()
         else:
             self.cursors.remove()
             if self.ui.debug:
@@ -316,6 +316,33 @@ class UIModelDnD(UIModelMPH):
         self.ui.refresh()
         return True
 
+    def component_between_cursors(self):
+        """
+        Returns the component between the two cursors, if present
+
+        Returns
+        -------
+        lcapygui.mnacpts.cpt or None
+            The component between the two cursors, if present
+
+        """
+        if len(self.cursors) < 2:
+            return None
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+        for cpt in self.circuit.elements.values():
+            if (
+                    cpt.gcpt is not self
+                    and cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
+                    and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2
+            ):
+                return cpt
+        return None
+
     def on_right_click(self, mouse_x, mouse_y):
         """
         Performs operations on right click
@@ -466,6 +493,13 @@ class UIModelDnD(UIModelMPH):
             if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(
                     mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected or not snap_to_component:
                 return snap_x, snap_y
+            elif len(self.cursors) >= 1:
+                xc = self.cursors[-1].x
+                yc = self.cursors[-1].y
+                if self.is_close_to(snap_x, xc):
+                    return xc, snap_y
+                if self.is_close_to(snap_y, yc):
+                    return snap_x, yc
             else:
                 # if not close grid position, attempt to snap to component
                 snapped = False
@@ -547,8 +581,23 @@ class UIModelDnD(UIModelMPH):
         if self.selected:
             self.cursors.remove()
             if self.cpt_selected:  # If a component is selected
-                # Call super to allow mouse drag
-                super().on_mouse_drag(mouse_x, mouse_y, key)
+                if not self.dragged:
+                    self.dragged = True
+                    x0, y0 = self.select_pos
+                    x0, y0 = self.snap(x0, y0)
+                    self.last_pos = x0, y0
+                    self.node_positions = [(node.pos.x, node.pos.y)
+                                           for node in self.selected.nodes]
+
+                x_0, y_0 = self.last_pos
+                x_1, y_1 = self.snap(mouse_x, mouse_y)
+                self.last_pos = x_1, y_1
+
+                d_x = x_1 - x_0
+                d_y = y_1 - y_0
+
+                self.cpt_move(self.selected, d_x, d_y, move_nodes=True)
+
             else:  # if a node is selected
                 if not self.dragged:
                     self.dragged = True
