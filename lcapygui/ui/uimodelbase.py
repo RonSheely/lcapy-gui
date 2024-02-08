@@ -435,7 +435,6 @@ class UIModelBase:
                          self.zoom_factor * self.preferences.line_width_scale)
                 gcpt.annotations.append(ann)
 
-
     def cpt_find(self, node_name1, node_name2):
         fcpt = None
         for cpt in self.circuit:

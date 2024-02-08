@@ -413,7 +413,6 @@ class LcapyTk(Tk):
         if event.xdata is None or event.ydata is None:
             # Can this happen?
             return
-        print("click_event")
         if self.debug:
             print('Button event %s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
                   ('double' if event.dblclick else 'single', event.button,
@@ -421,14 +420,11 @@ class LcapyTk(Tk):
 
         if event.dblclick:
             if event.button == 1:
-
-                print("left_dbl_click")
                 self.model.on_left_double_click(event.xdata, event.ydata)
             elif event.button == 3:
                 self.model.on_right_double_click(event.xdata, event.ydata)
         else:
             if event.button == 1:
-                print("left_click")
                 self.model.on_left_click(event.xdata, event.ydata)
             elif event.button == 3:
                 self.model.on_right_click(event.xdata, event.ydata)

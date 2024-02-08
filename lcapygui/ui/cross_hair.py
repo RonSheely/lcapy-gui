@@ -51,7 +51,7 @@ class CrossHair:
         if self.style is None:
         # If drawing a component, draw the component type
             if self.thing is not None:
-                if self.thing.cpt_type == "W" or self.thing.cpt_type == "DW":
+                if self.thing.cpt_type == "W":
                     self.picture.add(
                         sketcher.stroke_filled_circle(
                             self.x, self.y, radius=0.2 * scale, color=select_color, alpha=.5
@@ -83,7 +83,7 @@ class CrossHair:
             )
 
         elif self.style == "node": # If node style
-            if self.thing is not None and (self.thing.cpt_type != "W" and self.thing.cpt_type != "DW"):
+            if self.thing is not None and (self.thing.cpt_type != "W"):
                 self.picture.add(
                     sketcher.text(
                         self.x + 0.2 * scale,

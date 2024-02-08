@@ -29,7 +29,7 @@ class UIModelDnD(UIModelMPH):
 
     def on_add_cpt(self, thing):
         """
-        Configures crosshair for component creation.
+        Configures crosshair and cursors for component creation.
 
         Parameters
         ----------
@@ -44,7 +44,7 @@ class UIModelDnD(UIModelMPH):
         The crosshair is then redrawn to reflect the new component type.
 
         """
-        if len(self.cursors) >= 2:
+        if len(self.cursors) >= 2 and self.selected is None:
             self.create_component_between_cursors(thing)
             self.cursors.remove()
         else:
@@ -213,6 +213,11 @@ class UIModelDnD(UIModelMPH):
 
         # If a component is selected, do nothing
         if self.cpt_selected:
+            self.cursors.remove()
+            self.add_cursor(self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y)
+            node2 = self.selected.gcpt.node2
+            if node2 is not None:
+                self.add_cursor(node2.pos.x, node2.pos.y)
             if self.ui.debug:
                 print("Selected component " + self.selected.gcpt.name)
             return
@@ -225,9 +230,9 @@ class UIModelDnD(UIModelMPH):
         else:  # Otherwise default to the crosshair position
             mouse_x, mouse_y = self.crosshair.position
 
+
         # Attempt to add a new cursor
-        # Just placed a cursor, add a new component if we want
-        if ((not self.is_popup()) and self.on_add_cursor(mouse_x, mouse_y) and
+        if ((not self.is_popup()) and self.add_cursor(mouse_x, mouse_y) and
                 (len(self.cursors) == 2) and (self.crosshair.thing is not None)):
             self.create_component_between_cursors()
             self.crosshair.thing = None
@@ -235,21 +240,7 @@ class UIModelDnD(UIModelMPH):
 
         # Destroy all Popups
         self.unmake_popup()
-
-    def redraw(self):
-
-        for cpt in self.circuit.elements.values():
-            if cpt == self.selected:
-                self.cpt_draw(cpt, color=self.preferences.color("select"))
-                self.cursors.remove()
-                self.add_cursor(self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y)
-                node2 = self.selected.gcpt.node2
-                if node2 is not None:
-                    self.add_cursor(node2.pos.x, node2.pos.y)
-            else:
-                self.cpt_draw(cpt)
-
-            # Should redraw nodes on top to blank out wires on top of ports
+        self.on_redraw()
 
     def create_component_between_cursors(self, thing=None):
         """
@@ -298,7 +289,7 @@ class UIModelDnD(UIModelMPH):
         self.ui.refresh()
         return True
 
-    def on_add_cursor(self, mouse_x, mouse_y):
+    def add_cursor(self, mouse_x, mouse_y):
 
         # Create a new temporary cursor
         cursor = Cursor(self.ui, mouse_x, mouse_y)

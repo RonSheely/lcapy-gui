@@ -5,7 +5,6 @@ from .connection import Connection
 from .cpe import CPE
 from .current_source import CurrentSource
 from .diode import Diode
-from .dynamic_wire import DynamicWire
 from .ferritebead import FerriteBead
 from .impedance import Impedance
 from .inductor import Inductor
@@ -35,7 +34,6 @@ class CptMaker:
         'C': Capacitor,
         'CPE': CPE,
         'D': Diode,
-        'DW' : DynamicWire,
         'E': VCVS,
         'opamp': Opamp,
         'inamp': Inamp,
