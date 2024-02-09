@@ -52,6 +52,7 @@ class UIModelDnD(UIModelMPH):
             if self.ui.debug:
                 print(f"Crosshair mode: {self.crosshair.thing}")
             self.crosshair.update(thing=thing)
+        self.on_redraw()
 
     def on_add_con(self, thing):
         """
@@ -124,7 +125,8 @@ class UIModelDnD(UIModelMPH):
                 self.node_positions = None
 
                 if key == "shift":
-                    for node in self.selected.nodes:
+                    for node in (self.selected.gcpt.node1, self.selected.gcpt.node2):
+                        print(node)
                         # Join selected node if close
                         join_args = self.node_join(node)
                         if join_args is not None:
@@ -344,6 +346,7 @@ class UIModelDnD(UIModelMPH):
         """
         Performs operations on right click
 
+
         Parameters
         ----------
         mouse_x : float
@@ -550,6 +553,7 @@ class UIModelDnD(UIModelMPH):
         # Check if we are currently placing a component, and have already placed the first node
         if self.new_component is not None:
             self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
+            self.new_component.nodes[1].pos = self.new_component.gcpt.node2.pos
             return
         elif self.crosshair.thing is not None:  # Check if we need to place the first node
             if self.ui.debug:
@@ -586,6 +590,16 @@ class UIModelDnD(UIModelMPH):
                     self.node_positions = [(node.pos.x, node.pos.y)
                                            for node in self.selected.nodes]
 
+                # if key == "shift":
+                #     if self.ui.debug:
+                #         print("Separating component from circuit")
+                #     old_cpt = self.selected
+                #     self.selected = self.cpt_remake(self.selected)
+                #     self.history.append(HistoryEvent("D", old_cpt))
+                #     self.history.append(HistoryEvent("A", self.selected))
+                #     self.cpt_delete(old_cpt)
+
+
                 x_0, y_0 = self.last_pos
                 x_1, y_1 = self.snap(mouse_x, mouse_y)
                 self.last_pos = x_1, y_1
@@ -600,6 +614,11 @@ class UIModelDnD(UIModelMPH):
                     self.dragged = True
                     # To save history, save first component position
                     self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
+
+                if key == "shift":
+                    if self.ui.debug:
+                        print("Separating node from circuit")
+                        print("node splitting is not available right now")
 
                 self.node_move(self.selected, mouse_x, mouse_y)
         self.ui.refresh()

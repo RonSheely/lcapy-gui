@@ -68,8 +68,15 @@ class Stretchy(Component):
         kwargs.pop('mirror', False)
         kwargs.pop('invert', False)
 
-        self.picture.add(sketcher.stroke_line(*p1.xy, *p1p.xy, **kwargs))
-        self.picture.add(sketcher.stroke_line(*p2p.xy, *p2.xy, **kwargs))
+        # Change style of 'stretchy' lines if their respective node is not connected
+
+        linestyle1 = linestyle2 = kwargs.pop('linestyle', 'solid')
+        if len(self.node1.connected) < 2 and model.closest_node(self.node1.pos.x, self.node1.pos.y, ignore=self.node1) is not None:
+            linestyle1 = (0, (3, 5, 1, 5, 1, 5))
+        self.picture.add(sketcher.stroke_line(*p1.xy, *p1p.xy, linestyle=linestyle1, **kwargs))
+        if len(self.node2.connected) < 2 and model.closest_node(self.node2.pos.x, self.node2.pos.y, ignore=self.node2) is not None:
+            linestyle2 = (0, (3, 5, 1, 5, 1, 5))
+        self.picture.add(sketcher.stroke_line(*p2p.xy, *p2.xy, linestyle=linestyle2, **kwargs))
 
         # TODO, add label, voltage_label, current_label, flow_label
 
