@@ -594,16 +594,9 @@ class UIModelDnD(UIModelMPH):
                     self.node_positions = [(node.pos.x, node.pos.y)
                                            for node in self.selected.nodes]
 
-                if key == "shift" and (len(self.selected.gcpt.node1.connected) > 1 or len(self.selected.gcpt.node2.connected) > 1):
-                    if self.ui.debug:
-                        print("Separating component from circuit")
-                    x1, y1 = self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y
-                    x2, y2 = self.selected.gcpt.node2.pos.x, self.selected.gcpt.node2.pos.y
-                    type = self.selected.type
-                    self.history.append(HistoryEvent("D", self.selected))
-                    self.cpt_delete(self.selected)
-                    self.selected = self.thing_create(type, x1, y1, x2, y2, join=False)
-                    self.history.append(HistoryEvent("A", self.selected))
+                if key == "shift":
+                    # Separate component from connected nodes
+                    self.selected = self.cpt_separate(self.selected)
 
 
                 x_0, y_0 = self.last_pos
@@ -628,6 +621,27 @@ class UIModelDnD(UIModelMPH):
 
                 self.node_move(self.selected, mouse_x, mouse_y)
         self.ui.refresh()
+
+    def cpt_separate(self, cpt):
+        # If the component is already separated, return it
+        if (len(cpt.gcpt.node1.connected) <= 1 or len(cpt.gcpt.node2.connected) <= 1):
+            return cpt
+
+        if self.ui.debug:
+            print("Separating component from circuit")
+
+        # separate component into its nodes
+        x1, y1 = cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y
+        x2, y2 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
+        type = cpt.type
+        # Delete the existing component
+        self.history.append(HistoryEvent("D", cpt))
+        self.cpt_delete(cpt)
+        # Create a new separated component
+        cpt = self.thing_create(type, x1, y1, x2, y2, join=False)
+        self.history.append(HistoryEvent("A", cpt))
+
+        return cpt
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
