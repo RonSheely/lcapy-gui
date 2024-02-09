@@ -373,6 +373,8 @@ class UIModelDnD(UIModelMPH):
             if self.selected and self.cpt_selected:
                 # show the comonent popup
                 self.make_popup(self.selected.gcpt.menu_items)
+            elif self.selected:
+                self.make_popup(["inspect_properties"])
             else:  # if all else fails, show the paste popup
                 if self.clipboard is None:
                     self.make_popup(["!edit_paste"])
