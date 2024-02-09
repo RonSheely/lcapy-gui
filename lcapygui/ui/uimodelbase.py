@@ -885,7 +885,7 @@ class UIModelBase:
         s += '; ' + self.preferences.schematic_preferences() + '\n'
         return s
 
-    def thing_create(self, cpt_type, x1, y1, x2, y2, kind=''):
+    def thing_create(self, cpt_type, x1, y1, x2, y2, kind='', join=True):
         """
         Creates a new component of type cpt_type between two points identified by (x1, y1) and (x2, y2).
 
@@ -913,7 +913,7 @@ class UIModelBase:
                 continue
 
             node = self.circuit.nodes.by_position(position)
-            if node is None:
+            if node is None or not join:
                 node_name = gcpt.choose_node_name(m, all_node_names)
                 all_node_names.append(node_name)
             else:

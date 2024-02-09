@@ -594,14 +594,16 @@ class UIModelDnD(UIModelMPH):
                     self.node_positions = [(node.pos.x, node.pos.y)
                                            for node in self.selected.nodes]
 
-                # if key == "shift":
-                #     if self.ui.debug:
-                #         print("Separating component from circuit")
-                #     old_cpt = self.selected
-                #     self.selected = self.cpt_remake(self.selected)
-                #     self.history.append(HistoryEvent("D", old_cpt))
-                #     self.history.append(HistoryEvent("A", self.selected))
-                #     self.cpt_delete(old_cpt)
+                if key == "shift" and (len(self.selected.gcpt.node1.connected) > 1 or len(self.selected.gcpt.node2.connected) > 1):
+                    if self.ui.debug:
+                        print("Separating component from circuit")
+                    x1, y1 = self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y
+                    x2, y2 = self.selected.gcpt.node2.pos.x, self.selected.gcpt.node2.pos.y
+                    type = self.selected.type
+                    self.history.append(HistoryEvent("D", self.selected))
+                    self.cpt_delete(self.selected)
+                    self.selected = self.thing_create(type, x1, y1, x2, y2, join=False)
+                    self.history.append(HistoryEvent("A", self.selected))
 
 
                 x_0, y_0 = self.last_pos
