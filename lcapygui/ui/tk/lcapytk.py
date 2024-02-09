@@ -164,6 +164,8 @@ class LcapyTk(Tk):
         self.menu_parts["manupulate_expand_components"] = MenuItem('Expand components', self.on_expand)
         self.menu_parts["help"] = MenuItem('Help', self.on_help, accelerator='Ctrl+h')
         self.menu_parts["help_debug"] = MenuItem('Debug', self.on_debug, accelerator='Ctrl+d')
+        self.menu_parts["on_node_join"] = MenuItem('Join Nodes', self.on_node_join)
+        self.menu_parts["on_node_split"] = MenuItem('Split Nodes', self.on_node_split)
 
 
         # Define menu dropdowns
@@ -465,6 +467,13 @@ class LcapyTk(Tk):
 
     def on_delete(self, *args):
         self.model.on_delete()
+
+    def on_node_join(self, *args):
+        self.model.on_node_join()
+        self.model.on_redraw()
+
+    def on_node_split(self, *args):
+        print("Node Splitting not yet implemented")
 
     def on_description(self, *args):
         self.show_message_dialog(self.model.circuit.description())

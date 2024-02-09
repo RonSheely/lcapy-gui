@@ -126,12 +126,7 @@ class UIModelDnD(UIModelMPH):
 
                 if key == "shift":
                     for node in (self.selected.gcpt.node1, self.selected.gcpt.node2):
-                        # Join selected node if close
-                        join_args = self.node_join(node)
-                        if join_args is not None:
-                            # Add the join event to history
-                            self.history.append(
-                                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+                        self.on_node_join(node)
 
             else:  # Moving a node
                 # Add moved node to history
@@ -143,12 +138,7 @@ class UIModelDnD(UIModelMPH):
 
                 # If not denied, try to join
                 if key == "shift":
-                    # Join selected node if close
-                    join_args = self.node_join(self.selected)
-                    if join_args is not None:
-                        # Add the join event to history
-                        self.history.append(
-                            HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+                    self.on_node_join(self.selected)
 
         # Redraw screen for accurate display of labels
         self.on_redraw()
@@ -162,6 +152,14 @@ class UIModelDnD(UIModelMPH):
         self.redraw()
         self.cursors.draw()
         self.ui.refresh()
+
+    def on_close(self):
+        """
+        Close the lcapy-gui window
+
+        """
+        self.unmake_popup()
+        self.ui.quit()
 
     def split_nodes(self, current_cpt, current_node):
         """
@@ -378,8 +376,13 @@ class UIModelDnD(UIModelMPH):
             if self.selected and self.cpt_selected:
                 # show the comonent popup
                 self.make_popup(self.selected.gcpt.menu_items)
-            elif self.selected:
-                self.make_popup(["inspect_properties"])
+            elif self.node_selected:
+                if len(self.selected.connected) > 1:
+                    self.make_popup(["!on_node_split", "inspect_properties"])
+                elif self.closest_node(mouse_x, mouse_y, self.selected) is not None:
+                    self.make_popup(["on_node_join", "inspect_properties"])
+                else:
+                    self.make_popup(["!on_node_join", "inspect_properties"])
             else:  # if all else fails, show the paste popup
                 if self.clipboard is None:
                     self.make_popup(["!edit_paste"])
@@ -596,7 +599,7 @@ class UIModelDnD(UIModelMPH):
 
                 if key == "shift":
                     # Separate component from connected nodes
-                    self.selected = self.cpt_separate(self.selected)
+                    self.selected = self.on_cpt_separate(self.selected)
 
 
                 x_0, y_0 = self.last_pos
@@ -622,7 +625,18 @@ class UIModelDnD(UIModelMPH):
                 self.node_move(self.selected, mouse_x, mouse_y)
         self.ui.refresh()
 
-    def cpt_separate(self, cpt):
+    def on_node_join(self, node=None):
+        if node is None and self.node_selected:
+            node = self.selected
+        # Join selected node if close
+        join_args = self.node_join(node)
+        if join_args is not None:
+            # Add the join event to history
+            self.history.append(
+                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+
+
+    def on_cpt_separate(self, cpt):
         # If the component is already separated, return it
         if (len(cpt.gcpt.node1.connected) <= 1 or len(cpt.gcpt.node2.connected) <= 1):
             return cpt

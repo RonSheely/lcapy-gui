@@ -352,6 +352,7 @@ class UIModelMPH(UIModelBase):
         Close the lcapy-gui window
 
         """
+
         self.ui.quit()
 
     def on_copy(self):

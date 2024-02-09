@@ -270,6 +270,11 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
+    @property
+    def node_selected(self):
+
+        return isinstance(self.selected, Node)
+
     def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
         """
         TODO: Check
