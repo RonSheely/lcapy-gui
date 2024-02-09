@@ -517,12 +517,12 @@ class UIModelBase:
         """
 
         if to_node is None:
-            print(f"No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})")# if self.ui.debug else None
+            print(f"No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
             to_node = self.closest_node(from_node.pos.x, from_node.pos.y, ignore=from_node)
         if to_node is None:
-            print(f"No existing node found at ({from_node.pos.x}, {from_node.pos.y})")# if self.ui.debug else None
+            print(f"No existing node found at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
             return None
-        print(f"Joining {from_node.name} and {to_node.name}")# if self.ui.debug else None
+        print(f"Joining {from_node.name} and {to_node.name}") if self.ui.debug else None
 
 
         # if the two nodes are the same, disallow. This should not happen.

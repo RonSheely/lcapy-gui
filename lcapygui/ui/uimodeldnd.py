@@ -126,7 +126,6 @@ class UIModelDnD(UIModelMPH):
 
                 if key == "shift":
                     for node in (self.selected.gcpt.node1, self.selected.gcpt.node2):
-                        print(node)
                         # Join selected node if close
                         join_args = self.node_join(node)
                         if join_args is not None:
