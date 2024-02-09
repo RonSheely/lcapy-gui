@@ -565,10 +565,10 @@ class UIModelBase:
 
         """
         # Must pass in components to move
-        if components is None:
+        if components is None or len(components) == 0:
             if self.ui.debug:
                 print('No components moved')
-            return
+            return None
         if new_node is None:
             return
             # TODO: Implement creating a new node if none is passed in

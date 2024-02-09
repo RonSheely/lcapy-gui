@@ -34,20 +34,20 @@ class UIModelDnD(UIModelMPH):
         Parameters
         ----------
         thing
-            The component to create
+            The type of component to create
 
         Notes
         -----
-        Saves the 'thing' (essentially a component type) to the crosshair, which dictates its appearance, and
-        is referenced later in :func:`on_left_click` to determine if the component should be placed.
+        If there are two cursors, and there is no existing component, it will create a component between the cursors.
 
-        The crosshair is then redrawn to reflect the new component type.
+        Otherwise, it will initialise the crosshair to place a component of the given "thing" type.
 
         """
-
+        # Only place a component between cursors if there are two cursors and no existing component between them
         if len(self.cursors) >= 2 and self.component_between_cursors() is None:
             self.create_component_between_cursors(thing)
         else:
+            # Intialise crosshair to place a component of the given "thing" type
             self.cursors.remove()
             if self.ui.debug:
                 print(f"Crosshair mode: {self.crosshair.thing}")
@@ -55,7 +55,7 @@ class UIModelDnD(UIModelMPH):
 
     def on_add_con(self, thing):
         """
-        Configures crosshair for component creation.
+        Configures crosshair and cursors for component creation.
 
         Parameters
         ----------
@@ -64,8 +64,7 @@ class UIModelDnD(UIModelMPH):
 
         Notes
         -----
-        This method calls :func:`on_add_cpt` to configure the crosshair for component creation. Added for backwards
-        compatibility with :mod:`lcapygui.ui.uimodelmph`.
+        This method calls :func:`on_add_cpt` to configure the crosshair and cursors for component creation.
 
         """
         # Set crosshair mode to the component type
@@ -82,17 +81,13 @@ class UIModelDnD(UIModelMPH):
 
         Notes
         -----
-        If a component is being placed, it will be placed at the current position.
 
-        - If the crosshair has not moved since the component was created, a fixed size component will be placed.
-        - Otherwise, we can assume the component has moved to its preferred position.
+        If placing a component with the mouse, we stop placing it, and add it to history.
+            Will attempt to join the final point with any existing nodes if 'shift' is not pressed.
 
-        Both cases will save to history.
+        Otherwise, if a move event has occurred
+            It will stop the move event,
 
-        Pressing the 'shift' key will allow continual placing of components, otherwise the crosshair is reset to default
-
-        If no component is being created, a component or node may have been moved. In this case, the component will be
-        merged with any nearby nodes, and the new position will be saved to history.
 
         """
         if self.ui.debug:
@@ -100,10 +95,6 @@ class UIModelDnD(UIModelMPH):
 
         # If finished placing a component, stop placing
         if self.new_component is not None:
-            # Save node positions
-            # self.node_positions = [
-            # (node.pos.x, node.pos.y) for node in self.new_component.nodes
-            # ]
             # Add the brand new component to history
             self.history.append(HistoryEvent("A", self.new_component))
             if key != "shift":
@@ -132,7 +123,14 @@ class UIModelDnD(UIModelMPH):
                 )
                 self.node_positions = None
 
-                # TODO: Implement component joining
+                if key == "shift":
+                    for node in self.selected.nodes:
+                        # Join selected node if close
+                        join_args = self.node_join(node)
+                        if join_args is not None:
+                            # Add the join event to history
+                            self.history.append(
+                                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
 
             else:  # Moving a node
                 # Add moved node to history
@@ -143,7 +141,7 @@ class UIModelDnD(UIModelMPH):
                 self.node_positions = None
 
                 # If not denied, try to join
-                if key != "shift":
+                if key == "shift":
                     # Join selected node if close
                     join_args = self.node_join(self.selected)
                     if join_args is not None:
@@ -275,7 +273,6 @@ class UIModelDnD(UIModelMPH):
         x2 = self.cursors[1].x
         y2 = self.cursors[1].y
 
-        print(f"thing: {thing}, crosshair: {self.crosshair.thing}")
 
         if thing is None:
             if self.crosshair.thing is None:
@@ -603,8 +600,6 @@ class UIModelDnD(UIModelMPH):
                     self.dragged = True
                     # To save history, save first component position
                     self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
-                if key == "shift":
-                    print("Splitting nodes with shift not implemented yet, please use undo")
 
                 self.node_move(self.selected, mouse_x, mouse_y)
         self.ui.refresh()
