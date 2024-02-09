@@ -207,6 +207,9 @@ class UIModelDnD(UIModelMPH):
 
         """
 
+        # Destroy all Popups
+        self.unmake_popup()
+
         # Select component/node under mouse
         self.on_select(mouse_x, mouse_y)
 
@@ -237,8 +240,6 @@ class UIModelDnD(UIModelMPH):
             self.crosshair.thing = None
             self.cursors.remove()
 
-        # Destroy all Popups
-        self.unmake_popup()
         self.on_redraw()
 
     def create_component_between_cursors(self, thing=None):
@@ -366,8 +367,12 @@ class UIModelDnD(UIModelMPH):
             self.cpt_delete(self.new_component)
             self.new_component = None
 
+        # Clear cursors
+        self.cursors.remove()
+        self.ui.refresh()
+
         # Show right a click menu if not placing a component and there are no cursors
-        if self.crosshair.thing is None and len(self.cursors) <= 0:
+        if self.crosshair.thing is None:
             self.on_select(mouse_x, mouse_y)
             # If a component is selected
             if self.selected and self.cpt_selected:
@@ -383,8 +388,6 @@ class UIModelDnD(UIModelMPH):
 
         # clear current placed component
         self.crosshair.thing = None
-        # Clear cursors
-        self.cursors.remove()
 
     def make_popup(self, menu_items):
         """
