@@ -331,10 +331,12 @@ class UIModelDnD(UIModelMPH):
             # Clear cursors, as we dont need them when placing a cpt
             self.cursors.remove()
             return
-
+        components = []
         if self.selected:
             self.cursors.remove()
             if self.cpt_selected:  # If a component is selected
+                components.extend(self.selected.gcpt.node1.connected)
+                components.extend(self.selected.gcpt.node2.connected)
                 if not self.dragged:
                     self.dragged = True
                     x0, y0 = self.select_pos
@@ -342,6 +344,7 @@ class UIModelDnD(UIModelMPH):
                     self.last_pos = x0, y0
                     self.node_positions = [(node.pos.x, node.pos.y)
                                            for node in self.selected.nodes]
+
 
                 if key == "shift":
                     # Separate component from connected nodes
@@ -355,9 +358,19 @@ class UIModelDnD(UIModelMPH):
                 d_x = x_1 - x_0
                 d_y = y_1 - y_0
 
+
                 self.cpt_move(self.selected, d_x, d_y, move_nodes=True)
+                components = self.selected.gcpt.node1.connected
+                components.extend(self.selected.gcpt.node2.connected)
+                for component in components:
+                    if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
+                        if self.ui.debug:
+                            print(f"Invalid component placement, disallowing move")
+                        self.cpt_move(self.selected,-d_x, -d_y, move_nodes=True)
+
 
             else:  # if a node is selected
+                components.extend(self.selected.connected)
                 if not self.dragged:
                     self.dragged = True
                     # To save history, save first component position
@@ -368,7 +381,15 @@ class UIModelDnD(UIModelMPH):
                         print("Separating node from circuit")
                         print("node splitting is not available right now")
 
+                original_x, original_y = self.selected.pos.x, self.selected.pos.y
+
                 self.node_move(self.selected, mouse_x, mouse_y)
+                for component in self.selected.connected:
+                    if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
+                        if self.ui.debug:
+                            print(f"Invalid component placement, disallowing move")
+                        self.node_move(self.selected, original_x, original_y)
+
         #self.ui.refresh()
 
     def on_mouse_move(self, mouse_x, mouse_y):
@@ -737,3 +758,8 @@ class UIModelDnD(UIModelMPH):
         self.unmake_popup()
         self.ui.quit()
 
+    def validate_component_positions(self, components):
+        for component in components:
+            if component.gcpt.node1.pos.x == component.gcpt.node2.pos and component.gcpt.node1.pos.y == component.gcpt.node2.pos.y:
+                print(f"Invalid component: {component.name}")
+                return False
