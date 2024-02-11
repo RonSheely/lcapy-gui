@@ -55,6 +55,10 @@ class UIModelMPH(UIModelBase):
         for k, thing in self.connection_map.items():
             self.key_bindings_with_key[thing.accelerator] = self.on_add_con, thing
 
+        if self.first_use:
+            self.on_first_launch()
+            self.preferences.save()
+
     def add_cursor(self, x, y):
         """
         Adds a cursor at the specified position.
@@ -781,6 +785,9 @@ class UIModelMPH(UIModelBase):
             self.preferences.apply()
 
         self.ui.show_preferences_dialog(update)
+
+    def on_first_launch(self):
+        self.ui.show_first_launch_dialog()
 
     def on_quit(self):
 

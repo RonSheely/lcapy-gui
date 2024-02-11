@@ -810,6 +810,12 @@ class LcapyTk(Tk):
 
         self.preferences_dialog = PreferencesDialog(self, on_changed)
 
+    def show_first_launch_dialog(self):
+        from .message_dialog import MessageDialog
+
+        message = "Welcome to lcapy-gui.\nFor help on how to use this program, check out the documentation at https://lcapy-gui.readthedocs.io/"
+        self.first_launch_dialog = MessageDialog(title="Welcome to Lcap-gui", message=message)
+
     def show_python_dialog(self, expr):
         from .python_dialog import PythonDialog
 

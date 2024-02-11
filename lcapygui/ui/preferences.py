@@ -108,8 +108,8 @@ class Preferences:
     def load(self):
 
         dirname = self._dirname
-        if not dirname.exists():
-            return
+        if not self._filename.exists():
+            return False
 
         s = self._filename.read_text()
         d = json.loads(s)
@@ -143,6 +143,8 @@ class Preferences:
         # Update the preferences file if the version changed
         if version != self.version:
             self.save()
+
+        return True
 
     def reset(self):
 

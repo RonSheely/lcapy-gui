@@ -109,7 +109,7 @@ class UIModelBase:
         self.selected = None
         self.last_expr = None
         self.preferences = Preferences()
-        self.preferences.load()
+        self.first_use = not self.preferences.load()
         self.preferences.apply()
         self.dirty = False
         self.history = History()
