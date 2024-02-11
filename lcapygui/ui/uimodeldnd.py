@@ -71,6 +71,112 @@ class UIModelDnD(UIModelMPH):
         # Set crosshair mode to the component type
         self.on_add_cpt(thing)
 
+    def on_left_click(self, mouse_x, mouse_y):
+        """
+        Performs operations on left click
+
+        Parameters
+        ----------
+        mouse_x : float
+            x position of the mouse on screen
+        mouse_y : float
+            y position of the mouse on screen
+
+        Notes
+        -----
+        If not placing a component, it will attempt to select a component or node under the mouse.
+        otherwise, if a component is being placed, the first node will be placed at the current position.
+
+
+        """
+
+        # Destroy all Popups
+        self.unmake_popup()
+
+        # Select component/node under mouse
+        self.on_select(mouse_x, mouse_y)
+
+        # If a component is selected, do nothing
+        if self.cpt_selected:
+            self.cursors.remove()
+            self.add_cursor(self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y)
+            node2 = self.selected.gcpt.node2
+            if node2 is not None:
+                self.add_cursor(node2.pos.x, node2.pos.y)
+            if self.ui.debug:
+                print("Selected component " + self.selected.gcpt.name)
+            return
+
+        # If a node is selected, update mouse_x, mouse_y to that nodes position
+        if self.selected:
+            if self.ui.debug:
+                print("Selected node " + self.selected.name)
+            mouse_x, mouse_y = self.selected.pos.x, self.selected.pos.y
+        else:  # Otherwise default to the crosshair position
+            mouse_x, mouse_y = self.crosshair.position
+
+
+        # Attempt to add a new cursor
+        if ((not self.is_popup()) and self.add_cursor(mouse_x, mouse_y) and
+                (len(self.cursors) == 2) and (self.crosshair.thing is not None)):
+            self.create_component_between_cursors()
+            self.crosshair.thing = None
+            self.cursors.remove()
+
+        self.on_redraw()
+
+    def on_right_click(self, mouse_x, mouse_y):
+        """
+        Performs operations on right click
+
+
+        Parameters
+        ----------
+        mouse_x : float
+            x position of the mouse on screen
+        mouse_y : float
+            y position of the mouse on screen
+
+        Notes
+        -----
+        If placing a component, it cancels the place operation and deletes the component if it exists.
+        otherwise, it will attempt to show a popup-menu
+        - Component popup menu if a component is selected
+        - Paste popup menu if no component is selected
+
+        """
+        # Destroy any created component
+        if self.new_component is not None:
+            self.cpt_delete(self.new_component)
+            self.new_component = None
+
+        # Clear cursors
+        self.cursors.remove()
+        self.ui.refresh()
+
+        # Show right a click menu if not placing a component and there are no cursors
+        if self.crosshair.thing is None:
+            self.on_select(mouse_x, mouse_y)
+            # If a component is selected
+            if self.selected and self.cpt_selected:
+                # show the comonent popup
+                self.make_popup(self.selected.gcpt.menu_items)
+            elif self.node_selected:
+                if len(self.selected.connected) > 1:
+                    self.make_popup(["!on_node_split", "inspect_properties"])
+                elif self.closest_node(mouse_x, mouse_y, self.selected) is not None:
+                    self.make_popup(["on_node_join", "inspect_properties"])
+                else:
+                    self.make_popup(["!on_node_join", "inspect_properties"])
+            else:  # if all else fails, show the paste popup
+                if self.clipboard is None:
+                    self.make_popup(["!edit_paste"])
+                else:
+                    self.make_popup(["edit_paste"])
+
+        # clear current placed component
+        self.crosshair.thing = None
+
     def on_mouse_release(self, key=None):
         """
         Performs operations on mouse release
@@ -147,385 +253,6 @@ class UIModelDnD(UIModelMPH):
         # Ensure node_positions is cleared to avoid duplicate history events
         self.node_positions = None
 
-    def on_redraw(self):
-        self.clear()
-        self.redraw()
-        self.cursors.draw()
-        self.ui.refresh()
-
-    def on_close(self):
-        """
-        Close the lcapy-gui window
-
-        """
-        self.unmake_popup()
-        self.ui.quit()
-
-    def split_nodes(self, current_cpt, current_node):
-        """
-        Removes the given node from the component, and removes the component from the node
-        Then creates a new node at the position and assigns that node to the component
-
-        Parameters
-        ----------
-        current_cpt
-        node
-
-        """
-        new_cpt = self.thing_create(
-            current_cpt.gcpt.type,
-            current_cpt.gcpt.node1.x,
-            current_cpt.gcpt.node1.y,
-            current_cpt.gcpt.node2.x,
-            current_cpt.gcpt.node2.y
-
-        )
-        self.delete(current_cpt)
-
-        for node in new_cpt.nodes:
-            if node.pos.x == current_node.pos.x and node.pos.y == current_node.pos.y:
-                return node
-
-    def on_left_click(self, mouse_x, mouse_y):
-        """
-        Performs operations on left click
-
-        Parameters
-        ----------
-        mouse_x : float
-            x position of the mouse on screen
-        mouse_y : float
-            y position of the mouse on screen
-
-        Notes
-        -----
-        If not placing a component, it will attempt to select a component or node under the mouse.
-        otherwise, if a component is being placed, the first node will be placed at the current position.
-
-
-        """
-
-        # Destroy all Popups
-        self.unmake_popup()
-
-        # Select component/node under mouse
-        self.on_select(mouse_x, mouse_y)
-
-        # If a component is selected, do nothing
-        if self.cpt_selected:
-            self.cursors.remove()
-            self.add_cursor(self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y)
-            node2 = self.selected.gcpt.node2
-            if node2 is not None:
-                self.add_cursor(node2.pos.x, node2.pos.y)
-            if self.ui.debug:
-                print("Selected component " + self.selected.gcpt.name)
-            return
-
-        # If a node is selected, update mouse_x, mouse_y to that nodes position
-        if self.selected:
-            if self.ui.debug:
-                print("Selected node " + self.selected.name)
-            mouse_x, mouse_y = self.selected.pos.x, self.selected.pos.y
-        else:  # Otherwise default to the crosshair position
-            mouse_x, mouse_y = self.crosshair.position
-
-
-        # Attempt to add a new cursor
-        if ((not self.is_popup()) and self.add_cursor(mouse_x, mouse_y) and
-                (len(self.cursors) == 2) and (self.crosshair.thing is not None)):
-            self.create_component_between_cursors()
-            self.crosshair.thing = None
-            self.cursors.remove()
-
-        self.on_redraw()
-
-    def create_component_between_cursors(self, thing=None):
-        """
-        Creates a component between the two cursors, if present
-
-        Parameters
-        ----------
-        thing : Thing, optional
-            Used to decide an arbitrary component type if provided,
-                otherwise will default to the self.crosshair.thing if available
-
-        Returns
-        -------
-        bool
-            Returns True if a component could have been created
-            - There are 2 cursors to create a component between
-            - A thing was provided, or available from self.crosshair.thing
-
-        Notes
-        -----
-        This method will still return True, even if the component creation was unsuccessful. It only checks if it is
-            provided enough information to create a component to pass into the :func:`self.create` method.
-
-        """
-        if len(self.cursors) < 2:
-            if self.ui.debug:
-                print("Not enough cursors to create component")
-            return False
-
-        x1 = self.cursors[0].x
-        y1 = self.cursors[0].y
-        x2 = self.cursors[1].x
-        y2 = self.cursors[1].y
-
-
-        if thing is None:
-            if self.crosshair.thing is None:
-                if self.ui.debug:
-                    print("No-thing provided to decide component type")
-                return False
-            thing = self.crosshair.thing
-
-        self.cpt_create(thing.cpt_type, x1, y1, x2, y2)
-
-        self.ui.refresh()
-        return True
-
-    def add_cursor(self, mouse_x, mouse_y):
-
-        # Create a new temporary cursor
-        cursor = Cursor(self.ui, mouse_x, mouse_y)
-
-        if len(self.cursors) == 0:  # If no cursors, add positive one
-            cursor.draw('red')
-            self.cursors.append(cursor)
-            if self.ui.debug:
-                print("Adding positive cursor")
-        elif len(self.cursors) == 1:  # if one cursor, add negative one
-            cursor.draw('blue')
-            self.cursors.append(cursor)
-            if self.ui.debug:
-                print("Adding negative cursor")
-        elif len(self.cursors) >= 2:  # if too many cursors, clear all
-            self.cursors.pop(0)
-            self.cursors.append(cursor)
-            if self.ui.debug:
-                print("Too many cursors, clearing all")
-            self.ui.refresh()
-            return False
-
-        # Refresh UI
-        self.ui.refresh()
-        return True
-
-    def component_between_cursors(self):
-        """
-        Returns the component between the two cursors, if present
-
-        Returns
-        -------
-        lcapygui.mnacpts.cpt or None
-            The component between the two cursors, if present
-
-        """
-        if len(self.cursors) < 2:
-            return None
-
-        x1 = self.cursors[0].x
-        y1 = self.cursors[0].y
-        x2 = self.cursors[1].x
-        y2 = self.cursors[1].y
-
-        for cpt in self.circuit.elements.values():
-            if (
-                    cpt.gcpt is not self
-                    and cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
-                    and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2
-            ):
-                return cpt
-        return None
-
-    def on_right_click(self, mouse_x, mouse_y):
-        """
-        Performs operations on right click
-
-
-        Parameters
-        ----------
-        mouse_x : float
-            x position of the mouse on screen
-        mouse_y : float
-            y position of the mouse on screen
-
-        Notes
-        -----
-        If placing a component, it cancels the place operation and deletes the component if it exists.
-        otherwise, it will attempt to show a popup-menu
-        - Component popup menu if a component is selected
-        - Paste popup menu if no component is selected
-
-        """
-        # Destroy any created component
-        if self.new_component is not None:
-            self.cpt_delete(self.new_component)
-            self.new_component = None
-
-        # Clear cursors
-        self.cursors.remove()
-        self.ui.refresh()
-
-        # Show right a click menu if not placing a component and there are no cursors
-        if self.crosshair.thing is None:
-            self.on_select(mouse_x, mouse_y)
-            # If a component is selected
-            if self.selected and self.cpt_selected:
-                # show the comonent popup
-                self.make_popup(self.selected.gcpt.menu_items)
-            elif self.node_selected:
-                if len(self.selected.connected) > 1:
-                    self.make_popup(["!on_node_split", "inspect_properties"])
-                elif self.closest_node(mouse_x, mouse_y, self.selected) is not None:
-                    self.make_popup(["on_node_join", "inspect_properties"])
-                else:
-                    self.make_popup(["!on_node_join", "inspect_properties"])
-            else:  # if all else fails, show the paste popup
-                if self.clipboard is None:
-                    self.make_popup(["!edit_paste"])
-                else:
-                    self.make_popup(["edit_paste"])
-
-        # clear current placed component
-        self.crosshair.thing = None
-
-    def make_popup(self, menu_items):
-        """
-        Creates a popup menu
-
-        Parameters
-        ----------
-        menu_items : list
-            List of menu items to display in the popup
-
-        """
-        display_items = []
-        for menu_item in menu_items:
-            if menu_item[0] == '!':
-                new_item = self.ui.menu_parts[menu_item[1:]]
-                new_item.state = 'disabled'
-            else:
-                new_item = self.ui.menu_parts[menu_item]
-                new_item.state = 'normal'
-            display_items.append(new_item)
-
-        self.ui.popup_menu = MenuPopup(
-            MenuDropdown(
-                "Right click",
-                0,
-                display_items,
-            )
-        )
-        self.ui.popup_menu.make(self.ui, self.ui.level)
-        self.ui.popup_menu.do_popup(self.ui.canvas.winfo_pointerx(), self.ui.canvas.winfo_pointery())
-
-    def unmake_popup(self):
-        """
-        Destroys the popup menu
-        """
-        if self.ui.popup_menu is not None:
-            self.ui.popup_menu.undo_popup()
-            self.ui.popup_menu = None
-
-    def is_popup(self):
-        return self.ui.popup_menu is not None
-
-    def on_mouse_move(self, mouse_x, mouse_y):
-        """
-        Performs operations on mouse move
-
-        Parameters
-        ----------
-        mouse_x : float
-            x position of the mouse on screen
-        mouse_y : float
-            y position of the mouse on screen
-
-        Notes
-        -----
-        Updates the crosshair position based on the mouse position.
-        Will attempt to snap to the grid or to a component if the snap grid is enabled.
-
-        """
-        closest_node = self.closest_node(mouse_x, mouse_y)
-        # If the crosshair is not over a node, snap to the grid (if enabled)
-        if closest_node is None:
-            if self.preferences.snap_grid:
-                mouse_x, mouse_y = self.snap(mouse_x, mouse_y,
-                                             snap_to_component=True if self.crosshair.thing is None else False)
-            # Update position and reset style
-            self.crosshair.update(position=(mouse_x, mouse_y), style=None)
-
-        else:
-            self.crosshair.style = 'node'
-
-            # Update the crosshair position and set style to show it is over a node
-            self.crosshair.update(position=(closest_node.pos.x, closest_node.pos.y), style='node')
-
-    def snap(self, mouse_x, mouse_y, snap_to_component=False):
-        """
-        Snaps the x and y positions to the grid or to a component
-
-        Parameters
-        ----------
-        mouse_x : float
-            x position of the mouse on screen
-        mouse_y : float
-            y position of the mouse on screen
-        snap_to_component : bool
-            Determines if coords will snap to a selected component
-
-        Returns
-        -------
-        tuple[float, float]
-            The snapped x, y position
-
-        Notes
-        -----
-        Will only attempt to snap if allowed in settings
-
-        Will snap to the grid if the mouse is close to the grid position
-        Otherwise, it will attempt to snap to the component itself to allow component selection.
-        If no component is close enough, it will simply revert to snapping to the grid.
-
-        """
-        # Only snap if the snap grid is enabled
-        if self.preferences.snap_grid:
-
-            snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
-            # Prioritise snapping to the grid if close, or if placing a component
-            if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(
-                    mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected or not snap_to_component:
-                return snap_x, snap_y
-            elif len(self.cursors) >= 1:
-                xc = self.cursors[-1].x
-                yc = self.cursors[-1].y
-                if self.is_close_to(snap_x, xc):
-                    return xc, snap_y
-                if self.is_close_to(snap_y, yc):
-                    return snap_x, yc
-            else:
-                # if not close grid position, attempt to snap to component
-                snapped = False
-                for cpt in self.circuit.elements.values():
-                    if (
-                            cpt.gcpt is not self
-                            and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2
-                    ):
-                        mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
-                        snapped = True
-                # If no near components, snap to grid
-                if not snapped:
-                    return snap_x, snap_y
-            for node in self.circuit.nodes.values():
-                if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(
-                        mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
-                    return node.x, node.y
-        return mouse_x, mouse_y
-
     def on_mouse_drag(self, mouse_x, mouse_y, key=None):
         """
         Performs operations when the user drags the mouse on the canvas.
@@ -599,7 +326,7 @@ class UIModelDnD(UIModelMPH):
 
                 if key == "shift":
                     # Separate component from connected nodes
-                    self.selected = self.on_cpt_separate(self.selected)
+                    self.selected = self.on_cpt_split(self.selected)
 
 
                 x_0, y_0 = self.last_pos
@@ -625,37 +352,37 @@ class UIModelDnD(UIModelMPH):
                 self.node_move(self.selected, mouse_x, mouse_y)
         self.ui.refresh()
 
-    def on_node_join(self, node=None):
-        if node is None and self.node_selected:
-            node = self.selected
-        # Join selected node if close
-        join_args = self.node_join(node)
-        if join_args is not None:
-            # Add the join event to history
-            self.history.append(
-                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+    def on_mouse_move(self, mouse_x, mouse_y):
+        """
+        Performs operations on mouse move
 
+        Parameters
+        ----------
+        mouse_x : float
+            x position of the mouse on screen
+        mouse_y : float
+            y position of the mouse on screen
 
-    def on_cpt_separate(self, cpt):
-        # If the component is already separated, return it
-        if (len(cpt.gcpt.node1.connected) <= 1 or len(cpt.gcpt.node2.connected) <= 1):
-            return cpt
+        Notes
+        -----
+        Updates the crosshair position based on the mouse position.
+        Will attempt to snap to the grid or to a component if the snap grid is enabled.
 
-        if self.ui.debug:
-            print("Separating component from circuit")
+        """
+        closest_node = self.closest_node(mouse_x, mouse_y)
+        # If the crosshair is not over a node, snap to the grid (if enabled)
+        if closest_node is None:
+            if self.preferences.snap_grid:
+                mouse_x, mouse_y = self.snap(mouse_x, mouse_y,
+                                             snap_to_component=True if self.crosshair.thing is None else False)
+            # Update position and reset style
+            self.crosshair.update(position=(mouse_x, mouse_y), style=None)
 
-        # separate component into its nodes
-        x1, y1 = cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y
-        x2, y2 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
-        type = cpt.type
-        # Delete the existing component
-        self.history.append(HistoryEvent("D", cpt))
-        self.cpt_delete(cpt)
-        # Create a new separated component
-        cpt = self.thing_create(type, x1, y1, x2, y2, join=False)
-        self.history.append(HistoryEvent("A", cpt))
+        else:
+            self.crosshair.style = 'node'
 
-        return cpt
+            # Update the crosshair position and set style to show it is over a node
+            self.crosshair.update(position=(closest_node.pos.x, closest_node.pos.y), style='node')
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
@@ -680,6 +407,67 @@ class UIModelDnD(UIModelMPH):
             self.rotate(self.selected, angle)
             self.selected.gcpt.undraw()
             self.selected.gcpt.draw(self)
+
+    def snap(self, mouse_x, mouse_y, snap_to_component=False):
+        """
+        Snaps the x and y positions to the grid or to a component
+
+        Parameters
+        ----------
+        mouse_x : float
+            x position of the mouse on screen
+        mouse_y : float
+            y position of the mouse on screen
+        snap_to_component : bool
+            Determines if coords will snap to a selected component
+
+        Returns
+        -------
+        tuple[float, float]
+            The snapped x, y position
+
+        Notes
+        -----
+        Will only attempt to snap if allowed in settings
+
+        Will snap to the grid if the mouse is close to the grid position
+        Otherwise, it will attempt to snap to the component itself to allow component selection.
+        If no component is close enough, it will simply revert to snapping to the grid.
+
+        """
+        # Only snap if the snap grid is enabled
+        if self.preferences.snap_grid:
+
+            snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
+            # Prioritise snapping to the grid if close, or if placing a component
+            if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(
+                    mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected or not snap_to_component:
+                return snap_x, snap_y
+            elif len(self.cursors) >= 1:
+                xc = self.cursors[-1].x
+                yc = self.cursors[-1].y
+                if self.is_close_to(snap_x, xc):
+                    return xc, snap_y
+                if self.is_close_to(snap_y, yc):
+                    return snap_x, yc
+            else:
+                # if not close grid position, attempt to snap to component
+                snapped = False
+                for cpt in self.circuit.elements.values():
+                    if (
+                            cpt.gcpt is not self
+                            and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2
+                    ):
+                        mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
+                        snapped = True
+                # If no near components, snap to grid
+                if not snapped:
+                    return snap_x, snap_y
+            for node in self.circuit.nodes.values():
+                if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(
+                        mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
+                    return node.x, node.y
+        return mouse_x, mouse_y
 
     def on_cut(self):
         """
@@ -721,3 +509,190 @@ class UIModelDnD(UIModelMPH):
         self.on_add_cpt(paste_thing)
 
         self.ui.refresh()
+
+    def on_node_join(self, node=None):
+        if node is None and self.node_selected:
+            node = self.selected
+        # Join selected node if close
+        join_args = self.node_join(node)
+        if join_args is not None:
+            # Add the join event to history
+            self.history.append(
+                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+
+    def on_cpt_split(self, cpt):
+        # If the component is already separated, return it
+        if (len(cpt.gcpt.node1.connected) <= 1 or len(cpt.gcpt.node2.connected) <= 1):
+            return cpt
+
+        if self.ui.debug:
+            print("Separating component from circuit")
+
+        # separate component into its nodes
+        x1, y1 = cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y
+        x2, y2 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
+        type = cpt.type
+        # Delete the existing component
+        self.history.append(HistoryEvent("D", cpt))
+        self.cpt_delete(cpt)
+        # Create a new separated component
+        cpt = self.thing_create(type, x1, y1, x2, y2, join=False)
+        self.history.append(HistoryEvent("A", cpt))
+
+        return cpt
+
+    def on_redraw(self):
+        self.clear()
+        self.redraw()
+        self.cursors.draw()
+        self.ui.refresh()
+
+    def add_cursor(self, mouse_x, mouse_y):
+
+        # Create a new temporary cursor
+        cursor = Cursor(self.ui, mouse_x, mouse_y)
+
+        if len(self.cursors) == 0:  # If no cursors, add positive one
+            cursor.draw('red')
+            self.cursors.append(cursor)
+            if self.ui.debug:
+                print("Adding positive cursor")
+        elif len(self.cursors) == 1:  # if one cursor, add negative one
+            cursor.draw('blue')
+            self.cursors.append(cursor)
+            if self.ui.debug:
+                print("Adding negative cursor")
+        elif len(self.cursors) >= 2:  # if too many cursors, clear all
+            self.cursors.pop(0)
+            self.cursors.append(cursor)
+            if self.ui.debug:
+                print("Too many cursors, clearing all")
+            self.ui.refresh()
+            return False
+
+        # Refresh UI
+        self.ui.refresh()
+        return True
+
+    def component_between_cursors(self):
+        """
+        Returns the component between the two cursors, if present
+
+        Returns
+        -------
+        lcapygui.mnacpts.cpt or None
+            The component between the two cursors, if present
+
+        """
+        if len(self.cursors) < 2:
+            return None
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+        for cpt in self.circuit.elements.values():
+            if (
+                    cpt.gcpt is not self
+                    and cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
+                    and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2
+            ):
+                return cpt
+        return None
+
+    def create_component_between_cursors(self, thing=None):
+        """
+        Creates a component between the two cursors, if present
+
+        Parameters
+        ----------
+        thing : Thing, optional
+            Used to decide an arbitrary component type if provided,
+                otherwise will default to the self.crosshair.thing if available
+
+        Returns
+        -------
+        bool
+            Returns True if a component could have been created
+            - There are 2 cursors to create a component between
+            - A thing was provided, or available from self.crosshair.thing
+
+        Notes
+        -----
+        This method will still return True, even if the component creation was unsuccessful. It only checks if it is
+            provided enough information to create a component to pass into the :func:`self.create` method.
+
+        """
+        if len(self.cursors) < 2:
+            if self.ui.debug:
+                print("Not enough cursors to create component")
+            return False
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+
+        if thing is None:
+            if self.crosshair.thing is None:
+                if self.ui.debug:
+                    print("No-thing provided to decide component type")
+                return False
+            thing = self.crosshair.thing
+
+        self.cpt_create(thing.cpt_type, x1, y1, x2, y2)
+
+        self.ui.refresh()
+        return True
+
+    def make_popup(self, menu_items):
+        """
+        Creates a popup menu
+
+        Parameters
+        ----------
+        menu_items : list
+            List of menu items to display in the popup
+
+        """
+        display_items = []
+        for menu_item in menu_items:
+            if menu_item[0] == '!':
+                new_item = self.ui.menu_parts[menu_item[1:]]
+                new_item.state = 'disabled'
+            else:
+                new_item = self.ui.menu_parts[menu_item]
+                new_item.state = 'normal'
+            display_items.append(new_item)
+
+        self.ui.popup_menu = MenuPopup(
+            MenuDropdown(
+                "Right click",
+                0,
+                display_items,
+            )
+        )
+        self.ui.popup_menu.make(self.ui, self.ui.level)
+        self.ui.popup_menu.do_popup(self.ui.canvas.winfo_pointerx(), self.ui.canvas.winfo_pointery())
+
+    def unmake_popup(self):
+        """
+        Destroys the popup menu
+        """
+        if self.ui.popup_menu is not None:
+            self.ui.popup_menu.undo_popup()
+            self.ui.popup_menu = None
+
+    def is_popup(self):
+        return self.ui.popup_menu is not None
+
+    def on_close(self):
+        """
+        Close the lcapy-gui window
+
+        """
+        self.unmake_popup()
+        self.ui.quit()
+
