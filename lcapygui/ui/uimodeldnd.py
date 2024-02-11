@@ -1,14 +1,5 @@
-from lcapygui.ui.cursor import Cursor
-from lcapygui.ui.history_event import HistoryEvent
-from lcapygui.ui.uimodelmph import UIModelMPH
-from lcapygui.ui.uimodelbase import Thing
-from lcapygui.ui.tk.menu_popup import MenuPopup, MenuDropdown
-from .cross_hair import CrossHair
-
-
-class UIModelDnD(UIModelMPH):
-    """
-    UIModelDnD
+"""
+    A class for handling drag and drop operations in the lcapy-gui
 
     Attributes
     ----------
@@ -18,8 +9,17 @@ class UIModelDnD(UIModelMPH):
         The component currently being placed by the CrossHair
     node_positions : list of tuples or None
         Used for history, stores the node positions of the component or node before being moved
+"""
 
-    """
+from lcapygui.ui.cursor import Cursor
+from lcapygui.ui.history_event import HistoryEvent
+from lcapygui.ui.uimodelmph import UIModelMPH
+from lcapygui.ui.uimodelbase import Thing
+from lcapygui.ui.tk.menu_popup import MenuPopup, MenuDropdown
+from lcapygui.ui.cross_hair import CrossHair
+
+
+class UIModelDnD(UIModelMPH):
 
     def __init__(self, ui):
         super(UIModelDnD, self).__init__(ui)
@@ -129,7 +129,6 @@ class UIModelDnD(UIModelMPH):
         """
         Performs operations on right click
 
-
         Parameters
         ----------
         mouse_x : float
@@ -143,6 +142,9 @@ class UIModelDnD(UIModelMPH):
         otherwise, it will attempt to show a popup-menu
         - Component popup menu if a component is selected
         - Paste popup menu if no component is selected
+        - Node popup if a node is selected
+            - If that node is unjoined, show a join option if above another node
+            - If joined, show an unjoin option
 
         """
         # Destroy any created component
@@ -179,7 +181,9 @@ class UIModelDnD(UIModelMPH):
 
     def on_mouse_release(self, key=None):
         """
-        Performs operations on mouse release
+        Performs operations on mouse release.
+        High cpu usage operations should be placed here rather than in on_mouse_drag or on_mouse_move where possible, as
+        this method is only called once per mouse release.
 
         Parameters
         ----------
@@ -192,9 +196,14 @@ class UIModelDnD(UIModelMPH):
         If placing a component with the mouse, we stop placing it, and add it to history.
             Will attempt to join the final point with any existing nodes if 'shift' is not pressed.
 
-        Otherwise, if a move event has occurred
-            It will stop the move event,
+        Otherwise, if a component is selected and has been moved, it will add the moved component to history.
+            If 'shift' is pressed, it will attempt to join the component to any nearby nodes.
 
+        If a node is selected and has been moved, it will add the moved node to history.
+            If 'shift' is pressed, it will attempt to join the node to any nearby nodes.
+
+        The screen is then completely redrawn to ensure accurate display of labels.
+            This is a high cpu operation, but is only called once here, so should be safe.
 
         """
         if self.ui.debug:
@@ -256,6 +265,7 @@ class UIModelDnD(UIModelMPH):
     def on_mouse_drag(self, mouse_x, mouse_y, key=None):
         """
         Performs operations when the user drags the mouse on the canvas.
+            Everything here is run on every mouse movement, so should be kept as low cpu usage as possible.
 
         Explanation
         ------------
@@ -276,9 +286,18 @@ class UIModelDnD(UIModelMPH):
 
         Notes
         -----
-        If placing a component, and have placed the first node already, the second node will be moved to the current snap position
-        If a preexisting component is selected, it will be moved with the mouse.
-        Otherwise, if a node is selected, the node will be moved to the new position instead.
+        If we are *dragging* to create a new component:
+            If we have already created the component, and placed the first node:
+                move the second node to the mouse position
+            Otherwise, assume we haven't created the component yet, and create it at the current position
+                (Initial creation size affects component scaling, so a large size is chosen to avoid scaling issues)
+
+        Otherwise, assume we are dragging a component or a node.
+            If a component is selected, move all its nodes to the new position, and store this position in history
+                If "shift" is pressed, attempt to separate the component from connected nodes
+            If a node is selected, move that node to the new position, and store this position in history
+                If "shift" is pressed, attempt to separate the node from connected node (NOT IMPLEMENTED)
+
 
         """
         # Get crosshair position
@@ -350,7 +369,7 @@ class UIModelDnD(UIModelMPH):
                         print("node splitting is not available right now")
 
                 self.node_move(self.selected, mouse_x, mouse_y)
-        self.ui.refresh()
+        #self.ui.refresh()
 
     def on_mouse_move(self, mouse_x, mouse_y):
         """
@@ -522,7 +541,7 @@ class UIModelDnD(UIModelMPH):
 
     def on_cpt_split(self, cpt):
         # If the component is already separated, return it
-        if (len(cpt.gcpt.node1.connected) <= 1 or len(cpt.gcpt.node2.connected) <= 1):
+        if (len(cpt.gcpt.node1.connected) <= 1 and len(cpt.gcpt.node2.connected) <= 1):
             return cpt
 
         if self.ui.debug:
@@ -536,18 +555,40 @@ class UIModelDnD(UIModelMPH):
         self.history.append(HistoryEvent("D", cpt))
         self.cpt_delete(cpt)
         # Create a new separated component
-        cpt = self.thing_create(type, x1, y1, x2, y2, join=False)
-        self.history.append(HistoryEvent("A", cpt))
+        new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False)
+        self.history.append(HistoryEvent("A", new_cpt))
 
-        return cpt
+        return new_cpt
 
     def on_redraw(self):
+        """
+        Redraws all objects on the screen
+
+        """
         self.clear()
         self.redraw()
         self.cursors.draw()
         self.ui.refresh()
 
     def add_cursor(self, mouse_x, mouse_y):
+        """
+        Adds a cursor at the specified position on screen
+
+        Parameters
+        ----------
+        mouse_x : float
+            x position of the mouse on screen
+        mouse_y : float
+            y position of the mouse on screen
+
+        Notes
+        -----
+
+        If there are no cursors, it will add a positive cursor
+        If there is one cursor, it will add a negative cursor
+        If there are two cursors, it will remove the first cursor, make the second positive, and add a new negative cursor
+        """
+
 
         # Create a new temporary cursor
         cursor = Cursor(self.ui, mouse_x, mouse_y)
@@ -567,12 +608,9 @@ class UIModelDnD(UIModelMPH):
             self.cursors.append(cursor)
             if self.ui.debug:
                 print("Too many cursors, clearing all")
-            self.ui.refresh()
-            return False
 
         # Refresh UI
         self.ui.refresh()
-        return True
 
     def component_between_cursors(self):
         """
@@ -686,6 +724,9 @@ class UIModelDnD(UIModelMPH):
             self.ui.popup_menu = None
 
     def is_popup(self):
+        """
+        Returns True if a popup menu is currently active
+        """
         return self.ui.popup_menu is not None
 
     def on_close(self):
