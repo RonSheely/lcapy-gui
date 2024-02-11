@@ -387,7 +387,7 @@ class UIModelDnD(UIModelMPH):
                 for component in self.selected.connected:
                     if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
                         if self.ui.debug:
-                            print(f"Invalid component placement, disallowing move")
+                            print(f"Invalid node placement, disallowing move")
                         self.node_move(self.selected, original_x, original_y)
 
         #self.ui.refresh()
