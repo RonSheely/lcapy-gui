@@ -862,7 +862,7 @@ class UIModelDnD(UIModelBase):
 
                 if key == "shift":
                     # Separate component from connected nodes
-                    self.selected = self.on_cpt_split(self.selected)
+                    self.select(self.on_cpt_split(self.selected))
 
                 x_0, y_0 = self.last_pos
                 x_1, y_1 = self.snap(mouse_x, mouse_y)
@@ -872,8 +872,11 @@ class UIModelDnD(UIModelBase):
                 d_y = y_1 - y_0
 
                 self.cpt_move(self.selected, d_x, d_y, move_nodes=True)
+
+
                 components = self.selected.gcpt.node1.connected
                 components.extend(self.selected.gcpt.node2.connected)
+                components.remove(self.selected)
                 for component in components:
                     if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
                         if self.ui.debug:
