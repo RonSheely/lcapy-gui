@@ -38,3 +38,4 @@ Contents:
    introduction.rst
    getting_started.rst
    keybindings.rst
+   about.rst
