@@ -75,9 +75,6 @@ def main(argv=None):
                         help="sophistication level")
     parser.add_argument('--expr', type=str, default=None,
                         help="Lcapy expression")
-    parser.add_argument('--model', type=str,
-                        dest='model', default="UIModelDnD",
-                        help="select the UI model: UIModelMPH, UIModelDnD")
     parser.add_argument('--create-shortcut', action='store_true',
                         help='Create a system shortcut', default=False)
     parser.add_argument('filenames', type=str, nargs='*',
@@ -102,7 +99,7 @@ def main(argv=None):
         sys.excepthook = schtex_exception
 
     e = LcapyTk(
-        args.filenames, debug=args.debug, level=args.level, uimodel_class=args.model, icon=icon_filename
+        args.filenames, debug=args.debug, level=args.level, icon=icon_filename
     )
 
     if args.expr is not None:

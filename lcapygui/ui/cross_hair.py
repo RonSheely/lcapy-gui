@@ -35,7 +35,7 @@ class CrossHair:
 
         Parameters
         ==========
-        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodelmph.UIModelMPH or lcapygui.ui.uimodeldnd.UIModelDnD
+        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodeldnd.UIModelDnD
             UI Model to draw to
 
         """

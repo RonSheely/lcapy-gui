@@ -4,7 +4,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 from os.path import basename
-from ..uimodelmph import UIModelMPH
 from ..uimodeldnd import UIModelDnD
 from .sketcher import Sketcher
 from .drawing import Drawing
@@ -22,7 +21,7 @@ class LcapyTk(Tk):
 
     NAME = 'lcapy-tk'
 
-    def __init__(self, pathnames=None, uimodel_class=None, debug=0, level=0, icon=None, title="lcapy-gui"):
+    def __init__(self, pathnames=None, debug=0, level=0, icon=None, title="lcapy-gui"):
         from ... import __version__
 
         super().__init__()
@@ -40,17 +39,8 @@ class LcapyTk(Tk):
             icon = PhotoImage(file=icon)
             self.wm_iconphoto(False, icon)
 
-        # Select the UI model based on the command line argument
-        # Defaults to UIModelMPH if the model is unknown
 
-        if uimodel_class.lower() in ['uimodelmph', 'mph']:
-            uimodel_class = UIModelMPH
-        elif uimodel_class.lower() in ['uimodeldnd', 'dnd']:
-            uimodel_class = UIModelDnD
-        else:
-            if self.debug:
-                print(f'unknown model: {uimodel_class}. Defaulting to UIModelDnD')
-            uimodel_class = UIModelDnD
+        uimodel_class = UIModelDnD
 
         self.uimodel_class = uimodel_class
 
