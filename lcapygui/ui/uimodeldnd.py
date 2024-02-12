@@ -302,6 +302,10 @@ class UIModelDnD(UIModelMPH):
         # Get crosshair position
         mouse_x, mouse_y = self.crosshair.position
 
+        # Disallow component placement and movement if in zoom mode
+        if self.get_navigate_mode() == 'ZOOM':
+            return
+
         # Check if we are currently placing a component, and have already placed the first node
         if self.new_component is not None:
             self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
@@ -408,6 +412,13 @@ class UIModelDnD(UIModelMPH):
         Will attempt to snap to the grid or to a component if the snap grid is enabled.
 
         """
+
+
+        if self.get_navigate_mode() == 'ZOOM':
+            self.cursors.remove()
+            self.crosshair.update(position=(mouse_x, mouse_y), style=None)
+            return
+
         closest_node = self.closest_node(mouse_x, mouse_y)
         # If the crosshair is not over a node, snap to the grid (if enabled)
         if closest_node is None:
@@ -759,8 +770,10 @@ class UIModelDnD(UIModelMPH):
         self.unmake_popup()
         self.ui.quit()
 
-    def validate_component_positions(self, components):
-        for component in components:
-            if component.gcpt.node1.pos.x == component.gcpt.node2.pos and component.gcpt.node1.pos.y == component.gcpt.node2.pos.y:
-                print(f"Invalid component: {component.name}")
-                return False
+    def get_navigate_mode(self):
+        """
+        Returns the current navigate mode of the canvas
+
+        e.g. ZOOM, PAN, etc.
+        """
+        return self.ui.canvas.drawing.ax.get_navigate_mode()
