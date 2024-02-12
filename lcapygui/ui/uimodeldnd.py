@@ -1,15 +1,4 @@
-"""
-    A class for handling drag and drop operations in the lcapy-gui
 
-    Attributes
-    ----------
-    crosshair : CrossHair
-        A crosshair for placing and moving components
-    new_component : lcapygui.mnacpts.cpt or None
-        The component currently being placed by the CrossHair
-    node_positions : list of tuples or None
-        Used for history, stores the node positions of the component or node before being moved
-"""
 from os.path import basename
 from warnings import warn
 
@@ -30,12 +19,21 @@ from .uimodelbase import UIModelBase
 class UIModelDnD(UIModelBase):
     def __init__(self, ui):
         """
-        Defines the UIModelMPH class
+        Defines the UIModelDnD class
+
         Parameters
-        ==========
+        ----------
         ui : lcapygui.ui.tk.lcapytk.LcapyTk
             tkinter UI interface
 
+        Attributes
+        ----------
+        crosshair : CrossHair
+            A crosshair for placing and moving components
+        new_component : lcapygui.mnacpts.cpt or None
+            The component currently being placed by the CrossHair
+        node_positions : list of tuples or None
+            Used for history, stores the node positions of the component or node before being moved
         """
         super(UIModelDnD, self).__init__(ui)
 

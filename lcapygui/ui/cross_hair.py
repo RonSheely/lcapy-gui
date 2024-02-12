@@ -157,7 +157,7 @@ class CrossHair:
             Position of the mouse
         style : str or None
             Style of the crosshair
-        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodelmph.UIModelMPH or lcapygui.ui.uimodeldnd.UIModelDnD or None
+        model : lcapygui.ui.uimodelbase.UIModelBase or lcapygui.ui.uimodeldnd.UIModelDnD or None
             UI Model to draw to
 
         """
