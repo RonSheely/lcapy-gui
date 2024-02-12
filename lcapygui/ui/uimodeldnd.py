@@ -146,6 +146,8 @@ class UIModelDnD(UIModelMPH):
             - If joined, show an unjoin option
 
         """
+        if self.get_navigate_mode() is not None:
+            return
         # Destroy any created component
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
@@ -207,6 +209,9 @@ class UIModelDnD(UIModelMPH):
         """
         if self.ui.debug:
             print(f"left mouse release. key: {key}")
+
+        if self.get_navigate_mode() is not None:
+            return
 
         # If finished placing a component, stop placing
         if self.new_component is not None:
@@ -303,7 +308,7 @@ class UIModelDnD(UIModelMPH):
         mouse_x, mouse_y = self.crosshair.position
 
         # Disallow component placement and movement if in zoom mode
-        if self.get_navigate_mode() == 'ZOOM':
+        if self.get_navigate_mode() is not None:
             return
 
         # Check if we are currently placing a component, and have already placed the first node
@@ -414,7 +419,7 @@ class UIModelDnD(UIModelMPH):
         """
 
 
-        if self.get_navigate_mode() == 'ZOOM':
+        if self.get_navigate_mode() is not None:
             self.cursors.remove()
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
             return
@@ -770,10 +775,3 @@ class UIModelDnD(UIModelMPH):
         self.unmake_popup()
         self.ui.quit()
 
-    def get_navigate_mode(self):
-        """
-        Returns the current navigate mode of the canvas
-
-        e.g. ZOOM, PAN, etc.
-        """
-        return self.ui.canvas.drawing.ax.get_navigate_mode()

@@ -1213,3 +1213,11 @@ class UIModelBase:
         for cpt in self.circuit.elements.values():
             gcpt = cpt.gcpt
             gcpt.undraw()
+
+    def get_navigate_mode(self):
+        """
+        Returns the current navigate mode of the canvas
+
+        e.g. ZOOM, PAN, etc.
+        """
+        return self.ui.canvas.drawing.ax.get_navigate_mode()
