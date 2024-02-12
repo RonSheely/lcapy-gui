@@ -52,7 +52,6 @@ class UIModelDnD(UIModelMPH):
             if self.ui.debug:
                 print(f"Crosshair mode: {self.crosshair.thing}")
             self.crosshair.update(thing=thing)
-        self.on_redraw()
 
     def on_add_con(self, thing):
         """
@@ -500,6 +499,7 @@ class UIModelDnD(UIModelMPH):
                 ):
                     mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
                     snapped = True
+
             # If no near components, snap to grid
             if not snapped:
                 return snap_x, snap_y
@@ -624,7 +624,7 @@ class UIModelDnD(UIModelMPH):
             self.cursors.append(cursor)
             if self.ui.debug:
                 print("Adding negative cursor")
-        elif len(self.cursors) >= 2:  # if too many cursors, clear all
+        elif len(self.cursors) >= 2:  # if too many cursors, remove one and add
             self.cursors.pop(0)
             self.cursors.append(cursor)
             if self.ui.debug:
@@ -632,6 +632,7 @@ class UIModelDnD(UIModelMPH):
 
         # Refresh UI
         self.ui.refresh()
+        return True if len(self.cursors) == 2 else False
 
     def component_between_cursors(self):
         """
