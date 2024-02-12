@@ -499,9 +499,7 @@ class UIModelBase:
         # Update connected components
         for cpt in node.connected:
             cpt.gcpt.undraw()
-            cpt.gcpt.draw(self)
-
-        self.ui.refresh()
+            cpt.gcpt.draw(self, color=self.preferences.color('line'))
 
     def node_join(self, from_node, to_node=None):
         """

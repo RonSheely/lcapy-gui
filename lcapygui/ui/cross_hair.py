@@ -40,7 +40,7 @@ class CrossHair:
 
         """
 
-        scale = self.model.preferences.xsize / 20
+        scale = 1
         sketcher = self.model.ui.sketcher
 
         select_color = self.model.preferences.color('select')
@@ -99,20 +99,20 @@ class CrossHair:
 
             self.picture.add(
                 sketcher.stroke_circle(
-                    self.x, self.y, radius=0.2 * scale, color=line_color, alpha=1
+                    self.x, self.y, radius=0.2 * scale, color=line_color, linewidth=line_width, alpha=1
                 )
             )
 
             self.picture.add(
                 sketcher.stroke_filled_circle(
-                    self.x, self.y, radius=0.1 * scale, color=select_color, alpha=.5
+                    self.x, self.y, radius=0.1 * scale, color=select_color, linewidth=0, alpha=.5
                 )
             )
 
             # draw cursor
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale,  linewidth=line_width,color=line_color
+                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale,  linewidth=line_width, color=line_color
                 )
             )
             self.picture.add(

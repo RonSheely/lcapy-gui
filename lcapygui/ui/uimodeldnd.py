@@ -860,6 +860,7 @@ class UIModelDnD(UIModelBase):
                     self.node_positions = [(node.pos.x, node.pos.y)
                                            for node in self.selected.nodes]
 
+                # Split the component from the circuit if shifted
                 if key == "shift":
                     # Separate component from connected nodes
                     self.select(self.on_cpt_split(self.selected))
@@ -873,7 +874,7 @@ class UIModelDnD(UIModelBase):
 
                 self.cpt_move(self.selected, d_x, d_y, move_nodes=True)
 
-
+                # Check if the movement has left the circuit in an invalid state, if so, undo
                 components = self.selected.gcpt.node1.connected
                 components.extend(self.selected.gcpt.node2.connected)
                 components.remove(self.selected)
@@ -883,13 +884,13 @@ class UIModelDnD(UIModelBase):
                             print(f"Invalid component placement, disallowing move")
                         self.cpt_move(self.selected, -d_x, -d_y, move_nodes=True)
 
-
             else:  # if a node is selected
                 components.extend(self.selected.connected)
                 if not self.dragged:
                     self.dragged = True
                     # To save history, save first component position
                     self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
+
 
                 if key == "shift":
                     if self.ui.debug:
@@ -898,6 +899,7 @@ class UIModelDnD(UIModelBase):
 
                 original_x, original_y = self.selected.pos.x, self.selected.pos.y
 
+                # Check if the movement has left the circuit in an invalid state, if so, undo
                 self.node_move(self.selected, mouse_x, mouse_y)
                 for component in self.selected.connected:
                     if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
@@ -905,7 +907,7 @@ class UIModelDnD(UIModelBase):
                             print(f"Invalid node placement, disallowing move")
                         self.node_move(self.selected, original_x, original_y)
 
-        # self.ui.refresh()
+            #self.on_redraw()
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """

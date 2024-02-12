@@ -15,8 +15,9 @@ class Preferences:
     # mpl stylesheets available here, https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html
     color_schemes = {
         'default': {
-            'tk_theme' : None,
+            'tk_theme': None,
             'line': "black",
+            'label': "black",
             'positive': 'red',
             'negative': 'blue',
             'select': 'red',
@@ -24,31 +25,34 @@ class Preferences:
             'background': 'white'
         },
         'pastel': {
-            'tk_theme' : None,
+            'tk_theme': None,
             'line': 'black',
+            'label': 'mediumpurple',
             'positive': 'lightcoral',
             'negative': 'cornflowerblue',
             'select': 'mediumpurple',
             'grid': 'lightblue',
-            'background': "white"
+            'background': 'white'
         },
         'greyscale': {
-            'tk_theme' : None,
+            'tk_theme': None,
             'line': 'black',
+            'label': 'black',
             'positive': 'silver',
             'negative': 'silver',
             'select': 'dimgrey',
             'grid': 'gainsboro',
-            'background': "white"
+            'background': 'white'
         },
         'pitch': {
-            'tk_theme' : None,
+            'tk_theme': None,
             'line': 'white',
+            'label': 'white',
             'positive': 'silver',
             'negative': 'silver',
             'select': 'darkgray',
             'grid': 'dimgray',
-            'background': "black"
+            'background': 'black'
         },
 
     }
