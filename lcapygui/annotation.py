@@ -7,6 +7,7 @@ class Annotation:
     def __init__(self, ui, x, y, text, ha='center', va='center', rotate=0):
 
         self.sketcher = ui.sketcher
+        self.color = ui.model.preferences.color("label")
         self.x = x
         self.y = y
         self.ha = ha
@@ -23,7 +24,7 @@ class Annotation:
     def draw(self, **kwargs):
 
         self.patch = self.sketcher.text(self.x, self.y, self.text,
-                                        ha=self.ha, va=self.va, **kwargs)
+                                        ha=self.ha, va=self.va, color=self.color, **kwargs)
 
     def remove(self):
 

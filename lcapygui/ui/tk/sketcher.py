@@ -109,7 +109,7 @@ class Sketcher:
     def stroke_circle(self, x, y, radius=0.5, color='black',
                       alpha=0.5, **kwargs):
 
-        patch = Circle((x, y), radius, fc='white',
+        patch = Circle((x, y), radius, fill=False,
                        color=color, alpha=alpha, **kwargs)
         self.ax.add_patch(patch)
         return patch

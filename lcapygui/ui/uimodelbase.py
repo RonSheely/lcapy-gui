@@ -6,17 +6,33 @@ from ..components.pos import Pos
 from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
 from .history import History
 from .history_event import HistoryEvent
+from warnings import warn
 
 from copy import copy
-from math import atan2, degrees, sqrt
-from numpy import nan, isnan, floor
+from math import atan2, degrees, sqrt, cos, sin
+from numpy import nan, isnan, floor, array, dot, sqrt
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
+from lcapy.node import Node
 from lcapy.nodes import parse_nodes
 from lcapy.opts import Opts
 
 
 class Thing:
+    """
+    Thing Class
+
+    Explanation
+    ===========
+    Stores all relevant information for creating a new component 'thing'
+
+    Attributes
+    ==========
+    accelerator : str
+    menu_name : str
+    cpt_type : str
+    kind : str
+    """
 
     def __init__(self, accelerator, menu_name, cpt_type, kind):
 
@@ -61,6 +77,7 @@ class UIModelBase:
         'g': Thing('g', 'Voltage controlled current source', 'G', ''),
         'e': Thing('e', 'Voltage controlled voltage source', 'E', ''),
         'w': Thing('w', 'Wire', 'W', ''),
+        'dw': Thing('', 'Dynamic Wire', 'DW', ''),
     }
 
     # Short-cut key, menu name, cpt type, kind
@@ -79,8 +96,12 @@ class UIModelBase:
         'bidir': Thing('', 'Bidirectional', 'W', 'bidir')
     }
 
-    def __init__(self, ui):
 
+    def __init__(self, ui):
+        """
+        Initialise the UI model
+        :param ui.tk.lcapytk.LcapyTk ui: tkinter UI interface
+        """
         self.circuit = Circuit()
         self.ui = ui
         self._analysis_circuit = None
@@ -89,13 +110,14 @@ class UIModelBase:
         self.selected = None
         self.last_expr = None
         self.preferences = Preferences()
-        self.preferences.load()
+        self.first_use = not self.preferences.load()
         self.preferences.apply()
         self.dirty = False
         self.history = History()
         self.recall = History()
         self.clipboard = None
         self.select_pos = 0, 0
+        self.mouse_position = (0, 0)
         self.dragged = False
         self.zoom_factor = 1
 
@@ -126,7 +148,6 @@ class UIModelBase:
         self._analysis_circuit = self.circuit.copy()
 
         if self.ground_node is None:
-
             ground_node = list(self.circuit.nodes)[0]
             self.ui.show_info_dialog(
                 'Defining node %s as the ground node.' % ground_node)
@@ -144,12 +165,17 @@ class UIModelBase:
         return self._analysis_circuit
 
     def apply(self, event, inverse):
-
         cpt = event.cpt
         code = event.code
+        #Code:
+        # A = add
+        # D = delete
+        # M = move
+        # J = join (nodes)
+        # S = split (nodes)
 
         if inverse:
-            code = {'A': 'D', 'D': 'A', 'M': 'M'}[code]
+            code = {'A': 'D', 'D': 'A', 'M': 'M', 'J': 'S', 'S': 'J'}[code]
 
         if code == 'A':
             newcpt = self.circuit.add(str(cpt))
@@ -167,20 +193,45 @@ class UIModelBase:
             self.cpt_delete(cpt)
 
         elif code == 'M':
-            nodes = event.from_nodes if inverse else event.to_nodes
+            # Check if moving a component or a node
+            if isinstance(cpt, Cpt):
+                nodes = event.from_nodes if inverse else event.to_nodes
 
-            for node, pos in zip(cpt.nodes, nodes):
+                for node, pos in zip(cpt.nodes, nodes):
+                    node.pos.x = pos[0]
+                    node.pos.y = pos[1]
+
+                self.select(cpt)
+            else:
+                node = cpt
+                pos = event.from_nodes[0] if inverse else event.to_nodes[0]
+
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
-            self.select(cpt)
+                # if a subsequent join occurred, redo that too
+                if self.recall[-1].code == 'J':
+                    self.redo()
+
+                self.select(node)
             self.on_redraw()
+        elif code == 'J':
+            self.node_join(event.from_nodes)
+        elif code == 'S':
+            connected_from = cpt
+            new_node = event.from_nodes
+            existing_node = event.to_nodes
+            # split the nodes
+            self.node_split(existing_node, new_node, connected_from)
+
+            # if a preceding movement occurred, undo that too
+            if self.history[-1].code == 'M':
+                self.undo()
 
         # The network has changed
         self.invalidate()
 
     def bounding_box(self):
-
         if len(self.circuit.nodes) == 0:
             return None
 
@@ -220,15 +271,30 @@ class UIModelBase:
 
         return isinstance(self.selected, Cpt)
 
-    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
-        """Create a new component."""
+    @property
+    def node_selected(self):
 
-        s = sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        return isinstance(self.selected, Node)
+
+    def cpt_create(self, cpt_type, x1, y1, x2, y2, kind=None):
+        """
+        TODO: Check
+        Create a new component
+        :param cpt_type: The component to create ('r' = resistor, etc.)
+        :param x1: x position of the first node
+        :param y1: y position of the first node
+        :param x2: x position of the second node
+        :param y2: y position of the second node
+        :return: The instance of the component
+        """
+
+        s = sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
         if s < 0.2:
             self.exception('Nodes too close to create component')
             return None
 
-        cpt = self.thing_create(cpt_type, x1, y1, x2, y2, kind=kind)
+        cpt = self.thing_create(cpt_type, x1, y1, x2, y2)
+        self.history.append(HistoryEvent('A', cpt))
         self.select(cpt)
         return cpt
 
@@ -262,6 +328,9 @@ class UIModelBase:
 
         if gcpt is None:
             return
+
+        if "color" not in kwargs:
+            kwargs["color"] = self.preferences.color('line')
 
         gcpt.draw(self, **kwargs)
 
@@ -373,7 +442,6 @@ class UIModelBase:
                 gcpt.annotations.append(ann)
 
     def cpt_find(self, node_name1, node_name2):
-
         fcpt = None
         for cpt in self.circuit:
             if (cpt.nodes[0].name == node_name1 and cpt.nodes[1].name == node_name2):
@@ -395,17 +463,9 @@ class UIModelBase:
         if isolated or move_nodes:
             # If the component is not connected to another component,
             # or if we wish to move all the components sharing the
-            # a node with the selected component, we can just move the nodes.
-
+            # a node with the selected component, we can just move the nodes
             for node in cpt.nodes:
-                # TODO: handle snap
-                node.pos.x += xshift
-                node.pos.y += yshift
-
-            # TODO: only redraw cpts that have moved
-            gcpt = cpt.gcpt
-            gcpt.undraw()
-            gcpt.draw(self)
+                self.node_move(node, node.pos.x + xshift, node.pos.y + yshift)
 
         else:
             # Alternatively, we need to detach the component and
@@ -418,6 +478,127 @@ class UIModelBase:
             y2 = gcpt.node2.y + yshift
 
             self.cpt_modify_nodes(cpt, x1, y1, x2, y2)
+
+    def node_move(self, node, new_x, new_y):
+        """
+        Changes the x, y position of a given node to the new_x, new_y position
+        Then, redraws all connected components
+
+        Parameters
+        ==========
+        node : lcapy.nodes.Node
+            The node to move
+        new_x : float
+            The new x coordinate
+        new_y : float
+            The new y coordinate
+        """
+
+        # New position of nodes
+        node.pos.x = new_x
+        node.pos.y = new_y
+        # Update connected components
+        for cpt in node.connected:
+            cpt.gcpt.undraw()
+            cpt.gcpt.draw(self, color=self.preferences.color('line'))
+
+    def node_join(self, from_node, to_node=None):
+        """
+        Joins all components in node1, to those in node2, then removes node1 from the circuit.
+
+        Parameters
+        ----------
+        from_node : lcapy.nodes.Node
+            The node to merge from
+        to_node : lcapy.nodes.Node, optional
+            The node to merge onto
+
+        Returns
+        -------
+        connected_cpts : list[lcapy.mnacpts.Cpt, ...]
+            A copy of the list of components that were moved from node2 to node1
+
+        """
+
+        if to_node is None:
+            print(f"No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
+            to_node = self.closest_node(from_node.pos.x, from_node.pos.y, ignore=from_node)
+        if to_node is None:
+            print(f"No existing node found at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
+            return None
+        print(f"Joining {from_node.name} and {to_node.name}") if self.ui.debug else None
+
+
+        # if the two nodes are the same, disallow. This should not happen.
+        if from_node.name == to_node.name:
+            warn(f"Tried to merge node {from_node.name} with itself.\n\
+                this should not happen, and is likely due to an error.")
+            return
+
+        connected_from = []
+
+        # update every component in node1 to be in node2
+        for cpt in from_node.connected:
+            # store the moved component for return
+            connected_from.append(cpt)
+            # Remove node1 from the component
+            cpt.nodes.remove(from_node)
+            # Remove the component from node1
+            from_node.remove(cpt)
+            # Add the component to node2
+            to_node.append(cpt)
+            # Add node2 to the component
+            cpt.nodes.append(to_node)
+
+        # return information required for history
+        return from_node, to_node, connected_from
+
+    def node_split(self, existing_node, new_node=None, components=None):
+        """
+        moves the given components from node1 to new node2
+
+        Parameters
+        ----------
+        existing_node
+        new_node_name
+        components
+
+        Returns
+        -------
+
+        """
+        # Must pass in components to move
+        if components is None or len(components) == 0:
+            if self.ui.debug:
+                print('No components moved')
+            return None
+        if new_node is None:
+            return
+            # TODO: Implement creating a new node if none is passed in
+            # new_node = Node(self.circuit, new_node_name)
+            # # Add the new node to the circuit
+            # self.circuit.nodes[new_node_name] = new_node
+            # # Copy the original nodes position
+            # new_node.pos = copy(existing_node.pos)
+
+        # Ensure the new node is on the circuit
+        self.circuit.nodes[new_node.name] = new_node
+        # Copy the original nodes position
+        new_node.pos = copy(existing_node.pos)
+
+        # update every component in components to be in new_node
+        for cpt in components:
+            # Remove the component from existing_node
+            existing_node.remove(cpt)
+            # Remove existing_node from the component
+            cpt.nodes.remove(existing_node)
+            # Add the component to new_node
+            new_node.append(cpt)
+            # Add new_node to the component
+            cpt.nodes.append(new_node)
+
+        # return the new node
+        return new_node
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 
@@ -435,11 +616,9 @@ class UIModelBase:
         newcpt.args = cpt.args
         newcpt.opts.clear()
         newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
-                                         newgcpt.node2.x, newgcpt.node2.y,
-                                         self.node_spacing))
+                                         newgcpt.node2.x, newgcpt.node2.y))
 
     def cpt_remake(self, cpt):
-
         gcpt = cpt.gcpt
 
         if cpt.is_dependent_source and gcpt.type not in ('Eopamp',
@@ -487,6 +666,7 @@ class UIModelBase:
                                          self.node_spacing))
 
         newcpt.gcpt = gcpt
+        return newcpt
 
     def create(self, thing, x1, y1, x2, y2, kind=''):
 
@@ -638,9 +818,49 @@ class UIModelBase:
             if cpt.type == 'XX' and cpt._string.startswith('; nodes='):
                 self.circuit.remove(cpt.name)
 
-    def rotate(self, angle):
-        # TODO
-        pass
+    def rotate(self, cpt, angle=90, midpoint=None):
+        """
+        Rotates a component by a given angle
+        Parameters
+        ----------
+        cpt : lcapy.mnacpts.Cpt
+        angle : float
+        midpoint : tuple[float, float] or None
+        """
+        # convert the angle to radians
+        angle = angle * 3.141592654 / 180
+
+        # extract the node coordinates from each node
+        p1_x, p1_y = cpt.gcpt.node1.x, cpt.gcpt.node1.y
+        p2_x, p2_y = cpt.gcpt.node2.x, cpt.gcpt.node2.y
+
+        # calculate the midpoint
+        if midpoint is None:
+            mid_x, mid_y = cpt.gcpt.midpoint.xy
+        else:
+            mid_x, mid_y = self.snap_to_grid(midpoint[0], midpoint[1])
+
+        # Rotate nodes about midpoint
+        r1_x = mid_x + cos(angle) * (p1_x - mid_x) - sin(angle) * (p1_y - mid_y)
+        r1_y = mid_y + sin(angle) * (p1_x - mid_x) + cos(angle) * (p1_y - mid_y)
+
+        r2_x = mid_x + cos(angle) * (p2_x - mid_x) - sin(angle) * (p2_y - mid_y)
+        r2_y = mid_y + sin(angle) * (p2_x - mid_x) + cos(angle) * (p2_y - mid_y)
+
+        # TODO: Fix snapping to not alter length of cpt too much
+        # if self.preferences.snap_grid:
+        #     r1_x, r1_y = self.snap_to_grid(r1_x, r1_y)
+        #     r2_x, r2_y = self.snap_to_grid(r2_x, r2_y)
+
+        # Add rotation to history
+        node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
+        new_positions = [(r1_x, r1_y), (r2_x, r2_y)]
+        self.history.append(HistoryEvent('M', cpt, node_positions, new_positions))
+
+        # move nodes
+        self.node_move(cpt.gcpt.node1, r1_x, r1_y)
+        self.node_move(cpt.gcpt.node2, r2_x, r2_y)
+
 
     def save(self, pathname):
 
@@ -668,8 +888,18 @@ class UIModelBase:
         s += '; ' + self.preferences.schematic_preferences() + '\n'
         return s
 
-    def thing_create(self, cpt_type, x1, y1, x2, y2, kind=''):
+    def thing_create(self, cpt_type, x1, y1, x2, y2, kind='', join=True):
+        """
+        Creates a new component of type cpt_type between two points identified by (x1, y1) and (x2, y2).
 
+        :param cpt_type: New connection type
+        :param float x1:
+        :param float y1:
+        :param float x2:
+        :param float y2:
+        :param kind: The kind of component to create
+        :return: The instance of the component
+        """
         from lcapy.mnacpts import Cpt
 
         cpt_name = self.choose_cpt_name(cpt_type)
@@ -686,7 +916,7 @@ class UIModelBase:
                 continue
 
             node = self.circuit.nodes.by_position(position)
-            if node is None:
+            if node is None or not join:
                 node_name = gcpt.choose_node_name(m, all_node_names)
                 all_node_names.append(node_name)
             else:
@@ -849,6 +1079,39 @@ class UIModelBase:
 
         return x, y
 
+    def snap_to_cpt(self, x, y, cpt):
+        """
+        Projects the current point onto the nearest component
+
+        Parameters
+        ==========
+        x : float
+            x coordinate of the point to project
+        y : float
+            y coordinate of the point to project
+        cpt : lcapy.mnacpts.Cpt
+
+        Returns
+        =======
+        tuple[float, float]
+
+        """
+
+        v1_x, v1_y = cpt.gcpt.node1.x, cpt.gcpt.node1.y
+        v2_x, v2_y = cpt.gcpt.node2.x, cpt.gcpt.node2.y
+
+        # Convert line to a vector relative to node1
+        cpt_vect = array([v2_x - v1_x, v2_y - v1_y])
+        # Convert point x,y to a vector relative to node1
+        point_vect = array([x - v1_x, y - v1_y])
+
+
+        #  Project the point x,y onto the line
+        dot_product = (dot(point_vect, cpt_vect) / dot(cpt_vect, cpt_vect)) * cpt_vect
+
+        # Convert point vector back to point and return
+        return dot_product[0] + v1_x, dot_product[1] + v1_y
+
     def snap_to_grid_x(self, x):
 
         snap = self.grid_spacing
@@ -925,7 +1188,7 @@ class UIModelBase:
 
         for cpt in self.circuit.elements.values():
             if cpt == self.selected:
-                self.cpt_draw(cpt, color='red')
+                self.cpt_draw(cpt, color=self.preferences.color("select"))
             else:
                 self.cpt_draw(cpt)
 
@@ -948,3 +1211,11 @@ class UIModelBase:
         for cpt in self.circuit.elements.values():
             gcpt = cpt.gcpt
             gcpt.undraw()
+
+    def get_navigate_mode(self):
+        """
+        Returns the current navigate mode of the canvas
+
+        e.g. ZOOM, PAN, etc.
+        """
+        return self.ui.canvas.drawing.ax.get_navigate_mode()

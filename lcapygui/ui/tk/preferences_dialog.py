@@ -79,6 +79,11 @@ class PreferencesDialog(Window):
                               'Grid spacing',
                               self.model.preferences.grid_spacing,
                               command=self.on_update),
+                   LabelEntry('color_scheme',
+                              'Colour scheme',
+                              self.model.preferences.color_scheme,
+                              ('default', 'pastel', 'greyscale', 'pitch'),
+                              command=self.on_update),
                    ]
 
         self.labelentries = LabelEntries(self, ui, entries)
@@ -116,6 +121,8 @@ class PreferencesDialog(Window):
             'cpt_size')
         self.model.preferences.grid_spacing = self.labelentries.get(
             'grid_spacing')
+        self.model.preferences.color_scheme = self.labelentries.get(
+            'color_scheme')
 
         # Do not set show_units; this needs fixing in Lcapy since
         # str(expr) includes the units and this causes problems...

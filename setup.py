@@ -13,7 +13,7 @@ setup(
     version="0.94dev",
     description="A GUI for lcapy",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_mattype="text/markdown",
     author="Michael Hayes, Jordan Hay",
     license="MIT",
     url="https://github.com/mph-/lcapy-gui",
@@ -27,10 +27,6 @@ setup(
     ],
     install_requires=[
         "setuptools",
-        "importlib",
-        "importlib-metadata",
-        "importlib-resources",
-        "pathlib",
         "lcapy>=1.17",
         "numpy",
         "tk",
@@ -38,8 +34,13 @@ setup(
         "matplotlib",
         "svgpathtools",
         "svgpath2mpl",
-        "tkhtmlview"
+        "tkhtmlview",
+        "pyshortcuts"
     ],
+    extras_require={
+          'doc': ['sphinx', 'ipython', 'sphinx-rtd-theme'],
+          'release': ['pyinstaller'],
+      },
     entry_points={
         'console_scripts': [
             'lcapy-tk=lcapygui.scripts.lcapytk:main',
@@ -47,6 +48,6 @@ setup(
         ],
     },
     include_package_data=True,
-    package_data={'': ['data/svg/*/*.svg', 'data/lib/*/*.sch']},
+    package_data={'': ['data/svg/*/*.svg', 'data/lib/*/*.sch', 'data/icon/*']},
     python_requires=">=3.7"  # matched with lcapy
 )

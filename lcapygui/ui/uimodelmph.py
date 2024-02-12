@@ -2,6 +2,7 @@ from .cursor import Cursor
 from .cursors import Cursors
 from .uimodelbase import UIModelBase
 from .history_event import HistoryEvent
+from lcapy.nodes import Node
 from lcapy.mnacpts import Cpt
 from lcapy import Circuit
 from os.path import basename
@@ -10,11 +11,18 @@ from numpy import sqrt
 
 
 class UIModelMPH(UIModelBase):
-
     def __init__(self, ui):
+        """
+        Defines the UIModelMPH class
+        Parameters
+        ==========
+        ui : lcapygui.ui.tk.lcapytk.LcapyTk
+            tkinter UI interface
 
+        """
         super(UIModelMPH, self).__init__(ui)
 
+        self.last_pos = None
         self.cursors = Cursors()
         self.node_cursor = None
 
@@ -47,25 +55,46 @@ class UIModelMPH(UIModelBase):
         for k, thing in self.connection_map.items():
             self.key_bindings_with_key[thing.accelerator] = self.on_add_con, thing
 
-    def add_cursor(self, x, y):
+        if self.first_use:
+            self.on_first_launch()
+            self.preferences.save()
 
+    def add_cursor(self, x, y):
+        """
+        Adds a cursor at the specified position.
+
+        Explanation
+        ===========
+        Adds a cursor at the provided x & y position.
+        If two cursors already exist, the oldest cursor is removed.
+
+        The oldest cursor is considered positive, and the newest is considered negative.
+
+        Parameters
+        ==========
+        x : float
+            x position of the cursor
+        y : float
+            y position of the cursor
+
+        """
         # cursors[0] is the positive cursor
         # cursors[1] is the negative cursor
 
         cursor = Cursor(self.ui, x, y)
 
+        # If this is the first cursor, add it and make it positive
         if len(self.cursors) == 0:
             cursor.draw('red')
             self.cursors.append(cursor)
-
+        # If there is already a cursor, make the new cursor negative
         elif len(self.cursors) == 1:
             cursor.draw('blue')
             self.cursors.append(cursor)
 
         elif len(self.cursors) == 2:
-
-            rp = (x - self.cursors[0].x)**2 + (y - self.cursors[0].y)**2
-            rm = (x - self.cursors[1].x)**2 + (y - self.cursors[1].y)**2
+            rp = (x - self.cursors[0].x) ** 2 + (y - self.cursors[0].y) ** 2
+            rm = (x - self.cursors[1].x) ** 2 + (y - self.cursors[1].y) ** 2
 
             if rm > rp:
                 # Close to plus cursor so add new minus cursor
@@ -97,9 +126,22 @@ class UIModelMPH(UIModelBase):
         ax.callbacks.connect('ylim_changed', self.on_mouse_zoom)
 
     def closest_cpt(self, x, y):
+        """
+        Returns the component closest to the specified position
 
+        Parameters
+        ==========
+        x : float
+            x position
+        y : float
+            y position
+
+        Returns
+        =======
+        cpt: lcapy.mnacpts.Cpt or None
+            the closest component to (x,y) or None if no component is close
+        """
         for cpt in self.circuit.elements.values():
-
             gcpt = cpt.gcpt
             if gcpt is None:
                 continue
@@ -109,7 +151,24 @@ class UIModelMPH(UIModelBase):
 
         return None
 
-    def closest_node(self, x, y):
+    def closest_node(self, x, y, ignore=None):
+        """
+        Returns the node closest to the specified position
+
+        Parameters
+        ----------
+        x : float
+            x position
+        y : float
+            y position
+        ignore : lcapy.nodes.Node or list[lcapy.nodes.Node, ...], optional
+            Node(s) to ignore
+
+        """
+
+        if type(ignore) == Node:
+            ignore = [ignore]
+
 
         for node in self.circuit.nodes.values():
             if node.pos is None:
@@ -117,27 +176,64 @@ class UIModelMPH(UIModelBase):
                 # reference pin.
                 warn('Ignoring node %s with no position' % node.name)
                 continue
+            elif ignore is not None and node in ignore:
+                if self.ui.debug:
+                    print('Ignoring node %s' % node.name)
+                continue
             x1, y1 = node.pos.x, node.pos.y
-            rsq = (x1 - x)**2 + (y1 - y)**2
+            rsq = (x1 - x) ** 2 + (y1 - y) ** 2
             if rsq < 0.1:
                 return node
         return None
 
     def create_state_space(self, cpt):
+        """
+        TODO: Correct Docstring
 
+        Parameters
+        ==========
+        cpt : lcapy.mnacpts.Cpt
+            Component to create state space for
+
+        """
         ss = self.circuit.ss
         self.ui.show_state_space_dialog(ss)
 
     def create_transfer_function(self, cpt):
+        """
+        Shows the transfer function for the component 'cpt'
 
+        Parameters
+        ==========
+        cpt : lcapy.mnacpts.Cpt
+            Component to create transfer function for
+
+        """
         self.ui.show_transfer_function_dialog(cpt)
 
     def create_twoport(self, cpt, kind):
+        """
+        TODO: add docstring
 
+        Parameters
+        ==========
+        cpt : lcapy.mnacpts.Cpt
+            Component to create twoport for
+        kind : str
+            String key for the twoport type
+
+        """
         self.ui.show_twoport_dialog(cpt, kind)
 
     def exception(self, e):
+        """
+        Shows an error dialog with exception message 'e'
 
+        Parameters
+        ==========
+        e : Exception
+
+        """
         message = str(e)
         if self.pathname != '':
             message += ' in ' + self.pathname
@@ -146,7 +242,19 @@ class UIModelMPH(UIModelBase):
         self.ui.show_error_dialog(message)
 
     def new_name(self, pathname):
+        """
+        # TODO: what does this do?
 
+        Parameters
+        ==========
+        pathname : str
+            Pathname of the file to create
+
+        Returns
+        =======
+        str
+            New pathname
+        """
         from os.path import splitext
 
         base, ext = splitext(pathname)
@@ -162,7 +270,10 @@ class UIModelMPH(UIModelBase):
         return base + '_' + suffix + ext
 
     def on_ac_model(self):
+        """
+        Changes the circuit to an AC model
 
+        """
         # Perhaps should kill non-AC sources
         cct = self.circuit.ac()
         self.on_show_new_circuit(cct)
@@ -241,11 +352,18 @@ class UIModelMPH(UIModelBase):
         self.ui.refresh()
 
     def on_close(self):
+        """
+        Close the lcapy-gui window
+
+        """
 
         self.ui.quit()
 
     def on_copy(self):
+        """
+        Copy the selected component
 
+        """
         if self.selected is None:
             return
         if not self.cpt_selected:
@@ -322,6 +440,10 @@ class UIModelMPH(UIModelBase):
         self.ui.show_message_dialog(s, 'Debug')
 
     def on_delete(self):
+        """
+        If a component is selected, delete it, then redraw and refresh the UI
+
+        """
 
         if self.selected is None:
             return
@@ -377,6 +499,17 @@ class UIModelMPH(UIModelBase):
 
         self.ui.show_inspect_dialog(self.selected,
                                     title=self.selected.name)
+
+    def on_inspect_properties(self):
+        if self.cpt_selected:
+            self.ui.inspect_properties_dialog(self.selected,
+                                              self.on_cpt_changed,
+                                              title=self.selected.name)
+        else:
+            self.ui.show_node_properties_dialog(self.selected,
+                                                self.on_cpt_changed,
+                                                title='Node ' +
+                                                self.selected.name)
 
     def on_inspect_current(self, cpt=None):
 
@@ -434,7 +567,6 @@ class UIModelMPH(UIModelBase):
             if not self.selected or not self.cpt_selected:
                 return
             cpt = self.selected
-
         win = self.ui.show_working_dialog('Calculating voltage')
         self.inspect_voltage(cpt)
         win.destroy()
@@ -539,7 +671,7 @@ class UIModelMPH(UIModelBase):
         self.cpt_move(cpt, xshift, yshift, key == 'shift')
         self.ui.refresh()
 
-    def on_mouse_release(self):
+    def on_mouse_release(self, key=None):
 
         if self.ui.debug:
             print('mouse release')
@@ -654,6 +786,9 @@ class UIModelMPH(UIModelBase):
 
         self.ui.show_preferences_dialog(update)
 
+    def on_first_launch(self):
+        self.ui.show_first_launch_dialog()
+
     def on_quit(self):
 
         if self.dirty:
@@ -685,15 +820,7 @@ class UIModelMPH(UIModelBase):
         if not self.selected:
             return
 
-        if self.cpt_selected:
-            self.ui.inspect_properties_dialog(self.selected,
-                                              self.on_cpt_changed,
-                                              title=self.selected.name)
-        else:
-            self.ui.show_node_properties_dialog(self.selected,
-                                                self.on_cpt_changed,
-                                                title='Node ' +
-                                                self.selected.name)
+        self.on_inspect_properties()
 
     def on_right_double_click(self, x, y):
         pass
@@ -730,10 +857,10 @@ class UIModelMPH(UIModelBase):
 
         self.select_pos = x, y
 
-        cpt = self.closest_cpt(x, y)
-
-        if cpt is None:
-            node = self.closest_node(x, y)
+        node = self.closest_node(x, y)
+        cpt = None
+        if node is None:
+            cpt = self.closest_cpt(x, y)
 
         if cpt:
             self.select(cpt)
@@ -797,6 +924,7 @@ class UIModelMPH(UIModelBase):
         self.cursors[0], self.cursors[1] = self.cursors[1], self.cursors[0]
         self.cursors[0].remove()
         self.cursors[1].remove()
+        self.cursors[0].draw('red')
         self.cursors[0].draw('red')
         self.cursors[1].draw('blue')
         self.ui.refresh()

@@ -66,7 +66,7 @@ class CptMaker:
     def _make_cpt(self, cpt_type, kind='', style='', name=None,
                   nodes=None, opts=None):
 
-        if cpt_type == 'W' and kind != '':
+        if (cpt_type == 'W' or cpt_type == 'DW') and kind != '':
             cls = Connection
         elif cpt_type == 'E' and kind == 'opamp':
             cls = Opamp

@@ -15,7 +15,13 @@ class SketchLibrary:
                              % (style,  ', '.join(styles)))
 
     def lookup(self, sketch_key, style='american'):
-
+        """
+        Lookup a sketch by key and style.
+        :param str sketch_key: The sketch to look up
+        :param str style: The Component Style
+        :return:
+        :rtype: components.sketch.Sketch
+        """
         self._check_style(style)
 
         if style not in self.sketches:

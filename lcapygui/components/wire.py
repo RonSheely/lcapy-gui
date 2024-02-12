@@ -9,7 +9,6 @@ class Wire(Bipole):
     has_value = False
 
     def draw(self, model, **kwargs):
-
         sketcher = model.ui.sketcher
 
         x1, y1 = self.node1.x, self.node1.y
