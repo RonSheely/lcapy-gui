@@ -481,7 +481,7 @@ class UIModelDnD(UIModelMPH):
             snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
             # Prioritise snapping to the grid if close, or if placing a component
             if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(
-                    mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not self.selected or not snap_to_component:
+                    mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not snap_to_component:
                 return snap_x, snap_y
             elif len(self.cursors) >= 1:
                 xc = self.cursors[-1].x
@@ -490,19 +490,19 @@ class UIModelDnD(UIModelMPH):
                     return xc, snap_y
                 if self.is_close_to(snap_y, yc):
                     return snap_x, yc
-            else:
-                # if not close grid position, attempt to snap to component
-                snapped = False
-                for cpt in self.circuit.elements.values():
-                    if (
-                            cpt.gcpt is not self
-                            and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2
-                    ):
-                        mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
-                        snapped = True
-                # If no near components, snap to grid
-                if not snapped:
-                    return snap_x, snap_y
+
+            # if not close grid position, attempt to snap to component
+            snapped = False
+            for cpt in self.circuit.elements.values():
+                if (
+                        cpt.gcpt is not self
+                        and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2
+                ):
+                    mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
+                    snapped = True
+            # If no near components, snap to grid
+            if not snapped:
+                return snap_x, snap_y
             for node in self.circuit.nodes.values():
                 if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(
                         mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
