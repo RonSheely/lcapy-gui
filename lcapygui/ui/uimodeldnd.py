@@ -101,16 +101,16 @@ class UIModelDnD(UIModelBase):
         cursor = Cursor(self.ui, mouse_x, mouse_y)
 
         if len(self.cursors) == 0:  # If no cursors, add positive one
-            cursor.draw('red')
+            cursor.draw('positive')
             self.cursors.append(cursor)
             if self.ui.debug:
                 print("Adding positive cursor")
-        elif len(self.cursors) == 1:  # if one cursor, add negative one
-            cursor.draw('blue')
+        elif len(self.cursors) == 1:  # If one cursor, add negative one
+            cursor.draw('negative')
             self.cursors.append(cursor)
             if self.ui.debug:
                 print("Adding negative cursor")
-        elif len(self.cursors) >= 2:  # if too many cursors, remove one and add
+        elif len(self.cursors) >= 2:  # If too many cursors, remove one and add
             self.cursors.pop(0)
             self.cursors.append(cursor)
             if self.ui.debug:
@@ -1305,9 +1305,8 @@ class UIModelDnD(UIModelBase):
         self.cursors[0], self.cursors[1] = self.cursors[1], self.cursors[0]
         self.cursors[0].remove()
         self.cursors[1].remove()
-        self.cursors[0].draw('red')
-        self.cursors[0].draw('red')
-        self.cursors[1].draw('blue')
+        self.cursors[0].draw('positive')
+        self.cursors[1].draw('negative')
         self.ui.refresh()
 
     def unselect(self):

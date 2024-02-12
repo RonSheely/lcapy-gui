@@ -16,7 +16,7 @@ class Cursor:
 
         return self.x, self.y
 
-    def draw(self, color='red', polarity='positive', radius=0.2):
+    def draw(self, polarity='positive', radius=0.2):
 
         color = self.positive_colour
         if polarity == 'negative':

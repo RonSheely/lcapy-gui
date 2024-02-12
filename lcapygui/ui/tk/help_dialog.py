@@ -9,10 +9,7 @@ class HelpDialog(Window):
 <h1  style="font-size: 11px;">Editing</h1>
 
 <p style="font-size: 11px;">
-Click on the grid to place a red positive cursor then click elsewhere
-to place a blue negative cursor.  Then enter c for a capacitor, i for
-a current source, l for an inductor, r for a resistor, v for a voltage
-source, etc.  Alternatively, use the Components menu.</p>
+Components can be added in two ways: (1) by clicking on grid to place the positive and negative nodes and then selecting a component (from the menu or short-cut key); (2) by selecting a component and dragging the mouse to define the component size and direction,  see <a href="https://lcapy-gui.readthedocs.io"> https://lcapy-gui.readthedocs.io </a>.
 
 <p style="font-size: 11px;">
 By default, the cursors snap to the grid and align with the other
