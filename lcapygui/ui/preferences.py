@@ -46,7 +46,7 @@ class Preferences:
         },
         'pitch': {
             'tk_theme': None,
-            'line': 'white',
+            'line': 'silver',
             'label': 'white',
             'positive': 'silver',
             'negative': 'silver',

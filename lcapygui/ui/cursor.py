@@ -6,6 +6,7 @@ class Cursor:
         self.sketcher = ui.sketcher
         self.positive_colour = ui.model.preferences.color('positive')
         self.negative_colour = ui.model.preferences.color('negative')
+        self.line_colour = ui.model.preferences.color('line')
         self.picture = Picture()
         self.x = x
         self.y = y
@@ -31,6 +32,7 @@ class Cursor:
         self.picture.add(self.sketcher.stroke_line(
             self.x - radius, self.y,
             self.x + radius, self.y,
+            color=self.line_colour,
             linewidth=1.5
         ))
 
@@ -38,6 +40,7 @@ class Cursor:
             self.picture.add(self.sketcher.stroke_line(
                 self.x, self.y - radius,
                 self.x, self.y + radius,
+                color=self.line_colour,
                 linewidth=1.5
             ))
 

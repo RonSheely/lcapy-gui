@@ -85,7 +85,5 @@ imaginary part, etc.
 Additional documentation
 ========================
 
-For further information about Lcapy, see https://lcapy.readthedocs.io
-
-.. image:: ./_static/drag_component.gif
+For further information about Lcapy, see https://lcapy.readthedocs.io/
 

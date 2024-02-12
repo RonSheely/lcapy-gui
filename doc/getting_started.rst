@@ -53,3 +53,16 @@ Labelling components
 
 Components can be labelled by right clicking them, and opening the properties dialogue. Here, many options are available
 not just labelling.
+
+Joining & Unjoining Components
+==============================
+Nodes and Components can be joined together by dragging them on top of each-other while pressing ``shift``.
+
+Components can be separated from another by dragging them away from each-other while pressing ``shift``.
+
+Note: separating individual nodes this way is not possible yet.
+
+..  image:: ./_static/unjoined_nodes.png
+
+If two nodes are in the same position, but are not joined, a dotted line will appear to indicate they are separate
+
