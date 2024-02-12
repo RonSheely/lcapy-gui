@@ -6,6 +6,7 @@ from ..components.pos import Pos
 from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
 from .history import History
 from .history_event import HistoryEvent
+from warnings import warn
 
 from copy import copy
 from math import atan2, degrees, sqrt, cos, sin
@@ -530,8 +531,7 @@ class UIModelBase:
 
         # if the two nodes are the same, disallow. This should not happen.
         if from_node.name == to_node.name:
-            print(
-                f"WARN: Tried to merge node {from_node.name} with itself.\n\
+            warn(f"Tried to merge node {from_node.name} with itself.\n\
                 this should not happen, and is likely due to an error.")
             return
 

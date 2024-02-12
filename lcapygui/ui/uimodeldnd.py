@@ -1274,7 +1274,7 @@ class UIModelDnD(UIModelBase):
     def on_undo(self):
 
         self.undo()
-        self.ui.refresh()
+        self.on_redraw()
 
     def on_unselect(self):
 
