@@ -162,6 +162,7 @@ class LcapyTk(Tk):
         self.menu_parts["manipulate_model_laplace"] = MenuItem('Laplace model', self.on_laplace_model)
         self.menu_parts["manipulate_model_noise"] = MenuItem('Noise model', self.on_noise_model)
         self.menu_parts["manupulate_expand_components"] = MenuItem('Expand components', self.on_expand)
+        self.menu_parts["launch_documentation"] = MenuItem('Documentation (default browser)', self.launch_documentation)
         self.menu_parts["help"] = MenuItem('Help', self.on_help, accelerator='Ctrl+h')
         self.menu_parts["help_debug"] = MenuItem('Debug', self.on_debug, accelerator='Ctrl+d')
         self.menu_parts["on_node_join"] = MenuItem('Join Nodes', self.on_node_join)
@@ -241,6 +242,7 @@ class LcapyTk(Tk):
         ])
         self.menu_parts["dropdown_help_menu"] = MenuDropdown('Help', 0, [
             self.menu_parts["help"],
+            self.menu_parts["launch_documentation"],
             self.menu_parts["help_debug"]
         ])
 
@@ -519,6 +521,11 @@ class LcapyTk(Tk):
 
     def on_help(self, *args):
         self.model.on_help()
+
+    def launch_documentation(self, *args):
+        import webbrowser
+
+        webbrowser.open('https://lcapy-gui.readthedocs.io/')
 
     def on_inspect_properties(self, *args):
         self.model.on_inspect_properties()
