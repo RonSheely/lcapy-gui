@@ -39,7 +39,6 @@ class LcapyTk(Tk):
             icon = PhotoImage(file=icon)
             self.wm_iconphoto(False, icon)
 
-
         uimodel_class = UIModelDnD
 
         self.uimodel_class = uimodel_class
@@ -47,9 +46,8 @@ class LcapyTk(Tk):
         if self.debug:
             print('model: ', self.uimodel_class)
 
-
         # Title and size of the window
-        self.title(title + " " + __version__ + " : " + self.uimodel_class.__name__)
+        self.title(title + " " + __version__)
         self.geometry(self.GEOMETRY)
 
         self.level = level
@@ -157,7 +155,6 @@ class LcapyTk(Tk):
         self.menu_parts["help_debug"] = MenuItem('Debug', self.on_debug, accelerator='Ctrl+d')
         self.menu_parts["on_node_join"] = MenuItem('Join Nodes', self.on_node_join)
         self.menu_parts["on_node_split"] = MenuItem('Split Nodes', self.on_node_split)
-
 
         # Define menu dropdowns
         self.menu_parts["dropdown_file_menu"] = MenuDropdown('File', 0, [

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""lcapy-tk V0.0.3
+"""lcapy-tk V0.94dev
 Copyright (c) 2023 Michael P. Hayes, UC ECE, NZ
 
 Usage: lcapy-tk [infile.sch]

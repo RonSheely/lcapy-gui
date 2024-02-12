@@ -686,6 +686,8 @@ class UIModelMPH(UIModelBase):
         self.dragged = False
         node_positions = [(node.pos.x, node.pos.y)
                           for node in cpt.nodes]
+
+        # TODO handle node joining
         self.history.append(HistoryEvent('M', cpt, self.node_positions,
                                          node_positions))
 
