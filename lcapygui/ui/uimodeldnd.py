@@ -49,6 +49,7 @@ class UIModelDnD(UIModelBase):
             'ctrl+i': self.on_inspect,
             'ctrl+n': self.on_new,
             'ctrl+o': self.on_load,
+            'ctrl+r': self.on_redraw,
             'ctrl+s': self.on_save,
             'alt+s': self.on_save_as,
             'ctrl+t': self.on_exchange_cursors,
