@@ -364,12 +364,14 @@ class UIModelDnD(UIModelBase):
 
         Notes
         -----
-        If there are two cursors, and there is no existing component, it will create a component between the cursors.
+        If there are two cursors, and there is no existing component between the cursoors , it will create a component between the cursors.
 
         Otherwise, it will initialise the crosshair to place a component of the given "thing" type.
 
         """
+
         # Only place a component between cursors if there are two cursors and no existing component between them
+
         if len(self.cursors) >= 2 and self.component_between_cursors() is None:
             self.create_component_between_cursors(thing)
         else:
@@ -1371,11 +1373,10 @@ class UIModelDnD(UIModelBase):
         y2 = self.cursors[1].y
 
         for cpt in self.circuit.elements.values():
-            if (
-                    cpt.gcpt is not self
-                    and cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
-                    and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2
-            ):
+            if cpt is self:
+                continue
+            if (cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
+                and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2):
                 return cpt
         return None
 

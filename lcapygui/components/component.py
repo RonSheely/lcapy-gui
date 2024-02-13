@@ -455,7 +455,9 @@ class Component(ABC):
         rsq = float(dx**2 + dy**2)
 
         if rsq == 0.0:
-            return rsq
+            # Nodes should not be at the same place; this can happen
+            # with an opamp ground node that is noot drawn.
+            return 100
 
         # Perform linear interpolation to find closest point on line
         lerp = ((x - self.node1.x) * dx + (y - self.node1.y) * dy) / rsq
