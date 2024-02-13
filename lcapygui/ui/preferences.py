@@ -20,7 +20,7 @@ class Preferences:
             'label': "black",
             'positive': 'red',
             'negative': 'blue',
-            'select': 'red',
+            'select': 'purple',
             'grid': 'lightblue',
             'background': 'white'
         },
