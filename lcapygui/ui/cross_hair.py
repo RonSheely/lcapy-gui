@@ -132,7 +132,6 @@ class CrossHair:
             )
 
 
-
     def undraw(self):
         """
         Undraws the crosshair

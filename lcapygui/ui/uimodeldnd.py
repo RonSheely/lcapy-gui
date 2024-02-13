@@ -761,8 +761,9 @@ class UIModelDnD(UIModelBase):
         # If the crosshair is not over a node, snap to the grid (if enabled)
         if closest_node is None:
             if self.preferences.snap_grid:
+                dosnap = True if self.crosshair.thing is None else False
                 mouse_x, mouse_y = self.snap(mouse_x, mouse_y,
-                                             snap_to_component=True if self.crosshair.thing is None else False)
+                                             snap_to_component=dosnap)
             # Update position and reset style
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
 
@@ -770,7 +771,8 @@ class UIModelDnD(UIModelBase):
             self.crosshair.style = 'node'
 
             # Update the crosshair position and set style to show it is over a node
-            self.crosshair.update(position=(closest_node.pos.x, closest_node.pos.y), style='node')
+            self.crosshair.update(position=(closest_node.pos.x,
+                                            closest_node.pos.y), style='node')
 
     def on_mouse_drag(self, mouse_x, mouse_y, key=None):
         """
@@ -1313,6 +1315,8 @@ class UIModelDnD(UIModelBase):
     def unselect(self):
 
         self.selected = None
+        self.crosshair.thing = None
+        self.crosshair.undraw()
         self.cursors.remove()
         self.redraw()
         self.ui.refresh()
