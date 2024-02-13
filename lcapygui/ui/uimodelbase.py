@@ -167,7 +167,7 @@ class UIModelBase:
     def apply(self, event, inverse):
         cpt = event.cpt
         code = event.code
-        #Code:
+        # Code:
         # A = add
         # D = delete
         # M = move
@@ -185,9 +185,10 @@ class UIModelBase:
             for m, node in enumerate(cpt.nodes):
                 new_cpt.nodes[m].pos = node.pos
             new_cpt.gcpt = cpt.gcpt
+            new_cpt.gcpt.nodes = cpt.gcpt.nodes
 
-            self.cpt_draw(cpt)
-            self.select(cpt)
+            self.cpt_draw(new_cpt)
+            self.select(new_cpt)
 
         elif code == 'D':
             self.cpt_delete(cpt)
@@ -209,7 +210,7 @@ class UIModelBase:
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
-                # if a subsequent join occurred, redo that too
+                # If a subsequent join occurred, redo that too
                 if self.recall[-1].code == 'J':
                     self.redo()
 
@@ -224,7 +225,7 @@ class UIModelBase:
             # split the nodes
             self.node_split(existing_node, new_node, connected_from)
 
-            # if a preceding movement occurred, undo that too
+            # If a preceding movement occurred, undo that too
             if self.history[-1].code == 'M':
                 self.undo()
 
@@ -529,7 +530,7 @@ class UIModelBase:
         print(f"Joining {from_node.name} and {to_node.name}") if self.ui.debug else None
 
 
-        # if the two nodes are the same, disallow. This should not happen.
+        # If the two nodes are the same, disallow. This should not happen.
         if from_node.name == to_node.name:
             warn(f"Tried to merge node {from_node.name} with itself.\n\
                 this should not happen, and is likely due to an error.")
@@ -1182,6 +1183,7 @@ class UIModelBase:
 
         if self.ui.debug:
             print('Redo ' + event.code)
+
         self.apply(event, False)
 
     def redraw(self):
