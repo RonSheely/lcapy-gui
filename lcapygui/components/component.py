@@ -452,25 +452,27 @@ class Component(ABC):
         # Calculate difference between nodes
         dx = self.node2.x - self.node1.x
         dy = self.node2.y - self.node1.y
-        dr2 = float(dx**2 + dy**2)
+        rsq = float(dx**2 + dy**2)
+
+        if rsq == 0.0:
+            return rsq
 
         # Perform linear interpolation to find closest point on line
-        lerp = ((x - self.node1.x) * dx + (y - self.node1.y) * dy) / dr2
+        lerp = ((x - self.node1.x) * dx + (y - self.node1.y) * dy) / rsq
         # If the point is outside the line segment, clamp to the nearest node
         if lerp < 0:
             lerp = 0
         elif lerp > 1:
             lerp = 1
 
-        # Convert back to cartesian coordinates
+        # Convert back to Cartesian coordinates
         new_x = lerp * dx + self.node1.x
         new_y = lerp * dy + self.node1.y
-        _dx = new_x - x
-        _dy = new_y - y
+        dx = new_x - x
+        dy = new_y - y
 
-        # Calculate distance
-        square_dist = _dx**2 + _dy**2
-        return sqrt(square_dist)
+        rsq = dx**2 + dy**2
+        return sqrt(rsq)
 
     def is_within_bbox(self, x, y):
         tf = self.tf.inverted()
