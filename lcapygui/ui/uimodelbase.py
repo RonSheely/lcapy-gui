@@ -3,7 +3,7 @@ from ..annotations import Annotations
 from .preferences import Preferences
 from ..components.opamp import Opamp
 from ..components.pos import Pos
-from ..components.cpt_maker import cpt_make_from_cpt, cpt_make_from_type
+from ..components.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from .history import History
 from .history_event import HistoryEvent
 from warnings import warn
@@ -770,7 +770,7 @@ class UIModelBase:
                 cpt.gcpt = None
                 continue
             try:
-                gcpt = cpt_make_from_cpt(cpt)
+                gcpt = gcpt_make_from_cpt(cpt)
             except Exception as e:
                 gcpt = None
                 self.exception(e)
@@ -904,7 +904,7 @@ class UIModelBase:
         from lcapy.mnacpts import Cpt
 
         cpt_name = self.choose_cpt_name(cpt_type)
-        gcpt = cpt_make_from_type(cpt_type, cpt_name, kind=kind)
+        gcpt = gcpt_make_from_type(cpt_type, cpt_name, kind=kind)
         if gcpt is None:
             return None
 
@@ -942,7 +942,6 @@ class UIModelBase:
         attr_string = netitem.split(';', 1)[1]
         gcpt.update(nodes=cpt.nodes, opts=Opts(attr_string))
 
-        # Duck type
         cpt.gcpt = gcpt
 
         self.cpt_draw(cpt)

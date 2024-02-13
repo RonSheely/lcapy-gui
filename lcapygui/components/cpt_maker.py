@@ -63,7 +63,7 @@ class CptMaker:
 
         self.sketches = {}
 
-    def _make_cpt(self, cpt_type, kind='', style='', name=None,
+    def _make_gcpt(self, cpt_type, kind='', style='', name=None,
                   nodes=None, opts=None):
 
         if (cpt_type == 'W' or cpt_type == 'DW') and kind != '':
@@ -79,22 +79,22 @@ class CptMaker:
         else:
             raise ValueError('Unsupported component ' + cpt_type)
 
-        cpt = cls(kind=kind, style=style,
+        gcpt = cls(kind=kind, style=style,
                   name=name, nodes=nodes, opts=opts)
-        return cpt
+        return gcpt
 
     def __call__(self, cpt_type, kind='', style='', name=None,
                  nodes=None, opts=None):
 
-        cpt = self._make_cpt(cpt_type, kind, style, name, nodes, opts)
+        gcpt = self._make_gcpt(cpt_type, kind, style, name, nodes, opts)
 
-        return cpt
+        return gcpt
 
 
 cpt_maker = CptMaker()
 
 
-def cpt_make_from_cpt(cpt):
+def gcpt_make_from_cpt(cpt):
 
     # This is called when loading a schematic from a file.
 
@@ -111,12 +111,12 @@ def cpt_make_from_cpt(cpt):
                      nodes=cpt.nodes, opts=cpt.opts)
 
 
-def cpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
+def gcpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
 
     return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style)
 
 
-def cpt_make_from_sketch_key(sketch_key):
+def gcpt_make_from_sketch_key(sketch_key):
 
     parts = sketch_key.split('-', 2)
     cpt_type = parts[0]
@@ -130,4 +130,4 @@ def cpt_make_from_sketch_key(sketch_key):
         kind = parts[1]
         style = parts[2]
 
-    return cpt_make_from_type(cpt_type, '', kind, style)
+    return gcpt_make_from_type(cpt_type, '', kind, style)
