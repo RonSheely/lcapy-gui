@@ -7,7 +7,9 @@ from numpy import array
 
 class Connection(Bipole):
 
-    type = 'X'
+    # Both Wire and Connection use the W type since Lcapy treats
+    # connection as wires.
+    type = 'W'
     args = ()
     has_value = False
 

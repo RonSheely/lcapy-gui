@@ -54,7 +54,6 @@ class CptMaker:
         'TF': Transformer,
         'V': VoltageSource,
         'W': Wire,
-        'X': Connection,
         'Y': Admittance,
         'Z': Impedance
     }
@@ -95,19 +94,21 @@ cpt_maker = CptMaker()
 
 
 def gcpt_make_from_cpt(cpt):
-
     # This is called when loading a schematic from a file.
 
-    ctype = cpt.type
+    is_connection = False
 
     # Convert wire with implicit connection to a connection component.
-    if ctype == 'W':
+    if cpt.type == 'W':
         for kind in Connection.kinds:
+            # Note, the kind starts with a -.
             if kind[1:] in cpt.opts:
-                ctype = 'X'
+                is_connection = True
                 break
+    if not is_connection:
+        kind = cpt._kind
 
-    return cpt_maker(ctype, kind=cpt._kind, name=cpt.name,
+    return cpt_maker(cpt.type, kind=kind, name=cpt.name,
                      nodes=cpt.nodes, opts=cpt.opts)
 
 

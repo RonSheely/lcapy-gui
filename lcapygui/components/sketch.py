@@ -244,7 +244,7 @@ class Sketch:
         elif cpt_type in ('C', 'CPE', 'D', 'E', 'F', 'G',
                           'H', 'I', 'L', 'R', 'V', 'Y', 'Z'):
             xoffset, yoffset = self.horizontal_wire_pair_offsets()
-        elif cpt_type in ('FB', 'W', 'X'):
+        elif cpt_type in ('FB', 'W'):
             if cpt_style in ('vdd', 'vss', 'vcc', 'vee'):
                 xoffset, yoffset = self.vertical_wire_offsets()
                 yoffset = 0

@@ -1,6 +1,6 @@
 from lcapygui.ui.uimodelbase import UIModelBase
 from lcapygui.components.sketch import Sketch
-from lcapygui.components.cpt_maker import cpt_make_from_type
+from lcapygui.components.cpt_maker import gcpt_make_from_type
 
 
 def cpt_sketch_make(cpt, dstyle):
@@ -8,41 +8,60 @@ def cpt_sketch_make(cpt, dstyle):
     Sketch.create(cpt.sketch_key, cpt.sketch_net, dstyle)
 
 
-def make1(cpt_type, dstyle):
+def make1(thing, dstyle):
 
-    print(cpt_type)
-    cpt = cpt_make_from_type(cpt_type)
-    cpt_sketch_make(cpt, dstyle)
+    gcpt = gcpt_make_from_type(thing.cpt_type, kind=thing.kind)
+    print(gcpt.sketch_key)
+    cpt_sketch_make(gcpt, dstyle)
 
-    kinds = cpt.kinds
-    styles = cpt.styles
+    if thing.kind:
+        # Don't make other connections; make_connections
+        # chooses which to make.
+        return
+
+    kinds = gcpt.kinds
+    styles = gcpt.styles
     for kind in kinds:
         if styles == {}:
-            print(cpt_type, kind)
-            cpt = cpt_make_from_type(cpt_type, kind=kind)
-            cpt_sketch_make(cpt, dstyle)
+            print(gcpt.sketch_key)
+            gcpt = gcpt_make_from_type(thing.cpt_type, kind=kind)
+            cpt_sketch_make(gcpt, dstyle)
         else:
             for style in styles:
-                print(cpt_type, kind, style)
-                cpt = cpt_make_from_type(
-                    cpt_type, kind=kind, style=style)
-                cpt_sketch_make(cpt, dstyle)
+                print(gcpt.sketch_key)
+                gcpt = gcpt_make_from_type(
+                    thing.cpt_type, kind=kind, style=style)
+                cpt_sketch_make(gcpt, dstyle)
 
 
-def make(cpt_type):
+def make(thing):
+
+    if thing.cpt_type == 'DW':
+        return
 
     for dstyle in ('american', 'british', 'european'):
-        make1(cpt_type, dstyle)
+        make1(thing, dstyle)
+
+
+def make_connections():
+
+    for thing in UIModelBase.connection_map.values():
+
+        make(thing)
+
+
+def make_components():
+
+    for thing in UIModelBase.component_map.values():
+
+        make(thing)
 
 
 def make_all():
 
-    for k, v in UIModelBase.component_map.items():
+    make_connections()
+    make_components()
 
-        cpt_type = v[2]
-        make(cpt_type)
+make_all()
 
-    for k, v in UIModelBase.connection_map.items():
-
-        cpt_type = v[2]
-        make(cpt_type)
+print('Do not forget to install for these changes to take affect.')

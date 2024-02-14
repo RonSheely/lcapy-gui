@@ -1341,15 +1341,16 @@ class UIModelDnD(UIModelBase):
         if self.ui.debug:
             print("Separating component from circuit")
 
-        # separate component into its nodes
+        # Separate component into its nodes
         x1, y1 = cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y
         x2, y2 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
         type = cpt.type
+        kind = cpt.kind
         # Delete the existing component
         self.history.append(HistoryEvent("D", cpt))
         self.cpt_delete(cpt)
         # Create a new separated component
-        new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False)
+        new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False, kind=kind)
         self.history.append(HistoryEvent("A", new_cpt))
 
         return new_cpt
@@ -1420,7 +1421,7 @@ class UIModelDnD(UIModelBase):
                 return False
             thing = self.crosshair.thing
 
-        self.cpt_create(thing.cpt_type, x1, y1, x2, y2)
+        self.cpt_create(thing.cpt_type, x1, y1, x2, y2, kind=thing.kind)
 
         self.ui.refresh()
         return True

@@ -93,6 +93,9 @@ class Component(ABC):
         self.mirror = False
         self.invert = False
 
+        # If the kind starts with a - it is considered an Lcapy
+        # component style and is represented by an Lcapy component attribute.
+        # Without the - it is represented by an Lcapy component keyword.
         if kind == '':
             kind = self.default_kind
         self.kind = kind
@@ -149,8 +152,10 @@ class Component(ABC):
         # This is set by the draw() method
         self.picture = None
 
-        # items to be shown on right click
-        self.menu_items = ["edit_cut", "edit_copy", "edit_paste", "edit_delete", "dropdown_inspect_menu", "inspect_properties"]
+        # Items to be shown on right click
+        self.menu_items = ["edit_cut", "edit_copy", "edit_paste",
+                           "edit_delete", "dropdown_inspect_menu",
+                           "inspect_properties"]
 
     def filter_opts(self, opts):
 
@@ -502,14 +507,14 @@ class Component(ABC):
 
         parts = [self.name]
         parts.extend(self.netitem_nodes(node_names))
-        if self.type in ("E", "G"):
+        if self.type in ('E', 'G'):
             # Need to use known nodes to start with.
             parts.extend([node_names[0], node_names[1]])
         else:
             parts.extend(self.netitem_args)
-        netitem = " ".join(parts)
+        netitem = ' '.join(parts)
         attr_string = self.attr_string(x1, y1, x2, y2, step)
-        netitem += "; " + attr_string + "\n"
+        netitem += '; ' + attr_string + '\n'
         return netitem
 
     def update(self, opts=None, nodes=None):

@@ -7,7 +7,7 @@
 </defs>
 <g id="surface1">
 <g clip-path="url(#clip1)" clip-rule="nonzero">
-<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 0.00021875 -0.00021875 L 56.695531 -0.00021875 " transform="matrix(1,0,0,-1,0.199,0.199)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 0.00021875 -0.00021875 L 28.347875 -0.00021875 M 28.347875 -0.00021875 L 56.695531 -0.00021875 " transform="matrix(1,0,0,-1,0.199,0.199)"/>
 </g>
 </g>
 </svg>

@@ -82,18 +82,18 @@ class UIModelBase:
 
     # Short-cut key, menu name, cpt type, kind
     connection_map = {
-        '0V': Thing('', '0V', 'W', '0V'),
-        'ground': Thing('0', 'Ground', 'W', 'ground'),
-        'sground': Thing('', 'Signal ground', 'W', 'sground'),
-        'rground': Thing('', 'Rail ground', 'W', 'rground'),
-        'cground': Thing('', 'Chassis ground', 'W', 'cground'),
-        'vdd': Thing('', 'VDD', 'W', 'vdd'),
-        'vss': Thing('', 'VSS', 'W', 'vss'),
-        'vcc': Thing('', 'VCC', 'W', 'vcc'),
-        'vee': Thing('', 'VEE', 'W', 'vee'),
-        'input': Thing('', 'Input', 'W', 'input'),
-        'output': Thing('', 'Output', 'W', 'output'),
-        'bidir': Thing('', 'Bidirectional', 'W', 'bidir')
+        '0V': Thing('', '0V', 'W', '-0V'),
+        'ground': Thing('0', 'Ground', 'W', '-ground'),
+        'sground': Thing('', 'Signal ground', 'W', '-sground'),
+        'rground': Thing('', 'Rail ground', 'W', '-rground'),
+        'cground': Thing('', 'Chassis ground', 'W', '-cground'),
+        'vdd': Thing('', 'VDD', 'W', '-vdd'),
+        'vss': Thing('', 'VSS', 'W', '-vss'),
+        'vcc': Thing('', 'VCC', 'W', '-vcc'),
+        'vee': Thing('', 'VEE', 'W', '-vee'),
+        'input': Thing('', 'Input', 'W', '-input'),
+        'output': Thing('', 'Output', 'W', '-output'),
+        'bidir': Thing('', 'Bidirectional', 'W', '-bidir')
     }
 
 
@@ -294,7 +294,7 @@ class UIModelBase:
             self.exception('Nodes too close to create component')
             return None
 
-        cpt = self.thing_create(cpt_type, x1, y1, x2, y2)
+        cpt = self.thing_create(cpt_type, x1, y1, x2, y2, kind)
         self.history.append(HistoryEvent('A', cpt))
         self.select(cpt)
         return cpt
@@ -337,7 +337,7 @@ class UIModelBase:
 
         label_style = self.preferences.label_style
 
-        if gcpt.type in ('A', 'O', 'W', 'X'):
+        if gcpt.type in ('A', 'O', 'W'):
             label_style = 'none'
 
         name = cpt.name
@@ -413,15 +413,19 @@ class UIModelBase:
 
         draw_nodes = self.preferences.draw_nodes
         if draw_nodes != 'none':
+            dnodes = []
             for node in gcpt.drawn_nodes:
                 if node.port:
-                    self.node_draw(node)
+                    dnodes.append(node)
                     continue
 
                 if draw_nodes == 'connections' and node.count < 3:
                     continue
                 if draw_nodes == 'primary' and not node.primary:
                     continue
+                dnodes.append(node)
+
+            for node in dnodes:
                 self.node_draw(node)
 
         label_nodes = self.preferences.label_nodes
@@ -605,8 +609,6 @@ class UIModelBase:
 
         gcpt = cpt.gcpt
         cpt_key = gcpt.type
-        if cpt_key == 'X':
-            cpt_key = 'W'
 
         self.cpt_delete(gcpt)
         newcpt = self.cpt_create(cpt_key, x1, y1, x2, y2, gcpt.kind)
@@ -785,7 +787,8 @@ class UIModelBase:
         if self.clipboard is None:
             return
 
-        cpt = self.thing_create(self.clipboard.type, x1, y1, x2, y2)
+        cpt = self.thing_create(self.clipboard.type, x1, y1, x2, y2,
+                                self.clipboard.kind)
         self.history.append(HistoryEvent('A', cpt))
         self.select(cpt)
         return cpt
@@ -893,7 +896,7 @@ class UIModelBase:
         """
         Creates a new component of type cpt_type between two points identified by (x1, y1) and (x2, y2).
 
-        :param cpt_type: New connection type
+        :param cpt_type: New component type
         :param float x1:
         :param float y1:
         :param float x2:
