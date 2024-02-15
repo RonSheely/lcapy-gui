@@ -78,7 +78,7 @@ def main(argv=None):
     parser.add_argument('--create-shortcut', action='store_true',
                         help='Create a system shortcut', default=False)
     parser.add_argument('filenames', type=str, nargs='*',
-                        help='schematic filename(s)', default=[]),
+                        help='schematic filename(s)', default=[])
 
     args = parser.parse_args()
 
