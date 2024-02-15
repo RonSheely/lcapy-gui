@@ -433,7 +433,7 @@ class Component(ABC):
 
         kind = self.symbol_kind
         if kind not in (None, ""):
-            if self.type == "X":
+            if self.type == "W":
                 attr += ", " + kind
             else:
                 attr += ", kind=" + kind

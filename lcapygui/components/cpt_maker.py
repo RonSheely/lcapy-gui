@@ -105,6 +105,7 @@ def gcpt_make_from_cpt(cpt):
             if kind[1:] in cpt.opts:
                 is_connection = True
                 break
+
     if not is_connection:
         kind = cpt._kind
 
