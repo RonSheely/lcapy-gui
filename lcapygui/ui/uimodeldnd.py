@@ -370,7 +370,8 @@ class UIModelDnD(UIModelBase):
 
         """
 
-        # Only place a component between cursors if there are two cursors and no existing component between them
+        # Only place a component between cursors if there are two
+        # cursors and no existing component between them
 
         if len(self.cursors) >= 2 and self.component_between_cursors() is None:
             self.create_component_between_cursors(thing)
@@ -808,12 +809,11 @@ class UIModelDnD(UIModelBase):
 
         Otherwise, assume we are dragging a component or a node.
             If a component is selected, move all its nodes to the new position, and store this position in history
-                If "shift" is pressed, attempt to separate the component from connected nodes
+            If "shift" is pressed, attempt to separate the component from connected nodes
             If a node is selected, move that node to the new position, and store this position in history
-                If "shift" is pressed, attempt to separate the node from connected node (NOT IMPLEMENTED)
-
-
+            If "shift" is pressed, attempt to separate the node from connected node (NOT IMPLEMENTED)
         """
+
         # Get crosshair position
         mouse_x, mouse_y = self.crosshair.position
 
@@ -821,14 +821,16 @@ class UIModelDnD(UIModelBase):
         if self.get_navigate_mode() is not None:
             return
 
-        # Check if we are currently placing a component, and have already placed the first node
+        # Check if we are currently placing a component, and have
+        # already placed the first node
         if self.new_component is not None:
             self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
             self.new_component.nodes[1].pos = self.new_component.gcpt.node2.pos
             return
-        elif self.crosshair.thing is not None:  # Check if we need to place the first node
+        elif self.crosshair.thing is not None:
+            # Check if we need to place the first node
             if self.ui.debug:
-                print("creating new: " + self.crosshair.thing.kind)
+                print("Creating new: " + self.crosshair.thing.kind)
 
             kind = (
                 "-" + self.crosshair.thing.kind
@@ -841,8 +843,9 @@ class UIModelDnD(UIModelBase):
                 mouse_x,
                 mouse_y,
                 mouse_x + 2,
-                # Have to be set to something larger because components now scale
-                # to the initial size of the component.
+                # Have to be set to something larger because
+                # components now scale to the initial size of the
+                # component.
                 mouse_y,
                 kind=kind,
             )

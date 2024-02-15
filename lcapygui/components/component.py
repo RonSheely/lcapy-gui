@@ -455,6 +455,10 @@ class Component(ABC):
             Distance from component to point (x, y)
         """
         # Calculate difference between nodes
+
+        if not self.node1.is_drawn or not self.node2.is_drawn:
+            return 100
+
         dx = self.node2.x - self.node1.x
         dy = self.node2.y - self.node1.y
         rsq = float(dx**2 + dy**2)
