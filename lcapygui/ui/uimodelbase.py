@@ -415,6 +415,10 @@ class UIModelBase:
         if draw_nodes != 'none':
             dnodes = []
             for node in gcpt.drawn_nodes:
+                # Ignore implict nodes
+                if not node.is_drawn:
+                    continue
+
                 if node.port:
                     dnodes.append(node)
                     continue
@@ -431,6 +435,11 @@ class UIModelBase:
         label_nodes = self.preferences.label_nodes
         if label_nodes != 'none':
             for node in gcpt.labelled_nodes:
+
+                # Don't label a node that is not drawn
+                if not node.is_drawn:
+                    continue
+
                 if node.name[0] == '_':
                     continue
 
@@ -780,6 +789,7 @@ class UIModelBase:
             cpt.gcpt = gcpt
 
         self.invalidate()
+        self.check_drawable_nodes()
         self.redraw()
 
     def paste(self, x1, y1, x2, y2):
@@ -947,11 +957,42 @@ class UIModelBase:
 
         cpt.gcpt = gcpt
 
+        self.check_drawable_nodes()
+
         self.cpt_draw(cpt)
 
         self.select(cpt)
 
         return cpt
+
+    def check_drawable_nodes(self):
+
+        # FIXME, this is unnecessarily complicated due to Lcapy and
+        # Lcapy-gui components both having nodes.
+
+        nodes = self.circuit.nodes
+
+        for node in nodes.values():
+            node.is_drawn = True
+
+        for cpt in self.circuit.elements.values():
+            if not hasattr(cpt, 'gcpt'):
+                continue
+            gcpt = cpt.gcpt
+            gcpt_nodes = set(gcpt.nodes)
+            drawn_nodes = set(gcpt.drawn_nodes)
+
+            for node in gcpt_nodes - drawn_nodes:
+                # This could be simplified if cpt nodes and gcpt nodes
+                # are the same.
+                nodes[node.name].is_drawn = False
+
+        for cpt in self.circuit.elements.values():
+            if not hasattr(cpt, 'gcpt'):
+                continue
+            gcpt = cpt.gcpt
+            for node in gcpt.nodes:
+                node.is_drawn = nodes[node.name].is_drawn
 
     def inspect_admittance(self, cpt):
 
