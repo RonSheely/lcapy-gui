@@ -15,8 +15,8 @@ class Picture:
 
         def erase(elt):
             if isinstance(elt, list):
-                for elt in elt:
-                    erase(elt)
+                for elt1 in elt:
+                    erase(elt1)
             else:
                 elt.remove()
 
