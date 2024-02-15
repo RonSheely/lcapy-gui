@@ -16,6 +16,7 @@ from .fdopamp import FDOpamp
 from .opencircuit import OpenCircuit
 from .port import Port
 from .resistor import Resistor
+from .switch import Switch
 from .transformer import Transformer
 from .voltage_source import VoltageSource
 from .wire import Wire
@@ -51,6 +52,7 @@ class CptMaker:
         'Q': BJT,
         'R': Resistor,
         'NR': Resistor,         # Noise free resistor
+        'SW': Switch,
         'TF': Transformer,
         'V': VoltageSource,
         'W': Wire,

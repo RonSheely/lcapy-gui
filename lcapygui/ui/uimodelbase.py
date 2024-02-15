@@ -69,6 +69,7 @@ class UIModelBase:
         'p': Thing('p', 'Port', 'P', ''),
         'r': Thing('r', 'Resistor', 'R', ''),
         'nr': Thing('', 'Resistor (noiseless)', 'R', ''),
+        'switch': Thing('', 'Switch', 'SW', ''),
         'tf': Thing('tf', 'Transformer', 'TF', ''),
         'q': Thing('q', 'BJT', 'Q', ''),
         'j': Thing('j', 'JFET', 'J', ''),

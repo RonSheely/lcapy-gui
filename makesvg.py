@@ -11,7 +11,7 @@ def cpt_sketch_make(cpt, dstyle):
 def make1(thing, dstyle):
 
     gcpt = gcpt_make_from_type(thing.cpt_type, kind=thing.kind)
-    print(gcpt.sketch_key)
+    print(gcpt.sketch_key, '\t', gcpt.sketch_net)
     cpt_sketch_make(gcpt, dstyle)
 
     if thing.kind:
@@ -23,14 +23,14 @@ def make1(thing, dstyle):
     styles = gcpt.styles
     for kind in kinds:
         if styles == {}:
-            print(gcpt.sketch_key)
             gcpt = gcpt_make_from_type(thing.cpt_type, kind=kind)
+            print(gcpt.sketch_key, '\t', gcpt.sketch_net)
             cpt_sketch_make(gcpt, dstyle)
         else:
             for style in styles:
-                print(gcpt.sketch_key)
                 gcpt = gcpt_make_from_type(
                     thing.cpt_type, kind=kind, style=style)
+                print(gcpt.sketch_key, '\t', gcpt.sketch_net)
                 cpt_sketch_make(gcpt, dstyle)
 
 
@@ -57,11 +57,16 @@ def make_components():
         make(thing)
 
 
+def make_cpt(cpt_type):
+
+    make(UIModelBase.component_map[cpt_type])
+
+
 def make_all():
 
     make_connections()
     make_components()
 
-make_all()
+# make_all()
 
 print('Do not forget to install for these changes to take affect.')

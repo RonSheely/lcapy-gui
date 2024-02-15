@@ -242,7 +242,7 @@ class Sketch:
         elif cpt_type in ('J', ):
             xoffset, yoffset = self.width / 2 + 0.5, self.height / 2
         elif cpt_type in ('C', 'CPE', 'D', 'E', 'F', 'G',
-                          'H', 'I', 'L', 'R', 'V', 'Y', 'Z'):
+                          'H', 'I', 'L', 'R', 'SW', 'V', 'Y', 'Z'):
             xoffset, yoffset = self.horizontal_wire_pair_offsets()
         elif cpt_type in ('FB', 'W'):
             if cpt_style in ('vdd', 'vss', 'vcc', 'vee'):
@@ -256,7 +256,7 @@ class Sketch:
             xoffset = 0
             yoffset = 0
         else:
-            raise ValueError('No case for ' + sketch_key)
+            raise ValueError('No case for ' + sketch_key + ' in sketch.py')
 
         if xoffset is None or yoffset is None:
             print('Could not find offsets for ' + sketch_key)

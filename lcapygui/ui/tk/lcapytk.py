@@ -57,7 +57,7 @@ class LcapyTk(Tk):
             'Opamp': ('opamp', 'fdopamp', 'inamp'),
             'Transistor': ('q', 'j', 'm'),
             'Dependent source': ('e', 'f', 'g', 'h'),
-            'Misc.': ('y', 'cpe', 'z', 'o', 'nr'),
+            'Misc.': ('y', 'cpe', 'z', 'o', 'nr', 'switch'),
             'Connection': ('0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir')
