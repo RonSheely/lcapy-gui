@@ -416,7 +416,7 @@ class UIModelBase:
             dnodes = []
             for node in gcpt.drawn_nodes:
                 # Ignore implict nodes
-                if not node.is_drawn:
+                if node.is_implicit:
                     continue
 
                 if node.port:
@@ -974,6 +974,7 @@ class UIModelBase:
 
         for node in nodes.values():
             node.is_drawn = True
+            node.is_implicit = False
 
         for cpt in self.circuit.elements.values():
             if not hasattr(cpt, 'gcpt'):
@@ -987,12 +988,16 @@ class UIModelBase:
                 # are the same.
                 nodes[node.name].is_drawn = False
 
+            for node in gcpt.implicit_nodes:
+                node.is_implicit = True
+
         for cpt in self.circuit.elements.values():
             if not hasattr(cpt, 'gcpt'):
                 continue
             gcpt = cpt.gcpt
             for node in gcpt.nodes:
                 node.is_drawn = nodes[node.name].is_drawn
+                node.is_implicit = nodes[node.name].is_implicit
 
     def inspect_admittance(self, cpt):
 

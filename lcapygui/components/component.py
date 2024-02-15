@@ -228,6 +228,11 @@ class Component(ABC):
 
         return self.nodes
 
+    @property
+    def implicit_nodes(self):
+
+        return []
+
     def _sketch_lookup(self, model):
 
         ui = model.ui

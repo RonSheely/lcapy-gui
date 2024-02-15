@@ -136,6 +136,13 @@ class Connection(Bipole):
         else:
             return self.nodes[:1]
 
+    @property
+    def implicit_nodes(self):
+
+        if self.symbol_kind == '':
+            return []
+        return [self.nodes[1]]
+
     def is_within_bbox(self, x, y):
 
         # FIXME
