@@ -783,7 +783,7 @@ class UIModelDnD(UIModelBase):
 
         """
 
-        # Destroy all Popups
+        # Destroy all popups
         self.unmake_popup()
 
         # Select component/node under mouse
@@ -1062,7 +1062,7 @@ class UIModelDnD(UIModelBase):
         Rotates the selected component based on scroll direction. Currently only supports on 90 degree increments.
         """
         if self.selected and self.cpt_selected:
-            # rotate the component
+            # Rotate the component
             angle = 90 if scroll_direction == 'up' else -90
             self.rotate(self.selected, angle)
             self.selected.gcpt.undraw()
@@ -1266,6 +1266,7 @@ class UIModelDnD(UIModelBase):
 
         if self.ui.debug:
             print('Pasting ' + self.clipboard.name)
+
         # Generate new thing from clipboard
         paste_thing = Thing(None, None, self.clipboard.type, '')
         self.on_add_cpt(paste_thing)
@@ -1343,6 +1344,7 @@ class UIModelDnD(UIModelBase):
         """
         if self.get_navigate_mode() is not None:
             return
+
         # Destroy any created component
         if self.new_component is not None:
             self.cpt_delete(self.new_component)
@@ -1357,7 +1359,7 @@ class UIModelDnD(UIModelBase):
             self.on_select(mouse_x, mouse_y)
             # If a component is selected
             if self.selected and self.cpt_selected:
-                # show the comonent popup
+                # Show the comonent popup
                 self.make_popup(self.selected.gcpt.menu_items)
             elif self.node_selected:
                 if len(self.selected.connected) > 1:
@@ -1366,13 +1368,13 @@ class UIModelDnD(UIModelBase):
                     self.make_popup(['on_node_join', 'inspect_properties'])
                 else:
                     self.make_popup(['!on_node_join', 'inspect_properties'])
-            else:  # if all else fails, show the paste popup
+            else:  # If all else fails, show the paste popup
                 if self.clipboard is None:
                     self.make_popup(['!edit_paste'])
                 else:
                     self.make_popup(['edit_paste'])
 
-        # clear current placed component
+        # Clear current placed component
         self.crosshair.thing = None
 
     def on_right_double_click(self, x, y):

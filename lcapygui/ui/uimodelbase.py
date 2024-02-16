@@ -225,11 +225,11 @@ class UIModelBase:
             connected_from = cpt
             new_node = event.from_nodes
             existing_node = event.to_nodes
-            # split the nodes
+            # Split the nodes
             self.node_split(existing_node, new_node, connected_from)
 
             # If a preceding movement occurred, undo that too
-            if len(history) > 0 and self.history[-1].code == 'M':
+            if len(self.history) > 0 and self.history[-1].code == 'M':
                 self.undo()
 
         # The network has changed
@@ -554,7 +554,7 @@ class UIModelBase:
 
         connected_from = []
 
-        # update every component in node1 to be in node2
+        # Update every component in node1 to be in node2
         for cpt in from_node.connected:
             # Store the moved component for return
             connected_from.append(cpt)
@@ -567,7 +567,7 @@ class UIModelBase:
             # Add node2 to the component
             cpt.nodes.append(to_node)
 
-        # return information required for history
+        # Return information required for history
         return from_node, to_node, connected_from
 
     def node_split(self, existing_node, new_node=None, components=None):
@@ -847,14 +847,14 @@ class UIModelBase:
 
         gcpt = cpt.gcpt
 
-        # convert the angle to radians
+        # Convert the angle to radians
         angle = angle * 3.141592654 / 180
 
-        # extract the node coordinates from each node
+        # Extract the node coordinates from each node
         p1_x, p1_y = gcpt.node1.x, gcpt.node1.y
         p2_x, p2_y = gcpt.node2.x, gcpt.node2.y
 
-        # calculate the midpoint
+        # Calculate the midpoint
         if midpoint is None:
             mid_x, mid_y = gcpt.midpoint.xy
         else:
