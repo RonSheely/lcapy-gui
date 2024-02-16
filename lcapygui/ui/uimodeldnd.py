@@ -1337,18 +1337,21 @@ class UIModelDnD(UIModelBase):
                 HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
 
     def on_cpt_split(self, cpt):
+
+        gcpt = cpt.gcpt
+
         # If the component is already separated, return it
-        if (len(cpt.gcpt.node1.connected) <= 1 and len(cpt.gcpt.node2.connected) <= 1):
+        if (len(gcpt.node1.connected) <= 1 and len(gcpt.node2.connected) <= 1):
             return cpt
 
         if self.ui.debug:
             print("Separating component from circuit")
 
         # Separate component into its nodes
-        x1, y1 = cpt.gcpt.node1.pos.x, cpt.gcpt.node1.pos.y
-        x2, y2 = cpt.gcpt.node2.pos.x, cpt.gcpt.node2.pos.y
-        type = cpt.type
-        kind = cpt.kind
+        x1, y1 = gcpt.node1.pos.x, gcpt.node1.pos.y
+        x2, y2 = gcpt.node2.pos.x, gcpt.node2.pos.y
+        type = gcpt.type
+        kind = gcpt.kind
         # Delete the existing component
         self.history.append(HistoryEvent("D", cpt))
         self.cpt_delete(cpt)

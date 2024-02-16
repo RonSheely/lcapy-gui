@@ -90,3 +90,13 @@ attributes unless clever
 45. Add network synthesis
 
 46. Stretch transformer
+
+47. Tooltips for menu items
+
+48. Fix selection of connections that are smaller than the grid
+
+49. Add multiple component select
+
+50. Expand grid
+
+51. Rejoin nodes after moves
