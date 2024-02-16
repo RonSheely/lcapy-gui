@@ -217,8 +217,10 @@ class UIModelBase:
 
                 self.select(node)
             self.on_redraw()
+
         elif code == 'J':
             self.node_join(event.from_nodes)
+
         elif code == 'S':
             connected_from = cpt
             new_node = event.from_nodes
@@ -227,7 +229,7 @@ class UIModelBase:
             self.node_split(existing_node, new_node, connected_from)
 
             # If a preceding movement occurred, undo that too
-            if self.history[-1].code == 'M':
+            if len(history) > 0 and self.history[-1].code == 'M':
                 self.undo()
 
         # The network has changed
@@ -326,9 +328,6 @@ class UIModelBase:
         try:
             gcpt = cpt.gcpt
         except AttributeError:
-            breakpoint()
-
-        if gcpt is None:
             return
 
         if 'color' not in kwargs:
@@ -457,6 +456,7 @@ class UIModelBase:
                 gcpt.annotations.append(ann)
 
     def cpt_find(self, node_name1, node_name2):
+
         fcpt = None
         for cpt in self.circuit:
             if (cpt.nodes[0].name == node_name1 and cpt.nodes[1].name == node_name2):
@@ -512,10 +512,12 @@ class UIModelBase:
         # New position of nodes
         node.pos.x = new_x
         node.pos.y = new_y
+
         # Update connected components
         for cpt in node.connected:
-            cpt.gcpt.undraw()
-            cpt.gcpt.draw(self, color=self.preferences.color('line'))
+            gcpt = cpt.gcpt
+            gcpt.undraw()
+            gcpt.draw(self, color=self.preferences.color('line'))
 
     def node_join(self, from_node, to_node=None):
         """
@@ -544,7 +546,7 @@ class UIModelBase:
         print(f'Joining {from_node.name} and {to_node.name}') if self.ui.debug else None
 
 
-        # If the two nodes are the same, disallow. This should not happen.
+        # If the two nodes are the same, disallow.  This should not happen.
         if from_node.name == to_node.name:
             warn(f'Tried to merge node {from_node.name} with itself.\n\
                 this should not happen, and is likely due to an error.')
@@ -554,7 +556,7 @@ class UIModelBase:
 
         # update every component in node1 to be in node2
         for cpt in from_node.connected:
-            # store the moved component for return
+            # Store the moved component for return
             connected_from.append(cpt)
             # Remove node1 from the component
             cpt.nodes.remove(from_node)
@@ -601,7 +603,7 @@ class UIModelBase:
         # Copy the original nodes position
         new_node.pos = copy(existing_node.pos)
 
-        # update every component in components to be in new_node
+        # Update every component in components to be in new_node
         for cpt in components:
             # Remove the component from existing_node
             existing_node.remove(cpt)
@@ -612,7 +614,7 @@ class UIModelBase:
             # Add new_node to the component
             cpt.nodes.append(new_node)
 
-        # return the new node
+        # Return the new node
         return new_node
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
@@ -842,16 +844,19 @@ class UIModelBase:
         angle : float
         midpoint : tuple[float, float] or None
         """
+
+        gcpt = cpt.gcpt
+
         # convert the angle to radians
         angle = angle * 3.141592654 / 180
 
         # extract the node coordinates from each node
-        p1_x, p1_y = cpt.gcpt.node1.x, cpt.gcpt.node1.y
-        p2_x, p2_y = cpt.gcpt.node2.x, cpt.gcpt.node2.y
+        p1_x, p1_y = gcpt.node1.x, gcpt.node1.y
+        p2_x, p2_y = gcpt.node2.x, gcpt.node2.y
 
         # calculate the midpoint
         if midpoint is None:
-            mid_x, mid_y = cpt.gcpt.midpoint.xy
+            mid_x, mid_y = gcpt.midpoint.xy
         else:
             mid_x, mid_y = self.snap_to_grid(midpoint[0], midpoint[1])
 
@@ -872,9 +877,9 @@ class UIModelBase:
         new_positions = [(r1_x, r1_y), (r2_x, r2_y)]
         self.history.append(HistoryEvent('M', cpt, node_positions, new_positions))
 
-        # move nodes
-        self.node_move(cpt.gcpt.node1, r1_x, r1_y)
-        self.node_move(cpt.gcpt.node2, r2_x, r2_y)
+        # Move nodes
+        self.node_move(gcpt.node1, r1_x, r1_y)
+        self.node_move(gcpt.node2, r2_x, r2_y)
 
 
     def save(self, pathname):
@@ -1147,8 +1152,10 @@ class UIModelBase:
 
         """
 
-        v1_x, v1_y = cpt.gcpt.node1.x, cpt.gcpt.node1.y
-        v2_x, v2_y = cpt.gcpt.node2.x, cpt.gcpt.node2.y
+        gcpt = cpt.gcpt
+
+        v1_x, v1_y = gcpt.node1.x, gcpt.node1.y
+        v2_x, v2_y = gcpt.node2.x, gcpt.node2.y
 
         # Convert line to a vector relative to node1
         cpt_vect = array([v2_x - v1_x, v2_y - v1_y])
