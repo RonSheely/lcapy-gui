@@ -165,7 +165,7 @@ class UIModelBase:
 
         return self._analysis_circuit
 
-    def apply(self, event, inverse):
+    def apply_event(self, event, inverse):
         cpt = event.cpt
         code = event.code
         # Code:
@@ -331,8 +331,8 @@ class UIModelBase:
         if gcpt is None:
             return
 
-        if "color" not in kwargs:
-            kwargs["color"] = self.preferences.color('line')
+        if 'color' not in kwargs:
+            kwargs['color'] = self.preferences.color('line')
 
         gcpt.draw(self, **kwargs)
 
@@ -536,18 +536,18 @@ class UIModelBase:
         """
 
         if to_node is None:
-            print(f"No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
+            print(f'No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})') if self.ui.debug else None
             to_node = self.closest_node(from_node.pos.x, from_node.pos.y, ignore=from_node)
         if to_node is None:
-            print(f"No existing node found at ({from_node.pos.x}, {from_node.pos.y})") if self.ui.debug else None
+            print(f'No existing node found at ({from_node.pos.x}, {from_node.pos.y})') if self.ui.debug else None
             return None
-        print(f"Joining {from_node.name} and {to_node.name}") if self.ui.debug else None
+        print(f'Joining {from_node.name} and {to_node.name}') if self.ui.debug else None
 
 
         # If the two nodes are the same, disallow. This should not happen.
         if from_node.name == to_node.name:
-            warn(f"Tried to merge node {from_node.name} with itself.\n\
-                this should not happen, and is likely due to an error.")
+            warn(f'Tried to merge node {from_node.name} with itself.\n\
+                this should not happen, and is likely due to an error.')
             return
 
         connected_from = []
@@ -1233,13 +1233,13 @@ class UIModelBase:
         if self.ui.debug:
             print('Redo ' + event.code)
 
-        self.apply(event, False)
+        self.apply_event(event, False)
 
     def redraw(self):
 
         for cpt in self.circuit.elements.values():
             if cpt == self.selected:
-                self.cpt_draw(cpt, color=self.preferences.color("select"))
+                self.cpt_draw(cpt, color=self.preferences.color('select'))
             else:
                 self.cpt_draw(cpt)
 
@@ -1255,18 +1255,10 @@ class UIModelBase:
         if self.ui.debug:
             print('Undo ' + event.code)
 
-        self.apply(event, True)
+        self.apply_event(event, True)
 
     def undraw(self):
 
         for cpt in self.circuit.elements.values():
             gcpt = cpt.gcpt
             gcpt.undraw()
-
-    def get_navigate_mode(self):
-        """
-        Returns the current navigate mode of the canvas
-
-        e.g. ZOOM, PAN, etc.
-        """
-        return self.ui.canvas.drawing.ax.get_navigate_mode()

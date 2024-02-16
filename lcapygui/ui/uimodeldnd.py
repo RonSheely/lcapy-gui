@@ -105,17 +105,17 @@ class UIModelDnD(UIModelBase):
             cursor.draw('positive')
             self.cursors.append(cursor)
             if self.ui.debug:
-                print("Adding positive cursor")
+                print('Adding positive cursor')
         elif len(self.cursors) == 1:  # If one cursor, add negative one
             cursor.draw('negative')
             self.cursors.append(cursor)
             if self.ui.debug:
-                print("Adding negative cursor")
+                print('Adding negative cursor')
         elif len(self.cursors) >= 2:  # If too many cursors, remove one and add
             self.cursors.pop(0)
             self.cursors.append(cursor)
             if self.ui.debug:
-                print("Too many cursors, clearing all")
+                print('Too many cursors, clearing all')
 
         # Refresh UI
         self.ui.refresh()
@@ -306,7 +306,7 @@ class UIModelDnD(UIModelBase):
         """
         if len(self.cursors) < 2:
             if self.ui.debug:
-                print("Not enough cursors to create component")
+                print('Not enough cursors to create component')
             return False
 
         x1 = self.cursors[0].x
@@ -317,7 +317,7 @@ class UIModelDnD(UIModelBase):
         if thing is None:
             if self.crosshair.thing is None:
                 if self.ui.debug:
-                    print("No-thing provided to decide component type")
+                    print('No-thing provided to decide component type')
                 return False
             thing = self.crosshair.thing
 
@@ -428,7 +428,7 @@ class UIModelDnD(UIModelBase):
 
         self.ui.popup_menu = MenuPopup(
             MenuDropdown(
-                "Right click",
+                'Right click',
                 0,
                 display_items,
             )
