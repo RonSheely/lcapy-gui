@@ -45,58 +45,50 @@ attributes unless clever
 
 20. Fix transistor menagerie if base/gate offset
 
-22. Add voltage, current, and flow labels
+21. Add voltage, current, and flow labels
 
-23. Add generic labels
+22. Add generic labels
 
-25. Use suffixes for component values (u, p, M, etc)
+23. Use suffixes for component values (u, p, M, etc)
 
-26. Handle exception when creating circuitiz image
+24. Handle exception when creating circuitiz image
 
-27. Fix circuitikz image creation to use node positions
+25. Fix circuitikz image creation to use node positions
 
-29. Fix invert for opamp
+26. Fix invert for opamp
 
-30. Add label position modifiers
+27. Add label position modifiers
 
-31. Add U components
+28. Add U components
 
-33. Check if opamp has node 0 as output reference and warn if have no
+29. Check if opamp has node 0 as output reference and warn if have no
     other node 0.
 
-34. Add mutual inductance (could associate with a transformer but
+30. Add mutual inductance (could associate with a transformer but
     would need to output two inductors and a mutual inductance; this
     will be hard to interpret).  Probably need to modify TF in Lcapy
     to have arguments for the two self-inductances and the coupling
     coefficient.  In the interim, have a coupling dialog (edit/couplings)
     that specifies the couplings, e.g., `L1 L2 1`.
 
-35. Select connections
+31. Remove opts field from components
 
-36. Remove opts field from components
+32. Better labels for transformers (show turns ratio)
 
-37. Better labels for transformers (show turns ratio)
+33. History of operations (perhaps convert to Python script)
 
-38. History of operations (perhaps convert to Python script)
+34. Show symbol pins for debugging
 
-40. Fix label_pos for rotations
+35. Add network synthesis
 
-41. Add value_pos
+36. Stretch transformer
 
-42. Fix transistor drawing
+37. Tooltips for menu items
 
-44. Show symbol pins for debugging
+38. Fix selection of connections that are smaller than the grid
 
-45. Add network synthesis
+39. Add multiple component select
 
-46. Stretch transformer
+40. Expand grid
 
-47. Tooltips for menu items
-
-48. Fix selection of connections that are smaller than the grid
-
-49. Add multiple component select
-
-50. Expand grid
-
-51. Rejoin nodes after moves
+41. Rejoin nodes after moves
