@@ -255,6 +255,77 @@ class UIModelDnD(UIModelBase):
                 return node
         return None
 
+    def component_between_cursors(self):
+        """
+        Returns the component between the two cursors, if present
+
+        Returns
+        -------
+        lcapygui.mnacpts.cpt or None
+            The component between the two cursors, if present
+
+        """
+        if len(self.cursors) < 2:
+            return None
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+        for cpt in self.circuit.elements.values():
+            if cpt is self:
+                continue
+            if (cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
+                and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2):
+                return cpt
+        return None
+
+    def create_component_between_cursors(self, thing=None):
+        """
+        Creates a component between the two cursors, if present
+
+        Parameters
+        ----------
+        thing : Thing, optional
+            Used to decide an arbitrary component type if provided,
+                otherwise will default to the self.crosshair.thing if available
+
+        Returns
+        -------
+        bool
+            Returns True if a component could have been created
+            - There are 2 cursors to create a component between
+            - A thing was provided, or available from self.crosshair.thing
+
+        Notes
+        -----
+        This method will still return True, even if the component creation was unsuccessful. It only checks if it is
+            provided enough information to create a component to pass into the :func:`self.create` method.
+
+        """
+        if len(self.cursors) < 2:
+            if self.ui.debug:
+                print("Not enough cursors to create component")
+            return False
+
+        x1 = self.cursors[0].x
+        y1 = self.cursors[0].y
+        x2 = self.cursors[1].x
+        y2 = self.cursors[1].y
+
+        if thing is None:
+            if self.crosshair.thing is None:
+                if self.ui.debug:
+                    print("No-thing provided to decide component type")
+                return False
+            thing = self.crosshair.thing
+
+        self.cpt_create(thing.cpt_type, x1, y1, x2, y2, kind=thing.kind)
+
+        self.ui.refresh()
+        return True
+
     def create_state_space(self, cpt):
         """
         TODO: Correct Docstring
@@ -310,9 +381,66 @@ class UIModelDnD(UIModelBase):
             breakpoint()
         self.ui.show_error_dialog(message)
 
+    def exchange_cursors(self):
+
+        if len(self.cursors) < 2:
+            return
+        self.cursors[0], self.cursors[1] = self.cursors[1], self.cursors[0]
+        self.cursors[0].remove()
+        self.cursors[1].remove()
+        self.cursors[0].draw('positive')
+        self.cursors[1].draw('negative')
+        self.ui.refresh()
+
+    def get_navigate_mode(self):
+        """
+        Returns the current navigate mode of the canvas
+
+        e.g. ZOOM, PAN, etc.
+        """
+        return self.ui.canvas.drawing.ax.get_navigate_mode()
+
+    def is_popup_active(self):
+        """
+        Returns True if a popup menu is currently active
+        """
+        return self.ui.popup_menu is not None
+
+    def make_popup(self, menu_items):
+        """
+        Creates a popup menu
+
+        Parameters
+        ----------
+        menu_items : list
+            List of menu items to display in the popup
+
+        """
+        display_items = []
+        for menu_item in menu_items:
+            if menu_item[0] == '!':
+                new_item = self.ui.menu_parts[menu_item[1:]]
+                new_item.state = 'disabled'
+            else:
+                new_item = self.ui.menu_parts[menu_item]
+                new_item.state = 'normal'
+            display_items.append(new_item)
+
+        self.ui.popup_menu = MenuPopup(
+            MenuDropdown(
+                "Right click",
+                0,
+                display_items,
+            )
+        )
+        self.ui.popup_menu.make(self.ui, self.ui.level)
+        self.ui.popup_menu.do_popup(self.ui.canvas.winfo_pointerx(),
+                                    self.ui.canvas.winfo_pointery())
+
     def new_name(self, pathname):
         """
-        # TODO: what does this do?
+        This creates a modified version of the current pathname
+        for use when a circuit is clones.
 
         Parameters
         ==========
@@ -425,7 +553,7 @@ class UIModelDnD(UIModelBase):
         Close the lcapy-gui window
 
         """
-
+        self.unmake_popup()
         self.ui.quit()
 
     def on_copy(self):
@@ -673,7 +801,7 @@ class UIModelDnD(UIModelBase):
                 print("Selected component " + self.selected.gcpt.name)
             return
 
-        # If a node is selected, update mouse_x, mouse_y to that nodes position
+        # If a node is selected, update mouse_x, mouse_y to that node's position
         if self.selected:
             if self.ui.debug:
                 print("Selected node " + self.selected.name)
@@ -682,7 +810,8 @@ class UIModelDnD(UIModelBase):
             mouse_x, mouse_y = self.crosshair.position
 
         # Attempt to add a new cursor
-        if ((not self.is_popup()) and self.add_cursor(mouse_x, mouse_y) and
+        if ((not self.is_popup_active()) and
+            self.add_cursor(mouse_x, mouse_y) and
                 (len(self.cursors) == 2) and (self.crosshair.thing is not None)):
             self.create_component_between_cursors()
             self.crosshair.thing = None
@@ -1085,6 +1214,41 @@ class UIModelDnD(UIModelBase):
 
         self.ui.new()
 
+    def on_node_join(self, node=None):
+        if node is None and self.node_selected:
+            node = self.selected
+        # Join selected node if close
+        join_args = self.node_join(node)
+        if join_args is not None:
+            # Add the join event to history
+            self.history.append(
+                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+
+    def on_cpt_split(self, cpt):
+
+        gcpt = cpt.gcpt
+
+        # If the component is already separated, return it
+        if (len(gcpt.node1.connected) <= 1 and len(gcpt.node2.connected) <= 1):
+            return cpt
+
+        if self.ui.debug:
+            print("Separating component from circuit")
+
+        # Separate component into its nodes
+        x1, y1 = gcpt.node1.pos.x, gcpt.node1.pos.y
+        x2, y2 = gcpt.node2.pos.x, gcpt.node2.pos.y
+        type = gcpt.type
+        kind = gcpt.kind
+        # Delete the existing component
+        self.history.append(HistoryEvent("D", cpt))
+        self.cpt_delete(cpt)
+        # Create a new separated component
+        new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False, kind=kind)
+        self.history.append(HistoryEvent("A", new_cpt))
+
+        return new_cpt
+
     def on_noise_model(self):
 
         cct = self.circuit.noise_model()
@@ -1306,16 +1470,13 @@ class UIModelDnD(UIModelBase):
 
         self.ui.show_message_dialog(content)
 
-    def exchange_cursors(self):
-
-        if len(self.cursors) < 2:
-            return
-        self.cursors[0], self.cursors[1] = self.cursors[1], self.cursors[0]
-        self.cursors[0].remove()
-        self.cursors[1].remove()
-        self.cursors[0].draw('positive')
-        self.cursors[1].draw('negative')
-        self.ui.refresh()
+    def unmake_popup(self):
+        """
+        Destroys the popup menu
+        """
+        if self.ui.popup_menu is not None:
+            self.ui.popup_menu.undo_popup()
+            self.ui.popup_menu = None
 
     def unselect(self):
 
@@ -1325,161 +1486,3 @@ class UIModelDnD(UIModelBase):
         self.cursors.remove()
         self.redraw()
         self.ui.refresh()
-
-    def on_node_join(self, node=None):
-        if node is None and self.node_selected:
-            node = self.selected
-        # Join selected node if close
-        join_args = self.node_join(node)
-        if join_args is not None:
-            # Add the join event to history
-            self.history.append(
-                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
-
-    def on_cpt_split(self, cpt):
-
-        gcpt = cpt.gcpt
-
-        # If the component is already separated, return it
-        if (len(gcpt.node1.connected) <= 1 and len(gcpt.node2.connected) <= 1):
-            return cpt
-
-        if self.ui.debug:
-            print("Separating component from circuit")
-
-        # Separate component into its nodes
-        x1, y1 = gcpt.node1.pos.x, gcpt.node1.pos.y
-        x2, y2 = gcpt.node2.pos.x, gcpt.node2.pos.y
-        type = gcpt.type
-        kind = gcpt.kind
-        # Delete the existing component
-        self.history.append(HistoryEvent("D", cpt))
-        self.cpt_delete(cpt)
-        # Create a new separated component
-        new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False, kind=kind)
-        self.history.append(HistoryEvent("A", new_cpt))
-
-        return new_cpt
-
-    def component_between_cursors(self):
-        """
-        Returns the component between the two cursors, if present
-
-        Returns
-        -------
-        lcapygui.mnacpts.cpt or None
-            The component between the two cursors, if present
-
-        """
-        if len(self.cursors) < 2:
-            return None
-
-        x1 = self.cursors[0].x
-        y1 = self.cursors[0].y
-        x2 = self.cursors[1].x
-        y2 = self.cursors[1].y
-
-        for cpt in self.circuit.elements.values():
-            if cpt is self:
-                continue
-            if (cpt.gcpt.distance_from_cpt(x1, y1) < 0.2
-                and cpt.gcpt.distance_from_cpt(x2, y2) < 0.2):
-                return cpt
-        return None
-
-    def create_component_between_cursors(self, thing=None):
-        """
-        Creates a component between the two cursors, if present
-
-        Parameters
-        ----------
-        thing : Thing, optional
-            Used to decide an arbitrary component type if provided,
-                otherwise will default to the self.crosshair.thing if available
-
-        Returns
-        -------
-        bool
-            Returns True if a component could have been created
-            - There are 2 cursors to create a component between
-            - A thing was provided, or available from self.crosshair.thing
-
-        Notes
-        -----
-        This method will still return True, even if the component creation was unsuccessful. It only checks if it is
-            provided enough information to create a component to pass into the :func:`self.create` method.
-
-        """
-        if len(self.cursors) < 2:
-            if self.ui.debug:
-                print("Not enough cursors to create component")
-            return False
-
-        x1 = self.cursors[0].x
-        y1 = self.cursors[0].y
-        x2 = self.cursors[1].x
-        y2 = self.cursors[1].y
-
-        if thing is None:
-            if self.crosshair.thing is None:
-                if self.ui.debug:
-                    print("No-thing provided to decide component type")
-                return False
-            thing = self.crosshair.thing
-
-        self.cpt_create(thing.cpt_type, x1, y1, x2, y2, kind=thing.kind)
-
-        self.ui.refresh()
-        return True
-
-    def make_popup(self, menu_items):
-        """
-        Creates a popup menu
-
-        Parameters
-        ----------
-        menu_items : list
-            List of menu items to display in the popup
-
-        """
-        display_items = []
-        for menu_item in menu_items:
-            if menu_item[0] == '!':
-                new_item = self.ui.menu_parts[menu_item[1:]]
-                new_item.state = 'disabled'
-            else:
-                new_item = self.ui.menu_parts[menu_item]
-                new_item.state = 'normal'
-            display_items.append(new_item)
-
-        self.ui.popup_menu = MenuPopup(
-            MenuDropdown(
-                "Right click",
-                0,
-                display_items,
-            )
-        )
-        self.ui.popup_menu.make(self.ui, self.ui.level)
-        self.ui.popup_menu.do_popup(self.ui.canvas.winfo_pointerx(), self.ui.canvas.winfo_pointery())
-
-    def unmake_popup(self):
-        """
-        Destroys the popup menu
-        """
-        if self.ui.popup_menu is not None:
-            self.ui.popup_menu.undo_popup()
-            self.ui.popup_menu = None
-
-    def is_popup(self):
-        """
-        Returns True if a popup menu is currently active
-        """
-        return self.ui.popup_menu is not None
-
-    def on_close(self):
-        """
-        Close the lcapy-gui window
-
-        """
-        self.unmake_popup()
-        self.ui.quit()
