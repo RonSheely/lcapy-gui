@@ -97,7 +97,6 @@ class UIModelBase:
         'bidir': Thing('', 'Bidirectional', 'W', '-bidir')
     }
 
-
     def __init__(self, ui):
         """
         Initialise the UI model

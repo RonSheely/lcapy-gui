@@ -752,6 +752,10 @@ class UIModelDnD(UIModelBase):
     def on_inspect_voltage(self, cpt=None):
 
         if cpt is None:
+
+            if self.node_selected:
+                return self.inspect_voltage(self.selected)
+
             if not self.selected or not self.cpt_selected:
                 return
             cpt = self.selected
@@ -1354,21 +1358,34 @@ class UIModelDnD(UIModelBase):
         self.cursors.remove()
         self.ui.refresh()
 
-        # Show right a click menu if not placing a component and there are no cursors
+        # Show right a click menu if not placing a component and there
+        # are no cursors
         if self.crosshair.thing is None:
             self.on_select(mouse_x, mouse_y)
-            # If a component is selected
+
             if self.selected and self.cpt_selected:
-                # Show the comonent popup
+                # If a component is selected
                 self.make_popup(self.selected.gcpt.menu_items)
+
             elif self.node_selected:
+                # If a node is selected
                 if len(self.selected.connected) > 1:
-                    self.make_popup(['!on_node_split', 'inspect_properties'])
+                    self.make_popup(['!on_node_split',
+                                     'dropdown_inspect_menu',
+                                     'inspect_properties'])
+
                 elif self.closest_node(mouse_x, mouse_y, self.selected) is not None:
-                    self.make_popup(['on_node_join', 'inspect_properties'])
+                    self.make_popup(['on_node_join',
+                                     'dropdown_inspect_menu',
+                                     'inspect_properties'])
+
                 else:
-                    self.make_popup(['!on_node_join', 'inspect_properties'])
-            else:  # If all else fails, show the paste popup
+                    self.make_popup(['!on_node_join',
+                                     'dropdown_inspect_menu',
+                                     'inspect_properties'])
+
+            else:
+                # If all else fails, show the paste popup
                 if self.clipboard is None:
                     self.make_popup(['!edit_paste'])
                 else:
