@@ -65,7 +65,7 @@ class CptMaker:
         self.sketches = {}
 
     def _make_gcpt(self, cpt_type, kind='', style='', name=None,
-                  nodes=None, opts=None):
+                   nodes=None, opts=None):
 
         if (cpt_type == 'W' or cpt_type == 'DW') and kind != '':
             cls = Connection
@@ -81,7 +81,7 @@ class CptMaker:
             raise ValueError('Unsupported component ' + cpt_type)
 
         gcpt = cls(kind=kind, style=style,
-                  name=name, nodes=nodes, opts=opts)
+                   name=name, nodes=nodes, opts=opts)
         return gcpt
 
     def __call__(self, cpt_type, kind='', style='', name=None,

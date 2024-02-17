@@ -62,7 +62,7 @@ class Component(ABC):
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.
 
-    def __init__(self, kind="", style="", name=None, nodes=None, opts=None):
+    def __init__(self, kind='', style='', name=None, nodes=None, opts=None):
         if nodes is None:
             nodes = []
         # opts are the Lcapy drawing attributes such as `right`, `color=blue`.
@@ -153,9 +153,9 @@ class Component(ABC):
         self.picture = None
 
         # Items to be shown on right click
-        self.menu_items = ["edit_cut", "edit_copy", "edit_paste",
-                           "edit_delete", "dropdown_inspect_menu",
-                           "inspect_properties"]
+        self.menu_items = ['edit_cut', 'edit_copy', 'edit_paste',
+                           'edit_delete', 'dropdown_inspect_menu',
+                           'inspect_properties']
 
     def filter_opts(self, opts):
 
@@ -266,35 +266,35 @@ class Component(ABC):
         line_width = model.preferences.line_width
         lw = self._line_width_to_lw(model, line_width)
 
-        kwargs["lw"] = kwargs.pop("lw", lw)
+        kwargs['lw'] = kwargs.pop('lw', lw)
 
         for k, v in opts.items():
             if k in ('bodydiode', 'bulk'):
                 continue
-            if v == "":
+            if v == '':
                 v = True
-            if k == "line width":
-                k = "lw"
+            if k == 'line width':
+                k = 'lw'
                 v = self._line_width_to_lw(model, v)
             kwargs[k] = v
 
-        if kwargs.pop("thick", False):
-            kwargs["lw"] = kwargs["lw"] * 2
+        if kwargs.pop('thick', False):
+            kwargs['lw'] = kwargs['lw'] * 2
 
-        if self.color != "":
-            kwargs["color"] = self.color
+        if self.color != '':
+            kwargs['color'] = self.color
 
         if self.mirror:
-            kwargs["mirror"] = True
+            kwargs['mirror'] = True
 
         if self.invert:
-            kwargs["invert"] = True
+            kwargs['invert'] = True
 
-        if kwargs.pop("dashed", False):
-            kwargs["linestyle"] = "--"
+        if kwargs.pop('dashed', False):
+            kwargs['linestyle'] = '--'
 
-        if kwargs.pop("dotted", False):
-            kwargs["linestyle"] = ":"
+        if kwargs.pop('dotted', False):
+            kwargs['linestyle'] = ':'
 
         return kwargs
 
@@ -344,7 +344,7 @@ class Component(ABC):
 
         coords = []
         for node_pinname in self.node_pinnames:
-            if node_pinname == "":
+            if node_pinname == '':
                 coords.append((nan, nan))
             else:
                 coords.append(self.pins[node_pinname][1:])
@@ -374,30 +374,30 @@ class Component(ABC):
         r = tf.scale_factor / 2
         angle = -tf.angle_deg + self.angle_offset
 
-        if self.type == "X" and r >= 0.5:
+        if self.type == 'X' and r >= 0.5:
             r -= 0.49
 
         r = round(r, 2)
         if r == 1:
-            size = ""
+            size = ''
         else:
-            size = "=" + str(r).rstrip("0").rstrip(".")
+            size = '=' + str(r).rstrip('0').rstrip('.')
 
         angle = round(angle, 2)
 
         if r == 0:
-            attr = "down=0"
-            print("Zero length component; this will be drawn down")
+            attr = 'down=0'
+            print('Zero length component; this will be drawn down')
         elif angle == 0:
-            attr = "right" + size
+            attr = 'right' + size
         elif angle in (90, -270):
-            attr = "up" + size
+            attr = 'up' + size
         elif angle in (180, -180):
-            attr = "left" + size
+            attr = 'left' + size
         elif angle in (270, -90):
-            attr = "down" + size
+            attr = 'down' + size
         else:
-            attr = "rotate=" + str(angle).rstrip("0").rstrip(".")
+            attr = 'rotate=' + str(angle).rstrip('0').rstrip('.')
 
         if r < 1:
             attr += ', scale=' + str(r)
@@ -423,23 +423,23 @@ class Component(ABC):
         if self.label != '':
             attr += ', l=' + self.label
         if self.mirror:
-            attr += ", mirror"
+            attr += ', mirror'
         if self.invert:
-            attr += ", invert"
+            attr += ', invert'
 
         # Add user defined attributes such as thick, dashed, etc.
-        if self.attrs != "":
-            attr += ", " + self.attrs
+        if self.attrs != '':
+            attr += ', ' + self.attrs
 
         kind = self.symbol_kind
-        if kind not in (None, ""):
-            if self.type == "W":
-                attr += ", " + kind
+        if kind not in (None, ''):
+            if self.type == 'W':
+                attr += ', ' + kind
             else:
-                attr += ", kind=" + kind
+                attr += ', kind=' + kind
 
-        if self.style not in (None, ""):
-            attr += ", style=" + self.style
+        if self.style not in (None, ''):
+            attr += ', style=' + self.style
 
         return attr
 
@@ -507,7 +507,7 @@ class Component(ABC):
 
     @property
     def netitem_args(self):
-        if self.cpt_kind == "":
+        if self.cpt_kind == '':
             return ()
         return (self.cpt_kind,)
 
@@ -584,7 +584,7 @@ class Component(ABC):
 
     @property
     def ppins(self):
-        raise ValueError("Ppins not defined for %s" % self)
+        raise ValueError('Ppins not defined for %s' % self)
 
     @property
     def pins(self):
