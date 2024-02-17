@@ -745,16 +745,13 @@ class UIModelDnD(UIModelBase):
 
     def on_inspect_voltage(self):
 
-        if not self.selected:
-            return
-
         if self.node_selected:
             node = self.selected
             win = self.ui.show_working_dialog('Calculating node voltage')
             self.inspect_node_voltage(node)
             win.destroy()
 
-        if self.cpt_selected:
+        elif self.cpt_selected:
             cpt = self.selected
             win = self.ui.show_working_dialog('Calculating voltage')
             self.inspect_voltage(cpt)

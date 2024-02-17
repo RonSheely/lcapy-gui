@@ -11,16 +11,14 @@ class Drawing():
         self.xsize = ui.model.preferences.xsize
         self.ysize = ui.model.preferences.ysize
 
-
         # Maximum limits for drawing size.  Only xsize by ysize
         # is visible.
-        self.xmin = 0
-        self.ymin = 0
-        self.xmax = self.xsize * 2
-        self.ymax = self.ysize * 2
+        M = 2
+        self.xmin = -self.xsize * M
+        self.ymin = -self.xsize * M
+        self.xmax = self.xsize * (M + 1)
+        self.ymax = self.ysize * (M + 1)
 
-        import matplotlib.pyplot as mpl
-        
         self.enlarge_scale = 2
 
         self.ax = self.fig.add_subplot(111)
@@ -34,9 +32,8 @@ class Drawing():
             print('draw grid')
 
         scale = self.ui.model.preferences.grid_spacing
-        xticks = arange(self.xmax) * scale
-        yticks = arange(self.ymax) * scale
-
+        xticks = arange(self.xmin, self.xmax + 1) * scale
+        yticks = arange(self.xmin, self.ymax + 1) * scale
 
         self.ax.axis('equal')
         self.ax.set_xticks(xticks)

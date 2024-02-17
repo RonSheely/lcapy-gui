@@ -89,6 +89,6 @@ attributes unless clever
 
 39. Add multiple component select
 
-40. Expand grid
+40. Rejoin nodes after moves
 
-41. Rejoin nodes after moves
+41. Add dialog to rename nodes
