@@ -64,23 +64,6 @@ class CptPropertiesDialog(Window):
         button.grid(row=self.labelentries.row)
         self.focus()
 
-        # TODO, need to select the component for the callbacks
-        menudropdowns = [
-            MenuDropdown('Inspect', 0,
-                         [MenuItem('Voltage', self.on_inspect_voltage),
-                          MenuItem('Current', self.on_inspect_current),
-                          MenuItem('Thevenin impedance',
-                                   self.on_inspect_thevenin_impedance),
-                          MenuItem('Norton admittance',
-                                   self.on_inspect_norton_admittance),
-                          MenuItem('Noise voltage',
-                                   self.on_inspect_noise_voltage),
-                          MenuItem('Noise current',
-                                   self.on_inspect_noise_current)
-                          ])]
-        self.add_menu(menudropdowns)
-        self.focus()
-
     def on_update(self, arg=None):
 
         if self.gcpt.kinds != {}:
@@ -159,27 +142,3 @@ class CptPropertiesDialog(Window):
         # In case user does not hit enter
         self.on_update()
         self.on_close()
-
-    def on_inspect_current(self, *args):
-
-        self.ui.model.on_inspect_current(self.cpt)
-
-    def on_inspect_norton_admittance(self, *args):
-
-        self.ui.model.on_inspect_norton_admittance(self.cpt)
-
-    def on_inspect_thevenin_impedance(self, *args):
-
-        self.ui.model.on_inspect_thevenin_impedance(self.cpt)
-
-    def on_inspect_voltage(self, *args):
-
-        self.ui.model.on_inspect_voltage(self.cpt)
-
-    def on_inspect_noise_current(self, *args):
-
-        self.ui.model.on_inspect_noise_current(self.cpt)
-
-    def on_inspect_noise_voltage(self, *args):
-
-        self.ui.model.on_inspect_noise_voltage(self.cpt)

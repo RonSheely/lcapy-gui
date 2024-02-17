@@ -1032,6 +1032,15 @@ class UIModelBase:
         except (AttributeError, ValueError, RuntimeError) as e:
             self.exception(e)
 
+    def inspect_node_voltage(self, node):
+
+        try:
+            self.last_expr = self.analysis_circuit[node.name].v
+            self.ui.show_expr_dialog(self.last_expr,
+                                     'Node %s potential' % node.name)
+        except (AttributeError, ValueError, RuntimeError) as e:
+            self.exception(e)
+
     def inspect_noise_current(self, cpt):
 
         try:
