@@ -217,6 +217,9 @@ class LcapyTk(Tk):
             self.menu_parts["inspect_noise_voltage"],
             self.menu_parts["inspect_noise_current"]
         ])
+        self.menu_parts["dropdown_node_inspect_menu"] = MenuDropdown('Inspect', 0, [
+            self.menu_parts["inspect_voltage"],
+        ])
         self.menu_parts["dropdown_manipulate_menu"] = MenuDropdown('Manipulate', 0, [
             self.menu_parts["manipulate_independent_sources_kill"],
             self.menu_parts["manipulate_independent_sources_remove"],

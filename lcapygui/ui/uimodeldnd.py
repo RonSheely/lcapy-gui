@@ -699,13 +699,12 @@ class UIModelDnD(UIModelBase):
                                                 title='Node ' +
                                                       self.selected.name)
 
-    def on_inspect_current(self, cpt=None):
+    def on_inspect_current(self):
 
-        if cpt is None:
-            if not self.selected or not self.cpt_selected:
-                return
-            cpt = self.selected
+        if not self.selected or not self.cpt_selected:
+            return
 
+        cpt = self.selected
         win = self.ui.show_working_dialog('Calculating voltage')
         self.inspect_current(cpt)
         win.destroy()
@@ -728,40 +727,38 @@ class UIModelDnD(UIModelBase):
         self.inspect_noise_voltage(self.selected)
         win.destroy()
 
-    def on_inspect_norton_admittance(self, cpt=None):
-
-        if cpt is None:
-            if not self.selected or not self.cpt_selected:
-                return
-            cpt = self.selected
+    def on_inspect_norton_admittance(self):
 
         if not self.selected or not self.cpt_selected:
             return
 
+        cpt = self.selected
         self.inspect_norton_admittance(cpt)
 
-    def on_inspect_thevenin_impedance(self, cpt=None):
+    def on_inspect_thevenin_impedance(self):
 
-        if cpt is None:
-            if not self.selected or not self.cpt_selected:
-                return
-            cpt = self.selected
+        if not self.selected or not self.cpt_selected:
+            return
 
+        cpt = self.selected
         self.inspect_thevenin_impedance(cpt)
 
-    def on_inspect_voltage(self, cpt=None):
+    def on_inspect_voltage(self):
 
-        if cpt is None:
+        if not self.selected:
+            return
 
-            if self.node_selected:
-                return self.inspect_voltage(self.selected)
+        if self.node_selected:
+            node = self.selected
+            win = self.ui.show_working_dialog('Calculating node voltage')
+            self.inspect_node_voltage(node)
+            win.destroy()
 
-            if not self.selected or not self.cpt_selected:
-                return
+        if self.cpt_selected:
             cpt = self.selected
-        win = self.ui.show_working_dialog('Calculating voltage')
-        self.inspect_voltage(cpt)
-        win.destroy()
+            win = self.ui.show_working_dialog('Calculating voltage')
+            self.inspect_voltage(cpt)
+            win.destroy()
 
     def on_laplace_model(self):
 
@@ -1371,17 +1368,17 @@ class UIModelDnD(UIModelBase):
                 # If a node is selected
                 if len(self.selected.connected) > 1:
                     self.make_popup(['!on_node_split',
-                                     'dropdown_inspect_menu',
+                                     'dropdown_node_inspect_menu',
                                      'inspect_properties'])
 
                 elif self.closest_node(mouse_x, mouse_y, self.selected) is not None:
                     self.make_popup(['on_node_join',
-                                     'dropdown_inspect_menu',
+                                     'dropdown_node_inspect_menu',
                                      'inspect_properties'])
 
                 else:
                     self.make_popup(['!on_node_join',
-                                     'dropdown_inspect_menu',
+                                     'dropdown_node_inspect_menu',
                                      'inspect_properties'])
 
             else:
