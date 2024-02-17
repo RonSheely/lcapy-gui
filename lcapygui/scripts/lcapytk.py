@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""lcapy-tk V0.94dev
+"""lcapy-tk V0.94
 Copyright (c) 2023 Michael P. Hayes, UC ECE, NZ
 
 Usage: lcapy-tk [infile.sch]
@@ -40,23 +40,23 @@ def create_shortcut():
     icon_path = None
     from lcapygui import __datadir__
     if platform == 'win':
-        icon_path = __datadir__ / "icon" / "lcapy-gui.ico"
+        icon_path = __datadir__ / 'icon' / 'lcapy-gui.ico'
     elif platform == 'linux':
-        icon_path = __datadir__ / "icon" / "lcapy-gui.svg"
+        icon_path = __datadir__ / 'icon' / 'lcapy-gui.svg'
     elif platform == 'Darwin':
         integrate = False
 
     # Pick the best executable for the platform
     bindir = 'Scripts' if platform.startswith('win') else 'bin'
-    executable_path = os.path.normpath(os.path.join(sys.prefix, bindir, "lcapy-tk"))
+    executable_path = os.path.normpath(os.path.join(sys.prefix, bindir, 'lcapy-tk'))
 
     # Pick the best python for the installation
-    python_path = os.path.normpath(os.path.join(sys.prefix, bindir, "python"))
+    python_path = os.path.normpath(os.path.join(sys.prefix, bindir, 'python'))
 
     # Create the shortcut
-    launch_lcapygui = make_shortcut(f"{executable_path:s}", name=package_name, icon=icon_path, startmenu=integrate, terminal=False, folder=package_name, executable=python_path)
+    launch_lcapygui = make_shortcut(f'{executable_path:s}', name=package_name, icon=icon_path, startmenu=integrate, terminal=False, folder=package_name, executable=python_path)
 
-    print(f"Shortcut created in: {launch_lcapygui.startmenu_dir}")
+    print(f'Shortcut created in: {launch_lcapygui.startmenu_dir}')
 
 def main(argv=None):
     if argv is None:
@@ -68,13 +68,13 @@ def main(argv=None):
                         version=__doc__.split('\n')[0])
     parser.add_argument('--pdb', action='store_true',
                         default=False,
-                        help="enter python debugger on exception")
+                        help='enter python debugger on exception')
     parser.add_argument('--debug', type=int, default=None,
-                        help="enable debugging")
+                        help='enable debugging')
     parser.add_argument('--level', type=int, default=10,
-                        help="sophistication level")
+                        help='sophistication level')
     parser.add_argument('--expr', type=str, default=None,
-                        help="Lcapy expression")
+                        help='Lcapy expression')
     parser.add_argument('--create-shortcut', action='store_true',
                         help='Create a system shortcut', default=False)
     parser.add_argument('filenames', type=str, nargs='*',
@@ -89,7 +89,7 @@ def main(argv=None):
 
     # Add Icon path for program
     from lcapygui import __datadir__
-    icon_filename = __datadir__ / "icon" / "lcapy-gui-small.png"
+    icon_filename = __datadir__ / 'icon' / 'lcapy-gui-small.png'
 
     # If on MacOS, don't use icon
     if system() == 'Darwin':
@@ -98,9 +98,8 @@ def main(argv=None):
     if args.pdb:
         sys.excepthook = schtex_exception
 
-    e = LcapyTk(
-        args.filenames, debug=args.debug, level=args.level, icon=icon_filename
-    )
+    e = LcapyTk(args.filenames, debug=args.debug,
+                level=args.level, icon=icon_filename)
 
     if args.expr is not None:
         dialog = e.show_expr_dialog(lcapify(args.expr))
@@ -111,5 +110,5 @@ def main(argv=None):
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())
