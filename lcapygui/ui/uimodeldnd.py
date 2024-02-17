@@ -536,6 +536,23 @@ class UIModelDnD(UIModelBase):
         self.ui.set_view(xmin - 2, ymin - 2, xmax + 2, ymax + 2)
         self.ui.refresh()
 
+    def on_centre_fit(self):
+
+        bbox = self.bounding_box()
+        if bbox is None:
+            return
+        xmin, ymin, xmax, ymax = bbox
+
+        xc = (xmin + xmax) / 2
+        yc = (ymin + ymax) / 2
+        xmin = xc - self.preferences.xsize / 2
+        xmax = xc + self.preferences.xsize / 2
+        ymin = yc - self.preferences.ysize / 2
+        ymax = yc + self.preferences.ysize / 2
+
+        self.ui.set_view(xmin, ymin, xmax, ymax)
+        self.ui.refresh()
+
     def on_clone(self):
 
         pathname = self.new_name(self.pathname)

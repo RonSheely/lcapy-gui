@@ -121,6 +121,7 @@ class LcapyTk(Tk):
         self.menu_parts["view_mesh_equations"] = MenuItem('Mesh equations', self.on_mesh_equations)
         self.menu_parts["view_fit_best"] = MenuItem('Best fit', self.on_best_fit)
         self.menu_parts["view_fit_default"] = MenuItem('Default fit', self.on_default_fit)
+        self.menu_parts["view_fit_centre"] = MenuItem('Center fit', self.on_centre_fit)
         self.menu_parts["view_plots"] = MenuItem('Plots', self.on_plots)
         self.menu_parts["view_description"] = MenuItem('Description', self.on_description)
         self.menu_parts["view_annotation"] = MenuItem('Annotation', self.on_annotation)
@@ -188,6 +189,7 @@ class LcapyTk(Tk):
             self.menu_parts["view_mesh_equations"],
             self.menu_parts["view_fit_best"],
             self.menu_parts["view_fit_default"],
+            self.menu_parts["view_fit_centre"],
             self.menu_parts["view_plots"],
             self.menu_parts["view_description"],
             self.menu_parts["view_annotation"],
@@ -396,6 +398,9 @@ class LcapyTk(Tk):
 
     def on_best_fit(self, *args):
         self.model.on_best_fit()
+
+    def on_centre_fit(self, *args):
+        self.model.on_centre_fit()
 
     def on_circuitgraph(self, *args):
         # TODO, save to png file and then display file
