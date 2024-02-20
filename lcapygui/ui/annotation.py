@@ -1,5 +1,5 @@
-from .components.tf import TF
-from .components.pos import Pos
+from ..components.tf import TF
+from ..components.pos import Pos
 
 
 class Annotation:

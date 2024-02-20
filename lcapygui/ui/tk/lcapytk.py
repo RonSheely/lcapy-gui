@@ -111,6 +111,7 @@ class LcapyTk(Tk):
         self.menu_parts["edit_paste"] = MenuItem('Paste', self.on_paste, accelerator='Ctrl+v')
         self.menu_parts["edit_delete"] = MenuItem('Delete', self.on_delete, accelerator='Del')
         self.menu_parts["edit_values"] = MenuItem('Values', self.on_edit_values, accelerator='Ctrl+V')
+        self.menu_parts["edit_nodes"] = MenuItem('Nodes', self.on_edit_nodes, accelerator='Ctrl+N')
         self.menu_parts["view_expression"] = MenuItem('Expression', self.on_expression, accelerator='Ctrl+e')
         self.menu_parts["view_circuitikz_image"] = MenuItem('Circuitikz image', self.on_view, accelerator='Ctrl+u')
         self.menu_parts["view_circuitikz_macros"] = MenuItem('Circuitikz macros', self.on_view_macros)
@@ -176,7 +177,8 @@ class LcapyTk(Tk):
             self.menu_parts["edit_cut"],
             self.menu_parts["edit_copy"],
             self.menu_parts["edit_paste"],
-            self.menu_parts["edit_values"]
+            self.menu_parts["edit_values"],
+            self.menu_parts["edit_nodes"]
         ])
         self.menu_parts["dropdown_view_menu"] = MenuDropdown('View', 0, [
             self.menu_parts["view_expression"],
@@ -505,6 +507,9 @@ class LcapyTk(Tk):
     def on_expression(self, *args):
         self.model.on_expression()
 
+    def on_edit_nodes(self, *args):
+        self.show_edit_nodes_dialog()
+
     def on_edit_values(self, *args):
         self.show_edit_values_dialog()
 
@@ -720,6 +725,11 @@ class LcapyTk(Tk):
         from .edit_dialog import EditDialog
 
         self.edit_dialog = EditDialog(self, expr)
+
+    def show_edit_nodes_dialog(self):
+        from .edit_nodes_dialog import EditNodesDialog
+
+        self.edit_nodes_dialog = EditNodesDialog(self)
 
     def show_edit_values_dialog(self):
         from .edit_values_dialog import EditValuesDialog

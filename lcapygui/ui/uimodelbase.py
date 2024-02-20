@@ -1,5 +1,5 @@
-from ..annotation import Annotation
-from ..annotations import Annotations
+from .annotation import Annotation
+from .annotations import Annotations
 from .preferences import Preferences
 from ..components.opamp import Opamp
 from ..components.pos import Pos
