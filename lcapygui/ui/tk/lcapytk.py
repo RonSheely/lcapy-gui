@@ -729,7 +729,8 @@ class LcapyTk(Tk):
     def show_edit_nodes_dialog(self):
         from .edit_nodes_dialog import EditNodesDialog
 
-        self.edit_nodes_dialog = EditNodesDialog(self)
+        self.edit_nodes_dialog = EditNodesDialog(self,
+                                                 self.model.on_cpt_changed)
 
     def show_edit_values_dialog(self):
         from .edit_values_dialog import EditValuesDialog

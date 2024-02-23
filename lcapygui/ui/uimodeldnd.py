@@ -150,11 +150,14 @@ class UIModelDnD(UIModelBase):
         """
         # Only snap if the snap grid is enabled
         if self.preferences.snap_grid:
+            gs = self.preferences.grid_spacing
 
             snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
-            # Prioritise snapping to the grid if close, or if placing a component
-            if (abs(mouse_x - snap_x) < 0.2 * self.preferences.grid_spacing and abs(
-                    mouse_y - snap_y) < 0.2 * self.preferences.grid_spacing) or not snap_to_component:
+
+            # Prioritise snapping to the grid if close, or if placing
+            # a component
+            if ((abs(mouse_x - snap_x) < 0.2 * gs and
+                 abs(mouse_y - snap_y) < 0.2 * gs) or not snap_to_component):
                 return snap_x, snap_y
             elif len(self.cursors) >= 1:
                 xc = self.cursors[-1].x
@@ -167,17 +170,18 @@ class UIModelDnD(UIModelBase):
             # If not close grid position, attempt to snap to component
             snapped = False
             for cpt in self.circuit.elements.values():
-                if (cpt.gcpt is not self
-                    and cpt.gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2):
+                gcpt = cpt.gcpt
+                if (gcpt is not None and gcpt is not self
+                    and gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2):
                     mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
                     snapped = True
 
             # If no near components, snap to grid
             if not snapped:
                 return snap_x, snap_y
+
             for node in self.circuit.nodes.values():
-                if abs(mouse_x - node.x) < 0.2 * self.preferences.grid_spacing and abs(
-                        mouse_y - node.y) < 0.2 * self.preferences.grid_spacing:
+                if abs(mouse_x - node.x) < 0.2 * gs and abs(mouse_y - node.y) < 0.2 * gs:
                     return node.x, node.y
         return mouse_x, mouse_y
 
@@ -584,20 +588,22 @@ class UIModelDnD(UIModelBase):
 
         self.copy(self.selected)
 
-    def on_cpt_changed(self, cpt):
+    def on_cpt_changed(self, cpt_or_node):
 
         self.invalidate()
         # Component name may have changed
         self.clear()
 
-        if isinstance(cpt, Cpt):
+        if isinstance(cpt_or_node, Cpt):
 
             # If kind has changed need to remake the sketch
             # and remake the cpt.
             # If name changed need to remake the cpt.
-            self.cpt_remake(cpt)
-        else:
+            self.cpt_remake(cpt_or_node)
+        elif isinstance(cpt_or_node, Node):
             # Node name may have changed...
+            pass
+        else:
             pass
 
         self.redraw()
@@ -807,7 +813,8 @@ class UIModelDnD(UIModelBase):
         # If a component is selected, do nothing
         if self.cpt_selected:
             self.cursors.remove()
-            self.add_cursor(self.selected.gcpt.node1.pos.x, self.selected.gcpt.node1.pos.y)
+            self.add_cursor(self.selected.gcpt.node1.pos.x,
+                            self.selected.gcpt.node1.pos.y)
             node2 = self.selected.gcpt.node2
             if node2 is not None:
                 self.add_cursor(node2.pos.x, node2.pos.y)
@@ -1024,7 +1031,8 @@ class UIModelDnD(UIModelBase):
 
                 self.cpt_move(self.selected, d_x, d_y, move_nodes=True)
 
-                # Check if the movement has left the circuit in an invalid state, if so, undo
+                # Check if the movement has left the circuit in an
+                # invalid state, if so, undo
                 components = self.selected.gcpt.node1.connected
                 components.extend(self.selected.gcpt.node2.connected)
                 components.remove(self.selected)
