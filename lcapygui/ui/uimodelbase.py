@@ -1117,32 +1117,6 @@ class UIModelBase:
 
         return self.is_on_grid_x(x) and self.is_on_grid_y(y)
 
-    def snap(self, x, y):
-
-        # Snap to closest known node then snap to grid.
-        node = self.closest_node(x, y)
-        if node is not None:
-            print('Snapping to node', node)
-            return node.x, node.y
-
-        if self.preferences.snap_grid == 'true':
-
-            if len(self.cursors) > 0:
-                xc = self.cursors[0].x
-                yc = self.cursors[0].y
-                if self.is_close_to(x, xc):
-                    x = xc
-                else:
-                    x = self.snap_to_grid_x(x)
-                if self.is_close_to(y, yc):
-                    y = yc
-                else:
-                    y = self.snap_to_grid_y(y)
-            else:
-                x, y = self.snap_to_grid(x, y)
-
-        return x, y
-
     def snap_to_cpt(self, x, y, cpt):
         """
         Projects the current point onto the nearest component

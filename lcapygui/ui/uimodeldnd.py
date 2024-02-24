@@ -915,23 +915,23 @@ class UIModelDnD(UIModelBase):
 
         closest_node = self.closest_node(mouse_x, mouse_y)
 
-        # If the crosshair is not over a node, snap to the grid (if enabled)
-        if closest_node is None:
-            if self.preferences.snap_grid:
-                dosnap = True if self.crosshair.thing is None else False
-                mouse_x, mouse_y = self.snap(mouse_x, mouse_y,
-                                             snap_to_component=dosnap)
-
-            # Update position and reset style
-            self.crosshair.update(position=(mouse_x, mouse_y), style=None)
-
-        else:
-            self.crosshair.style = 'node'
-
+        if closest_node is not None:
             # Update the crosshair position and set style to show it
             # is over a node
             self.crosshair.update(position=(closest_node.pos.x,
                                             closest_node.pos.y), style='node')
+            return
+
+        # If the crosshair is not over a node, snap to the grid (if
+        # enabled)
+        if self.preferences.snap_grid:
+
+            dosnap = self.crosshair.thing is None
+            mouse_x, mouse_y = self.snap(mouse_x, mouse_y,
+                                         snap_to_component=dosnap)
+
+        # Update position and reset style
+        self.crosshair.update(position=(mouse_x, mouse_y), style=None)
 
     def drag_cpt(self, cpt, mouse_x, mouse_y, key):
 
@@ -977,10 +977,6 @@ class UIModelDnD(UIModelBase):
 
     def drag_node(self, node, mouse_x, mouse_y, key):
 
-        cpts = []
-
-        # If a node is selected
-        cpts.extend(node.connected)
         if not self.dragged:
             self.dragged = True
             # To save history, save first component position
@@ -993,12 +989,36 @@ class UIModelDnD(UIModelBase):
 
         original_x, original_y = node.pos.x, node.pos.y
 
+        node2 = self.closest_node(mouse_x, mouse_y)
+        if node2:
+            mouse_x, mouse_y = node2.pos.x, node2.pos.y
+
+        else:
+            # Check if aligned with a node on other end of component
+            # to the specified node
+            # node.connected_nodes in lcapy-1.22
+            for cpt in node.connected:
+                for node2 in cpt.nodes:
+                    if node2 is node:
+                        continue
+                    x2, y2 = node2.x, node2.y
+                    if self.is_close_to(mouse_x, x2):
+                        mouse_x = x2
+                    else:
+                        mouse_x = self.snap_to_grid_x(mouse_x)
+                    if self.is_close_to(mouse_y, y2):
+                        mouse_y = y2
+                    else:
+                        mouse_y = self.snap_to_grid_y(mouse_y)
+
+        self.node_move(node, mouse_x, mouse_y)
+
         # Check if the movement has left the circuit in an
         # invalid state, if so, undo
-        self.node_move(node, mouse_x, mouse_y)
         for cpt1 in node.connected:
             gcpt = cpt1.gcpt
-            if gcpt.node1.x == gcpt.node2.pos.x and gcpt.node1.y == cpt1.node2.pos.y:
+            if (gcpt.node1.x == gcpt.node2.pos.x and
+                gcpt.node1.y == gcpt.node2.pos.y):
                 if self.ui.debug:
                     print(f'Invalid node placement, disallowing move')
                 self.node_move(node, original_x, original_y)
@@ -1040,9 +1060,6 @@ class UIModelDnD(UIModelBase):
 
         """
 
-        # Get crosshair position
-        mouse_x, mouse_y = self.crosshair.position
-
         # Disallow component placement and movement if in zoom mode
         if self.get_navigate_mode() is not None:
             return
@@ -1051,6 +1068,10 @@ class UIModelDnD(UIModelBase):
             # Placing second node of component
 
             gcpt = self.new_cpt.gcpt
+
+            # Get crosshair position
+            mouse_x, mouse_y = self.crosshair.position
+
             self.node_move(gcpt.node2, mouse_x, mouse_y)
             self.new_cpt.nodes[1].pos = gcpt.node2.pos
             return
@@ -1063,6 +1084,9 @@ class UIModelDnD(UIModelBase):
                 print('Creating new: ' + thing.kind)
 
             kind = '-' + thing.kind if thing.kind != '' else ''
+
+            # Get crosshair position
+            mouse_x, mouse_y = self.crosshair.position
 
             # Create a new component
             self.new_cpt = self.thing_create(
@@ -1086,6 +1110,7 @@ class UIModelDnD(UIModelBase):
         self.cursors.remove()
 
         if self.cpt_selected:
+
             self.drag_cpt(self.selected, mouse_x, mouse_y, key)
 
         else:
