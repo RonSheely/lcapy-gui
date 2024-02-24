@@ -30,7 +30,7 @@ class UIModelDnD(UIModelBase):
         ----------
         crosshair : CrossHair
             A crosshair for placing and moving components
-        new_component : lcapygui.mnacpts.cpt or None
+        new_cpt : lcapygui.mnacpts.cpt or None
             The component currently being placed by the CrossHair
         node_positions : list of tuples or None
             Used for history, stores the node positions of the component or node before being moved
@@ -76,7 +76,7 @@ class UIModelDnD(UIModelBase):
             self.preferences.save()
 
         self.crosshair = CrossHair(self)
-        self.new_component = None
+        self.new_cpt = None
         self.node_positions = None
 
     def add_cursor(self, mouse_x, mouse_y):
@@ -149,40 +149,43 @@ class UIModelDnD(UIModelBase):
 
         """
         # Only snap if the snap grid is enabled
-        if self.preferences.snap_grid:
-            gs = self.preferences.grid_spacing
+        if not self.preferences.snap_grid:
+            return mouse_x, mouse_y
 
-            snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
+        gs = self.preferences.grid_spacing
 
-            # Prioritise snapping to the grid if close, or if placing
-            # a component
-            if ((abs(mouse_x - snap_x) < 0.2 * gs and
-                 abs(mouse_y - snap_y) < 0.2 * gs) or not snap_to_component):
-                return snap_x, snap_y
-            elif len(self.cursors) >= 1:
-                xc = self.cursors[-1].x
-                yc = self.cursors[-1].y
-                if self.is_close_to(snap_x, xc):
-                    return xc, snap_y
-                if self.is_close_to(snap_y, yc):
-                    return snap_x, yc
+        snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
 
-            # If not close grid position, attempt to snap to component
-            snapped = False
-            for cpt in self.circuit.elements.values():
-                gcpt = cpt.gcpt
-                if (gcpt is not None and gcpt is not self
-                    and gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2):
-                    mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
-                    snapped = True
+        # Prioritise snapping to the grid if close, or if placing
+        # a component
+        if ((abs(mouse_x - snap_x) < 0.2 * gs and
+             abs(mouse_y - snap_y) < 0.2 * gs) or not snap_to_component):
+            return snap_x, snap_y
 
-            # If no near components, snap to grid
-            if not snapped:
-                return snap_x, snap_y
+        elif len(self.cursors) >= 1:
+            xc = self.cursors[-1].x
+            yc = self.cursors[-1].y
+            if self.is_close_to(snap_x, xc):
+                return xc, snap_y
+            if self.is_close_to(snap_y, yc):
+                return snap_x, yc
 
-            for node in self.circuit.nodes.values():
-                if abs(mouse_x - node.x) < 0.2 * gs and abs(mouse_y - node.y) < 0.2 * gs:
-                    return node.x, node.y
+        # If not close grid position, attempt to snap to component
+        snapped = False
+        for cpt in self.circuit.elements.values():
+            gcpt = cpt.gcpt
+            if (gcpt is not None and gcpt is not self
+                and gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2):
+                mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
+                snapped = True
+
+        # If no near components, snap to grid
+        if not snapped:
+            return snap_x, snap_y
+
+        for node in self.circuit.nodes.values():
+            if abs(mouse_x - node.x) < 0.2 * gs and abs(mouse_y - node.y) < 0.2 * gs:
+                return node.x, node.y
         return mouse_x, mouse_y
 
     def clear(self):
@@ -911,6 +914,7 @@ class UIModelDnD(UIModelBase):
             return
 
         closest_node = self.closest_node(mouse_x, mouse_y)
+
         # If the crosshair is not over a node, snap to the grid (if enabled)
         if closest_node is None:
             if self.preferences.snap_grid:
@@ -924,22 +928,92 @@ class UIModelDnD(UIModelBase):
         else:
             self.crosshair.style = 'node'
 
-            # Update the crosshair position and set style to show it is over a node
+            # Update the crosshair position and set style to show it
+            # is over a node
             self.crosshair.update(position=(closest_node.pos.x,
                                             closest_node.pos.y), style='node')
 
+    def drag_cpt(self, cpt, mouse_x, mouse_y, key):
+
+        cpts = []
+        # If a component is selected
+
+        cpts.extend(cpt.gcpt.node1.connected)
+        cpts.extend(cpt.gcpt.node2.connected)
+
+        if not self.dragged:
+            self.dragged = True
+            x0, y0 = self.select_pos
+            x0, y0 = self.snap(x0, y0)
+            self.last_pos = x0, y0
+            self.node_positions = [(node.pos.x, node.pos.y)
+                                   for node in cpt.nodes]
+
+        # Split the component from the circuit if shifted
+        if key == 'shift':
+            # Separate component from connected nodes
+            self.select(self.on_cpt_split(cpt))
+
+        x_0, y_0 = self.last_pos
+        x_1, y_1 = self.snap(mouse_x, mouse_y, True)
+        self.last_pos = x_1, y_1
+
+        d_x = x_1 - x_0
+        d_y = y_1 - y_0
+
+        self.cpt_move(cpt, d_x, d_y, move_nodes=True)
+
+        # Check if the movement has left the circuit in an
+        # invalid state, if so, undo
+        cpts = cpt.gcpt.node1.connected
+        cpts.extend(cpt.gcpt.node2.connected)
+        cpts.remove(cpt)
+        for cpt in cpts:
+            gcpt = cpt.gcpt
+            if gcpt.node1.x == gcpt.node2.pos.x and gcpt.node1.y == gcpt.node2.pos.y:
+                if self.ui.debug:
+                    print(f'Invalid component placement, disallowing move')
+                self.cpt_move(cpt, -d_x, -d_y, move_nodes=True)
+
+    def drag_node(self, node, mouse_x, mouse_y, key):
+
+        cpts = []
+
+        # If a node is selected
+        cpts.extend(node.connected)
+        if not self.dragged:
+            self.dragged = True
+            # To save history, save first component position
+            self.node_positions = [(node.pos.x, node.pos.y)]
+
+        if key == 'shift':
+            if self.ui.debug:
+                print('Separating node from circuit')
+                print('node splitting is not available right now')
+
+        original_x, original_y = node.pos.x, node.pos.y
+
+        # Check if the movement has left the circuit in an
+        # invalid state, if so, undo
+        self.node_move(node, mouse_x, mouse_y)
+        for cpt1 in node.connected:
+            gcpt = cpt1.gcpt
+            if gcpt.node1.x == gcpt.node2.pos.x and gcpt.node1.y == cpt1.node2.pos.y:
+                if self.ui.debug:
+                    print(f'Invalid node placement, disallowing move')
+                self.node_move(node, original_x, original_y)
+
     def on_mouse_drag(self, mouse_x, mouse_y, key=None):
-        """
-        Performs operations when the user drags the mouse on the canvas.
-            Everything here is run on every mouse movement, so should be kept as low cpu usage as possible.
+        """Performs operations when the user drags the mouse on the canvas.
+        Everything here is run on every mouse movement, so should be
+        kept as low cpu usage as possible.
 
         Explanation
         ------------
         If a chosen component is not created, it will create a new one at the current position
         If that component already exists, it will move the second node to the mouse position.
 
-        It the chosen thing is a node, it will move that node to the current mouse position
-        otherwise, it will attempt to drag a chosen component
+        It the chosen thing is a node, it will move that node to the current mouse position otherwise, it will attempt to drag a chosen component
 
         Parameters
         ----------
@@ -963,6 +1037,7 @@ class UIModelDnD(UIModelBase):
             If 'shift' is pressed, attempt to separate the component from connected nodes
             If a node is selected, move that node to the new position, and store this position in history
             If 'shift' is pressed, attempt to separate the node from connected node (NOT IMPLEMENTED)
+
         """
 
         # Get crosshair position
@@ -972,25 +1047,26 @@ class UIModelDnD(UIModelBase):
         if self.get_navigate_mode() is not None:
             return
 
-        # Check if we are currently placing a component, and have
-        # already placed the first node
-        if self.new_component is not None:
-            self.node_move(self.new_component.gcpt.node2, mouse_x, mouse_y)
-            self.new_component.nodes[1].pos = self.new_component.gcpt.node2.pos
-            return
-        elif self.crosshair.thing is not None:
-            # Check if we need to place the first node
-            if self.ui.debug:
-                print('Creating new: ' + self.crosshair.thing.kind)
+        if self.new_cpt is not None:
+            # Placing second node of component
 
-            kind = (
-                '-' + self.crosshair.thing.kind
-                if self.crosshair.thing.kind != ''
-                else ''
-            )
+            gcpt = self.new_cpt.gcpt
+            self.node_move(gcpt.node2, mouse_x, mouse_y)
+            self.new_cpt.nodes[1].pos = gcpt.node2.pos
+            return
+
+        thing = self.crosshair.thing
+        if thing is not None:
+            # Placing first node of component
+
+            if self.ui.debug:
+                print('Creating new: ' + thing.kind)
+
+            kind = '-' + thing.kind if thing.kind != '' else ''
+
             # Create a new component
-            self.new_component = self.thing_create(
-                self.crosshair.thing.cpt_type,
+            self.new_cpt = self.thing_create(
+                thing.cpt_type,
                 mouse_x,
                 mouse_y,
                 mouse_x + 2,
@@ -998,74 +1074,22 @@ class UIModelDnD(UIModelBase):
                 # components now scale to the initial size of the
                 # component.
                 mouse_y,
-                kind=kind,
-            )
-            # Clear cursors, as we dont need them when placing a cpt
+                kind=kind)
+
+            # Clear cursors, as we don't need them when placing a component
             self.cursors.remove()
             return
-        components = []
-        if self.selected:
-            self.cursors.remove()
-            if self.cpt_selected:  # If a component is selected
-                components.extend(self.selected.gcpt.node1.connected)
-                components.extend(self.selected.gcpt.node2.connected)
-                if not self.dragged:
-                    self.dragged = True
-                    x0, y0 = self.select_pos
-                    x0, y0 = self.snap(x0, y0)
-                    self.last_pos = x0, y0
-                    self.node_positions = [(node.pos.x, node.pos.y)
-                                           for node in self.selected.nodes]
 
-                # Split the component from the circuit if shifted
-                if key == 'shift':
-                    # Separate component from connected nodes
-                    self.select(self.on_cpt_split(self.selected))
+        if not self.selected:
+            return
 
-                x_0, y_0 = self.last_pos
-                x_1, y_1 = self.snap(mouse_x, mouse_y)
-                self.last_pos = x_1, y_1
+        self.cursors.remove()
 
-                d_x = x_1 - x_0
-                d_y = y_1 - y_0
+        if self.cpt_selected:
+            self.drag_cpt(self.selected, mouse_x, mouse_y, key)
 
-                self.cpt_move(self.selected, d_x, d_y, move_nodes=True)
-
-                # Check if the movement has left the circuit in an
-                # invalid state, if so, undo
-                components = self.selected.gcpt.node1.connected
-                components.extend(self.selected.gcpt.node2.connected)
-                components.remove(self.selected)
-                for component in components:
-                    if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
-                        if self.ui.debug:
-                            print(f'Invalid component placement, disallowing move')
-                        self.cpt_move(self.selected, -d_x, -d_y, move_nodes=True)
-
-            else:  # if a node is selected
-                components.extend(self.selected.connected)
-                if not self.dragged:
-                    self.dragged = True
-                    # To save history, save first component position
-                    self.node_positions = [(self.selected.pos.x, self.selected.pos.y)]
-
-
-                if key == 'shift':
-                    if self.ui.debug:
-                        print('Separating node from circuit')
-                        print('node splitting is not available right now')
-
-                original_x, original_y = self.selected.pos.x, self.selected.pos.y
-
-                # Check if the movement has left the circuit in an invalid state, if so, undo
-                self.node_move(self.selected, mouse_x, mouse_y)
-                for component in self.selected.connected:
-                    if component.gcpt.node1.x == component.gcpt.node2.pos.x and component.gcpt.node1.y == component.gcpt.node2.pos.y:
-                        if self.ui.debug:
-                            print(f'Invalid node placement, disallowing move')
-                        self.node_move(self.selected, original_x, original_y)
-
-            #self.on_redraw()
+        else:
+            self.drag_node(self.selected, mouse_x, mouse_y, key)
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
@@ -1125,11 +1149,11 @@ class UIModelDnD(UIModelBase):
             return
 
         # If finished placing a component, stop placing
-        if self.new_component is not None:
+        if self.new_cpt is not None:
             # Add the brand new component to history
-            self.history.append(HistoryEvent('A', self.new_component))
+            self.history.append(HistoryEvent('A', self.new_cpt))
             if key != 'shift':
-                join_args = self.node_join(self.new_component.gcpt.node2)
+                join_args = self.node_join(self.new_cpt.gcpt.node2)
                 if join_args is not None:
                     # Add the join event to history
                     self.history.append(
@@ -1137,8 +1161,8 @@ class UIModelDnD(UIModelBase):
 
             # Reset crosshair mode
             self.crosshair.thing = None
-            # Clear up new_component to avoid confusion
-            self.new_component = None
+            # Clear up new_cpt to avoid confusion
+            self.new_cpt = None
 
         # If something is selected, and it has been moved
         elif self.selected is not None and self.node_positions is not None:
@@ -1369,9 +1393,9 @@ class UIModelDnD(UIModelBase):
             return
 
         # Destroy any created component
-        if self.new_component is not None:
-            self.cpt_delete(self.new_component)
-            self.new_component = None
+        if self.new_cpt is not None:
+            self.cpt_delete(self.new_cpt)
+            self.new_cpt = None
 
         # Clear cursors
         self.cursors.remove()

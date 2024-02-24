@@ -51,12 +51,11 @@ class CrossHair:
         if self.style is None:
         # If drawing a component, draw the component type
             if self.thing is not None:
-                if self.thing.cpt_type == "W":
+                if self.thing.cpt_type == 'W':
                     self.picture.add(
                         sketcher.stroke_filled_circle(
-                            self.x, self.y, radius=0.2 * scale, color=select_color, alpha=.5
-                        )
-                    )
+                            self.x, self.y, radius=0.2 * scale,
+                            color=select_color, alpha=.5))
                 else:
                     self.picture.add(
                         sketcher.text(
@@ -66,24 +65,21 @@ class CrossHair:
                             fontsize=self.model.preferences.font_size
                             * self.model.zoom_factor
                             * self.model.preferences.line_width_scale,
-                            color=line_color
-                        )
-                    )
+                            color=line_color))
 
-            # draw cursor
+            # Draw cursor
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale, linewidth=line_width,color=line_color
-                )
-            )
+                    self.x, self.y - 0.5 * scale, self.x, self.y + 0.5 * scale,
+                    linewidth=line_width, color=line_color))
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y, linewidth=line_width,color=line_color
-                )
-            )
+                    self.x - 0.5 * scale, self.y, self.x + 0.5 * scale, self.y,
+                    linewidth=line_width, color=line_color))
 
-        elif self.style == "node": # If node style
-            if self.thing is not None and (self.thing.cpt_type != "W"):
+        elif self.style == 'node':
+            # If node style
+            if self.thing is not None and (self.thing.cpt_type != 'W'):
                 self.picture.add(
                     sketcher.text(
                         self.x + 0.2 * scale,
@@ -93,43 +89,35 @@ class CrossHair:
                                  * self.model.zoom_factor
                                  * self.model.preferences.line_width_scale,
                         color=line_color,
-                        alpha=0
-                    )
-                )
+                        alpha=0))
 
             self.picture.add(
                 sketcher.stroke_circle(
-                    self.x, self.y, radius=0.2 * scale, color=line_color, linewidth=line_width, alpha=1
-                )
-            )
+                    self.x, self.y, radius=0.2 * scale, color=line_color,
+                    linewidth=line_width, alpha=1))
 
             self.picture.add(
                 sketcher.stroke_filled_circle(
-                    self.x, self.y, radius=0.1 * scale, color=select_color, linewidth=0, alpha=.5
-                )
-            )
+                    self.x, self.y, radius=0.1 * scale, color=select_color,
+                    linewidth=0, alpha=.5))
 
-            # draw cursor
+            # Draw cursor
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale,  linewidth=line_width, color=line_color
-                )
-            )
+                    self.x, self.y + 0.2 * scale, self.x, self.y + 0.5 * scale,
+                    linewidth=line_width, color=line_color))
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x, self.y - 0.5 * scale, self.x, self.y - 0.2 * scale,  linewidth=line_width,color=line_color
-                )
-            )
+                    self.x, self.y - 0.5 * scale, self.x, self.y - 0.2 * scale,
+                    linewidth=line_width, color=line_color))
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x + 0.2 * scale, self.y, self.x + 0.5 * scale, self.y,  linewidth=line_width,color=line_color
-                )
-            )
+                    self.x + 0.2 * scale, self.y, self.x + 0.5 * scale, self.y,
+                    linewidth=line_width, color=line_color))
             self.picture.add(
                 sketcher.stroke_line(
-                    self.x - 0.5 * scale, self.y, self.x - 0.2 * scale, self.y,  linewidth=line_width,color=line_color
-                )
-            )
+                    self.x - 0.5 * scale, self.y, self.x - 0.2 * scale, self.y,
+                    linewidth=line_width, color=line_color))
 
 
     def undraw(self):

@@ -1122,6 +1122,7 @@ class UIModelBase:
         # Snap to closest known node then snap to grid.
         node = self.closest_node(x, y)
         if node is not None:
+            print('Snapping to node', node)
             return node.x, node.y
 
         if self.preferences.snap_grid == 'true':
