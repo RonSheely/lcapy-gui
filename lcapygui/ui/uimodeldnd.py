@@ -908,7 +908,7 @@ class UIModelDnD(UIModelBase):
 
         """
 
-        if self.get_navigate_mode() is not None:
+        if False and self.get_navigate_mode() is not None:
             self.cursors.remove()
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
             return
@@ -1060,7 +1060,8 @@ class UIModelDnD(UIModelBase):
 
         """
 
-        # Disallow component placement and movement if in zoom mode
+        # Disallow component placement and movement if in zoom mode.
+        # Note, you can zoom in but then need to disable zoom mode.
         if self.get_navigate_mode() is not None:
             return
 
@@ -1287,14 +1288,18 @@ class UIModelDnD(UIModelBase):
         self.ui.new()
 
     def on_node_join(self, node=None):
+
         if node is None and self.node_selected:
             node = self.selected
+
         # Join selected node if close
         join_args = self.node_join(node)
+
         if join_args is not None:
             # Add the join event to history
             self.history.append(
-                HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+                HistoryEvent('J', from_nodes=join_args[0],
+                             to_nodes=join_args[1], cpt=join_args[2]))
 
     def on_cpt_split(self, cpt):
 

@@ -539,11 +539,14 @@ class UIModelBase:
         if to_node is None:
             print(f'No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})') if self.ui.debug else None
             to_node = self.closest_node(from_node.pos.x, from_node.pos.y, ignore=from_node)
-        if to_node is None:
-            print(f'No existing node found at ({from_node.pos.x}, {from_node.pos.y})') if self.ui.debug else None
-            return None
-        print(f'Joining {from_node.name} and {to_node.name}') if self.ui.debug else None
 
+        if to_node is None:
+            if self.ui.debug:
+                print(f'No existing node found at ({from_node.pos.x}, {from_node.pos.y})')
+            return None
+
+        if self.ui.debug:
+            print(f'Joining {from_node.name} and {to_node.name}')
 
         # If the two nodes are the same, disallow.  This should not happen.
         if from_node.name == to_node.name:
@@ -551,20 +554,13 @@ class UIModelBase:
                 this should not happen, and is likely due to an error.')
             return
 
-        connected_from = []
+        connected_from = from_node.connected
 
         # Update every component in node1 to be in node2
-        for cpt in from_node.connected:
-            # Store the moved component for return
-            connected_from.append(cpt)
-            # Remove node1 from the component
-            cpt.nodes.remove(from_node)
-            # Remove the component from node1
-            from_node.remove(cpt)
-            # Add the component to node2
-            to_node.append(cpt)
-            # Add node2 to the component
-            cpt.nodes.append(to_node)
+        for cpt in connected_from:
+            for node in cpt.nodes:
+                if node is from_node:
+                    node.name = to_node.name
 
         # Return information required for history
         return from_node, to_node, connected_from
@@ -583,6 +579,7 @@ class UIModelBase:
         -------
 
         """
+
         # Must pass in components to move
         if components is None or len(components) == 0:
             if self.ui.debug:
