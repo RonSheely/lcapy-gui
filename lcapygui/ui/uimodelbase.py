@@ -166,9 +166,6 @@ class UIModelBase:
 
     def apply_event(self, event, inverse):
 
-        cpt = event.cpt
-        code = event.code
-
         # Code:
         # A = add
         # D = delete
@@ -176,10 +173,11 @@ class UIModelBase:
         # J = join (nodes)
         # S = split (nodes)
 
-        if inverse:
-            code = event.inverse_code
+        code = event.inverse_code if inverse else event.code
 
         if code == 'A':
+            # Add component
+            cpt = event.cpt
             newcpt = self.circuit.add(str(cpt))
 
             # Copy node positions
@@ -193,37 +191,42 @@ class UIModelBase:
             self.select(new_cpt)
 
         elif code == 'D':
+            # Delete component
+            cpt = event.cpt
             self.cpt_delete(cpt)
 
         elif code == 'M':
-            # Check if moving a component or a node
-            if isinstance(cpt, Cpt):
-                nodes = event.from_nodes if inverse else event.to_nodes
+            # Move component
+            cpt = event.cpt
+            nodes = event.from_nodes if inverse else event.to_nodes
 
-                for node, pos in zip(cpt.nodes, nodes):
-                    node.pos.x = pos[0]
-                    node.pos.y = pos[1]
-
-                self.select(cpt)
-            else:
-                node = cpt
-                pos = event.from_nodes[0] if inverse else event.to_nodes[0]
-
+            for node, pos in zip(cpt.nodes, nodes):
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
-                self.select(node)
+            self.select(cpt)
+
+        elif code == 'N':
+            # Move node
+            node = event.cpt
+            pos = event.from_nodes[0] if inverse else event.to_nodes[0]
+
+            node.pos.x = pos[0]
+            node.pos.y = pos[1]
+
+            self.select(node)
             self.on_redraw()
 
         elif code == 'J':
+            # Join nodes
             self.node_join(event.from_nodes)
 
         elif code == 'S':
-            connected_from = cpt
+            # Split nodes
+            cpt = event.cpt
             new_node = event.from_nodes
             existing_node = event.to_nodes
-            # Split the nodes
-            self.node_split(existing_node, new_node, connected_from)
+            self.node_split(existing_node, new_node, cpt)
 
         # The network has changed
         self.invalidate()
@@ -848,7 +851,6 @@ class UIModelBase:
         # Move nodes
         self.node_move(gcpt.node1, r1_x, r1_y)
         self.node_move(gcpt.node2, r2_x, r2_y)
-
 
     def save(self, pathname):
 

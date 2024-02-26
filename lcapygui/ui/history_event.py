@@ -1,9 +1,8 @@
 class HistoryEvent:
 
-    def __init__(self, code, cpt, from_nodes=None, to_nodes=None,
+    def __init__(self, cpt, from_nodes=None, to_nodes=None,
                  join_nodes=None):
 
-        self.code = code
         self.cpt = cpt
         self.from_nodes = from_nodes
         self.to_nodes = to_nodes
@@ -30,6 +29,12 @@ class HistoryEventMove(HistoryEvent):
 
     code = 'M'
     inverse_code = 'M'
+
+
+class HistoryEventMoveNode(HistoryEvent):
+
+    code = 'N'
+    inverse_code = 'N'
 
 
 class HistoryEventJoin(HistoryEvent):

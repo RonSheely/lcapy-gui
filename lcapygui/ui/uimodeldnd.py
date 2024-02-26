@@ -14,6 +14,7 @@ from .cursor import Cursor
 from .cursors import Cursors
 from .history_event import HistoryEventAdd, HistoryEventDelete
 from .history_event import HistoryEventMove, HistoryEventJoin
+from .history_event import HistoryEventMoveNode
 from .uimodelbase import UIModelBase
 
 
@@ -1195,14 +1196,14 @@ class UIModelDnD(UIModelBase):
 
         # If something is selected, and it has been moved
         elif self.selected is not None and self.node_positions is not None:
-            if self.cpt_selected:  # Moving a component
+            if self.cpt_selected:
                 # Add moved component to history
                 node_positions = [
                     (node.pos.x, node.pos.y) for node in self.selected.nodes
                 ]
-                self.history.append(
-                    HistoryEventMove(self.selected, self.node_positions,
-                                     node_positions))
+                self.history.append(HistoryEventMove(self.selected,
+                                                     self.node_positions,
+                                                     node_positions))
                 self.node_positions = None
 
                 if key == 'shift':
@@ -1210,12 +1211,12 @@ class UIModelDnD(UIModelBase):
                                  self.selected.gcpt.node2):
                         self.on_node_join(node)
 
-            else:  # Moving a node
+            else:
                 # Add moved node to history
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
-                self.history.append(
-                    HistoryEventMove(self.selected, self.node_positions,
-                                     node_position))
+                self.history.append(HistoryEventMoveNode(self.selected,
+                                                         self.node_positions,
+                                                         node_position))
                 self.node_positions = None
 
                 # If not denied, try to join
@@ -1224,7 +1225,8 @@ class UIModelDnD(UIModelBase):
 
         # Redraw screen for accurate display of labels
         self.on_redraw()
-        # Used to determine if a component or node is being moved in the on_mouse_drag method
+        # Used to determine if a component or node is being moved in
+        # the on_mouse_drag method
         self.dragged = False
         # Ensure node_positions is cleared to avoid duplicate history events
         self.node_positions = None
