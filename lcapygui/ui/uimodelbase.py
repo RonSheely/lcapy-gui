@@ -5,7 +5,7 @@ from ..components.opamp import Opamp
 from ..components.pos import Pos
 from ..components.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from .history import History
-from .history_event import HistoryEvent
+from .history_event import HistoryEventAdd, HistoryEventDelete, HistoryEventMove
 from warnings import warn
 
 from copy import copy
@@ -168,6 +168,7 @@ class UIModelBase:
 
         cpt = event.cpt
         code = event.code
+
         # Code:
         # A = add
         # D = delete
@@ -176,7 +177,7 @@ class UIModelBase:
         # S = split (nodes)
 
         if inverse:
-            code = {'A': 'D', 'D': 'A', 'M': 'M', 'J': 'S', 'S': 'J'}[code]
+            code = event.inverse_code
 
         if code == 'A':
             newcpt = self.circuit.add(str(cpt))
@@ -211,10 +212,6 @@ class UIModelBase:
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
-                # If a subsequent join occurred, redo that too
-                if len(self.recall) and self.recall[-1].code == 'J':
-                    self.redo()
-
                 self.select(node)
             self.on_redraw()
 
@@ -227,10 +224,6 @@ class UIModelBase:
             existing_node = event.to_nodes
             # Split the nodes
             self.node_split(existing_node, new_node, connected_from)
-
-            # If a preceding movement occurred, undo that too
-            if len(self.history) > 0 and self.history[-1].code == 'M':
-                self.undo()
 
         # The network has changed
         self.invalidate()
@@ -298,7 +291,7 @@ class UIModelBase:
             return None
 
         cpt = self.thing_create(cpt_type, x1, y1, x2, y2, kind)
-        self.history.append(HistoryEvent('A', cpt))
+        self.history.append(HistoryEventAdd(cpt))
         self.select(cpt)
         return cpt
 
@@ -661,7 +654,7 @@ class UIModelBase:
     def create(self, thing, x1, y1, x2, y2, kind=''):
 
         cpt = self.cpt_create(thing, x1, y1, x2, y2, kind)
-        self.history.append(HistoryEvent('A', cpt))
+        self.history.append(HistoryEventAdd(cpt))
 
     def cut(self, cpt):
 
@@ -671,7 +664,7 @@ class UIModelBase:
     def delete(self, cpt):
 
         self.cpt_delete(cpt)
-        self.history.append(HistoryEvent('D', cpt))
+        self.history.append(HistoryEventDelete(cpt))
 
     def draw(self, cpt, **kwargs):
 
@@ -777,7 +770,7 @@ class UIModelBase:
 
         cpt = self.thing_create(self.clipboard.type, x1, y1, x2, y2,
                                 self.clipboard.kind)
-        self.history.append(HistoryEvent('A', cpt))
+        self.history.append(HistoryEventAdd(cpt))
         self.select(cpt)
         return cpt
 
@@ -850,7 +843,7 @@ class UIModelBase:
         # Add rotation to history
         node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
         new_positions = [(r1_x, r1_y), (r2_x, r2_y)]
-        self.history.append(HistoryEvent('M', cpt, node_positions, new_positions))
+        self.history.append(HistoryEventMove(cpt, node_positions, new_positions))
 
         # Move nodes
         self.node_move(gcpt.node1, r1_x, r1_y)

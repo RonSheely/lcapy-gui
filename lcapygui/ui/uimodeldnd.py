@@ -12,7 +12,8 @@ from lcapy.mnacpts import Cpt
 from lcapy.nodes import Node
 from .cursor import Cursor
 from .cursors import Cursors
-from .history_event import HistoryEvent
+from .history_event import HistoryEventAdd, HistoryEventDelete
+from .history_event import HistoryEventMove, HistoryEventJoin
 from .uimodelbase import UIModelBase
 
 
@@ -1177,15 +1178,15 @@ class UIModelDnD(UIModelBase):
         # If finished placing a component, stop placing
         if self.new_cpt is not None:
             # Add the brand new component to history
-            self.history.append(HistoryEvent('A', self.new_cpt))
+            self.history.append(HistoryEventAdd(self.new_cpt))
             if key != 'shift':
                 join_args = self.node_join(self.new_cpt.gcpt.node2)
                 if join_args is not None:
                     # Add the join event to history
                     from_node, to_node, cpts = join_args
                     self.history.append(
-                        HistoryEvent('J', from_nodes=from_node,
-                                     to_nodes=to_node, cpt=cpts))
+                        HistoryEventJoin(from_nodes=from_node,
+                                         to_nodes=to_node, cpt=cpts))
 
             # Reset crosshair mode
             self.crosshair.thing = None
@@ -1200,22 +1201,21 @@ class UIModelDnD(UIModelBase):
                     (node.pos.x, node.pos.y) for node in self.selected.nodes
                 ]
                 self.history.append(
-                    HistoryEvent(
-                        'M', self.selected, self.node_positions, node_positions
-                    )
-                )
+                    HistoryEventMove(self.selected, self.node_positions,
+                                     node_positions))
                 self.node_positions = None
 
                 if key == 'shift':
-                    for node in (self.selected.gcpt.node1, self.selected.gcpt.node2):
+                    for node in (self.selected.gcpt.node1,
+                                 self.selected.gcpt.node2):
                         self.on_node_join(node)
 
             else:  # Moving a node
                 # Add moved node to history
                 node_position = [(self.selected.pos.x, self.selected.pos.y)]
                 self.history.append(
-                    HistoryEvent('M', self.selected, self.node_positions, node_position)
-                )
+                    HistoryEventMove(self.selected, self.node_positions,
+                                     node_position))
                 self.node_positions = None
 
                 # If not denied, try to join
@@ -1303,8 +1303,8 @@ class UIModelDnD(UIModelBase):
         from_node, to_node, cpts = join_args
 
         self.history.append(
-            HistoryEvent('J', from_nodes=from_node,
-                         to_nodes=to_node, cpt=cpts))
+            HistoryEventJoin(from_nodes=from_node,
+                             to_nodes=to_node, cpt=cpts))
 
     def on_cpt_split(self, cpt):
 
@@ -1323,11 +1323,11 @@ class UIModelDnD(UIModelBase):
         type = gcpt.type
         kind = gcpt.kind
         # Delete the existing component
-        self.history.append(HistoryEvent('D', cpt))
+        self.history.append(HistoryEventDelete(cpt))
         self.cpt_delete(cpt)
         # Create a new separated component
         new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False, kind=kind)
-        self.history.append(HistoryEvent('A', new_cpt))
+        self.history.append(HistoryEventAdd(new_cpt))
 
         return new_cpt
 

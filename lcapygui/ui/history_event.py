@@ -12,3 +12,33 @@ class HistoryEvent:
     def __str__(self):
 
         return '%s %s %s -> %s' % (self.code, self.cpt, self.from_nodes, self.to_nodes)
+
+
+class HistoryEventAdd(HistoryEvent):
+
+    code = 'A'
+    inverse_code = 'D'
+
+
+class HistoryEventDelete(HistoryEvent):
+
+    code = 'D'
+    inverse_code = 'A'
+
+
+class HistoryEventMove(HistoryEvent):
+
+    code = 'M'
+    inverse_code = 'M'
+
+
+class HistoryEventJoin(HistoryEvent):
+
+    code = 'J'
+    inverse_code = 'S'
+
+
+class HistoryEventSplit(HistoryEvent):
+
+    code = 'S'
+    inverse_code = 'J'
