@@ -165,6 +165,7 @@ class UIModelBase:
         return self._analysis_circuit
 
     def apply_event(self, event, inverse):
+
         cpt = event.cpt
         code = event.code
         # Code:
@@ -211,7 +212,7 @@ class UIModelBase:
                 node.pos.y = pos[1]
 
                 # If a subsequent join occurred, redo that too
-                if self.recall[-1].code == 'J':
+                if len(self.recall) and self.recall[-1].code == 'J':
                     self.redo()
 
                 self.select(node)
@@ -537,7 +538,9 @@ class UIModelBase:
         """
 
         if to_node is None:
-            print(f'No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})') if self.ui.debug else None
+            if self.ui.debug:
+                print(f'No node provided, searching for existing node at ({from_node.pos.x}, {from_node.pos.y})')
+
             to_node = self.closest_node(from_node.pos.x, from_node.pos.y, ignore=from_node)
 
         if to_node is None:
@@ -556,14 +559,12 @@ class UIModelBase:
 
         connected_from = from_node.connected
 
-        # Update every component in node1 to be in node2
-        for cpt in connected_from:
-            for node in cpt.nodes:
-                if node is from_node:
-                    node.name = to_node.name
+        old_node = Node(None, from_node.name)
+
+        from_node.name = to_node.name
 
         # Return information required for history
-        return from_node, to_node, connected_from
+        return old_node, to_node, connected_from
 
     def node_split(self, existing_node, new_node=None, components=None):
         """
@@ -587,30 +588,8 @@ class UIModelBase:
             return None
         if new_node is None:
             return
-            # TODO: Implement creating a new node if none is passed in
-            # new_node = Node(self.circuit, new_node_name)
-            # # Add the new node to the circuit
-            # self.circuit.nodes[new_node_name] = new_node
-            # # Copy the original nodes position
-            # new_node.pos = copy(existing_node.pos)
 
-        # Ensure the new node is on the circuit
-        self.circuit.nodes[new_node.name] = new_node
-        # Copy the original nodes position
-        new_node.pos = copy(existing_node.pos)
-
-        # Update every component in components to be in new_node
-        for cpt in components:
-            # Remove the component from existing_node
-            existing_node.remove(cpt)
-            # Remove existing_node from the component
-            cpt.nodes.remove(existing_node)
-            # Add the component to new_node
-            new_node.append(cpt)
-            # Add new_node to the component
-            cpt.nodes.append(new_node)
-
-        # Return the new node
+        existing_node.rename(new_node.name, components)
         return new_node
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):

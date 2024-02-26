@@ -1182,8 +1182,10 @@ class UIModelDnD(UIModelBase):
                 join_args = self.node_join(self.new_cpt.gcpt.node2)
                 if join_args is not None:
                     # Add the join event to history
+                    from_node, to_node, cpts = join_args
                     self.history.append(
-                        HistoryEvent('J', from_nodes=join_args[0], to_nodes=join_args[1], cpt=join_args[2]))
+                        HistoryEvent('J', from_nodes=from_node,
+                                     to_nodes=to_node, cpt=cpts))
 
             # Reset crosshair mode
             self.crosshair.thing = None
@@ -1294,12 +1296,15 @@ class UIModelDnD(UIModelBase):
 
         # Join selected node if close
         join_args = self.node_join(node)
+        if join_args is None:
+            return
 
-        if join_args is not None:
-            # Add the join event to history
-            self.history.append(
-                HistoryEvent('J', from_nodes=join_args[0],
-                             to_nodes=join_args[1], cpt=join_args[2]))
+        # Add the join event to history
+        from_node, to_node, cpts = join_args
+
+        self.history.append(
+            HistoryEvent('J', from_nodes=from_node,
+                         to_nodes=to_node, cpt=cpts))
 
     def on_cpt_split(self, cpt):
 

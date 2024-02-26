@@ -27,7 +27,7 @@ setup(
     ],
     install_requires=[
         "setuptools",
-        "lcapy>=1.17",
+        "lcapy>=1.21",
         "numpy",
         "tk",
         "pillow>=9.4.0",
