@@ -925,6 +925,31 @@ class UIModelDnD(UIModelBase):
 
         self.cpt_move(cpt, d_x, d_y, move_nodes=True)
 
+    def node_attach1(self, node):
+
+        nodes = self.overlapping_nodes(node.pos.x, node.pos.y, node)
+        if len(nodes) == 0:
+            return None
+
+        if len(nodes) > 1:
+            print('Non connected nodes', nodes)
+
+        return nodes[0]
+
+    def node_attach(self, node):
+
+        anode = self.node_attach1(node)
+        if anode is None:
+            return
+
+        node.rename(anode.name)
+
+        for cpt in node.connected:
+            gcpt = cpt.gcpt
+            for m, node1 in enumerate(gcpt.nodes):
+                if node1.name == node.name:
+                    gcpt.nodes[m] = node
+
     def node_drag(self, node, mouse_x, mouse_y, key):
 
         if not self.dragged:
@@ -1029,7 +1054,7 @@ class UIModelDnD(UIModelBase):
             # Get crosshair position
             mouse_x, mouse_y = self.crosshair.position
 
-            # Create a new component
+            # Create a new component (the second node is filled in later)
             self.new_cpt = self.thing_create(
                 thing.cpt_type,
                 mouse_x,
@@ -1116,13 +1141,8 @@ class UIModelDnD(UIModelBase):
 
             node = self.new_cpt.gcpt.node2
             # Look for overlap with another node
-            nodes = self.overlapping_nodes(node.pos.x, node.pos.y, node)
-            if len(nodes) > 1:
-                print('Non connected nodes', nodes)
-            elif len(nodes) == 1:
-                # CHECKME if have more than 2 nodes...
-                self.new_cpt.gcpt.nodes[1] = nodes[0]
-                nodes[0].append(self.new_cpt)
+
+            self.node_attach(node)
 
             # Add the brand new component to history
             self.history.append(HistoryEventAdd(self.new_cpt))
@@ -1134,10 +1154,20 @@ class UIModelDnD(UIModelBase):
         # If something is selected, and it has been moved
         elif self.selected is not None and self.node_positions is not None:
             if self.cpt_selected:
+
+                cpt = self.selected
+
+                for node in cpt.nodes:
+                    self.node_attach(node)
+
                 # Add moved component to history
                 node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
             else:
-                node_positions = [(self.selected.pos.x, self.selected.pos.y)]
+
+                node = self.selected
+                self.node_attach(node)
+
+                node_positions = [(node.pos.x, node.pos.y)]
 
             self.history.append(HistoryEventMove(self.selected,
                                                  self.node_positions,

@@ -68,7 +68,8 @@ class Stretchy(Component):
         kwargs.pop('mirror', False)
         kwargs.pop('invert', False)
 
-        # Change style of 'stretchy' lines if their respective node is not connected
+        # Change style of 'stretchy' lines if their respective node
+        # is not connected
 
         linestyle1 = linestyle2 = kwargs.pop('linestyle', 'solid')
         if len(self.node1.connected) < 2 and model.closest_node(self.node1.pos.x, self.node1.pos.y, ignore=self.node1) is not None:
