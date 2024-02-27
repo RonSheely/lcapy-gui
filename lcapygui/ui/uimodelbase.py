@@ -198,35 +198,26 @@ class UIModelBase:
         elif code == 'M':
             # Move component
             cpt = event.cpt
-            nodes = event.from_nodes if inverse else event.to_nodes
+            if isinstance(cpt, Cpt):
+                nodes = event.from_nodes if inverse else event.to_nodes
 
-            for node, pos in zip(cpt.nodes, nodes):
+                for node, pos in zip(cpt.nodes, nodes):
+                    node.pos.x = pos[0]
+                    node.pos.y = pos[1]
+
+            else:
+                node = cpt
+                pos = event.from_nodes[0] if inverse else event.to_nodes[0]
+
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
 
             self.select(cpt)
-
-        elif code == 'N':
-            # Move node
-            node = event.cpt
-            pos = event.from_nodes[0] if inverse else event.to_nodes[0]
-
-            node.pos.x = pos[0]
-            node.pos.y = pos[1]
-
-            self.select(node)
             self.on_redraw()
 
-        elif code == 'J':
-            # Join nodes
-            self.node_join(event.from_nodes)
+        else:
+            raise ValueError('Unhandled event', code)
 
-        elif code == 'S':
-            # Split nodes
-            cpt = event.cpt
-            new_node = event.from_nodes
-            existing_node = event.to_nodes
-            self.node_split(existing_node, new_node, cpt)
 
         # The network has changed
         self.invalidate()
@@ -261,6 +252,40 @@ class UIModelBase:
             if name not in self.circuit.elements:
                 return name
             num += 1
+
+    def closest_node(self, x, y, ignore=None):
+        """
+        Returns the node closest to the specified position
+
+        Parameters
+        ----------
+        x : float
+            x position
+        y : float
+            y position
+        ignore : lcapy.nodes.Node or list[lcapy.nodes.Node, ...], optional
+            Node(s) to ignore
+
+        """
+
+        if type(ignore) == Node:
+            ignore = [ignore]
+
+        for node in self.circuit.nodes.values():
+            if node.pos is None:
+                # This happens with opamps.  Node 0 is the default
+                # reference pin.
+                warn('Ignoring node %s with no position' % node.name)
+                continue
+            elif ignore is not None and node in ignore:
+                if self.ui.debug:
+                    print('Ignoring node %s' % node.name)
+                continue
+            x1, y1 = node.pos.x, node.pos.y
+            rsq = (x1 - x) ** 2 + (y1 - y) ** 2
+            if rsq < 0.1:
+                return node
+        return None
 
     def copy(self, cpt):
 
@@ -765,6 +790,34 @@ class UIModelBase:
         self.invalidate()
         self.check_drawable_nodes()
         self.redraw()
+
+    def overlapping_nodes(self, x, y, ignore=None):
+        """
+        Returns the list of nodes close to the specified position
+
+        Parameters
+        ----------
+        x : float
+            x position
+        y : float
+            y position
+        """
+
+        nodes = []
+
+        for node in self.circuit.nodes.values():
+            if node is ignore:
+                continue
+            if node.pos is None:
+                # This happens with opamps.  Node 0 is the default
+                # reference pin.
+                warn('Ignoring node %s with no position' % node.name)
+                continue
+            x1, y1 = node.pos.x, node.pos.y
+            rsq = (x1 - x) ** 2 + (y1 - y) ** 2
+            if rsq < 0.1:
+                nodes.append(node)
+        return nodes
 
     def paste(self, x1, y1, x2, y2):
 

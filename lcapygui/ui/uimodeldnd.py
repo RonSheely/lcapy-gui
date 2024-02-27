@@ -14,7 +14,7 @@ from .cursor import Cursor
 from .cursors import Cursors
 from .history_event import HistoryEventAdd, HistoryEventDelete
 from .history_event import HistoryEventMove, HistoryEventJoin
-from .history_event import HistoryEventMoveNode
+from .history_event import HistoryEventMoveAttach
 from .uimodelbase import UIModelBase
 
 
@@ -226,40 +226,6 @@ class UIModelDnD(UIModelBase):
             if gcpt.is_within_bbox(x, y):
                 return cpt
 
-        return None
-
-    def closest_node(self, x, y, ignore=None):
-        """
-        Returns the node closest to the specified position
-
-        Parameters
-        ----------
-        x : float
-            x position
-        y : float
-            y position
-        ignore : lcapy.nodes.Node or list[lcapy.nodes.Node, ...], optional
-            Node(s) to ignore
-
-        """
-
-        if type(ignore) == Node:
-            ignore = [ignore]
-
-        for node in self.circuit.nodes.values():
-            if node.pos is None:
-                # This happens with opamps.  Node 0 is the default
-                # reference pin.
-                warn('Ignoring node %s with no position' % node.name)
-                continue
-            elif ignore is not None and node in ignore:
-                if self.ui.debug:
-                    print('Ignoring node %s' % node.name)
-                continue
-            x1, y1 = node.pos.x, node.pos.y
-            rsq = (x1 - x) ** 2 + (y1 - y) ** 2
-            if rsq < 0.1:
-                return node
         return None
 
     def component_between_cursors(self):
@@ -935,13 +901,7 @@ class UIModelDnD(UIModelBase):
         # Update position and reset style
         self.crosshair.update(position=(mouse_x, mouse_y), style=None)
 
-    def drag_cpt(self, cpt, mouse_x, mouse_y, key):
-
-        cpts = []
-        # If a component is selected
-
-        cpts.extend(cpt.gcpt.node1.connected)
-        cpts.extend(cpt.gcpt.node2.connected)
+    def cpt_drag(self, cpt, mouse_x, mouse_y, key):
 
         if not self.dragged:
             self.dragged = True
@@ -951,10 +911,10 @@ class UIModelDnD(UIModelBase):
             self.node_positions = [(node.pos.x, node.pos.y)
                                    for node in cpt.nodes]
 
-        # Split the component from the circuit if shifted
-        if key == 'shift':
-            # Separate component from connected nodes
-            self.select(self.on_cpt_split(cpt))
+            self.detach = key == 'shift'
+            if self.detach:
+                # Separate component from connected nodes
+                self.select(self.on_cpt_split(cpt))
 
         x_0, y_0 = self.last_pos
         x_1, y_1 = self.snap(mouse_x, mouse_y, True)
@@ -965,29 +925,17 @@ class UIModelDnD(UIModelBase):
 
         self.cpt_move(cpt, d_x, d_y, move_nodes=True)
 
-        # Check if the movement has left the circuit in an
-        # invalid state, if so, undo
-        cpts = cpt.gcpt.node1.connected
-        cpts.extend(cpt.gcpt.node2.connected)
-        cpts.remove(cpt)
-        for cpt in cpts:
-            gcpt = cpt.gcpt
-            if gcpt.node1.x == gcpt.node2.pos.x and gcpt.node1.y == gcpt.node2.pos.y:
-                if self.ui.debug:
-                    print(f'Invalid component placement, disallowing move')
-                self.cpt_move(cpt, -d_x, -d_y, move_nodes=True)
-
-    def drag_node(self, node, mouse_x, mouse_y, key):
+    def node_drag(self, node, mouse_x, mouse_y, key):
 
         if not self.dragged:
             self.dragged = True
+
             # To save history, save first component position
             self.node_positions = [(node.pos.x, node.pos.y)]
 
-        if key == 'shift':
-            if self.ui.debug:
-                print('Separating node from circuit')
-                print('node splitting is not available right now')
+            self.detach = key == 'shift'
+            if self.detach:
+                print('Node detaching not supported yet')
 
         original_x, original_y = node.pos.x, node.pos.y
 
@@ -1014,16 +962,6 @@ class UIModelDnD(UIModelBase):
                         mouse_y = self.snap_to_grid_y(mouse_y)
 
         self.node_move(node, mouse_x, mouse_y)
-
-        # Check if the movement has left the circuit in an
-        # invalid state, if so, undo
-        for cpt1 in node.connected:
-            gcpt = cpt1.gcpt
-            if (gcpt.node1.x == gcpt.node2.pos.x and
-                gcpt.node1.y == gcpt.node2.pos.y):
-                if self.ui.debug:
-                    print(f'Invalid node placement, disallowing move')
-                self.node_move(node, original_x, original_y)
 
     def on_mouse_drag(self, mouse_x, mouse_y, key=None):
         """Performs operations when the user drags the mouse on the canvas.
@@ -1113,11 +1051,9 @@ class UIModelDnD(UIModelBase):
         self.cursors.remove()
 
         if self.cpt_selected:
-
-            self.drag_cpt(self.selected, mouse_x, mouse_y, key)
-
+            self.cpt_drag(self.selected, mouse_x, mouse_y, key)
         else:
-            self.drag_node(self.selected, mouse_x, mouse_y, key)
+            self.node_drag(self.selected, mouse_x, mouse_y, key)
 
     def on_mouse_scroll(self, scroll_direction, mouse_x, mouse_y):
         """
@@ -1146,8 +1082,7 @@ class UIModelDnD(UIModelBase):
     def on_mouse_release(self, key=None):
         """
         Performs operations on mouse release.
-        High cpu usage operations should be placed here rather than in on_mouse_drag or on_mouse_move where possible, as
-        this method is only called once per mouse release.
+        High cpu usage operations should be placed here rather than in on_mouse_drag or on_mouse_move where possible, as this method is only called once per mouse release.
 
         Parameters
         ----------
@@ -1178,50 +1113,36 @@ class UIModelDnD(UIModelBase):
 
         # If finished placing a component, stop placing
         if self.new_cpt is not None:
+
+            node = self.new_cpt.gcpt.node2
+            # Look for overlap with another node
+            nodes = self.overlapping_nodes(node.pos.x, node.pos.y, node)
+            if len(nodes) > 1:
+                print('Non connected nodes', nodes)
+            elif len(nodes) == 1:
+                # CHECKME if have more than 2 nodes...
+                self.new_cpt.gcpt.nodes[1] = nodes[0]
+                nodes[0].append(self.new_cpt)
+
             # Add the brand new component to history
             self.history.append(HistoryEventAdd(self.new_cpt))
-            if key != 'shift':
-                join_args = self.node_join(self.new_cpt.gcpt.node2)
-                if join_args is not None:
-                    # Add the join event to history
-                    from_node, to_node, cpts = join_args
-                    self.history.append(
-                        HistoryEventJoin(from_nodes=from_node,
-                                         to_nodes=to_node, cpt=cpts))
 
             # Reset crosshair mode
             self.crosshair.thing = None
-            # Clear up new_cpt to avoid confusion
             self.new_cpt = None
 
         # If something is selected, and it has been moved
         elif self.selected is not None and self.node_positions is not None:
             if self.cpt_selected:
                 # Add moved component to history
-                node_positions = [
-                    (node.pos.x, node.pos.y) for node in self.selected.nodes
-                ]
-                self.history.append(HistoryEventMove(self.selected,
-                                                     self.node_positions,
-                                                     node_positions))
-                self.node_positions = None
-
-                if key == 'shift':
-                    for node in (self.selected.gcpt.node1,
-                                 self.selected.gcpt.node2):
-                        self.on_node_join(node)
-
+                node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
             else:
-                # Add moved node to history
-                node_position = [(self.selected.pos.x, self.selected.pos.y)]
-                self.history.append(HistoryEventMoveNode(self.selected,
-                                                         self.node_positions,
-                                                         node_position))
-                self.node_positions = None
+                node_positions = [(self.selected.pos.x, self.selected.pos.y)]
 
-                # If not denied, try to join
-                if key == 'shift':
-                    self.on_node_join(self.selected)
+            self.history.append(HistoryEventMove(self.selected,
+                                                 self.node_positions,
+                                                 node_positions))
+            self.node_positions = None
 
         # Redraw screen for accurate display of labels
         self.on_redraw()
@@ -1324,9 +1245,11 @@ class UIModelDnD(UIModelBase):
         x2, y2 = gcpt.node2.pos.x, gcpt.node2.pos.y
         type = gcpt.type
         kind = gcpt.kind
+
         # Delete the existing component
         self.history.append(HistoryEventDelete(cpt))
         self.cpt_delete(cpt)
+
         # Create a new separated component
         new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False, kind=kind)
         self.history.append(HistoryEventAdd(new_cpt))
