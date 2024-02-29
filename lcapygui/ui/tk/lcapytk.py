@@ -140,6 +140,7 @@ class LcapyTk(Tk):
         self.menu_parts["inspect_properties"] = MenuItem('Properties', self.on_inspect_properties)
         self.menu_parts["inspect_voltage"] = MenuItem('Voltage', self.on_inspect_voltage)
         self.menu_parts["inspect_current"] = MenuItem('Current', self.on_inspect_current)
+        self.menu_parts["inspect_noise_voltage"] = MenuItem('Noise voltage', self.on_inspect_noise_voltage)
         self.menu_parts["inspect_thevenin_impedence"] = MenuItem('Thevenin impedance', self.on_inspect_thevenin_impedance)
         self.menu_parts["inspect_norton_admittance"] = MenuItem('Norton admittance', self.on_inspect_norton_admittance)
         self.menu_parts["inspect_noise_voltage"] = MenuItem('Noise voltage', self.on_inspect_noise_voltage)
@@ -216,6 +217,7 @@ class LcapyTk(Tk):
         self.menu_parts["dropdown_inspect_menu"] = MenuDropdown('Inspect', 0, [
             self.menu_parts["inspect_voltage"],
             self.menu_parts["inspect_current"],
+            self.menu_parts["inspect_noise_voltage"],
             self.menu_parts["inspect_thevenin_impedence"],
             self.menu_parts["inspect_norton_admittance"],
             self.menu_parts["inspect_noise_voltage"],
@@ -223,6 +225,7 @@ class LcapyTk(Tk):
         ])
         self.menu_parts["dropdown_node_inspect_menu"] = MenuDropdown('Inspect', 0, [
             self.menu_parts["inspect_voltage"],
+            self.menu_parts["inspect_noise_voltage"],
         ])
         self.menu_parts["dropdown_manipulate_menu"] = MenuDropdown('Manipulate', 0, [
             self.menu_parts["manipulate_independent_sources_kill"],
