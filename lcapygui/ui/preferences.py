@@ -7,7 +7,7 @@ from warnings import warn
 
 class Preferences:
 
-    circuitikz_default_line_width = 1.0
+    circuitikz_default_line_width = 0.4   # pt
     circuitikz_default_scale = 1.0
     circuitikz_default_cpt_size = 1.5
 
@@ -66,14 +66,16 @@ class Preferences:
         self.style = 'american'
         self.voltage_dir = 'RP'
         self.grid = 'on'
+        # Line width in pt.
         self.line_width = self.circuitikz_default_line_width
         self.scale = self.circuitikz_default_scale
         self.show_units = 'false'
         self.xsize = 16
         self.ysize = 10
         self.snap_grid = 'true'
-        # This is the scaling used to set the circuitikz line width
-        self.line_width_scale = 1.01
+        # This is the scaling used to set the matplotlib line width
+        # from the circuitikz line width.
+        self.line_width_scale = 1.01 * 2.5
         self.node_size = 0.07
         self.node_color = 'black'
         self.current_sign_convention = 'passive'
@@ -85,8 +87,6 @@ class Preferences:
         self.grid_spacing = 0.5
 
         self.color_scheme = "default"
-
-
 
     def apply(self):
 
@@ -124,9 +124,8 @@ class Preferences:
             setattr(self, k, v)
 
         if hasattr(self, 'lw'):
-            warn('lw is superseded by line_width')
-            self.line_width = float(v) / self.line_width_scale
             delattr(self, 'lw')
+            warn('lw ignored, it is superseded by line_width')
 
         if (hasattr(self, 'line_width')
                 and not isinstance(self.line_width, float)):
@@ -142,7 +141,6 @@ class Preferences:
             if self.label_style == 'name+value':
                 self.label_style = 'name=value'
             delattr(self, 'label_cpts')
-
 
         # Update the preferences file if the version changed
         if version != self.version:

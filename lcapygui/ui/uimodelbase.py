@@ -201,16 +201,20 @@ class UIModelBase:
             if isinstance(cpt, Cpt):
                 nodes = event.from_nodes if inverse else event.to_nodes
 
-                for node, pos in zip(cpt.nodes, nodes):
+                for node, foo in zip(cpt.nodes, nodes):
+                    name, pos = foo
                     node.pos.x = pos[0]
                     node.pos.y = pos[1]
+                    self.node_rename(node, name)
 
             else:
                 node = cpt
-                pos = event.from_nodes[0] if inverse else event.to_nodes[0]
+                nodes = event.from_nodes if inverse else event.to_nodes
 
+                name, pos = list(nodes)[0]
                 node.pos.x = pos[0]
                 node.pos.y = pos[1]
+                self.node_rename(node, name)
 
             self.select(cpt)
             self.on_redraw()
@@ -419,7 +423,7 @@ class UIModelBase:
                                         gcpt.label_offset_pos,
                                         gcpt.label_alignment, label)
             ann.draw(fontsize=self.preferences.font_size *
-                     self.zoom_factor * self.preferences.line_width_scale)
+                     self.zoom_factor)
             gcpt.annotations.append(ann)
 
         if alabel != '' and gcpt.annotation_offset_pos:
@@ -429,7 +433,7 @@ class UIModelBase:
                                         gcpt.annotation_alignment,
                                         alabel)
             ann.draw(fontsize=self.preferences.font_size *
-                     self.zoom_factor * self.preferences.line_width_scale)
+                     self.zoom_factor)
             gcpt.annotations.append(ann)
 
         draw_nodes = self.preferences.draw_nodes
@@ -473,7 +477,7 @@ class UIModelBase:
                 y += 0.1
                 ann = Annotation(self.ui, x, y, node.name)
                 ann.draw(fontsize=self.preferences.font_size *
-                         self.zoom_factor * self.preferences.line_width_scale)
+                         self.zoom_factor)
                 gcpt.annotations.append(ann)
 
     def cpt_find(self, node_name1, node_name2):

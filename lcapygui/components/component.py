@@ -254,8 +254,7 @@ class Component(ABC):
                 line_width = float(line_width[0:-2])
             elif line_width.endswith('mm'):
                 line_width = float(line_width[0:-2]) * 72 / 25.4
-            else:
-                model.ui.show_warning_dialog('Assuming points for line width')
+            # The default units are pt.
             line_width = float(line_width)
 
         return line_width * model.preferences.line_width_scale * model.zoom_factor
