@@ -3,6 +3,7 @@ from .tf import TF
 from .svgparse import SVGParse
 from os.path import join
 from matplotlib.path import Path
+from warnings import warn
 
 
 class SketchPath:
@@ -95,14 +96,13 @@ class Sketch:
 
         if not svg_filename.exists():
 
-            print('Could not find data file %s for %s' %
-                  (svg_filename, sketch_key))
-            import sys
-            sys.exit()
-
             if complain:
                 raise FileNotFoundError('Could not find data file %s for %s' %
                                         (svg_filename, sketch_key))
+            else:
+                warn('Could not find data file %s for %s' %
+                     (svg_filename, sketch_key))
+
             return None
 
         sketch = cls.load_file(str(svg_filename))
