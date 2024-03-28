@@ -14,7 +14,6 @@ from .cursor import Cursor
 from .cursors import Cursors
 from .history_event import HistoryEventAdd, HistoryEventDelete
 from .history_event import HistoryEventMove, HistoryEventJoin
-from .history_event import HistoryEventMoveAttach
 from .uimodelbase import UIModelBase
 
 
@@ -905,11 +904,13 @@ class UIModelDnD(UIModelBase):
 
         if not self.dragged:
             self.dragged = True
+            self.nodenames = [node.name for node in cpt.nodes]
+            self.node_positions = [(node.pos.x, node.pos.y)
+                                   for node in cpt.nodes]
+
             x0, y0 = self.select_pos
             x0, y0 = self.snap(x0, y0)
             self.last_pos = x0, y0
-            self.node_positions = [(node.pos.x, node.pos.y)
-                                   for node in cpt.nodes]
 
             self.detach = key == 'shift'
             if self.detach:
@@ -924,6 +925,11 @@ class UIModelDnD(UIModelBase):
         d_y = y_1 - y_0
 
         self.cpt_move(cpt, d_x, d_y, move_nodes=True)
+
+    def cpt_attach(self, cpt):
+
+        for node in cpt.nodes:
+            self.node_attach(node)
 
     def node_attach1(self, node):
 
@@ -942,7 +948,14 @@ class UIModelDnD(UIModelBase):
         if anode is None:
             return
 
-        node.rename(anode.name)
+        self.node_rename(node, anode.name)
+
+    def node_rename(self, node, new_name):
+
+        if node.name == new_name:
+            return
+
+        node.rename(new_name)
 
         for cpt in node.connected:
             gcpt = cpt.gcpt
@@ -954,8 +967,7 @@ class UIModelDnD(UIModelBase):
 
         if not self.dragged:
             self.dragged = True
-
-            # To save history, save first component position
+            self.nodenames = [node.name]
             self.node_positions = [(node.pos.x, node.pos.y)]
 
             self.detach = key == 'shift'
@@ -1140,8 +1152,6 @@ class UIModelDnD(UIModelBase):
         if self.new_cpt is not None:
 
             node = self.new_cpt.gcpt.node2
-            # Look for overlap with another node
-
             self.node_attach(node)
 
             # Add the brand new component to history
@@ -1156,22 +1166,24 @@ class UIModelDnD(UIModelBase):
             if self.cpt_selected:
 
                 cpt = self.selected
-
-                for node in cpt.nodes:
-                    self.node_attach(node)
+                self.cpt_attach(cpt)
 
                 # Add moved component to history
-                node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
+                node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
+                nodenames = [node.name for node in cpt.nodes]
             else:
 
                 node = self.selected
                 self.node_attach(node)
 
                 node_positions = [(node.pos.x, node.pos.y)]
+                nodenames = [node.name]
+
+            to_nodes = zip(nodenames, node_positions)
+            from_nodes = zip(self.nodenames, self.node_positions)
 
             self.history.append(HistoryEventMove(self.selected,
-                                                 self.node_positions,
-                                                 node_positions))
+                                                 from_nodes, to_nodes))
             self.node_positions = None
 
         # Redraw screen for accurate display of labels
@@ -1254,6 +1266,8 @@ class UIModelDnD(UIModelBase):
 
         # Add the join event to history
         from_node, to_node, cpts = join_args
+
+        # FIXME
 
         self.history.append(
             HistoryEventJoin(from_nodes=from_node,

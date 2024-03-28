@@ -1,20 +1,19 @@
 class HistoryEvent:
 
-    def __init__(self, cpt, from_nodes=None, to_nodes=None, to_cpt=None):
-
-        if to_cpt is None:
-            to_cpt = cpt
+    def __init__(self, cpt, from_nodes=None, to_nodes=None):
 
         self.cpt = cpt
-        self.to_cpt = to_cpt
         self.from_nodes = from_nodes
         self.to_nodes = to_nodes
 
     def __str__(self):
 
-        return '%s (%s %s) -> (%s %s)' % (self.code, self.cpt,
-                                          self.from_nodes, self.to_cpt,
-                                          self.to_nodes)
+        if self.from_nodes is None or self.to_nodes is None:
+            return '%s %s' % (self.code, self.cpt)
+
+        return '%s %s %s -> %s' % (self.code, self.cpt,
+                                   list(self.from_nodes),
+                                   list(self.to_nodes))
 
 
 class HistoryEventAdd(HistoryEvent):
@@ -34,18 +33,6 @@ class HistoryEventMove(HistoryEvent):
 
     code = 'M'
     inverse_code = 'M'
-
-
-class HistoryEventDetachMove(HistoryEvent):
-
-    code = 'U'
-    inverse_code = 'C'
-
-
-class HistoryEventMoveAttach(HistoryEvent):
-
-    code = 'C'
-    inverse_code = 'U'
 
 
 class HistoryEventJoin(HistoryEvent):
