@@ -94,12 +94,12 @@ class CptPropertiesDialog(Window):
             if self.cpt.is_capacitor:
                 v0 = self.labelentries.get('v0')
                 self.cpt.args[-1] = v0
-                if v0 == '':
+                if v0 == '' or v0 is None:
                     v0 = None
                 else:
                     try:
                         v0 = float(v0)
-                    except ValueError:
+                    except (TypeError, ValueError):
                         # Symbolic
                         pass
 
@@ -109,12 +109,12 @@ class CptPropertiesDialog(Window):
             elif self.cpt.is_inductor:
                 i0 = self.labelentries.get('i0')
                 self.cpt.args[-1] = i0
-                if i0 == '':
+                if i0 == '' or i0 is None:
                     i0 = None
                 else:
                     try:
                         i0 = float(i0)
-                    except ValueError:
+                    except (TypeError, ValueError):
                         # Symbolic
                         pass
                 cpt = self.cpt.cpt
