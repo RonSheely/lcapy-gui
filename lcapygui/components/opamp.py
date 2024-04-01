@@ -56,6 +56,7 @@ class Opamp(Fixed):
         return self.nodes[3]
 
     def choose_node_name(self, m, nodes):
+        """m is the node index"""
 
         # Handle the special ground node.
         if m == 1:

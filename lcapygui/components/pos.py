@@ -1,4 +1,5 @@
 from math import sqrt
+from copy import copy
 
 
 class Pos(object):
@@ -58,3 +59,7 @@ class Pos(object):
     def norm(self):
 
         return sqrt(self.x**2 + self.y**2)
+
+    def copy(self):
+
+        return copy(self)

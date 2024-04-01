@@ -14,6 +14,7 @@ from numpy import nan, isnan, floor, array, dot, sqrt
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
 from lcapy.node import Node
+from lcapy.schemmisc import Pos as Pos2
 from lcapy.nodes import parse_nodes
 from lcapy.opts import Opts
 
@@ -196,32 +197,51 @@ class UIModelBase:
             self.cpt_delete(cpt)
 
         elif code == 'M':
-            # Move component
-            cpt = event.cpt
-            if isinstance(cpt, Cpt):
-                nodes = event.from_nodes if inverse else event.to_nodes
+            new_nodes = event.from_nodes if inverse else event.to_nodes
+            old_nodes = event.to_nodes if inverse else event.from_nodes
 
-                for node, foo in zip(cpt.nodes, nodes):
-                    name, pos = foo
-                    node.pos.x = pos[0]
-                    node.pos.y = pos[1]
-                    self.node_rename(node, name)
+            nodes = self.circuit.nodes
 
-            else:
-                node = cpt
-                nodes = event.from_nodes if inverse else event.to_nodes
+            for old_node_info, new_node_info in zip(old_nodes, new_nodes):
+                old_name, old_pos = old_node_info
+                new_name, new_pos = new_node_info
 
-                name, pos = list(nodes)[0]
-                node.pos.x = pos[0]
-                node.pos.y = pos[1]
-                self.node_rename(node, name)
+                old_node = nodes[old_name]
 
-            self.select(cpt)
+                if old_name == new_name:
+                    if self.ui.debug:
+                        print('Changing pos', old_pos, 'to', new_pos, 'for',
+                              old_name)
+
+                    old_node.pos.x = new_pos[0]
+                    old_node.pos.y = new_pos[1]
+
+                else:
+                    cptnames = [cpt.name for cpt in event.cpt]
+                    cpts = [self.circuit[cptname] for cptname in cptnames]
+
+                    for cpt in cpts:
+                        old_node.remove(cpt)
+                        # This creates a new node if it does not exist.
+                        node = nodes.add(new_name, cpt, self.circuit)
+                        node.pos = Pos2(new_pos[0], new_pos[1])
+
+                        for m, node1 in enumerate(cpt.nodes):
+                            if node1.name == old_name:
+                                cpt.nodes[m] = nodes[new_name]
+
+                        cpt.gcpt.update(nodes=cpt.nodes)
+
+            # FIX implict and is_drawn attributes
+            self.check_drawable_nodes()
+
+            # Generalise if have multiple cpts or nodes selected.
+            thing = event.cpt[0]
+            self.select(thing)
             self.on_redraw()
 
         else:
             raise ValueError('Unhandled event', code)
-
 
         # The network has changed
         self.invalidate()
@@ -494,16 +514,20 @@ class UIModelBase:
 
     def cpt_move(self, cpt, xshift, yshift, move_nodes=False):
 
-        isolated = True
+        if self.ui.debug:
+            print('Moving', cpt)
+
+        detached = True
         for node in cpt.nodes:
             if node.count > 1:
-                isolated = False
+                detached = False
                 break
 
-        if isolated or move_nodes:
+        if detached or move_nodes:
             # If the component is not connected to another component,
             # or if we wish to move all the components sharing the
             # a node with the selected component, we can just move the nodes
+
             for node in cpt.nodes:
                 self.node_move(node, node.pos.x + xshift, node.pos.y + yshift)
 
@@ -537,6 +561,9 @@ class UIModelBase:
         # New position of nodes
         node.pos.x = new_x
         node.pos.y = new_y
+
+        if self.ui.debug:
+            print('Moving node', node.name, 'to', node.pos)
 
         # Update connected components
         for cpt in node.connected:
@@ -1125,6 +1152,9 @@ class UIModelBase:
 
     def select(self, thing):
 
+        if self.ui.debug:
+            print('Selected', thing)
+
         self.selected = thing
 
     def is_close_to(self, x, xc):
@@ -1250,7 +1280,6 @@ class UIModelBase:
 
         if self.ui.debug:
             print('Redo ' + event.code)
-
         self.apply_event(event, False)
 
     def redraw(self):

@@ -1,6 +1,6 @@
-
 from os.path import basename
 from warnings import warn
+from copy import copy
 
 from lcapygui.ui.cross_hair import CrossHair
 from lcapygui.ui.tk.menu_popup import MenuPopup, MenuDropdown
@@ -15,6 +15,57 @@ from .cursors import Cursors
 from .history_event import HistoryEventAdd, HistoryEventDelete
 from .history_event import HistoryEventMove, HistoryEventJoin
 from .uimodelbase import UIModelBase
+
+
+class DragInfo:
+
+    def __init__(self, cpts, nodes, positions):
+
+        self.cpts = cpts
+        self.nodes = nodes
+        self.positions = positions
+
+    @property
+    def nodenames(self):
+
+        return [node.name for node in self.nodes]
+
+    @classmethod
+    def from_cpts(cls, cpts):
+
+        if not isinstance(cpts, list):
+            cpts = [cpts]
+
+        nodes = []
+        positions = []
+        for cpt in cpts:
+            for node in cpt.nodes:
+                if node.name not in nodes:
+                    nodes.append(node)
+                    positions.append((node.pos.x, node.pos.y))
+        return cls(cpts, nodes, positions)
+
+    @classmethod
+    def from_nodes(cls, nodes):
+
+        if not isinstance(nodes, list):
+            nodes = [nodes]
+
+        cpts = []
+        for node in nodes:
+            for cpt in node.connected:
+                if cpt not in cpts:
+                    cpts.append(cpt)
+
+        positions = [(node.pos.x, node.pos.y) for node in nodes]
+        return cls(cpts, nodes, positions)
+
+    @classmethod
+    def from_thing(cls, thing):
+
+        if isinstance(thing, Node):
+            return cls.from_nodes(thing)
+        return cls.from_cpts(thing)
 
 
 class UIModelDnD(UIModelBase):
@@ -904,18 +955,17 @@ class UIModelDnD(UIModelBase):
 
         if not self.dragged:
             self.dragged = True
-            self.nodenames = [node.name for node in cpt.nodes]
-            self.node_positions = [(node.pos.x, node.pos.y)
-                                   for node in cpt.nodes]
 
             x0, y0 = self.select_pos
             x0, y0 = self.snap(x0, y0)
             self.last_pos = x0, y0
 
-            self.detach = key == 'shift'
-            if self.detach:
-                # Separate component from connected nodes
-                self.select(self.on_cpt_split(cpt))
+            self.drag_info = DragInfo.from_cpts(cpt)
+
+            if key == 'shift':
+                # Separate component from connected nodes and add new nodes
+                cpt = self.cpt_detach(cpt)
+                self.select(cpt)
 
         x_0, y_0 = self.last_pos
         x_1, y_1 = self.snap(mouse_x, mouse_y, True)
@@ -925,11 +975,6 @@ class UIModelDnD(UIModelBase):
         d_y = y_1 - y_0
 
         self.cpt_move(cpt, d_x, d_y, move_nodes=True)
-
-    def cpt_attach(self, cpt):
-
-        for node in cpt.nodes:
-            self.node_attach(node)
 
     def node_attach1(self, node):
 
@@ -947,6 +992,9 @@ class UIModelDnD(UIModelBase):
         anode = self.node_attach1(node)
         if anode is None:
             return
+
+        if self.ui.debug:
+            print('Renaming node', node.name, 'to', anode.name)
 
         self.node_rename(node, anode.name)
 
@@ -967,12 +1015,7 @@ class UIModelDnD(UIModelBase):
 
         if not self.dragged:
             self.dragged = True
-            self.nodenames = [node.name]
-            self.node_positions = [(node.pos.x, node.pos.y)]
-
-            self.detach = key == 'shift'
-            if self.detach:
-                print('Node detaching not supported yet')
+            self.drag_info = DragInfo.from_nodes(node)
 
         original_x, original_y = node.pos.x, node.pos.y
 
@@ -1030,11 +1073,8 @@ class UIModelDnD(UIModelBase):
                 (Initial creation size affects component scaling, so a large size is chosen to avoid scaling issues)
 
         Otherwise, assume we are dragging a component or a node.
-            If a component is selected, move all its nodes to the new position, and store this position in history
-            If 'shift' is pressed, attempt to separate the component from connected nodes
+            If a component is selected, move all its nodes to the new position, and store this position in history.  If 'shift' is pressed, detach the component from connected nodes
             If a node is selected, move that node to the new position, and store this position in history
-            If 'shift' is pressed, attempt to separate the node from connected node (NOT IMPLEMENTED)
-
         """
 
         # Disallow component placement and movement if in zoom mode.
@@ -1119,6 +1159,7 @@ class UIModelDnD(UIModelBase):
     def on_mouse_release(self, key=None):
         """
         Performs operations on mouse release.
+
         High cpu usage operations should be placed here rather than in on_mouse_drag or on_mouse_move where possible, as this method is only called once per mouse release.
 
         Parameters
@@ -1130,20 +1171,16 @@ class UIModelDnD(UIModelBase):
         -----
 
         If placing a component with the mouse, we stop placing it, and add it to history.
-            Will attempt to join the final point with any existing nodes if 'shift' is not pressed.
 
         Otherwise, if a component is selected and has been moved, it will add the moved component to history.
-            If 'shift' is pressed, it will attempt to join the component to any nearby nodes.
 
         If a node is selected and has been moved, it will add the moved node to history.
-            If 'shift' is pressed, it will attempt to join the node to any nearby nodes.
 
         The screen is then completely redrawn to ensure accurate display of labels.
-            This is a high cpu operation, but is only called once here, so should be safe.
-
         """
+
         if self.ui.debug:
-            print(f'left mouse release. key: {key}')
+            print(f'left mouse release: key: {key}')
 
         if self.get_navigate_mode() is not None:
             return
@@ -1162,37 +1199,24 @@ class UIModelDnD(UIModelBase):
             self.new_cpt = None
 
         # If something is selected, and it has been moved
-        elif self.selected is not None and self.node_positions is not None:
-            if self.cpt_selected:
+        elif self.selected is not None and self.dragged:
 
-                cpt = self.selected
-                self.cpt_attach(cpt)
+            info1 = self.drag_info
+            info2 = DragInfo.from_thing(self.selected)
 
-                # Add moved component to history
-                node_positions = [(node.pos.x, node.pos.y) for node in cpt.nodes]
-                nodenames = [node.name for node in cpt.nodes]
-            else:
-
-                node = self.selected
+            for node in info2.nodes:
                 self.node_attach(node)
 
-                node_positions = [(node.pos.x, node.pos.y)]
-                nodenames = [node.name]
+            to_nodes = list(zip(info2.nodenames, info2.positions))
+            from_nodes = list(zip(info1.nodenames, info1.positions))
 
-            to_nodes = zip(nodenames, node_positions)
-            from_nodes = zip(self.nodenames, self.node_positions)
-
-            self.history.append(HistoryEventMove(self.selected,
+            self.history.append(HistoryEventMove(info1.cpts,
                                                  from_nodes, to_nodes))
-            self.node_positions = None
 
         # Redraw screen for accurate display of labels
         self.on_redraw()
-        # Used to determine if a component or node is being moved in
-        # the on_mouse_drag method
         self.dragged = False
-        # Ensure node_positions is cleared to avoid duplicate history events
-        self.node_positions = None
+
 
     def on_mouse_zoom(self, ax):
         """This is called whenever xlim or ylim changes; usually
@@ -1273,7 +1297,7 @@ class UIModelDnD(UIModelBase):
             HistoryEventJoin(from_nodes=from_node,
                              to_nodes=to_node, cpt=cpts))
 
-    def on_cpt_split(self, cpt):
+    def cpt_detach(self, cpt):
 
         gcpt = cpt.gcpt
 
@@ -1281,22 +1305,30 @@ class UIModelDnD(UIModelBase):
         if (len(gcpt.node1.connected) <= 1 and len(gcpt.node2.connected) <= 1):
             return cpt
 
+        # Create new nodes and rename cpt nodes to the new ones
+        node_map = {}
+        old_nodes = cpt.nodes
+        all_nodes = list(self.circuit.nodes.keys())
+        for node in old_nodes:
+            new_node_name = gcpt.choose_node_name(0, all_nodes)
+            all_nodes.append(new_node_name)
+            node_map[node.name] = new_node_name
+
+        self.circuit.remove(cpt.name)
+        new_cpt = cpt._rename_nodes(node_map)
+        new_cpt = self.circuit.add(new_cpt)
+        new_cpt.gcpt = gcpt
+
         if self.ui.debug:
-            print('Separating component from circuit')
+            print('Detaching', cpt, 'as', new_cpt)
 
-        # Separate component into its nodes
-        x1, y1 = gcpt.node1.pos.x, gcpt.node1.pos.y
-        x2, y2 = gcpt.node2.pos.x, gcpt.node2.pos.y
-        type = gcpt.type
-        kind = gcpt.kind
+        for old_node, new_node in zip(old_nodes, new_cpt.nodes):
+            new_node.pos = copy(old_node.pos)
 
-        # Delete the existing component
-        self.history.append(HistoryEventDelete(cpt))
-        self.cpt_delete(cpt)
+        # Update gcpt nodes
+        gcpt.update(nodes=new_cpt.nodes)
 
-        # Create a new separated component
-        new_cpt = self.thing_create(type, x1, y1, x2, y2, join=False, kind=kind)
-        self.history.append(HistoryEventAdd(new_cpt))
+        self.check_drawable_nodes()
 
         return new_cpt
 

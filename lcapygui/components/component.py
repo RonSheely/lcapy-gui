@@ -63,6 +63,7 @@ class Component(ABC):
     # an Lcapy cpt or from a cpt type.
 
     def __init__(self, kind='', style='', name=None, nodes=None, opts=None):
+
         if nodes is None:
             nodes = []
         # opts are the Lcapy drawing attributes such as `right`, `color=blue`.
@@ -75,6 +76,7 @@ class Component(ABC):
             opts = opts.copy()
 
         self.name = name
+        # Nodes is a reference to cpt.nodes
         self.nodes = nodes
         self.opts = opts
         self.control = None
