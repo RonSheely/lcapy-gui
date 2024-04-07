@@ -217,6 +217,9 @@ class UIModelBase:
                     old_node.pos.y = new_pos[1]
 
                 else:
+                    # Get current cpts (these can be different to
+                    # those stored in the event since the node names
+                    # might have changed).
                     cptnames = [cpt.name for cpt in event.cpt]
                     cpts = [self.circuit[cptname] for cptname in cptnames]
 
