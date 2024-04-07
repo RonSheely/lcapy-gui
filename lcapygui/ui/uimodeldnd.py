@@ -1307,28 +1307,13 @@ class UIModelDnD(UIModelBase):
 
         # Create new nodes and rename cpt nodes to the new ones
 
-        if False:
-            node_map = {}
-            old_nodes = cpt.nodes
-            all_nodes = list(self.circuit.nodes.keys())
-            for node in old_nodes:
-                new_node_name = gcpt.choose_node_name(0, all_nodes)
-                all_nodes.append(new_node_name)
-                node_map[node.name] = new_node_name
-
-            self.circuit.remove(cpt.name)
-            new_cpt = cpt._rename_nodes(node_map)
-            new_cpt = self.circuit.add(new_cpt)
-            new_cpt.gcpt = gcpt
-
-        else:
-            all_nodes = list(self.circuit.nodes.keys())
-            old_nodes = cpt.nodes
-            for node in cpt.nodes:
-                new_node_name = gcpt.choose_node_name(0, all_nodes)
-                all_nodes.append(new_node_name)
-                node.rename(new_node_name, cpt)
-            new_cpt = cpt
+        all_nodes = list(self.circuit.nodes.keys())
+        old_nodes = cpt.nodes
+        for node in cpt.nodes:
+            new_node_name = gcpt.choose_node_name(0, all_nodes)
+            all_nodes.append(new_node_name)
+            node.rename(new_node_name, cpt)
+        new_cpt = cpt
 
         if self.ui.debug:
             print('Detaching', cpt, 'as', new_cpt)
