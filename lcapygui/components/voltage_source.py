@@ -7,8 +7,8 @@ class VoltageSource(Bipole):
     kinds = {'dc': 'DC', 'ac': 'AC', 'step': 'Step',
              '': 'Arbitrary', 'noise': 'Noise', 's': ''}
     default_kind = ''
-    label_offset_pos = (0, -0.5)
-    annotation_offset_pos = (0, 0.5)
+    label_offset_pos = (0, -0.55)
+    annotation_offset_pos = (0, 0.55)
 
     @property
     def sketch_net(self):
