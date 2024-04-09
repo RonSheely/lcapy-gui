@@ -5,12 +5,13 @@ from ..components.opamp import Opamp
 from ..components.pos import Pos
 from ..components.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from .history import History
-from .history_event import HistoryEventAdd, HistoryEventDelete, HistoryEventMove
+from .action import ActionAdd, ActionDelete, ActionMove
+from .actions import Actions
 from warnings import warn
 
 from copy import copy
 from math import atan2, degrees, sqrt, cos, sin
-from numpy import nan, isnan, floor, array, dot, sqrt
+from numpy import nan, isnan, floor, array, dot, sqrt, radians
 from lcapy import Circuit, expr
 from lcapy.mnacpts import Cpt
 from lcapy.node import Node
@@ -115,7 +116,8 @@ class UIModelBase:
         self.preferences.apply()
         self.dirty = False
         self.history = History()
-        self.recall = History()
+        self.undo_buffer = Actions()
+        self.redo_buffer = Actions()
         self.clipboard = None
         self.select_pos = 0, 0
         self.mouse_position = (0, 0)
@@ -217,9 +219,9 @@ class UIModelBase:
                     old_node.pos.y = new_pos[1]
 
                 else:
-                    # Get current cpts (these can be different to
-                    # those stored in the event since the node names
-                    # might have changed).
+                    # Get current cpts (these can be different
+                    # to those stored in the event since the node names
+                    # might have chan
                     cptnames = [cpt.name for cpt in event.cpt]
                     cpts = [self.circuit[cptname] for cptname in cptnames]
 
@@ -346,7 +348,9 @@ class UIModelBase:
             return None
 
         cpt = self.thing_create(cpt_type, x1, y1, x2, y2, kind)
-        self.history.append(HistoryEventAdd(cpt))
+        event = ActionAdd(cpt)
+        self.history.add('Add', event)
+        self.undo_buffer.append(event)
         self.select(cpt)
         return cpt
 
@@ -716,17 +720,22 @@ class UIModelBase:
     def create(self, thing, x1, y1, x2, y2, kind=''):
 
         cpt = self.cpt_create(thing, x1, y1, x2, y2, kind)
-        self.history.append(HistoryEventAdd(cpt))
+        event = ActionAdd(cpt)
+        self.history.add('Create', event)
+        self.undo_buffer.append(event)
 
     def cut(self, cpt):
 
+        self.history.add('Cut', cpt)
         self.delete(cpt)
         self.clipboard = cpt
 
     def delete(self, cpt):
 
+        self.history.add('Delete', cpt)
         self.cpt_delete(cpt)
-        self.history.append(HistoryEventDelete(cpt))
+        event = ActionDelete(cpt)
+        self.undo_buffer.append(event)
 
     def draw(self, cpt, **kwargs):
 
@@ -855,12 +864,14 @@ class UIModelBase:
 
     def paste(self, x1, y1, x2, y2):
 
+        self.history.add('Paste', self.clipboard)
         if self.clipboard is None:
             return
 
         cpt = self.thing_create(self.clipboard.type, x1, y1, x2, y2,
                                 self.clipboard.kind)
-        self.history.append(HistoryEventAdd(cpt))
+        event = ActionAdd(cpt)
+        self.undo_buffer.append(event)
         self.select(cpt)
         return cpt
 
@@ -903,10 +914,12 @@ class UIModelBase:
         midpoint : tuple[float, float] or None
         """
 
+        self.history.add('Rotate', angle)
+
         gcpt = cpt.gcpt
 
         # Convert the angle to radians
-        angle = angle * 3.141592654 / 180
+        angle = radians(angle)
 
         # Extract the node coordinates from each node
         p1_x, p1_y = gcpt.node1.x, gcpt.node1.y
@@ -933,7 +946,9 @@ class UIModelBase:
         # Add rotation to history
         node_positions = [(node.pos.x, node.pos.y) for node in self.selected.nodes]
         new_positions = [(r1_x, r1_y), (r2_x, r2_y)]
-        self.history.append(HistoryEventMove(cpt, node_positions, new_positions))
+        event = ActionMove(cpt, node_positions, new_positions)
+        self.history.add('Move', event)
+        self.undo_buffer.append(event)
 
         # Move nodes
         self.node_move(gcpt.node1, r1_x, r1_y)
@@ -1155,6 +1170,8 @@ class UIModelBase:
 
     def select(self, thing):
 
+        self.history.add('Select', thing)
+
         if self.ui.debug:
             print('Selected', thing)
 
@@ -1276,10 +1293,12 @@ class UIModelBase:
 
     def redo(self):
 
-        if self.recall == []:
+        if self.redo_buffer == []:
+            self.history.add('Redo empty')
             return
-        event = self.recall.pop()
-        self.history.append(event)
+        event = self.redo_buffer.pop()
+        self.history.add('Redo', event)
+        self.undo_buffer.append(event)
 
         if self.ui.debug:
             print('Redo ' + event.code)
@@ -1297,10 +1316,12 @@ class UIModelBase:
 
     def undo(self):
 
-        if self.history == []:
+        if self.undo_buffer == []:
+            self.history.add('Undo empty')
             return
-        event = self.history.pop()
-        self.recall.append(event)
+        event = self.undo_buffer.pop()
+        self.history.add('Undo', event)
+        self.redo_buffer.append(event)
 
         if self.ui.debug:
             print('Undo ' + event.code)

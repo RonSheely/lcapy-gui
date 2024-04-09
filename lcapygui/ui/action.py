@@ -1,4 +1,4 @@
-class HistoryEvent:
+class Action:
 
     def __init__(self, cpt, from_nodes=None, to_nodes=None):
 
@@ -16,32 +16,32 @@ class HistoryEvent:
                                    list(self.to_nodes))
 
 
-class HistoryEventAdd(HistoryEvent):
+class ActionAdd(Action):
 
     code = 'A'
     inverse_code = 'D'
 
 
-class HistoryEventDelete(HistoryEvent):
+class ActionDelete(Action):
 
     code = 'D'
     inverse_code = 'A'
 
 
-class HistoryEventMove(HistoryEvent):
+class ActionMove(Action):
     # Detach, move, attach
 
     code = 'M'
     inverse_code = 'M'
 
 
-class HistoryEventJoin(HistoryEvent):
+class ActionJoin(Action):
 
     code = 'J'
     inverse_code = 'S'
 
 
-class HistoryEventSplit(HistoryEvent):
+class ActionSplit(Action):
 
     code = 'S'
     inverse_code = 'J'

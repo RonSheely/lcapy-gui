@@ -12,8 +12,8 @@ from lcapy.mnacpts import Cpt
 from lcapy.nodes import Node
 from .cursor import Cursor
 from .cursors import Cursors
-from .history_event import HistoryEventAdd, HistoryEventDelete
-from .history_event import HistoryEventMove, HistoryEventJoin
+from .action import ActionAdd, ActionDelete
+from .action import ActionMove, ActionJoin
 from .uimodelbase import UIModelBase
 
 
@@ -670,10 +670,12 @@ class UIModelDnD(UIModelBase):
         s += self.cursors.debug() + '\n'
         s += 'Selected.........\n'
         s += str(self.selected) + '\n'
+        s += '\nUndo_Buffer.........\n'
+        s += str(self.undo_buffer) + '\n'
+        s += '\nRedo_Buffer.........\n'
+        s += str(self.redo_buffer) + '\n'
         s += '\nHistory.........\n'
-        s += str(self.history) + '\n'
-        s += '\nRecall.........\n'
-        s += str(self.recall)
+        s += str(self.history)
         self.ui.show_message_dialog(s, 'Debug')
 
     def on_delete(self):
@@ -1192,7 +1194,8 @@ class UIModelDnD(UIModelBase):
             self.node_attach(node)
 
             # Add the brand new component to history
-            self.history.append(HistoryEventAdd(self.new_cpt))
+            self.history.add('Add', self.new_cpt)
+            self.undo_buffer.append(ActionAdd(self.new_cpt))
 
             # Reset crosshair mode
             self.crosshair.thing = None
@@ -1210,8 +1213,9 @@ class UIModelDnD(UIModelBase):
             to_nodes = list(zip(info2.nodenames, info2.positions))
             from_nodes = list(zip(info1.nodenames, info1.positions))
 
-            self.history.append(HistoryEventMove(info1.cpts,
-                                                 from_nodes, to_nodes))
+            self.history.add('Move', info1.cpts, from_nodes, to_nodes)
+            self.undo_buffer.append(ActionMove(info1.cpts,
+                                                     from_nodes, to_nodes))
 
         # Redraw screen for accurate display of labels
         self.on_redraw()
@@ -1293,9 +1297,9 @@ class UIModelDnD(UIModelBase):
 
         # FIXME
 
-        self.history.append(
-            HistoryEventJoin(from_nodes=from_node,
-                             to_nodes=to_node, cpt=cpts))
+        self.undo_buffer.append(
+            ActionJoin(from_nodes=from_node,
+                       to_nodes=to_node, cpt=cpts))
 
     def cpt_detach(self, cpt):
 
