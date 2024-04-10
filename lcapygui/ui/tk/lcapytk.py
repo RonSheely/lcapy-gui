@@ -60,7 +60,8 @@ class LcapyTk(Tk):
             'Misc.': ('y', 'cpe', 'z', 'o', 'nr', 'switch'),
             'Connection': ('0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
-                           'input', 'output', 'bidir')
+                           'input', 'output', 'bidir'),
+            'Mechanical': ('K', 'M', 'R'),
         }
 
         items = []

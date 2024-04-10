@@ -4,11 +4,13 @@ from .capacitor import Capacitor
 from .connection import Connection
 from .cpe import CPE
 from .current_source import CurrentSource
+from .damper import Damper
 from .diode import Diode
 from .ferritebead import FerriteBead
 from .impedance import Impedance
 from .inductor import Inductor
 from .jfet import JFET
+from .mass import Mass
 from .mosfet import MOSFET
 from .opamp import Opamp
 from .inamp import Inamp
@@ -16,6 +18,7 @@ from .fdopamp import FDOpamp
 from .opencircuit import OpenCircuit
 from .port import Port
 from .resistor import Resistor
+from .spring import Spring
 from .switch import Switch
 from .transformer import Transformer
 from .voltage_source import VoltageSource
@@ -45,12 +48,15 @@ class CptMaker:
         'H': CCVS,
         'I': CurrentSource,
         'J': JFET,
+        'k': Spring,
         'L': Inductor,
         'M': MOSFET,
+        'm': Mass,
         'O': OpenCircuit,
         'P': Port,
         'Q': BJT,
         'R': Resistor,
+        'r': Damper,
         'NR': Resistor,         # Noise free resistor
         'SW': Switch,
         'TF': Transformer,

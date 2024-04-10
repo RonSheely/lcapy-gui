@@ -81,6 +81,9 @@ class UIModelBase:
         'e': Thing('e', 'Voltage controlled voltage source', 'E', ''),
         'w': Thing('w', 'Wire', 'W', ''),
         'dw': Thing('', 'Dynamic Wire', 'DW', ''),
+        'M': Thing('M', 'Mass', 'm', ''),
+        'K': Thing('K', 'Spring', 'k', ''),
+        'R': Thing('R', 'Damper', 'r', ''),
     }
 
     # Short-cut key, menu name, cpt type, kind
