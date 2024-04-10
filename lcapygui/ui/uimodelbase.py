@@ -818,6 +818,7 @@ class UIModelBase:
 
         self.remove_directives()
 
+        unknown = []
         for cpt in self.circuit.elements.values():
             if cpt.type == 'XX':
                 cpt.gcpt = None
@@ -825,10 +826,13 @@ class UIModelBase:
             try:
                 gcpt = gcpt_make_from_cpt(cpt)
             except Exception as e:
-                gcpt = None
-                self.exception(e)
+                warn(str(e))
+                unknown.append(cpt)
 
             cpt.gcpt = gcpt
+
+        for cpt in unknown:
+            self.circuit.remove(cpt.name)
 
         self.invalidate()
         self.check_drawable_nodes()
