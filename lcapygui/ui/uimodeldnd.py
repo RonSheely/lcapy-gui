@@ -12,8 +12,7 @@ from lcapy.mnacpts import Cpt
 from lcapy.nodes import Node
 from .cursor import Cursor
 from .cursors import Cursors
-from .action import ActionAdd, ActionDelete
-from .action import ActionMove, ActionJoin
+from .action import ActionAdd, ActionDelete, ActionMove
 from .uimodelbase import UIModelBase
 
 
@@ -1282,25 +1281,6 @@ class UIModelDnD(UIModelBase):
 
         self.ui.new()
 
-    def on_node_join(self, node=None):
-
-        if node is None and self.node_selected:
-            node = self.selected
-
-        # Join selected node if close
-        join_args = self.node_join(node)
-        if join_args is None:
-            return
-
-        # Add the join event to history
-        from_node, to_node, cpts = join_args
-
-        # FIXME
-
-        self.undo_buffer.append(
-            ActionJoin(from_nodes=from_node,
-                       to_nodes=to_node, cpt=cpts))
-
     def cpt_detach(self, cpt):
 
         gcpt = cpt.gcpt
@@ -1448,21 +1428,8 @@ class UIModelDnD(UIModelBase):
 
             elif self.node_selected:
                 # If a node is selected
-                if len(self.selected.connected) > 1:
-                    self.make_popup(['!on_node_split',
-                                     'dropdown_node_inspect_menu',
-                                     'inspect_properties'])
-
-                elif self.closest_node(mouse_x, mouse_y, self.selected) is not None:
-                    self.make_popup(['on_node_join',
-                                     'dropdown_node_inspect_menu',
-                                     'inspect_properties'])
-
-                else:
-                    self.make_popup(['!on_node_join',
-                                     'dropdown_node_inspect_menu',
-                                     'inspect_properties'])
-
+                self.make_popup(['dropdown_node_inspect_menu',
+                                 'inspect_properties'])
             else:
                 # If all else fails, show the paste popup
                 if self.clipboard is None:

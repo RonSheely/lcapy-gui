@@ -33,15 +33,3 @@ class ActionMove(Action):
 
     code = 'M'
     inverse_code = 'M'
-
-
-class ActionJoin(Action):
-
-    code = 'J'
-    inverse_code = 'S'
-
-
-class ActionSplit(Action):
-
-    code = 'S'
-    inverse_code = 'J'

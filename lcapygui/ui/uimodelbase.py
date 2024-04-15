@@ -176,8 +176,6 @@ class UIModelBase:
         # A = add
         # D = delete
         # M = move
-        # J = join (nodes)
-        # S = split (nodes)
 
         code = event.inverse_code if inverse else event.code
 
