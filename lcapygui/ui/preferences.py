@@ -10,6 +10,7 @@ class Preferences:
     circuitikz_default_line_width = 0.4   # pt
     circuitikz_default_scale = 1.0
     circuitikz_default_cpt_size = 1.5
+    circuitikz_default_font_size = 12
 
     # For compatible colours, see https://matplotlib.org/stable/gallery/color/named_colors.html
     # mpl stylesheets available here, https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html
@@ -79,7 +80,7 @@ class Preferences:
         self.node_size = 0.07
         self.node_color = 'black'
         self.current_sign_convention = 'passive'
-        self.font_size = 18
+        self.font_size = self.circuitikz_default_font_size
         self.cpt_size = self.circuitikz_default_cpt_size
         # This is used as the reference for component attributes in
         # a .sch file.  For example, R 1 2; right.
