@@ -18,6 +18,7 @@ from lcapy.node import Node
 from lcapy.schemmisc import Pos as Pos2
 from lcapy.nodes import parse_nodes
 from lcapy.opts import Opts
+from lcapy.labelmaker import LabelMaker
 
 
 class Thing:
@@ -393,43 +394,45 @@ class UIModelBase:
         if gcpt.type in ('A', 'O', 'W'):
             label_style = 'none'
 
-        name = cpt.name
+        # name = cpt.name
+        #
+        # try:
+        #     if cpt.type in ('F', 'H'):
+        #         value = cpt.args[1]
+        #     elif cpt.type in ('P', ):
+        #         value = None
+        #     else:
+        #         value = cpt.args[0]
+        # except IndexError:
+        #     value = None
+        #
+        # if value is None:
+        #     value = ''
+        #     value_latex = ''
+        # else:
+        #     value_latex = '$' + expr(value).latex() + '$'
 
-        try:
-            if cpt.type in ('F', 'H'):
-                value = cpt.args[1]
-            elif cpt.type in ('P', ):
-                value = None
-            else:
-                value = cpt.args[0]
-        except IndexError:
-            value = None
-
-        if value is None:
-            value = ''
-            value_latex = ''
-        else:
-            value_latex = '$' + expr(value).latex() + '$'
+        name, value = LabelMaker().make(cpt)
 
         label = ''
         alabel = ''
         if label_style == 'name=value':
             if name != value and gcpt.has_value:
-                label = name + '=' + value_latex
+                label = name + '=' + value
             else:
                 label = name
         elif label_style == 'stacked':
             if name != value and gcpt.has_value:
-                label = name + '\n' + value_latex
+                label = name + '\n' + value
             else:
                 label = name
         elif label_style == 'split':
             label = name
             if name != value and gcpt.has_value:
-                alabel = value_latex
+                alabel = value
         elif label_style == 'value':
             if value != '':
-                label = value_latex
+                label = value
         elif label_style == 'name':
             label = name
         elif label_style == 'none':
