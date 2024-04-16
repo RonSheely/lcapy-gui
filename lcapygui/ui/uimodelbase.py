@@ -413,7 +413,7 @@ class UIModelBase:
         # else:
         #     value_latex = '$' + expr(value).latex() + '$'
 
-        name, value = LabelMaker().make(cpt)
+        name, value = LabelMaker().make(cpt, label_ports=True)
 
         label = ''
         alabel = ''
