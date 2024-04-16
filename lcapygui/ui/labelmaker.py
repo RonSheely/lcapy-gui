@@ -1,8 +1,8 @@
 # This is a copy of the Lcapy version.  Remove once Lcapy updated.
 
-from .expr import Expr
-from .latex import latex_format_label
-from .engformatter import EngFormatter
+from lcapy.expr import Expr
+from lcapy.latex import latex_format_label
+from lcapy.engformatter import EngFormatter
 import sympy as sym
 
 
