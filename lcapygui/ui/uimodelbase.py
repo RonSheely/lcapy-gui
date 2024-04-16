@@ -7,6 +7,7 @@ from ..components.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from .history import History
 from .action import ActionAdd, ActionDelete, ActionMove
 from .actions import Actions
+from .labelmaker import LabelMaker
 from warnings import warn
 
 from copy import copy
@@ -18,7 +19,7 @@ from lcapy.node import Node
 from lcapy.schemmisc import Pos as Pos2
 from lcapy.nodes import parse_nodes
 from lcapy.opts import Opts
-from lcapy.labelmaker import LabelMaker
+
 
 
 class Thing:
