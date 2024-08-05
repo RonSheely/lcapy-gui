@@ -13,9 +13,8 @@ class TransferFunctionDialog(Window):
 
         elements = ui.model.circuit.elements
 
-        # TODO, allow V or I
         names = [elt.name for elt in elements.values()
-                 if elt.type not in ('W', 'O', 'V', 'I')]
+                 if elt.type not in ('W', 'O')]
 
         entries.append(LabelEntry('input', 'Input',
                                   names[0], names))
