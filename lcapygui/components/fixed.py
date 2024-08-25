@@ -22,7 +22,7 @@ class Fixed(Component):
             if node_pinname == '':
                 coords.append((nan, nan))
             else:
-                coords.append(self.pins[node_pinname][1:])
+                coords.append(self.pins[node_pinname].xy)
 
         positions = tf.transform(coords)
 

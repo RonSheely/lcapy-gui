@@ -2,6 +2,7 @@
 Defines the components that lcapy-gui can draw
 """
 
+from .anchor import Anchor
 from .pos import Pos
 from .tf import TF
 from .utils import point_in_polygon
@@ -348,7 +349,7 @@ class Component(ABC):
             if node_pinname == '':
                 coords.append((nan, nan))
             else:
-                coords.append(self.pins[node_pinname][1:])
+                coords.append(self.pins[node_pinname].xy)
 
         positions = tf.transform(coords)
 
@@ -364,11 +365,11 @@ class Component(ABC):
 
     @property
     def pos1(self):
-        return Pos(self.pins[self.pinname1][1:])
+        return self.pins[self.pinname1].pos
 
     @property
     def pos2(self):
-        return Pos(self.pins[self.pinname2][1:])
+        return self.pins[self.pinname2].pos
 
     def _attr_dir_string(self, x1, y1, x2, y2, step=1):
         tf = self.make_tf(Pos(x1, y1), Pos(x2, y2), self.pos1, self.pos2)
@@ -596,5 +597,5 @@ class Component(ABC):
                 y = -y
             if self.invert:
                 x = -x
-            newpins[pinname] = loc, x, y
+            newpins[pinname] = Anchor(loc, x, y)
         return newpins

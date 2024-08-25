@@ -939,6 +939,12 @@ class UIModelDnD(UIModelBase):
                                             closest_node.pos.y), style='node')
             return
 
+        closest_cpt = self.closest_cpt(mouse_x, mouse_y)
+        if closest_cpt is not None:
+
+            # TODO, highligh anchors
+            print(closest_cpt)
+
         # If the crosshair is not over a node, snap to the grid (if
         # enabled)
         if self.preferences.snap_grid:
