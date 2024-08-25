@@ -46,7 +46,8 @@ class Sketcher:
                 vertices = path.vertices * (-1, 1)
                 path = Path(vertices, path.codes)
 
-            path = path.transformed(tf)
+            if tf is not None:
+                path = path.transformed(tf)
 
             fill = kwargs.pop('fill', fill)
 

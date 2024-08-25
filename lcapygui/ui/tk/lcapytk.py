@@ -64,8 +64,7 @@ class LcapyTk(Tk):
             if menuitem is None or isinstance(menuitem, MenuDropdown):
                 previewer.hide()
             else:
-                print(menuitem.arg, menuitem.label)
-                previewer.show(menuitem.label)
+                previewer.show(menuitem.label, menuitem.arg)
 
         categories = {
             'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w', 'tf'),
