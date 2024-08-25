@@ -449,14 +449,12 @@ class UIModelDnD(UIModelBase):
                 new_item.state = 'normal'
             display_items.append(new_item)
 
-        self.ui.popup_menu = MenuPopup(
-            MenuDropdown(
-                'Right click',
-                0,
-                display_items,
-            )
-        )
-        self.ui.popup_menu.make(self.ui, self.ui.level)
+        self.ui.popup_menu = MenuPopup(self.ui,
+                                       MenuDropdown('Right click',
+                                                    0, display_items))
+
+
+        self.ui.popup_menu.make(self.ui.level)
         self.ui.popup_menu.do_popup(self.ui.canvas.winfo_pointerx(),
                                     self.ui.canvas.winfo_pointery())
 
