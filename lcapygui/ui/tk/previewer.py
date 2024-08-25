@@ -42,14 +42,15 @@ class Previewer(Window):
 
         self.ax.clear()
         self.ax.axis('off')
+        self.ax.axis('equal')
 
         self.sketcher.sketch(sketch, None)
 
         self.deiconify()
         # self.title(label)
 
-        self.ax.set_xlim(-36, 36)
-        self.ax.set_ylim(-36, 36)
+        xmin, xmax, ymin, ymax = sketch.minmax()
+        self.ax.set_xlim(xmin, xmax)
 
         self.fig.canvas.draw()
 
