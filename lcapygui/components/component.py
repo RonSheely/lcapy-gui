@@ -2,7 +2,7 @@
 Defines the components that lcapy-gui can draw
 """
 
-from .anchor import Anchor
+from .pin import Pin
 from .pos import Pos
 from .tf import TF
 from .utils import point_in_polygon
@@ -10,6 +10,7 @@ from .utils import point_in_polygon
 from numpy import array, nan
 from math import sqrt
 from lcapy.opts import Opts
+from lcapy.cache import cached_property
 
 from typing import Union
 from abc import ABC, abstractmethod
@@ -58,7 +59,7 @@ class Component(ABC):
     ignore_keys = ('left', 'right', 'up', 'down', 'size', 'rotate',
                    'pinnodes', 'pinnames', 'pins', 'pinlabels',
                    'mirrorinputs', 'free', 'ignore', 'nosim', 'arrow',
-                   'startarrow', 'endarrow', 'bus', 'anchor', 'fixed')
+                   'startarrow', 'endarrow', 'bus', 'pin', 'fixed')
 
     # TODO: add class methods to construct Component from
     # an Lcapy cpt or from a cpt type.
@@ -588,8 +589,11 @@ class Component(ABC):
     def ppins(self):
         raise ValueError('Ppins not defined for %s' % self)
 
-    @property
+    @cached_property
     def pins(self):
+        """These are relative to the centre of the component
+        and are not scaled."""
+
         newpins = {}
         for pinname, data in self.ppins.items():
             loc, x, y = data
@@ -597,5 +601,15 @@ class Component(ABC):
                 y = -y
             if self.invert:
                 x = -x
-            newpins[pinname] = Anchor(loc, x, y)
+            newpins[pinname] = Pin(loc, x, y)
+        return newpins
+
+    @cached_property
+    def transformed_pins(self):
+
+        newpins = {}
+        for pinname, pin in self.pins.items():
+
+            x, y = self.tf.transform(pin.xy)
+            newpins[pinname] = Pin(pin.loc, x, y)
         return newpins

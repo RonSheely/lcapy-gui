@@ -12,6 +12,8 @@ from lcapy.mnacpts import Cpt
 from lcapy.nodes import Node
 from .cursor import Cursor
 from .cursors import Cursors
+from .highlight import Highlight
+from ..components.picture import Picture
 from .action import ActionAdd, ActionDelete, ActionMove
 from .uimodelbase import UIModelBase
 
@@ -129,6 +131,7 @@ class UIModelDnD(UIModelBase):
         self.crosshair = CrossHair(self)
         self.new_cpt = None
         self.node_positions = None
+        self.highlight = Highlight(ui)
 
     def add_cursor(self, mouse_x, mouse_y):
         """
@@ -930,6 +933,11 @@ class UIModelDnD(UIModelBase):
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
             return
 
+        if False:
+            closest_cpt, closest_pin = self.closest_pin(mouse_x, mouse_y)
+            if closest_pin is not None:
+                print(closest_pin.pos)
+
         closest_node = self.closest_node(mouse_x, mouse_y)
 
         if closest_node is not None:
@@ -941,9 +949,9 @@ class UIModelDnD(UIModelBase):
 
         closest_cpt = self.closest_cpt(mouse_x, mouse_y)
         if closest_cpt is not None:
-
-            # TODO, highligh anchors
-            print(closest_cpt)
+            self.highlight.show(closest_cpt)
+        else:
+            self.highlight.remove()
 
         # If the crosshair is not over a node, snap to the grid (if
         # enabled)

@@ -319,6 +319,30 @@ class UIModelBase:
                 return node
         return None
 
+    def closest_pin(self, x, y):
+        """
+        Returns the pin closest to the specified position
+
+        Parameters
+        ----------
+        x : float
+            x position
+        y : float
+            y position
+        """
+
+        for cpt in self.circuit.elements.values():
+            gcpt = cpt.gcpt
+            if gcpt is None:
+                continue
+
+            for pin in gcpt.transformed_pins.values():
+                x1, y1 = pin.pos.x, pin.pos.y
+                rsq = (x1 - x) ** 2 + (y1 - y) ** 2
+                if rsq < 0.1:
+                    return cpt, pin
+        return None, None
+
     def copy(self, cpt):
 
         self.clipboard = cpt

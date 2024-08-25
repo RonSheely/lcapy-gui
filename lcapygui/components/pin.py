@@ -1,6 +1,7 @@
 from .pos import Pos
 
-class Anchor:
+class Pin:
+    """A pin can be an electrical node or an anchor."""
 
     def __init__(self, loc, x, y):
 

@@ -1,4 +1,5 @@
-from lcapygui.components.picture import Picture
+from ..components.picture import Picture
+
 class Cursor:
 
     def __init__(self, ui, x, y):
