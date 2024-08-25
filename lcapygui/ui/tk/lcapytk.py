@@ -9,19 +9,23 @@ from .sketcher import Sketcher
 from .drawing import Drawing
 from .menu import MenuBar, MenuDropdown, MenuItem, MenuSeparator
 from ...sketch_library import SketchLibrary
+from .previewer import Previewer
 
 
 class LcapyTk(Tk):
+
     SCALE = 0.01
 
     GEOMETRY = '1200x800'
+
     # Note, need to reduce height from 8 to 7.2 to fit toolbar.
     FIGSIZE = (12, 7.2)
-    # FIGSIZE = (6.6, 4)
 
     NAME = 'lcapy-tk'
 
-    def __init__(self, pathnames=None, debug=0, level=0, icon=None, title="lcapy-gui"):
+    def __init__(self, pathnames=None, debug=0, level=0, icon=None,
+                 title="lcapy-gui"):
+
         from ... import __version__
 
         super().__init__()
@@ -52,9 +56,20 @@ class LcapyTk(Tk):
 
         self.level = level
 
+        previewer = Previewer(self)
+        previewer.hide()
+
+        def show_preview(menuitem):
+
+            if menuitem is None or isinstance(menuitem, MenuDropdown):
+                previewer.hide()
+            else:
+                print(menuitem.arg, menuitem.label)
+                previewer.show(menuitem.label)
+
         categories = {
             'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w', 'tf'),
-            'Opamp': ('opamp', 'fdopamp', 'inamp'),
+            'Amplifier': ('opamp', 'fdopamp', 'inamp'),
             'Transistor': ('q', 'j', 'm'),
             'Dependent source': ('e', 'f', 'g', 'h'),
             'Misc.': ('y', 'cpe', 'z', 'o', 'nr', 'switch'),
@@ -86,12 +101,14 @@ class LcapyTk(Tk):
                         thing = self.uimodel_class.component_map[key]
                         cmd = self.on_add_cpt
                     acc = thing.accelerator
-                    subitems.append(MenuItem(thing.menu_name, command=cmd,
-                                             arg=thing, accelerator=acc))
-                menu = MenuDropdown(cat, 0, subitems)
+                    subitems.append(MenuItem(thing.menu_name,
+                                             command=cmd, arg=thing,
+                                             accelerator=acc))
+                menu = MenuDropdown(cat, 0, subitems, select=show_preview)
                 items.append(menu)
 
-        component_menu_dropdown = MenuDropdown('Components', 0, items)
+        component_menu_dropdown = MenuDropdown('Components', 0, items,
+                                               select=show_preview)
 
         self.menu_parts = {}
         # define menu parts in a dictionary
@@ -244,11 +261,17 @@ class LcapyTk(Tk):
             self.menu_parts["help_debug"]
         ])
 
-        menudropdowns = [self.menu_parts["dropdown_file_menu"], self.menu_parts["dropdown_edit_menu"], self.menu_parts["dropdown_view_menu"], self.menu_parts["dropdown_component_menu"], self.menu_parts["dropdown_create_menu"], self.menu_parts["dropdown_inspect_menu"], self.menu_parts["dropdown_manipulate_menu"], self.menu_parts["dropdown_help_menu"]]
+        menudropdowns = [self.menu_parts["dropdown_file_menu"],
+                         self.menu_parts["dropdown_edit_menu"],
+                         self.menu_parts["dropdown_view_menu"],
+                         self.menu_parts["dropdown_component_menu"],
+                         self.menu_parts["dropdown_create_menu"],
+                         self.menu_parts["dropdown_inspect_menu"],
+                         self.menu_parts["dropdown_manipulate_menu"],
+                         self.menu_parts["dropdown_help_menu"]]
 
-
-        self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self, self.level)
+        self.menubar = MenuBar(self, menudropdowns)
+        self.menubar.make(self.level)
 
         self.popup_menu = None
 
@@ -620,8 +643,6 @@ class LcapyTk(Tk):
         if event.button == 1:
             self.model.on_mouse_drag(event.xdata, event.ydata,
                                      event.key)
-
-
 
         if self.uimodel_class == UIModelDnD:
             self.model.on_mouse_move(event.xdata, event.ydata)

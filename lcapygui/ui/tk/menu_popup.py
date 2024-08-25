@@ -3,11 +3,15 @@ from tkinter import Menu
 
 
 class MenuPopup:
-    def __init__(self, menu_dropdown):
+
+    def __init__(self, window, menu_dropdown):
+
+        self.window = window
         self.menu_dropdown = menu_dropdown
         self.menu = None
 
-    def make(self, window, level=10):
+    def make(self, level=10):
+
         def doit(menuitem):
             arg = menuitem.arg
             if arg is None:
@@ -15,7 +19,7 @@ class MenuPopup:
 
             menuitem.command(arg)
 
-        self.menu = Menu(window, tearoff=0)
+        self.menu = Menu(self.window, tearoff=0)
 
         for menuitem in self.menu_dropdown.menuitems:
             if menuitem is None:

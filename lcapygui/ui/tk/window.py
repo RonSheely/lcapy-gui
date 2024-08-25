@@ -21,8 +21,8 @@ class Window(Toplevel):
 
     def add_menu(self, menudropdowns, level=10):
 
-        self.menubar = MenuBar(menudropdowns)
-        self.menubar.make(self, level)
+        self.menubar = MenuBar(self, menudropdowns)
+        self.menubar.make(level)
 
     def focus(self):
 

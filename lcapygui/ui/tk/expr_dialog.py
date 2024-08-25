@@ -65,6 +65,7 @@ class ExprDialog(Window):
                           ]),
             MenuDropdown('View', 0,
                          [MenuItem('Plot', self.on_plot),
+                          MenuItem('Value', self.on_value),
                           MenuItem('LaTeX', self.on_latex),
                           MenuItem('Python', self.on_python),
                           MenuItem('Attributes', self.on_attributes)]),
@@ -351,3 +352,8 @@ class ExprDialog(Window):
                    'Angular frequency': 'angular_frequency_response'}
 
         self.apply_method(domains, arg)
+
+    def on_value(self, arg):
+
+        expr = self.expr.value
+        self.ui.show_expr_dialog(expr, title=self.titlestr)
