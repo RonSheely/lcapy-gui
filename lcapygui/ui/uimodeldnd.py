@@ -531,10 +531,10 @@ class UIModelDnD(UIModelBase):
 
         """
 
-        # Only place a component between cursors if there are two
-        # cursors and no existing component between them
+        if len(self.cursors) >= 2:
+            if self.component_between_cursors():
+                warn('Placing component across another')
 
-        if len(self.cursors) >= 2 and self.component_between_cursors() is None:
             self.create_component_between_cursors(thing)
         else:
             # Intialise crosshair to place a component of the given 'thing' type
