@@ -1063,7 +1063,8 @@ class UIModelBase:
 
             if pinname is None or not join:
                 pinname = gcpt.choose_node_name(m, all_node_names)
-                all_node_names.append(pinname)
+                if '.' not in pinname:
+                    all_node_names.append(pinname)
 
             node_names.append(pinname)
 

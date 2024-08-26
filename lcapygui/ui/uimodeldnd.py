@@ -182,9 +182,15 @@ class UIModelDnD(UIModelBase):
 
         xc = self.cursors[-1].x
         yc = self.cursors[-1].y
+
         if self.is_close_to(x, xc):
+            if self.preferences.snap_grid:
+                y = self.snap_to_grid_y(y)
             return xc, y, True
+
         if self.is_close_to(y, yc):
+            if self.preferences.snap_grid:
+                x = self.snap_to_grid_x(x)
             return x, yc, True
 
         return x, y, False
