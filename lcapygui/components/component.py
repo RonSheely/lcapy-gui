@@ -531,7 +531,8 @@ class Component(ABC):
 
     def update(self, opts=None, nodes=None):
         """This is called after a component is created to update
-        the nodes and opts."""
+        the nodes and opts.  It is also called if the node positions
+        are changed."""
 
         # Defining the nodes on component creation is gnarly and
         # requires the node positions to be passed as arguments.
@@ -547,6 +548,8 @@ class Component(ABC):
 
             if 'scale' in opts:
                 self.scale = float(opts['scale'])
+
+        self._clear_caches()
 
     def choose_node_name(self, m, nodes):
         num = 1
@@ -567,27 +570,39 @@ class Component(ABC):
 
         return self.make_tf(node1.pos, node2.pos, self.pos1, self.pos2)
 
-    @property
+    @cached_property
     def tf(self):
-        # If this was cached then need to update if the node
-        # positions are changed.
-        tf = self.find_tf(self.pinname1, self.pinname2)
+        return self.find_tf(self.pinname1, self.pinname2)
 
-        return tf
+    def _clear_caches(self):
+
+        try:
+            del self.tf
+        except AttributeError:
+            pass
+        try:
+            del self.pins
+        except AttributeError:
+            pass
+        try:
+            del self.transformed_pins
+        except AttributeError:
+            pass
 
     def undraw(self):
+
+        # This is called when nodes are moved.
+        self.update()
+
         if self.picture is not None:
             self.picture.remove()
         for ann in self.annotations:
             ann.remove()
         self.annotations = []
 
-        # TODO: erase nodes if necessary
-        # Could combine annotations with picture
-
     @property
     def ppins(self):
-        raise ValueError('Ppins not defined for %s' % self)
+        raise ValueError('ppins not defined for %s' % self)
 
     @cached_property
     def pins(self):

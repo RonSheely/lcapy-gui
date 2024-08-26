@@ -220,6 +220,7 @@ class UIModelBase:
 
                     old_node.pos.x = new_pos[0]
                     old_node.pos.y = new_pos[1]
+                    # TODO update component
 
                 else:
                     # Get current cpts (these can be different
