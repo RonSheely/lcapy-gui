@@ -17,7 +17,7 @@ class Highlight:
         self.picture = Picture()
 
         gcpt = cpt.gcpt
-        for pin in gcpt.transformed_pins.values():
+        for pin in gcpt.transformed_pins:
 
             self.picture.add(self.ui.sketcher.stroke_filled_circle(
                 pin.x, pin.y,

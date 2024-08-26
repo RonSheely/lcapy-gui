@@ -3,6 +3,7 @@ Defines the components that lcapy-gui can draw
 """
 
 from ..core.pin import Pin
+from ..core.pins import Pins
 from ..core.pos import Pos
 from ..core.tf import TF
 from ..core.utils import point_in_polygon
@@ -609,22 +610,23 @@ class Component(ABC):
         """These are relative to the centre of the component
         and are not scaled."""
 
-        newpins = {}
+        newpins = Pins()
         for pinname, data in self.ppins.items():
             loc, x, y = data
             if self.mirror:
                 y = -y
             if self.invert:
                 x = -x
-            newpins[pinname] = Pin(loc, x, y)
+            newpins.add(Pin(pinname, loc, x, y))
+
         return newpins
 
     @cached_property
     def transformed_pins(self):
 
-        newpins = {}
-        for pinname, pin in self.pins.items():
-
+        newpins = Pins()
+        for pin in self.pins:
             x, y = self.tf.transform(pin.xy)
-            newpins[pinname] = Pin(pin.loc, x, y)
+            newpins.add(Pin(pin.name, pin.loc, x, y))
+
         return newpins

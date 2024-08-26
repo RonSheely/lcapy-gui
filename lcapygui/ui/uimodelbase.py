@@ -337,7 +337,7 @@ class UIModelBase:
             if gcpt is None:
                 continue
 
-            for pin in gcpt.transformed_pins.values():
+            for pin in gcpt.transformed_pins:
                 x1, y1 = pin.pos.x, pin.pos.y
                 rsq = (x1 - x) ** 2 + (y1 - y) ** 2
                 if rsq < 0.1:
