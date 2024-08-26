@@ -617,7 +617,7 @@ class Component(ABC):
                 y = -y
             if self.invert:
                 x = -x
-            newpins.add(Pin(pinname, loc, x, y))
+            newpins.add(Pin(pinname, loc, x, y, pinname in self.node_pinnames))
 
         return newpins
 
@@ -627,6 +627,6 @@ class Component(ABC):
         newpins = Pins()
         for pin in self.pins:
             x, y = self.tf.transform(pin.xy)
-            newpins.add(Pin(pin.name, pin.loc, x, y))
+            newpins.add(Pin(pin.name, pin.loc, x, y, pin.isnode))
 
         return newpins

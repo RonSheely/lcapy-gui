@@ -22,7 +22,7 @@ class Highlight:
             self.picture.add(self.ui.sketcher.stroke_filled_circle(
                 pin.x, pin.y,
                 radius=0.1,
-                color='purple',
+                color='green' if pin.isnode else 'purple',
                 alpha=0.5
             ))
 

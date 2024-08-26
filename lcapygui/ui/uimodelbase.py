@@ -1014,6 +1014,24 @@ class UIModelBase:
         s += '; ' + self.preferences.schematic_preferences() + '\n'
         return s
 
+    def pinname_find(self, position):
+
+        for cpt in self.circuit.elements.values():
+            gcpt = cpt.gcpt
+            if gcpt is None:
+                continue
+            pin = gcpt.transformed_pins.by_position(position)
+
+            if pin is not None:
+                if pin.isnode:
+                    # FIXME, there must be a better way
+                    node = self.circuit.nodes.by_position(position)
+                    if node is None:
+                        raise ValueError('Node problem', gcpt)
+                    return node.name
+                return gcpt.name + '.' + pin.name
+        return None
+
     def thing_create(self, cpt_type, x1, y1, x2, y2, kind='', join=True):
         """
         Creates a new component of type cpt_type between two points identified by (x1, y1) and (x2, y2).
@@ -1041,13 +1059,13 @@ class UIModelBase:
             if position is None:
                 continue
 
-            node = self.circuit.nodes.by_position(position)
-            if node is None or not join:
-                node_name = gcpt.choose_node_name(m, all_node_names)
-                all_node_names.append(node_name)
-            else:
-                node_name = node.name
-            node_names.append(node_name)
+            pinname = self.pinname_find(position)
+
+            if pinname is None or not join:
+                pinname = gcpt.choose_node_name(m, all_node_names)
+                all_node_names.append(pinname)
+
+            node_names.append(pinname)
 
         netitem = gcpt.netitem(node_names, x1, y1, x2, y2, self.node_spacing)
 
