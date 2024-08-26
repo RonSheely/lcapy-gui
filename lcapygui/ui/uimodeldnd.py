@@ -346,7 +346,7 @@ class UIModelDnD(UIModelBase):
         if thing is None:
             if self.crosshair.thing is None:
                 if self.ui.debug:
-                    print('No-thing provided to decide component type')
+                    print('No thing provided to decide component type')
                 return False
             thing = self.crosshair.thing
 
@@ -936,13 +936,13 @@ class UIModelDnD(UIModelBase):
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
             return
 
-        closest_node = self.closest_node(mouse_x, mouse_y)
+        closest_cpt, closest_pin = self.closest_pin(mouse_x, mouse_y)
 
-        if closest_node is not None:
+        if closest_pin is not None:
             # Update the crosshair position and set style to show it
-            # is over a node
-            self.crosshair.update(position=(closest_node.pos.x,
-                                            closest_node.pos.y), style='node')
+            # is over a pin
+            self.crosshair.update(position=(closest_pin.x,
+                                            closest_pin.y), style='node')
             return
 
         closest_cpt = self.closest_cpt(mouse_x, mouse_y)
