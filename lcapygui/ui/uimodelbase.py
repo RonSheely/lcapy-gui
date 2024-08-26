@@ -1,8 +1,8 @@
 from .annotation import Annotation
 from .annotations import Annotations
 from .preferences import Preferences
+from ..core.pos import Pos
 from ..components.opamp import Opamp
-from ..components.pos import Pos
 from ..components.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from .history import History
 from .action import ActionAdd, ActionDelete, ActionMove
@@ -1255,7 +1255,6 @@ class UIModelBase:
         cpt_vect = array([v2_x - v1_x, v2_y - v1_y])
         # Convert point x,y to a vector relative to node1
         point_vect = array([x - v1_x, y - v1_y])
-
 
         #  Project the point x,y onto the line
         dot_product = (dot(point_vect, cpt_vect) / dot(cpt_vect, cpt_vect)) * cpt_vect

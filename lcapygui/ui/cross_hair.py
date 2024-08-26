@@ -1,4 +1,4 @@
-from lcapygui.components.picture import Picture
+from ..core.picture import Picture
 from typing import Tuple
 
 

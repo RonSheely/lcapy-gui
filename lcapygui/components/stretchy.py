@@ -1,6 +1,6 @@
 from .component import Component
-from .picture import Picture
-from .pos import Pos
+from ..core.picture import Picture
+from ..core.pos import Pos
 from numpy import array, sqrt
 
 

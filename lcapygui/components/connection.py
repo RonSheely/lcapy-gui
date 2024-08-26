@@ -1,6 +1,6 @@
 from .bipole import Bipole
-from .picture import Picture
-from .tf import TF
+from ..core.picture import Picture
+from ..core.tf import TF
 from math import cos, sin, radians, sqrt
 from numpy import array
 

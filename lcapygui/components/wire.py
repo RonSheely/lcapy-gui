@@ -1,5 +1,5 @@
 from .bipole import Bipole
-from .picture import Picture
+from ..core.picture import Picture
 
 
 class Wire(Bipole):

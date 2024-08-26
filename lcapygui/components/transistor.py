@@ -1,4 +1,4 @@
-from .pos import Pos
+from ..core.pos import Pos
 from .stretchy import Stretchy
 from numpy import array, sqrt, dot
 

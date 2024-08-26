@@ -1,4 +1,4 @@
-from .components.sketch import Sketch
+from .core.sketch import Sketch
 
 
 class SketchLibrary:

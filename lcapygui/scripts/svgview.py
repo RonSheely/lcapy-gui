@@ -7,8 +7,8 @@ Usage: svgview infile.svg
 
 from argparse import ArgumentParser
 import sys
-from lcapygui.components.sketch import Sketch
-from lcapygui.components.tf import TF
+from lcapygui.core import Sketch
+from lcapygui.core.tf import TF
 from lcapygui.ui.tk.sketcher import Sketcher
 from matplotlib.pyplot import subplots, show
 from matplotlib.path import Path

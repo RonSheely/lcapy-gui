@@ -2,9 +2,9 @@
 Defines the components that lcapy-gui can draw
 """
 
-from .pin import Pin
-from .pos import Pos
-from .tf import TF
+from ..core.pin import Pin
+from ..core.pos import Pos
+from ..core.tf import TF
 from .utils import point_in_polygon
 
 from numpy import array, nan

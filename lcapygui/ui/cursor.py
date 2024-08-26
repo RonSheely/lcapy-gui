@@ -1,4 +1,4 @@
-from ..components.picture import Picture
+from ..core.picture import Picture
 
 class Cursor:
 
