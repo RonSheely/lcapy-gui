@@ -5,7 +5,7 @@ Defines the components that lcapy-gui can draw
 from ..core.pin import Pin
 from ..core.pos import Pos
 from ..core.tf import TF
-from .utils import point_in_polygon
+from ..core.utils import point_in_polygon
 
 from numpy import array, nan
 from math import sqrt

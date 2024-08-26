@@ -2,8 +2,8 @@ from .annotation import Annotation
 from .annotations import Annotations
 from .preferences import Preferences
 from ..core.pos import Pos
+from ..core.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from ..components.opamp import Opamp
-from ..components.cpt_maker import gcpt_make_from_cpt, gcpt_make_from_type
 from .history import History
 from .action import ActionAdd, ActionDelete, ActionMove
 from .actions import Actions

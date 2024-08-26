@@ -3,7 +3,7 @@ from .bjt import BJT
 from .capacitor import Capacitor
 from .connection import Connection
 from .cpe import CPE
-from .current_source import CurrentSource
+from .currentsource import CurrentSource
 from .damper import Damper
 from .diode import Diode
 from .ferritebead import FerriteBead
@@ -21,7 +21,7 @@ from .resistor import Resistor
 from .spring import Spring
 from .switch import Switch
 from .transformer import Transformer
-from .voltage_source import VoltageSource
+from .voltagesource import VoltageSource
 from .wire import Wire
 from .vcvs import VCVS
 from .vccs import VCCS

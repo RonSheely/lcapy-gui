@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 import sys
 from lcapygui.core.sketch import Sketch
 from lcapygui.core.tf import TF
-from lcapygui.components.cpt_maker import cpt_make_from_sketch_key
+from lcapygui.core.cpt_maker import cpt_make_from_sketch_key
 from lcapygui.ui.tk.sketcher import Sketcher
 from matplotlib.pyplot import subplots, show
 
