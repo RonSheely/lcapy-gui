@@ -12,7 +12,9 @@ class Highlight:
     def show(self, cpt):
 
         if cpt == self.cpt:
-            self.remove()
+            return
+
+        self.remove()
 
         self.picture = Picture()
 
