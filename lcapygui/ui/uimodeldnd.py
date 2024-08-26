@@ -13,7 +13,7 @@ from lcapy.nodes import Node
 from .cursor import Cursor
 from .cursors import Cursors
 from .highlight import Highlight
-from ..components.picture import Picture
+from ..core.picture import Picture
 from .action import ActionAdd, ActionDelete, ActionMove
 from .uimodelbase import UIModelBase
 
@@ -175,6 +175,37 @@ class UIModelDnD(UIModelBase):
         self.ui.refresh()
         return True if len(self.cursors) == 2 else False
 
+    def snap_align_cursor(self, x, y):
+
+        if len(self.cursors) < 1:
+            return x, y, False
+
+        xc = self.cursors[-1].x
+        yc = self.cursors[-1].y
+        if self.is_close_to(x, xc):
+            return xc, y, True
+        if self.is_close_to(y, yc):
+            return x, yc, True
+
+        return x, y, False
+
+    def snap_to_cursor(self, x, y):
+
+        for cursor in self.cursors:
+            xc = cursor.x
+            yc = cursor.y
+            if self.is_close_to(x, xc) and self.is_close_to(y, yc):
+                return xc, yc, True
+        return x, y, False
+
+    def snap_to_pin(self, x, y):
+
+        cpt, pin = self.closest_pin(x, y)
+        if pin:
+            return pin.x, pin.y, True
+
+        return x, y, False
+
     def snap(self, mouse_x, mouse_y, snap_to_component=False):
         """
         Snaps the x and y positions to the grid or to a component
@@ -192,54 +223,26 @@ class UIModelDnD(UIModelBase):
         -------
         tuple[float, float]
             The snapped x, y position
-
-        Notes
-        -----
-        Will only attempt to snap if allowed in settings
-
-        Will snap to the grid if the mouse is close to the grid position
-        Otherwise, it will attempt to snap to the component itself to allow component selection.
-        If no component is close enough, it will simply revert to snapping to the grid.
-
         """
-        # Only snap if the snap grid is enabled
-        if not self.preferences.snap_grid:
-            return mouse_x, mouse_y
 
-        gs = self.preferences.grid_spacing
+        if snap_to_component:
+            x, y, snapped = self.snap_to_pin(mouse_x, mouse_y)
+            if snapped:
+                return x, y
 
-        snap_x, snap_y = self.snap_to_grid(mouse_x, mouse_y)
+        x, y, snapped = self.snap_to_cursor(mouse_x, mouse_y)
+        if snapped:
+            return x, y
 
-        # Prioritise snapping to the grid if close, or if placing
-        # a component
-        if ((abs(mouse_x - snap_x) < 0.2 * gs and
-             abs(mouse_y - snap_y) < 0.2 * gs) or not snap_to_component):
-            return snap_x, snap_y
+        x, y, snapped = self.snap_align_cursor(mouse_x, mouse_y)
+        if snapped:
+            return x, y
 
-        elif len(self.cursors) >= 1:
-            xc = self.cursors[-1].x
-            yc = self.cursors[-1].y
-            if self.is_close_to(snap_x, xc):
-                return xc, snap_y
-            if self.is_close_to(snap_y, yc):
-                return snap_x, yc
+        if self.preferences.snap_grid:
+            return self.snap_to_grid(mouse_x, mouse_y)
 
-        # If not close grid position, attempt to snap to component
-        snapped = False
-        for cpt in self.circuit.elements.values():
-            gcpt = cpt.gcpt
-            if (gcpt is not None and gcpt is not self
-                and gcpt.distance_from_cpt(mouse_x, mouse_y) < 0.2):
-                mouse_x, mouse_y = self.snap_to_cpt(mouse_x, mouse_y, cpt)
-                snapped = True
+        # TODO: Try to align with pin or cursor...
 
-        # If no near components, snap to grid
-        if not snapped:
-            return snap_x, snap_y
-
-        for node in self.circuit.nodes.values():
-            if abs(mouse_x - node.x) < 0.2 * gs and abs(mouse_y - node.y) < 0.2 * gs:
-                return node.x, node.y
         return mouse_x, mouse_y
 
     def clear(self):
@@ -932,11 +935,6 @@ class UIModelDnD(UIModelBase):
             self.cursors.remove()
             self.crosshair.update(position=(mouse_x, mouse_y), style=None)
             return
-
-        if False:
-            closest_cpt, closest_pin = self.closest_pin(mouse_x, mouse_y)
-            if closest_pin is not None:
-                print(closest_pin.pos)
 
         closest_node = self.closest_node(mouse_x, mouse_y)
 
