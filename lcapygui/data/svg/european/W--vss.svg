@@ -6,7 +6,7 @@
 </clipPath>
 </defs>
 <g id="surface1">
-<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -0.0015625 -0.00021875 L -0.0015625 -0.00021875 M -0.0015625 -0.00021875 L -0.0015625 -0.00021875 " transform="matrix(1,0,0,-1,4.65,0.199)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -0.0015625 -0.00021875 L -0.0015625 -0.00021875 " transform="matrix(1,0,0,-1,4.65,0.199)"/>
 <g clip-path="url(#clip1)" clip-rule="nonzero">
 <path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -4.251562 -6.804906 L -0.0015625 -12.754125 L 4.252344 -6.804906 " transform="matrix(1,0,0,-1,4.65,0.199)"/>
 </g>

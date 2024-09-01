@@ -13,7 +13,7 @@
 </defs>
 <g id="surface1">
 <g clip-path="url(#clip1)" clip-rule="nonzero">
-<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -0.0015625 0.0001875 L -0.0015625 0.0001875 M -0.0015625 0.0001875 L -0.0015625 0.0001875 " transform="matrix(1,0,0,-1,4.65,17.008)"/>
+<path style="fill:none;stroke-width:0.3985;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -0.0015625 0.0001875 L -0.0015625 0.0001875 " transform="matrix(1,0,0,-1,4.65,17.008)"/>
 </g>
 <g clip-path="url(#clip2)" clip-rule="nonzero">
 <path style="fill:none;stroke-width:0.797;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -4.251562 6.804875 L -0.0015625 12.754094 L 4.252344 6.804875 " transform="matrix(1,0,0,-1,4.65,17.008)"/>
