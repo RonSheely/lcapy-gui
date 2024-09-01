@@ -64,7 +64,9 @@ class LcapyTk(Tk):
             if menuitem is None or isinstance(menuitem, MenuDropdown):
                 previewer.hide()
             else:
-                previewer.show(menuitem.label, menuitem.arg)
+                thing = menuitem.arg
+                previewer.show(menuitem.label, thing,
+                               self.model.preferences.style)
 
         categories = {
             'Basic': ('c', 'i', 'l', 'p', 'r', 'v', 'w', 'tf'),
@@ -75,7 +77,7 @@ class LcapyTk(Tk):
             'Connection': ('0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir'),
-            # 'Extra': ('ADC', 'DAC'),
+            'Extra': ('adc', 'dac'),
             'Mechanical': ('K', 'M', 'R'),
         }
 

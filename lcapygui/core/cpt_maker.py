@@ -27,10 +27,14 @@ from ..components.vcvs import VCVS
 from ..components.vccs import VCCS
 from ..components.ccvs import CCVS
 from ..components.cccs import CCCS
+from ..components.dac import DAC
+from ..components.adc import ADC
 
 # Could use importlib.import_module to programmatically import
 # the component classes.
 
+# Perhaps iterate over kinds for each component class and
+# index by cpt-type and cpt-kind?
 
 class CptMaker:
 
@@ -81,6 +85,10 @@ class CptMaker:
             cls = Inamp
         elif cpt_type == 'E' and kind == 'fdopamp':
             cls = FDOpamp
+        elif cpt_type == 'U' and kind == 'adc':
+            cls = ADC
+        elif cpt_type == 'U' and kind == 'dac':
+            cls = DAC
         elif cpt_type in self.cpts:
             cls = self.cpts[cpt_type]
         else:
@@ -102,7 +110,7 @@ cpt_maker = CptMaker()
 
 
 def gcpt_make_from_cpt(cpt):
-    # This is called when loading a schematic from a file.
+    # This is used when loading a schematic from a file.
 
     is_connection = False
 
@@ -122,11 +130,13 @@ def gcpt_make_from_cpt(cpt):
 
 
 def gcpt_make_from_type(cpt_type, cpt_name='', kind='', style=''):
+    # This used when creating a new cpt from menu
 
     return cpt_maker(cpt_type, name=cpt_name, kind=kind, style=style)
 
 
 def gcpt_make_from_sketch_key(sketch_key):
+    # This is used only by sketchview
 
     parts = sketch_key.split('-', 2)
     cpt_type = parts[0]

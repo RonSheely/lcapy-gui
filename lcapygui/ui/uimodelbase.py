@@ -82,12 +82,12 @@ class UIModelBase:
         'g': Thing('g', 'Voltage controlled current source', 'G', ''),
         'e': Thing('e', 'Voltage controlled voltage source', 'E', ''),
         'w': Thing('w', 'Wire', 'W', ''),
-        'dw': Thing('', 'Dynamic Wire', 'DW', ''),
+        'dw': Thing('', 'Dynamic wire', 'DW', ''),
         'M': Thing('M', 'Mass', 'm', ''),
         'K': Thing('K', 'Spring', 'k', ''),
         'R': Thing('R', 'Damper', 'r', ''),
-        # 'dac': Thing('', 'DAC', 'Udac', ''),
-        # 'adc': Thing('', 'ADC', 'Uadc', ''),
+        'dac': Thing('', 'DAC', 'U', 'dac'),
+        'adc': Thing('', 'ADC', 'U', 'adc'),
     }
 
     # Short-cut key, menu name, cpt type, kind

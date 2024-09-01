@@ -257,7 +257,9 @@ class Sketch:
             xoffset = 0
             yoffset = 0
         else:
-            raise ValueError('No case for ' + sketch_key + ' in sketch.py')
+            warn('No case for ' + sketch_key + ' in sketch.py')
+            xoffset = 0
+            yoffset = 0
 
         if xoffset is None or yoffset is None:
             print('Could not find offsets for ' + sketch_key)

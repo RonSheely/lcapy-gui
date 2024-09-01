@@ -29,6 +29,8 @@ If the component is known to Lcapy (see `lcapy.schemcpts.py`):
 Updating components
 ===================
 
+If Circuitikz has changed how components are drawn:
+
 1. Run python or ipython
 
 >>> from makesvg import make_all

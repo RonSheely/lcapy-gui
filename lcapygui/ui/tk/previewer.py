@@ -3,6 +3,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from .window import Window
 from .sketcher import Sketcher
+from ...core.cpt_maker import cpt_maker
 
 
 class Previewer(Window):
@@ -32,11 +33,13 @@ class Previewer(Window):
         self.fig = fig
         self.ax = ax
 
-    def show(self, label, arg):
+    def show(self, label, thing, style='american'):
 
-        # FIXME for other styles
         try:
-            sketch = self.ui.sketchlib.lookup(arg.cpt_type, 'american')
+            cpt = cpt_maker(thing.cpt_type, thing.kind)
+            sketch_key = cpt.sketch_key
+
+            sketch = self.ui.sketchlib.lookup(sketch_key, style)
         except Exception:
             return
 
