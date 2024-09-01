@@ -86,6 +86,8 @@ class UIModelBase:
         'M': Thing('M', 'Mass', 'm', ''),
         'K': Thing('K', 'Spring', 'k', ''),
         'R': Thing('R', 'Damper', 'r', ''),
+        # 'dac': Thing('', 'DAC', 'Udac', ''),
+        # 'adc': Thing('', 'ADC', 'Uadc', ''),
     }
 
     # Short-cut key, menu name, cpt type, kind

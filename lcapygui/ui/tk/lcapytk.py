@@ -75,6 +75,7 @@ class LcapyTk(Tk):
             'Connection': ('0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir'),
+            # 'Extra': ('ADC', 'DAC'),
             'Mechanical': ('K', 'M', 'R'),
         }
 

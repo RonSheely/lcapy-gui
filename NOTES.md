@@ -24,3 +24,12 @@ If the component is known to Lcapy (see `lcapy.schemcpts.py`):
    file to find the exact locations.  Note, the x-y position of the mouse is shown in the top right corner.
 
 9. Update the menu in `lcapygui/ui/tk/uimodelmph.py`
+
+
+Updating components
+===================
+
+1. Run python or ipython
+
+>>> from makesvg import make_all
+>>> make_all()

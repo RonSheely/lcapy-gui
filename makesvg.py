@@ -1,6 +1,6 @@
 from lcapygui.ui.uimodelbase import UIModelBase
-from lcapygui.components.sketch import Sketch
-from lcapygui.components.cpt_maker import gcpt_make_from_type
+from lcapygui.core.sketch import Sketch
+from lcapygui.core.cpt_maker import gcpt_make_from_type
 
 
 def cpt_sketch_make(cpt, dstyle):
