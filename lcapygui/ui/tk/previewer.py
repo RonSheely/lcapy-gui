@@ -36,8 +36,8 @@ class Previewer(Window):
     def show(self, label, thing, style='american'):
 
         try:
-            cpt = cpt_maker(thing.cpt_type, thing.kind)
-            sketch_key = cpt.sketch_key
+            gcpt = cpt_maker(thing.cpt_type, thing.kind)
+            sketch_key = gcpt.sketch_key
 
             sketch = self.ui.sketchlib.lookup(sketch_key, style)
         except Exception:

@@ -79,7 +79,7 @@ class MOSFET(Transistor):
         return 'd' if self.is_ptype else 's'
 
     @cached_property
-    def ppins(self):
+    def pins(self):
         if self.is_igfet:
             if self.has_bodydiode:
                 return self.nigfet_bodydiode_pins if self.is_ntype else self.pigfet_bodydiode_pins

@@ -46,6 +46,8 @@ class Component(ABC):
     # Extra fields such as `mirror`, `invert` as used by opamps and transistors
     extra_fields = {}
     has_value = True
+    node_pinnames = ()
+    default_width = 1
 
     voltage_keys = ('v', 'v_', 'v^', 'v_>', 'v_<', 'v^>', 'v^<',
                     'v<', 'v>')
@@ -351,7 +353,7 @@ class Component(ABC):
             if node_pinname == '':
                 coords.append((nan, nan))
             else:
-                coords.append(self.pins[node_pinname].xy)
+                coords.append(self.relative_pins[node_pinname].xy)
 
         positions = tf.transform(coords)
 
@@ -367,14 +369,13 @@ class Component(ABC):
 
     @property
     def pos1(self):
-        return self.pins[self.pinname1].pos
+        return self.relative_pins[self.pinname1].pos
 
     @property
     def pos2(self):
-        return self.pins[self.pinname2].pos
+        return self.relative_pins[self.pinname2].pos
 
-    def _attr_dir_string(self, x1, y1, x2, y2, step=1):
-        tf = self.make_tf(Pos(x1, y1), Pos(x2, y2), self.pos1, self.pos2)
+    def _attr_dir_string(self, tf, step=1):
         r = tf.scale_factor / 2
         angle = -tf.angle_deg + self.angle_offset
 
@@ -408,10 +409,10 @@ class Component(ABC):
 
         return attr
 
-    def attr_string(self, x1, y1, x2, y2, step=1):
+    def attr_string(self, tf, step=1):
         """Return Lcapy attribute string such as `right, color=blue`"""
 
-        attr = self._attr_dir_string(x1, y1, x2, y2, step)
+        attr = self._attr_dir_string(tf, step)
 
         if self.scale != '1':
             attr += ', scale=' + str(self.scale)
@@ -515,7 +516,7 @@ class Component(ABC):
             return ()
         return (self.cpt_kind,)
 
-    def netitem(self, node_names, x1, y1, x2, y2, step=1):
+    def netitem(self, node_names, tf, step=1):
         """Create Lcapy netlist item such as `R1 1 2; right, color=blue`"""
 
         parts = [self.name]
@@ -526,7 +527,7 @@ class Component(ABC):
         else:
             parts.extend(self.netitem_args)
         netitem = ' '.join(parts)
-        attr_string = self.attr_string(x1, y1, x2, y2, step)
+        attr_string = self.attr_string(tf, step)
         netitem += '; ' + attr_string + '\n'
         return netitem
 
@@ -582,7 +583,7 @@ class Component(ABC):
         except AttributeError:
             pass
         try:
-            del self.pins
+            del self.relative_pins
         except AttributeError:
             pass
         try:
@@ -602,21 +603,24 @@ class Component(ABC):
         self.annotations = []
 
     @property
-    def ppins(self):
-        raise ValueError('ppins not defined for %s' % self)
+    def pins(self):
+        raise ValueError('pins not defined for %s' % self)
 
     @cached_property
-    def pins(self):
+    def relative_pins(self):
         """These are relative to the centre of the component
-        and are not scaled."""
+        and can be mirrored or inverted but not scaled."""
 
         newpins = Pins()
-        for pinname, data in self.ppins.items():
+        for pinname, data in self.pins.items():
             loc, x, y = data
             if self.mirror:
                 y = -y
             if self.invert:
                 x = -x
+            # FIXME
+            x *= self.default_width
+            y *= self.default_width
             newpins.add(Pin(pinname, loc, x, y, pinname in self.node_pinnames))
 
         return newpins
@@ -625,7 +629,7 @@ class Component(ABC):
     def transformed_pins(self):
 
         newpins = Pins()
-        for pin in self.pins:
+        for pin in self.relative_pins:
             x, y = self.tf.transform(pin.xy)
             newpins.add(Pin(pin.name, pin.loc, x, y, pin.isnode))
 

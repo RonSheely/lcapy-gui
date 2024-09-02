@@ -1,13 +1,16 @@
-from .fixed import Fixed
+from .chip import Chip
 
 
-class DAC(Fixed):
+class DAC(Chip):
 
     type = "Udac"
     sketch_net = 'U dac'
-    sketch_key = 'dac'
+    sketch_key = 'U-dac'
     label_offset_pos = (0, 0)
     anotation_offset_pos = None
+
+    pinname1 = 'data'
+    pinname2 = 'in'
 
     pins = {'out': ('r', 0.5, 0),
             'out+': ('r', 0.4375, 0.125),

@@ -13,7 +13,7 @@ class Inamp(Opamp):
 
     node_pinnames = ('out', 'ref', 'in+', 'in-', 'r+', 'r-')
 
-    ppins = {'out': ('rx', 1.25, 0.0),
+    pins = {'out': ('rx', 1.25, 0.0),
              'in+': ('lx', -1.25, 0.5),
              'in-': ('lx', -1.25, -0.5),
              'vdd': ('t', 0, 0.5),

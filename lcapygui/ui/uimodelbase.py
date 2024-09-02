@@ -696,8 +696,10 @@ class UIModelBase:
         newgcpt.kind = gcpt.kind
         newcpt.args = cpt.args
         newcpt.opts.clear()
-        newcpt.opts.add(gcpt.attr_string(newgcpt.node1.x, newgcpt.node1.y,
-                                         newgcpt.node2.x, newgcpt.node2.y))
+
+        tf = newgcpt.make_tf(newgcpt.node1.x, newgcpt.node1.y,
+                             newgcpt.node2.x, newgcpt.node2.y)
+        newcpt.opts.add(gcpt.attr_string(tf))
 
     def cpt_remake(self, cpt):
         gcpt = cpt.gcpt
@@ -742,9 +744,10 @@ class UIModelBase:
                 print('Trying to change mirror for ' + str(newcpt))
 
         newcpt.opts.clear()
-        newcpt.opts.add(gcpt.attr_string(gcpt.node1.x, gcpt.node1.y,
-                                         gcpt.node2.x, gcpt.node2.y,
-                                         self.node_spacing))
+        tf = gcpt.self.make_tf(gcpt.node1.x, gcpt.node1.y,
+                               gcpt.node2.x, gcpt.node2.y)
+
+        newcpt.opts.add(gcpt.attr_string(tf, self.node_spacing))
 
         newcpt.gcpt = gcpt
         return newcpt
@@ -1047,6 +1050,7 @@ class UIModelBase:
         :return: The instance of the component
         """
         from lcapy.mnacpts import Cpt
+        from ..components.chip import Chip
 
         cpt_name = self.choose_cpt_name(cpt_type)
         gcpt = gcpt_make_from_type(cpt_type, cpt_name, kind=kind)
@@ -1068,9 +1072,12 @@ class UIModelBase:
                 if '.' not in pinname:
                     all_node_names.append(pinname)
 
-            node_names.append(pinname)
+            if not isinstance(gcpt, Chip):
+                node_names.append(pinname)
 
-        netitem = gcpt.netitem(node_names, x1, y1, x2, y2, self.node_spacing)
+
+        tf = gcpt.make_tf(Pos(x1, y1), Pos(x2, y2), gcpt.pos1, gcpt.pos2)
+        netitem = gcpt.netitem(node_names, tf, self.node_spacing)
 
         if self.ui.debug:
             print('Adding ' + netitem)

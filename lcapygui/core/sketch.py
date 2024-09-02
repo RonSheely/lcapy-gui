@@ -256,6 +256,9 @@ class Sketch:
         elif cpt_type in ('P', ):
             xoffset = 0
             yoffset = 0
+        elif cpt_type == 'U' and cpt_kind in ('adc', 'dac'):
+            xoffset = self.width / 2
+            yoffset = self.height / 2
         else:
             warn('No case for ' + sketch_key + ' in sketch.py')
             xoffset = 0

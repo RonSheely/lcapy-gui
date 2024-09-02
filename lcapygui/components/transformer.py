@@ -29,7 +29,7 @@ class Transformer(Fixed):
 
     hw = 0.32
     hh = 0.5
-    ppins = {'s+': ('rx', hw, hh),
+    pins = {'s+': ('rx', hw, hh),
              's-': ('rx', hw, -hh),
              'p+': ('lx', -hw, hh),
              'p-': ('lx', -hw, -hh)}

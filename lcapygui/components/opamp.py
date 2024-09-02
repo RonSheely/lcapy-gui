@@ -22,7 +22,7 @@ class Opamp(Fixed):
     hh = 0.848
     bbox_path = ((-hw, -hh), (-hw, hh), (1, 0))
 
-    ppins = {'out': ('rx', 1.25, 0.0),
+    pins = {'out': ('rx', 1.25, 0.0),
              'in+': ('lx', -1.25, 0.5),
              'in-': ('lx', -1.25, -0.5),
              'vdd': ('t', 0, 0.5),

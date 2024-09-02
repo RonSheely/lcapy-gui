@@ -16,7 +16,7 @@ class FDOpamp(Opamp):
 
     node_pinnames = ('out+', 'out-', 'in+', 'in-', 'ocm')
 
-    ppins = {'out+': ('r', 0.85, -0.5),
+    pins = {'out+': ('r', 0.85, -0.5),
              'out-': ('r', 0.85, 0.5),
              'in+': ('l', -1.25, 0.5),
              'ocm': ('l', -0.85, 0),

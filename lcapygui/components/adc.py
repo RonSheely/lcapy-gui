@@ -1,13 +1,16 @@
-from .fixed import Fixed
+from .chip import Chip
 
 
-class ADC(Fixed):
+class ADC(Chip):
 
     type = "Uadc"
     sketch_net = 'U adc'
-    sketch_key = 'adc'
+    sketch_key = 'U-adc'
     label_offset_pos = (0, 0)
     anotation_offset_pos = None
+
+    pinname1 = 'in'
+    pinname2 = 'data'
 
     pins = {'in': ('l', -0.5, 0),
             'in+': ('l', -0.4375, 0.125),

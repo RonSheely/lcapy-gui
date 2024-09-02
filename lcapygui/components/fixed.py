@@ -11,6 +11,9 @@ class Fixed(Component):
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions."""
 
+        if len(self.nodes) == 0:
+            return array(())
+
         if len(self.nodes) == 2:
             return array(((x1, y1), (x2, y2)))
 
@@ -22,7 +25,7 @@ class Fixed(Component):
             if node_pinname == '':
                 coords.append((nan, nan))
             else:
-                coords.append(self.pins[node_pinname].xy)
+                coords.append(self.relative_pins[node_pinname].xy)
 
         positions = tf.transform(coords)
 

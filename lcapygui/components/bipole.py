@@ -5,7 +5,7 @@ from numpy import array
 class Bipole(Stretchy):
 
     node_pinnames = ('+', '-')
-    ppins = {'+': ('lx', -0.5, 0),
+    pins = {'+': ('lx', -0.5, 0),
              '-': ('rx', 0.5, 0)}
     pinname1 = '+'
     pinname2 = '-'

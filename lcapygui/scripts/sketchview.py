@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 import sys
 from lcapygui.core.sketch import Sketch
 from lcapygui.core.tf import TF
-from lcapygui.core.cpt_maker import cpt_make_from_sketch_key
+from lcapygui.core.cpt_maker import gcpt_make_from_sketch_key
 from lcapygui.ui.tk.sketcher import Sketcher
 from matplotlib.pyplot import subplots, show
 
@@ -59,9 +59,9 @@ def sketchview(sketch_key, pins, points):
           (sketch.width, sketch.width_cm, sketch.height, sketch.height_cm))
 
     if pins:
-        cpt = cpt_make_from_sketch_key(sketch_key)
-        for pinname, pin in cpt.pins.items():
-            x, y = pin[1], pin[2]
+        cpt = gcpt_make_from_sketch_key(sketch_key)
+        for pinname, pin in cpt.relative_pins.items():
+            x, y = pin.xy
             sketcher.stroke_filled_circle(
                 x, y, 0.02, color='purple', alpha=1)
             print(pinname, x, y)

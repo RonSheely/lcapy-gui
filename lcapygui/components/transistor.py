@@ -80,10 +80,10 @@ class Transistor(Stretchy):
 
         tf = self.make_tf(p1p, p2p,
                           self.pos1, self.pos2)
-        if 'g' in self.pins:
-            pin = self.pins['g']
+        if 'g' in self.relative_pins:
+            pin = self.relative_pins['g']
         else:
-            pin = self.pins['b']
+            pin = self.relative_pins['b']
 
         gatepos = tf.transform(pin[1:])
         xg, yg = gatepos
