@@ -685,6 +685,9 @@ class UIModelBase:
 
     def cpt_modify_nodes(self, cpt, x1, y1, x2, y2):
 
+        if self.ui.debug:
+            print('cpt_modify_nodes %s' % cpt)
+
         gcpt = cpt.gcpt
         cpt_key = gcpt.type
 
@@ -696,12 +699,17 @@ class UIModelBase:
         newgcpt.kind = gcpt.kind
         newcpt.args = cpt.args
         newcpt.opts.clear()
-
-        tf = newgcpt.make_tf(newgcpt.node1.x, newgcpt.node1.y,
-                             newgcpt.node2.x, newgcpt.node2.y)
-        newcpt.opts.add(gcpt.attr_string(tf))
+        newcpt.opts.add(gcpt._attr_string(newcpt.tf))
 
     def cpt_remake(self, cpt):
+
+        # This is called when the control component of a dependent source
+        # is changed, when the name of a component is changed, and
+        # when the mirror attribute is changed.
+
+        if self.ui.debug:
+            print('cpt_remake %s' % cpt)
+
         gcpt = cpt.gcpt
 
         if cpt.is_dependent_source and gcpt.type not in ('Eopamp',
@@ -744,10 +752,8 @@ class UIModelBase:
                 print('Trying to change mirror for ' + str(newcpt))
 
         newcpt.opts.clear()
-        tf = gcpt.self.make_tf(gcpt.node1.x, gcpt.node1.y,
-                               gcpt.node2.x, gcpt.node2.y)
 
-        newcpt.opts.add(gcpt.attr_string(tf, self.node_spacing))
+        newcpt.opts.add(gcpt.attr_string(self.node_spacing))
 
         newcpt.gcpt = gcpt
         return newcpt
@@ -1075,8 +1081,9 @@ class UIModelBase:
             if not isinstance(gcpt, Chip):
                 node_names.append(pinname)
 
-
+        # Note, gcpt has no tf attribute yet since nodes are not yet allocated
         tf = gcpt.make_tf(Pos(x1, y1), Pos(x2, y2), gcpt.pos1, gcpt.pos2)
+
         netitem = gcpt.netitem(node_names, tf, self.node_spacing)
 
         if self.ui.debug:

@@ -78,8 +78,7 @@ class Transistor(Stretchy):
             p1p = p1
             p2p = p2
 
-        tf = self.make_tf(p1p, p2p,
-                          self.pos1, self.pos2)
+        tf = self.make_tf(p1p, p2p, self.pos1, self.pos2)
         if 'g' in self.relative_pins:
             pin = self.relative_pins['g']
         else:

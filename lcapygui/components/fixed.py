@@ -37,8 +37,7 @@ class Fixed(Component):
         if 'invisible' in kwargs or 'nodraw' in kwargs or 'ignore' in kwargs:
             return
 
-        tf = self.find_tf(self.pinname1, self.pinname2)
-        sketch = self._sketch_lookup(model)
-
         self.picture = Picture()
+        sketch = self._sketch_lookup(model)
+        tf = self.tf()
         self.picture.add(sketch.draw(model, tf, **kwargs))

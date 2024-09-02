@@ -18,6 +18,6 @@ class Annotation(Connection):
 
         return 'A 0; right, ' + self.symbol_kind
 
-    def attr_string(self, tf, step=1):
+    def attr_string(self, step=1):
 
         return self.symbol_kind

@@ -409,8 +409,8 @@ class Component(ABC):
 
         return attr
 
-    def attr_string(self, tf, step=1):
-        """Return Lcapy attribute string such as `right, color=blue`"""
+    def _attr_string(self, tf, step=1):
+        """Return Lcapy attribute string such as `right=2, color=blue`"""
 
         attr = self._attr_dir_string(tf, step)
 
@@ -447,6 +447,11 @@ class Component(ABC):
             attr += ', style=' + self.style
 
         return attr
+
+    def attr_string(self, step=1):
+        """Return Lcapy attribute string such as `right, color=blue`"""
+
+        return self._attr_string(self.tf, step)
 
     def distance_from_cpt(self, x, y):
         """
@@ -527,7 +532,7 @@ class Component(ABC):
         else:
             parts.extend(self.netitem_args)
         netitem = ' '.join(parts)
-        attr_string = self.attr_string(tf, step)
+        attr_string = self._attr_string(tf, step)
         netitem += '; ' + attr_string + '\n'
         return netitem
 
@@ -564,17 +569,10 @@ class Component(ABC):
     def make_tf(self, p1, p2, q1, q2):
         return TF.from_points_pair(q1.xy, p1.xy, q2.xy, p2.xy)
 
-    def find_tf(self, pinname1, pinname2, node1=None, node2=None):
-        if node1 is None:
-            node1 = self.node1
-        if node2 is None:
-            node2 = self.node2
-
-        return self.make_tf(node1.pos, node2.pos, self.pos1, self.pos2)
-
     @cached_property
     def tf(self):
-        return self.find_tf(self.pinname1, self.pinname2)
+        return self.make_tf(self.node1.pos, self.node2.pos,
+                            self.pos1, self.pos2)
 
     def _clear_caches(self):
 
