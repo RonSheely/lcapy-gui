@@ -23,14 +23,15 @@ class LcapyTk(Tk):
 
     NAME = 'lcapy-tk'
 
-    def __init__(self, pathnames=None, debug=0, level=0, icon=None,
-                 title="lcapy-gui"):
+    def __init__(self, pathnames=None, debug=0, level=0, devel=False,
+                 icon=None, title="lcapy-gui"):
 
         from ... import __version__
 
         super().__init__()
 
         self.debug = debug
+        self.devel = devel
         self.version = __version__
         self.model = None
         self.canvas = None
@@ -77,9 +78,11 @@ class LcapyTk(Tk):
             'Connection': ('0V', 'ground', 'sground', 'rground', 'cground',
                            'vdd', 'vss', 'vcc', 'vee',
                            'input', 'output', 'bidir'),
-            'Extra': ('adc', 'dac'),
             'Mechanical': ('K', 'M', 'R'),
         }
+
+        if self.devel:
+            categories['Extra'] = ('adc', 'dac')
 
         items = []
         for cat in categories:
