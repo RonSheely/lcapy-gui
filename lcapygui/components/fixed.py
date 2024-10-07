@@ -11,9 +11,6 @@ class Fixed(Component):
     def assign_positions(self, x1, y1, x2, y2) -> array:
         """Assign node positions based on cursor positions."""
 
-        if len(self.nodes) == 0:
-            return array(())
-
         if len(self.nodes) == 2:
             return array(((x1, y1), (x2, y2)))
 
@@ -39,5 +36,5 @@ class Fixed(Component):
 
         self.picture = Picture()
         sketch = self._sketch_lookup(model)
-        tf = self.tf()
+        tf = self.tf
         self.picture.add(sketch.draw(model, tf, **kwargs))
