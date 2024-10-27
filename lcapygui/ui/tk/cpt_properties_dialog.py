@@ -82,13 +82,17 @@ class CptPropertiesDialog(Window):
         else:
             self.ui.show_error_dialog('Cannot change component type')
 
+        newargs = ()
         for m, arg in enumerate(self.gcpt.args):
             if arg == 'Control':
+                newargs += (arg, )
                 continue
             value = self.labelentries.get(arg)
             if value == '':
                 value = self.gcpt.name
-            self.cpt.args[m] = value
+            newargs += (arg, )
+
+        self.cpt.args = newargs
 
         try:
             if self.cpt.is_capacitor:
