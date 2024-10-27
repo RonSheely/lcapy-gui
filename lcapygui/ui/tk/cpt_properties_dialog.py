@@ -90,7 +90,7 @@ class CptPropertiesDialog(Window):
             value = self.labelentries.get(arg)
             if value == '':
                 value = self.gcpt.name
-            newargs += (arg, )
+            newargs += (value, )
 
         self.cpt.args = newargs
 
